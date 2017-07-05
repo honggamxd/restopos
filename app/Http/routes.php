@@ -14,3 +14,22 @@
 Route::get('/', function () {
     return view('sample');
 });
+
+Route::get('/order', function () {
+    return view('order');
+});
+
+Route::get('/bill', function () {
+    return view('billout');
+});
+
+Route::get('/billperitem', function () {
+    return view('billoutperitem');
+});
+
+Route::get('/inventory', function () {
+    return view('inventory');
+});
+
+
+

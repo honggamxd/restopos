@@ -20,6 +20,31 @@
 @yield('css')
 </head>
 <body>
+<nav class="navbar navbar-default nav-stacked">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pos-navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span> 
+      </button>
+      <a class="navbar-brand" href="#">POS</a>
+    </div>
+    <div class="collapse navbar-collapse" id="pos-navbar">
+    <ul class="nav navbar-nav">
+      <li><a href="/">Cashier</a></li>
+      <li><a href="/inventory">Inventory</a></li>
+      <li><a href="/receiving">Receiving</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+    <li>
+      <a href="/login" id="app-settings"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+    </li>
+    </ul>
+    </div>
+  </div>
+</nav>
+
 
 <div class="container-fluid">
 	<div class="row">

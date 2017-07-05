@@ -25,10 +25,19 @@
   width: 100%;
 }
 
+#complete-order-table{
+  width: 100%;
+  border-collapse: collapse;
+}
+#complete-order-table tr td,#complete-order-table tr th{
+  border: 1px solid black;
+  padding: 0px 2px 0px 2px;
+}
+
 </style>
 @endsection
 @section('content')
-<div class="col-sm-4">
+<div class="col-sm-6">
   <button class="btn btn-primary" onclick="$('#add-table-modal').modal('show')">Add Table</button>
   <div class="table-responsive">
     <table class="table table-hover">
@@ -53,7 +62,9 @@
           <td>
             <div class="btn-group">
               <button class="btn btn-primary" onclick="$('#add-order-modal').modal('show')">Order</button>
-              <button class="btn btn-success">Bill out</button>
+              <a href="/bill" class="btn btn-success">Bill out</a>
+              <a href="/billperitem" class="btn btn-info">Bill out per Item</a>
+              <button class="btn btn-default">View Orders</button>
               <button class="btn btn-danger">Cancel Order</button>
             </div>
           </td>
@@ -62,7 +73,7 @@
     </table>
   </div>  
 </div>
-<div class="col-sm-8">
+<div class="col-sm-6">
 
 </div>
 @endsection
@@ -140,6 +151,7 @@
                   <i class="search icon"></i>
                 </div>
               </div>
+            </div>
 
             <div class="table-responsive">
               <table class="ui sortable compact table" id="menu-table">
@@ -150,73 +162,132 @@
                 </thead>
                 <tbody>
                   <tr>
+                    <td></td>
+                    <td>Qty</td>
+                    <td>Price</td>
+                    <td class="right aligned">
+                    </td>
+                  </tr>
+                  <tr>
                     <td>Menu 1</td>
+                    <td>2</td>
+                    <td>20.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 2</td>
+                    <td>2</td>
+                    <td>20.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 3</td>
+                    <td>3</td>
+                    <td>30.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 4</td>
+                    <td>4</td>
+                    <td>40.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 5</td>
+                    <td>5</td>
+                    <td>50.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 6</td>
+                    <td>6</td>
+                    <td>60.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 7</td>
+                    <td>7</td>
+                    <td>70.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 8</td>
+                    <td>8</td>
+                    <td>80.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 9</td>
+                    <td>9</td>
+                    <td>90.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 10</td>
+                    <td>10</td>
+                    <td>100.00</td>
                     <td class="right aligned">
-                      <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
+                      <bu tton class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                   <tr>
                     <td>Menu 11</td>
+                    <td>11</td>
+                    <td>110.00</td>
                     <td class="right aligned">
                       <button class="btn btn-success"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add to List</button>
                     </td>
                   </tr>
                 </tbody>
+                <tfoot>
+
+                </tfoot>
               </table>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div id="printarea">
+            <table id="complete-order-table">
+              <thead>
+                <tr>
+                  <th style="text-align: center;">Order 1</th>
+                  <th style="text-align: center;">Table 1</th>
+                </tr>
+                <tr>
+                  <th style="text-align: center;">Menu</th>
+                  <th style="text-align: center;">Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align: center;">Menu 1</td>
+                  <td style="text-align: center;">1</td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">Menu 2</td>
+                  <td style="text-align: center;">2</td>
+                </tr>
+              </tbody>
+            </table>
+              <a href="/order" class="btn btn-primary"><span class="glyphicon glyphicon-print"></span> Print</a>
             </div>
           </div>
         </div>
