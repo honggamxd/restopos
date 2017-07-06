@@ -34,11 +34,28 @@
   border: 1px solid black;
   padding: 0px 2px 0px 2px;
 }
+.complete-order-table tfoot tr td,.complete-order-table tfoot tr th{
+  border: 0px;
+  padding: 0px 2px 0px 2px;
+}
 @media print{
-  a{
+  .hidetoprint, a{
     display: none !important;
   }
+  .type_payment{
+    border: 0px !important;
+  }
+  .footer{
+    page-break-after: always;
+  }
+  select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      text-indent: 1px;
+      text-overflow: '';
+  }
 }
+
 
 </style>
 @endsection
@@ -79,6 +96,15 @@ Date Time<br>
     <th style="text-align: right;" colspan="3">Total:</th>
     <th style="text-align: right;">30.00</th>
   </tr>
+  <tr>
+    <th style="text-align: right;" colspan="2"><button type="button" class="btn btn-primary hidetoprint" onclick="$('#payments-modal').modal('show')">Add Payment</button></th>
+    <th style="text-align: right;">Cash</th>
+    <th style="text-align: right;">50.00</th>
+  </tr>
+  <tr>
+    <th style="text-align: right;" colspan="3">Change:</th>
+    <th style="text-align: right;">20.00</th>
+  </tr>
 </tfoot>
 </table>
 <br>
@@ -86,6 +112,44 @@ Date Time<br>
 <a href="#" class="btn btn-primary" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
 @endsection
 
+@section('modals')
+<div id="payments-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Payments</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/items" method="post" id="add-items-form">
+        {{ csrf_field() }}
+        <div class="form-group">
+          <label>Settlement</label>
+          <select class="form-control">
+            <option>Cash</option>
+            <option>Credit</option>
+            <option>Debit</option>
+            <option>Guest Ledger</option>
+            <option>Free of Charge</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Amount</label>
+          <input type="text" name="" placeholder="Amount" class="form-control">
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+@endsection
 
 @section('scripts')
 <script type="text/javascript">

@@ -47,7 +47,7 @@
         </div>
         <div class="field">
           <label>&nbsp;</label>
-          <button class="ui primary button fluid">Add Menu</button>
+          <button type="button" class="ui primary button fluid" onclick="$('#addmenu-modal').modal('show')">Add Menu</button>
         </div>
       </div>
     </div>
@@ -73,7 +73,7 @@
           <td class="center aligned">1</td>
           <td class="right aligned">10.00</td>
           <td class="center aligned">
-            <button class="btn btn-default">Edit</button>
+            <button class="btn btn-default" onclick="$('#editmenu-modal').modal('show')">Edit</button>
           </td>
         </tr>
         <tr>
@@ -211,7 +211,7 @@
           <td class="center aligned">1</td>
           <td class="right aligned">10.00</td>
           <td class="center aligned">
-            <button class="btn btn-success">Use</button>
+            <button class="btn btn-success" onclick="$('#useinventory-modal').modal('show')">Use</button>
           </td>
         </tr>
         <tr>
@@ -325,6 +325,147 @@
 @endsection
 
 @section('modals')
+<div id="useinventory-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Use Inv Item 1</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/items" method="post" id="add-items-form">
+        {{ csrf_field() }}
+        <div class="form-group">
+          <label>Stocks</label>
+          <input type="text" name="" placeholder="Stocks" class="form-control" value="1" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>How Many</label>
+          <input type="text" name="" placeholder="Quantity" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Comments</label>
+          <textarea placeholder="Comments" class="form-control"></textarea>
+        </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="editmenu-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Menu 1</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/items" method="post" id="add-items-form">
+        {{ csrf_field() }}
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" name="" placeholder="Category" class="form-control" value="Food">
+        </div>
+
+        <div class="form-group">
+          <label>Subcategory</label>
+          <input type="text" name="" placeholder="Subcategory" class="form-control" value="Food">
+        </div>
+
+
+        <div class="form-group">
+          <label>Item</label>
+          <input type="text" name="" placeholder="Item" class="form-control" value="Menu 1">
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="text" name="" placeholder="Quantity" class="form-control" value="1">
+        </div>
+
+        <div class="form-group">
+          <label>Price</label>
+          <input type="text" name="" placeholder="Price" class="form-control" value="10.00">
+        </div>
+
+        <div class="form-group">
+          <label>Comments</label>
+          <textarea placeholder="Comments" class="form-control"></textarea>
+        </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="addmenu-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Menu</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/items" method="post" id="add-items-form">
+        {{ csrf_field() }}
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" name="" placeholder="Category" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Subcategory</label>
+          <input type="text" name="" placeholder="Subcategory" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Item</label>
+          <input type="text" name="" placeholder="Item" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="text" name="" placeholder="Quantity" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Price</label>
+          <input type="text" name="" placeholder="Price" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Comments</label>
+          <textarea placeholder="Comments" class="form-control"></textarea>
+        </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
 
 
 

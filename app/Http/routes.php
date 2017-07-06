@@ -32,4 +32,15 @@ Route::get('/inventory', function () {
 });
 
 
+Route::get('/receiving', function () {
+    return view('receiving');
+});
+
+
+
+Route::get('/reports', function () {
+    return view('reports');
+});
+
+
 

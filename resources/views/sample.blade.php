@@ -119,7 +119,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Table</h4>
+        <h4 class="modal-title">Orders</h4>
       </div>
       <div class="modal-body">
         <form action="/items" method="post" class="form-horizontal ui form" id="add-items-form">
@@ -265,15 +265,11 @@
           </div>
           <div class="col-sm-6">
             <div id="printarea">
-            <table id="complete-order-table">
+            <table class="ui sortable compact table unstackable">
               <thead>
                 <tr>
                   <th style="text-align: center;">Order 1</th>
                   <th style="text-align: center;">Table 1</th>
-                </tr>
-                <tr>
-                  <th style="text-align: center;">Menu</th>
-                  <th style="text-align: center;">Qty</th>
                 </tr>
               </thead>
               <tbody>

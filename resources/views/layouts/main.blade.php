@@ -32,9 +32,10 @@
     </div>
     <div class="collapse navbar-collapse" id="pos-navbar">
     <ul class="nav navbar-nav">
-      <li><a href="/">Cashier</a></li>
+      <li><a href="/">Home</a></li>
       <li><a href="/inventory">Inventory</a></li>
       <li><a href="/receiving">Receiving</a></li>
+      <li><a href="/reports">Reports</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
     <li>
