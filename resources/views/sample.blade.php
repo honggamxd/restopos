@@ -37,44 +37,50 @@
 </style>
 @endsection
 @section('content')
-<div class="col-sm-6">
-  <button class="btn btn-primary" onclick="$('#add-table-modal').modal('show')">Add Table</button>
+<div class="col-sm-12">
   <div class="table-responsive">
-    <table class="table table-hover">
+    <table class="ui unstackable celled table">
       <thead>
         <tr>
-          <th>Table</th>
-          <th></th>
+          <th class="center aligned">Table</th>
+          <th class="center aligned">Time</th>
+          <th class="center aligned">Pax</th>
+          <th class="center aligned">Total</th>
+          <th class="center aligned"><button class="ui basic primary button" onclick="$('#add-table-modal').modal('show')">Add Table</button></th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>001</td>
-          <td>
-            <div class="btn-group">
-              <button class="btn btn-primary" onclick="$('#add-order-modal').modal('show')">Order</button>
-              <button class="btn btn-danger">Remove</button>
+          <td style="width: 30vw;" class="center aligned">001</td>
+          <td class="center aligned">10:00 AM</td>
+          <td class="center aligned">3 <i class="fa fa-users" aria-hidden="true"></i></td>
+          <td class="center aligned">10,000.00</td>
+          <td style="width: 26vw;">
+            <div class="ui buttons">
+              <button class="ui basic green button" onclick="$('#add-order-modal').modal('show')"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
+              <button class="ui basic red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
             </div>
           </td>
         </tr>
-        <tr class="info">
-          <td>002</td>
+        <tr>
+          <td class="center aligned">002</td>
+          <td class="center aligned">10:00 AM</td>
+          <td class="center aligned">3 <i class="fa fa-users" aria-hidden="true"></i></td>
+          <td class="center aligned">10,000.00</td>
           <td>
+            <div class="ui buttons">
+              <button class="ui basic green button" onclick="$('#add-order-modal').modal('show')"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
+              <a href="/bill" class="ui basic violet button"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</a>
+              <button class="ui basic red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button>
+            </div>
             <div class="btn-group">
-              <button class="btn btn-primary" onclick="$('#add-order-modal').modal('show')">Order</button>
-              <a href="/bill" class="btn btn-success">Bill out</a>
-              <a href="/billperitem" class="btn btn-info">Bill out per Item</a>
-              <button class="btn btn-default">View Orders</button>
-              <button class="btn btn-danger">Cancel Order</button>
+
             </div>
           </td>
         </tr>
       </tbody>
     </table>
   </div>  
-</div>
-<div class="col-sm-6">
-
 </div>
 @endsection
 
