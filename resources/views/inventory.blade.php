@@ -85,7 +85,10 @@
           <td class="center aligned">2</td>
           <td class="right aligned">20.00</td>
           <td class="center aligned">
-            <button class="btn btn-default">Edit</button>
+          <div class="ui toggle checkbox">
+            <input type="checkbox" name="public">
+            <label>Subscribe to weekly newsletter</label>
+          </div>
           </td>
         </tr>
         <tr>

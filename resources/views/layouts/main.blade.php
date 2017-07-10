@@ -19,6 +19,7 @@
 <link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/transition.css">
 <link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/sidebar.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/popup.min.css">
+<link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/checkbox.min.css">
 
 <!-- Alertify -->
 <link rel="stylesheet" type="text/css" href="/assets/css/alertify-css/alertify.css">
@@ -112,6 +113,7 @@
 <script type="text/javascript" src="/assets/semantic-ui/components/transition.js"></script>
 <script type="text/javascript" src="/assets/semantic-ui/components/sidebar.min.js"></script>
 <script type="text/javascript" src="/assets/semantic-ui/components/popup.min.js"></script>
+<script type="text/javascript" src="/assets/semantic-ui/components/checkbox.min.js"></script>
 
 <script type="text/javascript" src="/assets/js/angular.min.js"></script>
 <script type="text/javascript" src="/assets/js/moment.js"></script>

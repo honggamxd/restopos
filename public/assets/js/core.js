@@ -9,5 +9,4 @@ $(document).ready(function(){
   setInterval(function(){
     $("#time-display").html(moment().format("h:mm:ss A"));
   }, 500);
-
 });
