@@ -17,6 +17,9 @@
 
 </style>
 @endsection
+@section('breadcrumb')
+<div class="active section">Inventory</div>
+@endsection
 @section('content')
 <div class="col-sm-6">
   <form action="/items" method="post" class="form-horizontal ui form" id="add-items-form">

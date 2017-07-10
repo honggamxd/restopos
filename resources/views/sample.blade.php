@@ -36,42 +36,55 @@
 
 </style>
 @endsection
+@section('breadcrumb')
+<div class="active section">Restaurant</div>
+@endsection
 @section('content')
 <div class="col-sm-12">
+  <h1 style="text-align: center;">Name of Outlet</h1>
+  <div class="form-group">
+      <div class="ui action input">
+        <input type="text" placeholder="Search Table">
+        <button class="ui icon button" type="submit">
+          <i class="search icon"></i>
+        </button>
+        <button type="button" class="ui icon primary button" onclick="$('#add-table-modal').modal('show')" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
+      </div>
+  </div>
   <div class="table-responsive">
-    <table class="ui unstackable celled table">
+    <table class="ui unstackable sortable celled table">
       <thead>
         <tr>
           <th class="center aligned">Table</th>
           <th class="center aligned">Time</th>
           <th class="center aligned">Pax</th>
           <th class="center aligned">Total</th>
-          <th class="center aligned"><button class="ui basic primary button" onclick="$('#add-table-modal').modal('show')">Add Table</button></th>
+          <th class="center aligned"></th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td style="width: 30vw;" class="center aligned">001</td>
           <td class="center aligned">10:00 AM</td>
-          <td class="center aligned">3 <i class="fa fa-users" aria-hidden="true"></i></td>
+          <td class="center aligned"><i class="fa fa-users" aria-hidden="true"></i> 3</td>
           <td class="center aligned">10,000.00</td>
           <td style="width: 26vw;">
             <div class="ui buttons">
-              <button class="ui basic green button" onclick="$('#add-order-modal').modal('show')"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-              <button class="ui basic red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+              <button class="ui inverted green button" onclick="$('#add-order-modal').modal('show')"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
+              <button class="ui inverted red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
             </div>
           </td>
         </tr>
         <tr>
           <td class="center aligned">002</td>
           <td class="center aligned">10:00 AM</td>
-          <td class="center aligned">3 <i class="fa fa-users" aria-hidden="true"></i></td>
+          <td class="center aligned"><i class="fa fa-users" aria-hidden="true"></i> 3</td>
           <td class="center aligned">10,000.00</td>
           <td>
             <div class="ui buttons">
-              <button class="ui basic green button" onclick="$('#add-order-modal').modal('show')"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-              <a href="/bill" class="ui basic violet button"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</a>
-              <button class="ui basic red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button>
+              <button class="ui inverted green button" onclick="$('#add-order-modal').modal('show')"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
+              <a href="/bill" class="ui inverted violet button"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</a>
+              <button class="ui inverted red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button>
             </div>
             <div class="btn-group">
 
@@ -98,7 +111,7 @@
         {{ csrf_field() }}
         <div class="form-group">
           <div class="col-sm-12">
-            <select class="form-control">
+            <select class="form-control" id="select-tablenumber">
               <option value="">Table Number</option>
               <option value="003">003</option>
               <option value="004">004</option>
@@ -310,5 +323,11 @@
 @section('scripts')
 <script type="text/javascript">
   $('table').tablesort();
+  shortcut.add("Ctrl+Shift+A",function() {
+    $('#add-table-modal').modal('show')
+  });
+  $('#add-table-modal').on('shown.bs.modal', function () {
+      $('#select-tablenumber').focus();
+  })  
 </script>
 @endsection
