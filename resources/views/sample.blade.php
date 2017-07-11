@@ -68,7 +68,7 @@
           <td class="center aligned">10:00 AM</td>
           <td class="center aligned"><i class="fa fa-users" aria-hidden="true"></i> 3</td>
           <td class="center aligned">10,000.00</td>
-          <td style="width: 26vw;">
+          <td style="width: 28vw;">
             <div class="ui buttons">
               <button class="ui inverted green button" onclick="$('#add-order-modal').modal('show')"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
               <button class="ui inverted red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
@@ -107,20 +107,21 @@
         <h4 class="modal-title">Add Table</h4>
       </div>
       <div class="modal-body">
-        <form action="/items" method="post" class="form-horizontal" id="add-items-form">
+        <form action="/items" method="post" id="add-items-form">
         {{ csrf_field() }}
         <div class="form-group">
-          <div class="col-sm-12">
-            <select class="form-control" id="select-tablenumber">
-              <option value="">Table Number</option>
-              <option value="003">003</option>
-              <option value="004">004</option>
-              <option value="005">005</option>
-              <option value="006">006</option>
-            </select>
-          </div>
+          <select class="form-control" id="select-tablenumber">
+            <option value="">Table Number</option>
+            <option value="003">003</option>
+            <option value="004">004</option>
+            <option value="005">005</option>
+            <option value="006">006</option>
+          </select>
         </div>
-
+        <div class="form-group">
+          <label># of Pax</label>
+          <input class="form-control" type="text" name="pax" placeholder="Enter # of Pax">
+        </div>
         </form>
       </div>
       <div class="modal-footer">

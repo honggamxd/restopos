@@ -11,7 +11,12 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/', 'Restaurant_controller@index');
+Route::get('/restaurant/menu', 'Restaurant_menu_controller@index');
+Route::post('/restaurant/menu', 'Restaurant_menu_controller@store');
+Route::get('/restaurant/menu/list', 'Restaurant_menu_controller@get_list');
+
+Route::get('/restaurant', function () {
     return view('sample');
 });
 
@@ -35,8 +40,6 @@ Route::get('/inventory', function () {
 Route::get('/receiving', function () {
     return view('receiving');
 });
-
-
 
 Route::get('/reports', function () {
     return view('reports');

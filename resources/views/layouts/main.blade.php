@@ -35,6 +35,10 @@
         <i class="food icon"></i>
         Restaurant
     </a>
+    <a class="item" href="/restaurant/menu">
+        <i class="food icon"></i>
+        Restaurant<br>Menu
+    </a>
     <a class="item" href="/inventory">
         <i class="browser icon"></i>
         Inventory
@@ -90,11 +94,11 @@
 </nav>
     <div class="container-fluid">
       <div class="ui breadcrumb">
-        <a class="section" id="menu">Menu</a>
+        <a class="section" id="menu">App Menu</a>
         <i class="right angle icon divider"></i>
         @yield('breadcrumb')
       </div>
-      <div class="row">
+      <div class="row" ng-controller="content-controller">
         @yield('content')
       </div>
     </div>

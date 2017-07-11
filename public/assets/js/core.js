@@ -9,4 +9,7 @@ $(document).ready(function(){
   setInterval(function(){
     $("#time-display").html(moment().format("h:mm:ss A"));
   }, 500);
+  // $('.ui.sidebar').sidebar({
+  //     transition: 'overlay'
+  // });
 });

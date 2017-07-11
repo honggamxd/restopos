@@ -7,6 +7,9 @@
 
 </style>
 @endsection
+@section('breadcrumb')
+<div class="active section">Purchases</div>
+@endsection
 @section('content')
 <div class="col-sm-9">
   <div class="row">
