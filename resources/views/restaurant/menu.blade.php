@@ -62,19 +62,20 @@
       <thead class="full-width">
         <tr>
           <th class="center aligned">Category</th>
+          <th class="center aligned">Subcategory</th>
           <th class="center aligned">Item</th>
           <th class="center aligned">Price</th>
-          <th class="center aligned"></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody ng-cloak>
         <tr ng-repeat="menu_data in menu">
-          <td class="center aligned" ng-bind="menu_data.category">Food</td>
-          <td class="center aligned" ng-bind="menu_data.name">Menu 1</td>
-          <td class="right aligned" ng-bind="menu_data.price">10.00</td>
-          <td class="center aligned">
+          <td class="center aligned middle aligned" ng-bind="menu_data.category" ng-cloak>Category</td>
+          <td class="center aligned middle aligned" ng-bind="menu_data.subcategory" ng-cloak>Subcategory</td>
+          <td class="center aligned middle aligned" ng-bind="menu_data.name" ng-cloak>Menu Name</td>
+          <td class="right aligned middle aligned" ng-cloak>@{{menu_data.price|currency:""}}</td>
+          <td class="center aligned middle aligned" style="width: 12vw">
             <div class="ui toggle checkbox">
-              <input type="checkbox" name="public" ng-bind="menu_data.is_prepared">
+              <input type="checkbox" name="public" ng-change="available_to_menu(this)" ng-model="menu_data.is_prepared">
               <label>Available</label>
             </div>
           </td>
@@ -232,14 +233,11 @@
 @section('scripts')
 <script type="text/javascript">
   $('table').tablesort();
-  $('.ui.checkbox').checkbox('enable');
 
+  // $('.ui.checkbox').checkbox('enable');
   var app = angular.module('main', []);
   app.controller('add_menu-controller', function($scope,$http, $sce) {
-
-    $scope.test = function() {
-      alert("asdasda");
-    }
+  angular.element('.ui.checkbox').checkbox('enable');
 
     $scope.formdata = {
       _token: "{{csrf_token()}}",
@@ -268,16 +266,34 @@
   });
 
   app.controller('content-controller', function($scope,$http, $sce) {
+    $scope.formdata = {
+      _token: "{{csrf_token()}}",
+    };
+
     show_menu();
     function show_menu() {
       $http({
           method : "GET",
           url : "/restaurant/menu/list",
       }).then(function mySuccess(response) {
-          $scope.menu = response.data;
-          $scope.total_sales = response.data.total_sales;
+          $scope.menu = response.data.result;
       }, function myError(response) {
           console.log(response.statusText);
+      });
+    }
+    $scope.available_to_menu = function(data) {
+      // console.log(data.menu_data.is_prepared);
+      $scope.formdata.is_prepared = data.menu_data.is_prepared;
+      $http({
+          method: 'PUT',
+          url: '/restaurant/menu/list/'+data.menu_data.id,
+          data: $.param($scope.formdata),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+          console.log(response.data);
+      }, function(rejection) {
+          var errors = rejection.data;
       });
     }
   });

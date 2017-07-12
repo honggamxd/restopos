@@ -11,6 +11,6 @@ class Restaurant_controller extends Controller
 {
     public function index(Request $request)
     {
-      return view('sample');
+      return view('restaurant.home');
     }
 }

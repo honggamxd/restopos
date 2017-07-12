@@ -18,7 +18,7 @@ class CreateRestaurantorderTable extends Migration
           $table->integer('date_time');
           $table->integer('que_number');
           $table->integer('pax');
-          $table->integer('table_name');
+          $table->string('table_name');
           $table->integer('restaurant_id');
           $table->integer('server');
           $table->boolean('deleted');
@@ -34,6 +34,6 @@ class CreateRestaurantorderTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user');
+        Schema::dropIfExists('restaurant_order');
     }
 }

@@ -12,13 +12,14 @@ class CreateRestauranttablecustomerTable extends Migration
      */
     public function up()
     {
-        Schema::create('restaurant_table_customers', function (Blueprint $table) {
+        Schema::create('restaurant_table_customer', function (Blueprint $table) {
           $table->increments('id');
           $table->integer('server');
           $table->integer('date_time');
           $table->integer('pax');
           $table->boolean('has_order');
           $table->integer('restaurant_id');
+          $table->integer('restaurant_table_id');
         });
     }
 
@@ -29,6 +30,6 @@ class CreateRestauranttablecustomerTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('restaurant_table_customers');
+        Schema::dropIfExists('restaurant_table_customer');
     }
 }

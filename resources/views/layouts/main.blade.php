@@ -29,7 +29,7 @@
 
 @yield('css')
 </head>
-<body>
+<body ng-controller="content-controller">
 <div class="ui left vertical inverted labeled icon sidebar menu">
     <a class="item" href="/">
         <i class="food icon"></i>
@@ -98,7 +98,7 @@
         <i class="right angle icon divider"></i>
         @yield('breadcrumb')
       </div>
-      <div class="row" ng-controller="content-controller">
+      <div class="row">
         @yield('content')
       </div>
     </div>
