@@ -72,7 +72,7 @@
           <td class="center aligned middle aligned" ng-bind="menu_data.category" ng-cloak>Category</td>
           <td class="center aligned middle aligned" ng-bind="menu_data.subcategory" ng-cloak>Subcategory</td>
           <td class="center aligned middle aligned" ng-bind="menu_data.name" ng-cloak>Menu Name</td>
-          <td class="right aligned middle aligned" ng-cloak>@{{menu_data.price|currency:""}}</td>
+          <td class="center aligned middle aligned" ng-cloak>@{{menu_data.price|currency:""}}</td>
           <td class="center aligned middle aligned" style="width: 12vw">
             <div class="ui toggle checkbox">
               <input type="checkbox" name="public" ng-change="available_to_menu(this)" ng-model="menu_data.is_prepared">
@@ -215,7 +215,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" form="add-items-form" ng-disabled="submit" ng-click="add_menu()">Save</button>
+          <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="add_menu()">Save</button>
         </div>
       </div>
 
@@ -237,32 +237,7 @@
   // $('.ui.checkbox').checkbox('enable');
   var app = angular.module('main', []);
   app.controller('add_menu-controller', function($scope,$http, $sce) {
-  angular.element('.ui.checkbox').checkbox('enable');
-
-    $scope.formdata = {
-      _token: "{{csrf_token()}}",
-    };
-
-    $scope.add_menu = function() {
-      $scope.submit = true;
-      $http({
-          method: 'POST',
-          url: '/restaurant/menu',
-          data: $.param($scope.formdata),
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-      .then(function(response) {
-          console.log(response.data);
-          location.reload();
-      }, function(rejection) {
-          var errors = rejection.data;
-          $scope.formdata.ar_number_error = errors.ar_number;
-          $scope.formdata.amount_error = errors.amount;
-          $scope.formdata.date_payment_error = errors.date_payment;
-          $scope.submit = false;
-      });
-    }
-
+    angular.element('.ui.checkbox').checkbox('enable');
   });
 
   app.controller('content-controller', function($scope,$http, $sce) {
@@ -273,27 +248,55 @@
     show_menu();
     function show_menu() {
       $http({
-          method : "GET",
-          url : "/restaurant/menu/list",
+        method : "GET",
+        url : "/restaurant/menu/list",
       }).then(function mySuccess(response) {
-          $scope.menu = response.data.result;
+        $scope.menu = response.data.result;
       }, function myError(response) {
-          console.log(response.statusText);
+        console.log(response.statusText);
       });
     }
+
+    $scope.add_menu = function() {
+      $scope.submit = true;
+
+      $http({
+        method: 'POST',
+        url: '/restaurant/menu',
+        data: $.param($scope.formdata),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+        $scope.submit = false;
+        alertify.success($scope.formdata.name+" is added.");
+        $scope.formdata = {
+          _token: "{{csrf_token()}}",
+        };
+        show_menu();
+      }, function(rejection) {
+        var errors = rejection.data;
+        $scope.formdata.ar_number_error = errors.ar_number;
+        $scope.formdata.amount_error = errors.amount;
+        $scope.formdata.date_payment_error = errors.date_payment;
+        $scope.submit = false;
+      });
+    }
+
+
     $scope.available_to_menu = function(data) {
       // console.log(data.menu_data.is_prepared);
       $scope.formdata.is_prepared = data.menu_data.is_prepared;
       $http({
-          method: 'PUT',
-          url: '/restaurant/menu/list/'+data.menu_data.id,
-          data: $.param($scope.formdata),
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        method: 'PUT',
+        url: '/restaurant/menu/list/'+data.menu_data.id,
+        data: $.param($scope.formdata),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-          console.log(response.data);
+        console.log(response.data);
       }, function(rejection) {
-          var errors = rejection.data;
+        var errors = rejection.data;
       });
     }
   });

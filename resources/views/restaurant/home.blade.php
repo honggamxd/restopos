@@ -42,7 +42,7 @@
         <button class="ui icon button" type="submit">
           <i class="search icon"></i>
         </button>
-        <button type="button" class="ui icon primary button" onclick="$('#add-table-modal').modal('show')" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
+        <button type="button" class="ui icon primary button" ng-click="show_table()" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
       </div>
   </div>
   <div class="table-responsive">
@@ -57,8 +57,8 @@
       </thead>
       <tbody>
         <tr ng-repeat="customer_data in table_customers" ng-cloak>
-          <td style="width: 30vw;" class="center aligned middle aligned">001</td>
-          <td class="center aligned middle aligned">@{{customer_data.date_time}}</td>
+          <td style="width: 30vw;" class="center aligned middle aligned" ng-bind="customer_data.table_name"></td>
+          <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
           <td class="center aligned middle aligned">10,000.00</td>
           <td class="left aligned middle aligned" style="width: 28vw;">
@@ -84,7 +84,7 @@
 
 @section('modals')
 
-<div id="add-table-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="add-table-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add-table-controller">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -97,8 +97,7 @@
         <div class="form-group">
           <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id">
             <option value="">Table Number</option>
-            <option value="1">001</option>
-            <option value="2">002</option>
+            <option ng-repeat="table_data in table" value="@{{table_data.id}}">@{{table_data.name}}</option>
           </select>
         </div>
         <div class="form-group">
@@ -213,7 +212,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-print"></span> Print</button>
+        <button type="button" class="btn btn-primary" ng-click="make_orders(this)" ng-disabled="submit"><span class="glyphicon glyphicon-print"></span> Print</button>
       </div>
     </div>
 
@@ -238,19 +237,21 @@
     $scope.formdata = {
      _token: "{{csrf_token()}}",
     };
+    $scope.table = {};
 
     $scope.add_table = function() {
       $scope.submit = true;
       $http({
          method: 'POST',
-         url: '/restaurant/table/add',
+         url: '/restaurant/table/customer/add',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
          console.log(response.data);
          show_table_customers();
-         $scope.submit = true;
+         show_table();
+         $scope.submit = false;
          $("#add-table-modal").modal("hide");
       }, function(rejection) {
          var errors = rejection.data;
@@ -259,12 +260,28 @@
       });
     }
 
+    function show_table() {
+      $http({
+          method : "GET",
+          url : "/restaurant/table/list",
+      }).then(function mySuccess(response) {
+          $scope.table = response.data.result;
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
+
+    $scope.show_table = function() {
+      $('#add-table-modal').modal('show');
+      show_table();
+    }
+
     $scope.table_customers = {};
     show_table_customers();
     function show_table_customers() {
       $http({
           method : "GET",
-          url : "/restaurant/table/list",
+          url : "/restaurant/table/customer/list",
       }).then(function mySuccess(response) {
           $scope.table_customers = response.data.result;
       }, function myError(response) {
@@ -308,6 +325,30 @@
           console.log(response.statusText);
       });
     }
+
+    $scope.make_orders = function(data) {
+      // console.log($scope.formdata);
+      
+      $scope.submit = true;
+      $http({
+        method: 'POST',
+        url: '/restaurant/table/order/make/'+$scope.table_customer_id,
+        data: $.param($scope.formdata),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+        $scope.submit = false;
+      }, function(rejection) {
+        var errors = rejection.data;
+        $scope.formdata.ar_number_error = errors.ar_number;
+        $scope.formdata.amount_error = errors.amount;
+        $scope.formdata.date_payment_error = errors.date_payment;
+        $scope.submit = false;
+      }); 
+    }
+
+    
   });
 
   app.controller('add-order-controller',function ($scope,$http,$sce) {
@@ -347,6 +388,11 @@
          $scope.formdata.date_payment_error = errors.date_payment;
       });
     }
+
+  });
+
+  app.controller('add-table-controller',function($scope,$http,$sce) {
+    
   });
   angular.bootstrap(document, ['main']);
 </script>

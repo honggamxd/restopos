@@ -63,9 +63,10 @@
         <i class="settings icon"></i>
         Settings
     </a>
+
 </div>
 <div class="pusher">
-<nav class="navbar navbar-default nav-stacked">
+<nav class="navbar navbar-default nav-stacked navbar-fixed-bottom">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pos-navbar">

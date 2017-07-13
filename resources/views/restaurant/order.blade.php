@@ -42,6 +42,11 @@
 
 </style>
 @endsection
+@section('breadcrumb')
+<a class="section" href="/restaurant">Restaurant</a>
+<i class="right angle icon divider"></i>
+<div class="active section">Order</div>
+@endsection
 @section('content')
 <table id="complete-order-table">
 <thead>

@@ -20,6 +20,10 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_table_customer->server = 1;
     $restaurant_table_customer->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_table_customer->save();
+    $restaurant_table = new Restaurant_table;
+    $table_occupied = $restaurant_table->find($request->table_id);
+    $table_occupied->occupied = 1;
+    $table_occupied->save();
   }
 
   public function order_cart(Request $request)
@@ -61,7 +65,7 @@ class Restaurant_table_customer_controller extends Controller
     return $data;
   }
 
-  public function view_cart(Request $request,$table_customer_id)
+  public function show(Request $request,$table_customer_id)
   {
     $data = array();
     if($request->session()->has('restaurant.table_customer.'.$table_customer_id.".cart") && $request->session()->get('restaurant.table_customer.'.$table_customer_id.".cart") != array()){

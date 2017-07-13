@@ -16,6 +16,7 @@ class CreateRestauranttableTable extends Migration
           $table->increments('id');
           $table->string('name');
           $table->integer('restaurant_id');
+          $table->boolean('occupied');
           $table->boolean('deleted');
           $table->text('deleted_comment');
           $table->integer('deleted_date');

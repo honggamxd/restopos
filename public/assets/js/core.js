@@ -4,12 +4,16 @@ $(document).ready(function(){
   });
   $("#menu").click(function(e) {
     $('.ui.sidebar').sidebar('show');
+    $(".navbar").css("visibility","hidden");
   });
+    $('.ui.sidebar').sidebar({
+      onHide: function() {
+        $(".navbar").css("visibility","visible");
+        // $(".navbar").animate({visibility: "visible"});
+      }
+    });
   $("#time-display").html(moment().format("h:mm:ss A"));
   setInterval(function(){
     $("#time-display").html(moment().format("h:mm:ss A"));
   }, 500);
-  // $('.ui.sidebar').sidebar({
-  //     transition: 'overlay'
-  // });
 });
