@@ -8,6 +8,8 @@ use App\Http\Requests;
 use App\Restaurant_table_customer;
 use App\Restaurant_table;
 use App\Restaurant_menu;
+use App\Restaurant_order;
+use App\Restaurant_order_detail;
 
 class Restaurant_table_customer_controller extends Controller
 {
@@ -75,6 +77,9 @@ class Restaurant_table_customer_controller extends Controller
         $total += $cart_data->quantity*$cart_data->price;
       }
       $data["total"] = $total;
+    }else{
+      $data["cart"] = array();
+      $data["total"] = "";
     }
     return $data;
   }
@@ -82,13 +87,32 @@ class Restaurant_table_customer_controller extends Controller
   public function get_list(Request $request)
   {
     $restaurant_table_customer = new Restaurant_table_customer;
+    $restaurant_order_detail = new Restaurant_order_detail;
     $restaurant_table = new Restaurant_table;
+    $restaurant_order = new Restaurant_order;
     $data["result"] = $restaurant_table_customer->get();
     foreach ($data["result"] as $customer_data) {
-      $customer_data->date_time = date("m/d/Y",$customer_data->date_time);
+      $customer_data->date_time = date("h:i:s A",$customer_data->date_time);
       $customer_data->has_order = ($customer_data->has_order==1?TRUE:FALSE);
+      $customer_data->has_billed_out = ($customer_data->has_billed_out==1?TRUE:FALSE);
       $customer_data->table_name = $restaurant_table->where("id",$customer_data->restaurant_table_id)->value("name");
+      $customer_data->total = $restaurant_order
+        ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
+        ->select( DB::raw('SUM(quantity*price) as total'))
+        ->where("restaurant_table_customer_id",$customer_data->id)->first()->total;
     }
+    return $data;
+  }
+
+  public function bill_out(Request $request,$id)
+  {
+    # code...
+  }
+
+  public function show_order(Request $request,$id)
+  {
+    $restaurant_order = new Restaurant_order;
+    $data["result"] = $restaurant_order->where('restaurant_table_customer_id',$id)->get();
     return $data;
   }
 

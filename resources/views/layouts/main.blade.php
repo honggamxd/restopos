@@ -95,8 +95,8 @@
 </nav>
     <div class="container-fluid">
       <div class="ui breadcrumb">
-        <a class="section" id="menu">App Menu</a>
-        <i class="right angle icon divider"></i>
+        <a class="section hideprint hideprint" id="menu">App Menu</a>
+        <i class="right angle icon divider hideprint"></i>
         @yield('breadcrumb')
       </div>
       <div class="row">
@@ -121,6 +121,7 @@
 <script type="text/javascript" src="/assets/semantic-ui/components/checkbox.min.js"></script>
 
 <script type="text/javascript" src="/assets/js/angular.min.js"></script>
+<script type="text/javascript" src="/assets/js/angular-route.min.js"></script>
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 <script type="text/javascript" src="/assets/js/tablesort.js"></script>
 <script type="text/javascript" src="/assets/js/alertify.js"></script>

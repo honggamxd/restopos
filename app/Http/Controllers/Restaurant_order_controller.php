@@ -28,8 +28,12 @@ class Restaurant_order_controller extends Controller
     $restaurant_order->pax = $customer_data->pax;
     $restaurant_order->table_name = $table_data->name;
     $restaurant_order->restaurant_id = $customer_data->restaurant_id;
+    $restaurant_order->restaurant_table_customer_id = $id;
     $restaurant_order->server = $customer_data->server;
     $restaurant_order->save();
+
+    $customer_data->has_order = 1;
+    $customer_data->save();
 
     $order_data = $restaurant_order->orderBy('id','DESC')->first();
     $cart = $request->session()->get('restaurant.table_customer.'.$id.'.cart');
@@ -42,6 +46,7 @@ class Restaurant_order_controller extends Controller
       $restaurant_order_detail->restaurant_id = $customer_data->restaurant_id;
       $restaurant_order_detail->save();
     }
+    $cart = $request->session()->forget('restaurant.table_customer.'.$id.'.cart');
     return $order_data;
   }
 
@@ -49,13 +54,19 @@ class Restaurant_order_controller extends Controller
   {
     $restaurant_order = new Restaurant_order;
     $restaurant_order_detail = new Restaurant_order_detail;
+    $restaurant_menu = new Restaurant_menu;
     $data["order"] = $restaurant_order->find($id);
     $data["order_detail"] = $restaurant_order_detail->where("restaurant_order_id",$id)->get();
+    foreach ($data["order_detail"] as $order_detail) {
+      $order_detail->menu = $restaurant_menu->find($order_detail->restaurant_menu_id)->name;
+    }
+    $data["order"]->date_ = date("F d, Y",$data["order"]->date_);
+    $data["order"]->date_time = date("h:i:s A",$data["order"]->date_time);
     return $data;
   }
 
   public function index(Request $request,$id)
   {
-    return view("restaurant.order");
+    return view("restaurant.order",["id"=>$id]);
   }
 }

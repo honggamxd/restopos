@@ -24,6 +24,7 @@ class CreateRestaurantorderTable extends Migration
           $table->boolean('deleted');
           $table->text('deleted_comment');
           $table->integer('deleted_date');
+          $table->integer('restaurant_table_customer_id');
         });
     }
 

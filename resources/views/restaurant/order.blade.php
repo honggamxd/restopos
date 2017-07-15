@@ -15,67 +15,101 @@
   }  
 }
 
-#menu-table tbody{
-  max-height: 40vh;
-  overflow: auto;
-  display: block;
-}
-
-#menu-table tr>td{
-  width: 100%;
-}
-
-#complete-order-table{
+.order-table{
   width: 100%;
   border-collapse: collapse;
   margin: 0;
 }
-#complete-order-table tr td,#complete-order-table tr th{
-  border: 1px solid black;
-  padding: 0px 2px 0px 2px;
-}
+
 @media print{
-  a{
+  .hideprint{
     display: none !important;
+  }
+
+  *{
+    background-color: white !important;
   }
 }
 
 </style>
 @endsection
 @section('breadcrumb')
-<a class="section" href="/restaurant">Restaurant</a>
-<i class="right angle icon divider"></i>
-<div class="active section">Order</div>
+<a class="section hideprint" href="/restaurant">Restaurant</a>
+<i class="right angle icon divider hideprint"></i>
+<div class="active section hideprint">Order</div>
 @endsection
 @section('content')
-<table id="complete-order-table">
-<thead>
-  <tr>
-    <th style="text-align: center;">Order 1</th>
-    <th style="text-align: center;">Table 1</th>
-  </tr>
-  <tr>
-    <th style="text-align: center;">Items</th>
-    <th style="text-align: center;">Qty</th>
-  </tr>
-</thead>
+<table class="order-table">
 <tbody>
   <tr>
-    <td style="text-align: center;">Menu 1</td>
-    <td style="text-align: center;">1</td>
+    <td style="width: 50%">Outlet:<span ng-cloak></span></td>
+    <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
   </tr>
   <tr>
-    <td style="text-align: center;">Menu 2</td>
-    <td style="text-align: center;">2</td>
+    <td>Food Order #: <span ng-cloak>@{{order.id}}</td>
+    <td>Time: <span ng-cloak>@{{order.date_time}}</span></td>
+  </tr>
+  <tr>
+    <td>Table #: <span ng-cloak>@{{order.table_name}}</span></td>
+    <td># of Pax: <span ng-cloak>@{{order.pax}}</span></td>
   </tr>
 </tbody>
 </table>
-<a href="#" class="btn btn-primary" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
+<h1 style="text-align: center;">H1</h1>
+<table class="order-table">
+<tbody>
+  <thead>
+    <tr>
+      <th style="text-align: center;">ITEM</th>
+      <th style="text-align: center;">QTY</th>
+      <th style="text-align: right;">TOTAL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="items in order_detail" ng-cloak>
+      <td ng-bind="items.menu"></td>
+      <td style="text-align: center;" ng-bind="items.quantity"></td>
+      <td style="text-align: right;">@{{items.price|currency:""}}</td>
+    </tr>
+  </tbody>
+</tbody>
+</table>
+<br>
+<p>Server:</p>
+<a href="#" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
+<a href="#" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
 @endsection
-
 
 @section('scripts')
 <script type="text/javascript">
   $('table').tablesort();
+  
+  shortcut.add("x",function() {
+    window.close();
+  });
+  shortcut.add("esc",function() {
+    window.close();
+  });
+  $(document).ready(function() {
+    setTimeout(function(){ window.print(); }, 500);
+  });
+  var app = angular.module('main', []);
+  app.controller('content-controller', function($scope,$http, $sce) {
+    show_order();
+    function show_order() {
+      $http({
+        method : "GET",
+        url : "/restaurant/table/order/view/"+{{$id}},
+      }).then(function mySuccess(response) {
+        console.log(response.data);
+        $scope.order = response.data.order;
+        $scope.order_detail = response.data.order_detail;
+
+      }, function myError(response) {
+        console.log(response.statusText);
+      });
+    }
+  });
+  angular.bootstrap(document, ['main']);
 </script>
 @endsection

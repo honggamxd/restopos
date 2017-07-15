@@ -18,8 +18,10 @@ class CreateRestauranttablecustomerTable extends Migration
           $table->integer('date_time');
           $table->integer('pax');
           $table->boolean('has_order');
+          $table->boolean('has_billed_out');
           $table->integer('restaurant_id');
           $table->integer('restaurant_table_id');
+          $table->integer('restaurant_temp_bill_id');
         });
     }
 

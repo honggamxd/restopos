@@ -25,6 +25,11 @@
   padding: 0px 2px 0px 2px;
 }
 
+.order-table{
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
 
 
 
@@ -60,7 +65,7 @@
           <td style="width: 30vw;" class="center aligned middle aligned" ng-bind="customer_data.table_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
-          <td class="center aligned middle aligned">10,000.00</td>
+          <td class="center aligned middle aligned" ng-click="view_orders(this)"><a href="#">@{{customer_data.total|currency:""}}</a></td>
           <td class="left aligned middle aligned" style="width: 28vw;">
             <div class="ui buttons" ng-if="!customer_data.has_order">
               <button class="ui inverted green button" ng-click="add_order(this)"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
@@ -68,8 +73,8 @@
             </div>
             <div class="ui buttons" ng-if="customer_data.has_order">
               <div class="ui buttons">
-                <button class="ui inverted green button" ng-click="add_order(this)"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-                <a href="/bill" class="ui inverted violet button"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</a>
+                <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
+                <button class="ui inverted violet button" ng-click="bill_out(this)"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
                 <button class="ui inverted red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button>
               </div>
             </div>
@@ -192,7 +197,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="cart_data in table_customer_cart">
+                  <tr ng-repeat="cart_data in table_customer_cart" ng-init="table_customer_cart={};table_customer_total=''">
                     <td class="center aligned">@{{cart_data.name}}</td>
                     <td class="right aligned">@{{cart_data.quantity}}</td>
                     <td class="right aligned">@{{cart_data.total|currency:""}}</td>
@@ -212,12 +217,131 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="make_orders(this)" ng-disabled="submit"><span class="glyphicon glyphicon-print"></span> Print</button>
+        <button type="button" class="btn btn-primary" ng-click="make_orders(this)" ng-disabled="submit">Confirm</button>
       </div>
     </div>
 
   </div>
 </div>
+
+<div id="view-order-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Order</h4>
+      </div>
+      <div class="modal-body">
+        <table class="order-table">
+        <tbody>
+          <tr>
+            <td style="width: 50%">Outlet:<span ng-cloak></span></td>
+            <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
+          </tr>
+          <tr>
+            <td>Food Order #: <span ng-cloak>@{{order.id}}</td>
+            <td>Time: <span ng-cloak>@{{order.date_time}}</span></td>
+          </tr>
+          <tr>
+            <td>Table #: <span ng-cloak>@{{order.table_name}}</span></td>
+            <td># of Pax: <span ng-cloak>@{{order.pax}}</span></td>
+          </tr>
+        </tbody>
+        </table>
+        <h1 style="text-align: center;">H1</h1>
+        <table class="order-table">
+        <tbody>
+          <thead>
+            <tr>
+              <th style="text-align: center;">ITEM</th>
+              <th style="text-align: center;">QTY</th>
+              <th style="text-align: right;">TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="items in order_detail" ng-cloak>
+              <td ng-bind="items.menu"></td>
+              <td style="text-align: center;" ng-bind="items.quantity"></td>
+              <td style="text-align: right;">@{{items.price|currency:""}}</td>
+            </tr>
+          </tbody>
+        </tbody>
+        </table>
+        <br>
+        <p>Server:</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <a class="btn btn-primary" href="/restaurant/order/@{{order.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="view-list-order-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Orders of Table @{{table_name}}</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ui unstackable sortable compact table" id="list-order-table">
+          <thead>
+            <tr>
+              <th class="center aligned" width="100%">Order #</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="order_data in orders">
+              <td ng-bind="order_data.id"></td>
+              <td>
+                <a class="btn btn-primary" href="/restaurant/order/@{{order_data.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="bill-preview-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Bill</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ui unstackable sortable compact table" id="list-order-table">
+          <thead>
+            <tr>
+              <th class="center aligned" width="100%">Order #</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="order_data in orders">
+              <td ng-bind="order_data.id"></td>
+              <td>
+                <a class="btn btn-primary" href="/restaurant/order/@{{order_data.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 
 @endsection
@@ -225,15 +349,16 @@
 @section('scripts')
 <script type="text/javascript">
   $('#customer-table').tablesort();
+  $('#list-order-table').tablesort();
   shortcut.add("Ctrl+Shift+A",function() {
-    $('#add-table-modal').modal('show')
+    $('#add-table-modal').modal('show');
   });
 
   $('#add-table-modal').on('shown.bs.modal', function () {
       $('#select-tablenumber').focus();
   });
   var app = angular.module('main', []);
-  app.controller('content-controller', function($scope,$http, $sce) {
+  app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.formdata = {
      _token: "{{csrf_token()}}",
     };
@@ -248,7 +373,6 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-         console.log(response.data);
          show_table_customers();
          show_table();
          $scope.submit = false;
@@ -288,18 +412,22 @@
           console.log(response.statusText);
       });
     }
-    $scope.table_customer_cart = {};
-    $scope.table_customer_total = "";
     $scope.table_name = "";
 
     $scope.add_order = function(data) {
-      $("#add-order-modal").modal("show");
-      $scope.table_customer_id = data.$parent.customer_data.id;
-      $scope.table_name = data.$parent.customer_data.table_name;
-      show_cart(data.$parent.customer_data.id);
-      show_menu();
+      if(!data.$parent.customer_data.has_billed_out){
+        $("#add-order-modal").modal("show");
+        $scope.table_customer_id = data.$parent.customer_data.id;
+        $scope.table_name = data.$parent.customer_data.table_name;
+        show_cart(data.$parent.customer_data.id);
+        show_menu();
+      }else{
+        alertify.error("The customer has already billed out");
+      }
     }
     function show_cart(table_customer_id) {
+      $scope.table_customer_cart = {};
+      $scope.table_customer_total = "";
       $http({
           method : "GET",
           url : "/restaurant/table/order/cart/"+table_customer_id,
@@ -328,7 +456,6 @@
 
     $scope.make_orders = function(data) {
       // console.log($scope.formdata);
-      
       $scope.submit = true;
       $http({
         method: 'POST',
@@ -337,8 +464,12 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
+        // console.log(response.data);
         $scope.submit = false;
+        show_table_customers();
+        $("#add-order-modal").modal('hide');
+        $('#view-order-modal').modal('show');
+        show_order(response.data.id);
       }, function(rejection) {
         var errors = rejection.data;
         $scope.formdata.ar_number_error = errors.ar_number;
@@ -348,23 +479,16 @@
       }); 
     }
 
-    
-  });
-
-  app.controller('add-order-controller',function ($scope,$http,$sce) {
-    $scope.formdata = {
-       _token: "{{csrf_token()}}",
-    };
-
-    function show_cart(table_customer_id) {
+    function show_order(id) {
       $http({
-          method : "GET",
-          url : "/restaurant/table/order/cart/"+table_customer_id,
+        method : "GET",
+        url : "/restaurant/table/order/view/"+id,
       }).then(function mySuccess(response) {
-        $scope.table_customer_cart = response.data.cart;
-          $scope.table_customer_total = response.data.total;
+        // console.log(response.data);
+        $scope.order = response.data.order;
+        $scope.order_detail = response.data.order_detail;
       }, function myError(response) {
-          console.log(response.statusText);
+        console.log(response.statusText);
       });
     }
     $scope.add_cart = function(data) {
@@ -381,7 +505,7 @@
          // console.log(response.data);
          $scope.table_customer_cart = response.data.cart;
          $scope.table_customer_total = response.data.total;
-         alertify.success("Order has been placed.");
+         // alertify.success("Order has been placed.");
       }, function(rejection) {
          var errors = rejection.data;
          alertify.error(rejection.data.error);
@@ -389,11 +513,52 @@
       });
     }
 
+    $scope.orders = {};
+    $scope.view_orders = function(data) {
+      $http({
+          method : "GET",
+          url : "/restaurant/table/customer/orders/"+data.customer_data.id,
+      }).then(function mySuccess(response) {
+          $('#view-list-order-modal').modal('show');
+          $scope.orders = response.data.result;
+          $scope.table_name = data.customer_data.table_name;
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
+
+    $scope.bill_out = function(data) {
+      console.log(data.$parent.customer_data.id);
+      // $http({
+      //    method: 'POST',
+      //    url: '/restaurant/table/customer/billout/',
+      //    data: $.param($scope.formdata),
+      //    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      // })
+      // .then(function(response) {
+      //    show_table_customers();
+      //    show_table();
+      //    $scope.submit = false;
+      //    $("#add-table-modal").modal("hide");
+      // }, function(rejection) {
+      //    var errors = rejection.data;
+      //    $scope.formdata.date_payment_error = errors.date_payment;
+      //    $scope.submit = false;
+      // });
+    }
+    
+  });
+
+  app.controller('add-order-controller',function ($scope,$http,$sce) {
+    $scope.formdata = {
+       _token: "{{csrf_token()}}",
+    };
   });
 
   app.controller('add-table-controller',function($scope,$http,$sce) {
     
   });
+
   angular.bootstrap(document, ['main']);
 </script>
 @endsection

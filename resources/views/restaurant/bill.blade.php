@@ -15,144 +15,89 @@
   }  
 }
 
-#menu-table tbody{
-  max-height: 40vh;
-  overflow: auto;
-  display: block;
-}
-
-#menu-table tr>td{
-  width: 100%;
-}
-
-.complete-order-table{
+.order-table{
   width: 100%;
   border-collapse: collapse;
   margin: 0;
 }
-.complete-order-table tr td,.complete-order-table tr th{
-  border: 1px solid black;
-  padding: 0px 2px 0px 2px;
-}
-.complete-order-table tfoot tr td,.complete-order-table tfoot tr th{
-  border: 0px;
-  padding: 0px 2px 0px 2px;
-}
+
 @media print{
-  .hidetoprint, a{
+  .hideprint{
     display: none !important;
   }
-  .type_payment{
-    border: 0px !important;
-  }
-  .footer{
-    page-break-after: always;
-  }
-  select {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      text-indent: 1px;
-      text-overflow: '';
+
+  *{
+    background-color: white !important;
   }
 }
-
 
 </style>
 @endsection
+@section('breadcrumb')
+<a class="section hideprint" href="/restaurant">Restaurant</a>
+<i class="right angle icon divider hideprint"></i>
+<div class="active section hideprint">Order</div>
+@endsection
 @section('content')
-<center>
-Company Name<br>
-Address<br>
-Contact Number<br>
-</center>
-<br>
-Table 1<br>
-Date Time<br>
-<table class="complete-order-table">
-<thead>
-  <tr>
-    <th style="text-align: center;">Items</th>
-    <th style="text-align: center;">Qty</th>
-    <th style="text-align: center;">Price</th>
-    <th style="text-align: center;">Total</th>
-  </tr>
-</thead>
+<img src="/assets/images/logo.png" style="margin-right: auto;margin-left: auto; width: 150px;display: block;">
+<table class="order-table">
 <tbody>
   <tr>
-    <td style="text-align: center;">Menu 1</td>
-    <td style="text-align: center;">1</td>
-    <td style="text-align: right;">10.00</td>
-    <td style="text-align: right;">10.00</td>
+    <td style="width: 50%">Outlet:<span ng-cloak></span></td>
+    <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
   </tr>
   <tr>
-    <td style="text-align: center;">Menu 2</td>
-    <td style="text-align: center;">2</td>
-    <td style="text-align: right;">20.00</td>
-    <td style="text-align: right;">20.00</td>
+    <td>Food Order #: <span ng-cloak>@{{order.id}}</td>
+    <td>Time: <span ng-cloak>@{{order.date_time}}</span></td>
+  </tr>
+  <tr>
+    <td>Table #: <span ng-cloak>@{{order.table_name}}</span></td>
+    <td># of Pax: <span ng-cloak>@{{order.pax}}</span></td>
   </tr>
 </tbody>
-<tfoot>
-  <tr>
-    <th style="text-align: right;" colspan="3">Total:</th>
-    <th style="text-align: right;">30.00</th>
-  </tr>
-  <tr>
-    <th style="text-align: right;" colspan="2"><button type="button" class="btn btn-primary hidetoprint" onclick="$('#payments-modal').modal('show')">Add Payment</button></th>
-    <th style="text-align: right;">Cash</th>
-    <th style="text-align: right;">50.00</th>
-  </tr>
-  <tr>
-    <th style="text-align: right;" colspan="3">Change:</th>
-    <th style="text-align: right;">20.00</th>
-  </tr>
-</tfoot>
+</table>
+<h1 style="text-align: center;">H1</h1>
+<table class="order-table">
+<tbody>
+  <thead>
+    <tr>
+      <th style="text-align: center;">ITEM</th>
+      <th style="text-align: center;">QTY</th>
+      <th style="text-align: right;">TOTAL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="items in order_detail" ng-cloak>
+      <td ng-bind="items.menu"></td>
+      <td style="text-align: center;" ng-bind="items.quantity"></td>
+      <td style="text-align: right;">@{{items.price|currency:""}}</td>
+    </tr>
+  </tbody>
+</tbody>
 </table>
 <br>
-<center>Footer Message</center>
-<a href="#" class="btn btn-primary" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
-@endsection
-
-@section('modals')
-<div id="payments-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Payments</h4>
-      </div>
-      <div class="modal-body">
-        <form action="/items" method="post" id="add-items-form">
-        {{ csrf_field() }}
-        <div class="form-group">
-          <label>Settlement</label>
-          <select class="form-control">
-            <option>Cash</option>
-            <option>Credit</option>
-            <option>Debit</option>
-            <option>Guest Ledger</option>
-            <option>Free of Charge</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Amount</label>
-          <input type="text" name="" placeholder="Amount" class="form-control">
-        </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
+<p>Server:</p>
+<a href="#" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
+<a href="#" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
 @endsection
 
 @section('scripts')
 <script type="text/javascript">
   $('table').tablesort();
+  
+  shortcut.add("x",function() {
+    window.close();
+  });
+  shortcut.add("esc",function() {
+    window.close();
+  });
+  $(document).ready(function() {
+    // setTimeout(function(){ window.print(); }, 500);
+  });
+  var app = angular.module('main', []);
+  app.controller('content-controller', function($scope,$http, $sce) {
+
+  });
+  angular.bootstrap(document, ['main']);
 </script>
 @endsection
