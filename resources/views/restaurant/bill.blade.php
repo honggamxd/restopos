@@ -84,16 +84,6 @@
 @section('scripts')
 <script type="text/javascript">
   $('table').tablesort();
-  
-  shortcut.add("x",function() {
-    window.close();
-  });
-  shortcut.add("esc",function() {
-    window.close();
-  });
-  $(document).ready(function() {
-    // setTimeout(function(){ window.print(); }, 500);
-  });
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce) {
 

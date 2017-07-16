@@ -24,7 +24,8 @@ Route::get('/restaurant/table/order/cart/{table_customer_id}', 'Restaurant_table
 Route::get('/restaurant/table/order/test', 'Restaurant_table_customer_controller@test');
 Route::get('/restaurant/table/order/delete', 'Restaurant_table_customer_controller@delete');
 Route::post('/restaurant/table/customer/add', 'Restaurant_table_customer_controller@store');
-Route::post('/restaurant/table/customer/billout/{id}', 'Restaurant_table_customer_controller@billout');
+Route::post('/restaurant/table/customer/billout/{id}', 'Restaurant_table_customer_controller@bill_out');
+Route::get('/restaurant/table/customer/billout/{id}', 'Restaurant_table_customer_controller@show_temp_bill');
 Route::get('/restaurant/table/customer/orders/{id}', 'Restaurant_table_customer_controller@show_order');
 Route::get('/restaurant/table/customer/list', 'Restaurant_table_customer_controller@get_list');
 Route::get('/restaurant/table/list', 'Restaurant_table_controller@get_list');

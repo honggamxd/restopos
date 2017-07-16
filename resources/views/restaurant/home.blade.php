@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Restaurant POS')
+@section('title', '')
 
 @section('css')
 <style type="text/css">
@@ -311,25 +311,26 @@
 </div>
 
 <div id="bill-preview-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-sm">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Bill</h4>
       </div>
       <div class="modal-body">
-        <table class="ui unstackable sortable compact table" id="list-order-table">
+        <table class="ui unstackable compact table" id="list-order-table">
           <thead>
             <tr>
-              <th class="center aligned" width="100%">Order #</th>
+              <th class="center aligned">Item</th>
+              <th class="center aligned">Qty</th>
+              <th class="center aligned">Total</th>
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="order_data in orders">
-              <td ng-bind="order_data.id"></td>
-              <td>
-                <a class="btn btn-primary" href="/restaurant/order/@{{order_data.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
-              </td>
+            <tr ng-repeat="bill_preview_data in bill_preview">
+              <td ng-bind="bill_preview.name"></td>
+              <td ng-bind="bill_preview.price"></td>
+              <td ng-bind="bill_preview.total"></td>
             </tr>
           </tbody>
         </table>
@@ -353,6 +354,7 @@
   shortcut.add("Ctrl+Shift+A",function() {
     $('#add-table-modal').modal('show');
   });
+    $('#bill-preview-modal').modal('show');
 
   $('#add-table-modal').on('shown.bs.modal', function () {
       $('#select-tablenumber').focus();
@@ -528,23 +530,34 @@
     }
 
     $scope.bill_out = function(data) {
-      console.log(data.$parent.customer_data.id);
-      // $http({
-      //    method: 'POST',
-      //    url: '/restaurant/table/customer/billout/',
-      //    data: $.param($scope.formdata),
-      //    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      // })
-      // .then(function(response) {
-      //    show_table_customers();
-      //    show_table();
-      //    $scope.submit = false;
-      //    $("#add-table-modal").modal("hide");
-      // }, function(rejection) {
-      //    var errors = rejection.data;
-      //    $scope.formdata.date_payment_error = errors.date_payment;
-      //    $scope.submit = false;
-      // });
+      // console.log(data.$parent.customer_data.has_billed_out);
+      if(data.$parent.customer_data.has_billed_out){
+        // bill_preview
+        $http({
+          method : "GET",
+          url : "/restaurant/table/customer/billout/"+data.$parent.customer_data.id,
+        }).then(function mySuccess(response) {
+          console.log(response.data);
+          $scope.bill_preview = response.data.response;
+        }, function myError(response) {
+          console.log(response.statusText);
+        });
+      }else{
+        $http({
+           method: 'POST',
+           url: '/restaurant/table/customer/billout/'+data.$parent.customer_data.id,
+           data: $.param($scope.formdata),
+           headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(response) {
+          console.log(response.data);
+          show_table_customers();
+        }, function(rejection) {
+           var errors = rejection.data;
+           $scope.formdata.date_payment_error = errors.date_payment;
+           $scope.submit = false;
+        });
+      }
     }
     
   });

@@ -10,6 +10,8 @@ use App\Restaurant_table;
 use App\Restaurant_menu;
 use App\Restaurant_order;
 use App\Restaurant_order_detail;
+use App\Restaurant_temp_bill;
+use App\Restaurant_temp_bill_detail;
 
 class Restaurant_table_customer_controller extends Controller
 {
@@ -99,14 +101,61 @@ class Restaurant_table_customer_controller extends Controller
       $customer_data->total = $restaurant_order
         ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
         ->select( DB::raw('SUM(quantity*price) as total'))
-        ->where("restaurant_table_customer_id",$customer_data->id)->first()->total;
+        ->where("restaurant_table_customer_id",$customer_data->id)
+        ->first()
+        ->total;
     }
     return $data;
   }
 
   public function bill_out(Request $request,$id)
   {
-    # code...
+    $restaurant_temp_bill = new Restaurant_temp_bill;
+    $restaurant_order = new Restaurant_order;
+    $orders = $restaurant_order
+      ->select('restaurant_menu_id')
+      ->distinct()
+      ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
+      ->where('restaurant_table_customer_id',$id)
+      ->get();
+    $restaurant_temp_bill->restaurant_table_customer_id = $id;
+    $restaurant_temp_bill->save();
+    $temp_bill_data = $restaurant_temp_bill->orderBy('id','DESC')->first();
+
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $customer_data = $restaurant_table_customer->find($id);
+    $customer_data->has_billed_out = 1;
+    $customer_data->restaurant_temp_bill_id = $temp_bill_data->id;
+    $customer_data->save();
+
+    foreach ($orders as $order_data) {
+      $quantity = $restaurant_order
+        ->select('restaurant_menu_id',DB::raw('SUM(quantity) as total_quantity'))
+        ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
+        ->where('restaurant_table_customer_id',$id)
+        ->where('restaurant_menu_id',$order_data->restaurant_menu_id)
+        ->first();
+      $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+      $restaurant_temp_bill_detail->restaurant_menu_id = $quantity->restaurant_menu_id;
+      $restaurant_temp_bill_detail->quantity = $quantity->total_quantity;
+      $restaurant_temp_bill_detail->restaurant_temp_bill_id = $temp_bill_data->id;
+      $restaurant_temp_bill_detail->save();
+    }
+    $data["result"] = $restaurant_temp_bill
+      ->join('restaurant_temp_bill_detail','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
+      ->get();
+    return $data;
+  }
+
+  public function show_temp_bill(Request $request,$id)
+  {
+    $restaurant_temp_bill = new Restaurant_temp_bill;
+    $data["result"] = $restaurant_temp_bill
+      ->join('restaurant_temp_bill_detail', 'restaurant_temp_bill.id', '=', 'restaurant_temp_bill_detail.restaurant_temp_bill_id')
+      ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
+      ->where('restaurant_table_customer_id',$id)
+      ->get();
+    return $data;
   }
 
   public function show_order(Request $request,$id)
