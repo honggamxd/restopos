@@ -12,6 +12,8 @@ use App\Restaurant_order;
 use App\Restaurant_order_detail;
 use App\Restaurant_temp_bill;
 use App\Restaurant_temp_bill_detail;
+use App\Restaurant_bill;
+use App\Restaurant_bill_detail;
 
 class Restaurant_table_customer_controller extends Controller
 {
@@ -97,6 +99,7 @@ class Restaurant_table_customer_controller extends Controller
       $customer_data->date_time = date("h:i:s A",$customer_data->date_time);
       $customer_data->has_order = ($customer_data->has_order==1?TRUE:FALSE);
       $customer_data->has_billed_out = ($customer_data->has_billed_out==1?TRUE:FALSE);
+      $customer_data->has_bill = ($customer_data->has_bill==1?TRUE:FALSE);
       $customer_data->table_name = $restaurant_table->where("id",$customer_data->restaurant_table_id)->value("name");
       $customer_data->total = $restaurant_order
         ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
@@ -130,13 +133,14 @@ class Restaurant_table_customer_controller extends Controller
 
     foreach ($orders as $order_data) {
       $quantity = $restaurant_order
-        ->select('restaurant_menu_id',DB::raw('SUM(quantity) as total_quantity'))
+        ->select('restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
         ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
         ->where('restaurant_table_customer_id',$id)
         ->where('restaurant_menu_id',$order_data->restaurant_menu_id)
         ->first();
       $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
       $restaurant_temp_bill_detail->restaurant_menu_id = $quantity->restaurant_menu_id;
+      $restaurant_temp_bill_detail->price = $quantity->price;
       $restaurant_temp_bill_detail->quantity = $quantity->total_quantity;
       $restaurant_temp_bill_detail->restaurant_temp_bill_id = $temp_bill_data->id;
       $restaurant_temp_bill_detail->save();
@@ -163,6 +167,85 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_order = new Restaurant_order;
     $data["result"] = $restaurant_order->where('restaurant_table_customer_id',$id)->get();
     return $data;
+  }
+
+  public function make_bill(Request $request,$id)
+  {
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $restaurant_table = new Restaurant_table;
+    $restaurant_temp_bill = new Restaurant_temp_bill;
+    $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+    $customer_data = $restaurant_table_customer->find($id);
+    
+    $restaurant_bill = new Restaurant_bill;
+    $restaurant_bill->date_ = strtotime(date("m/d/Y"));
+    $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
+    $restaurant_bill->pax = $customer_data->pax;
+    $restaurant_bill->server = $customer_data->server;
+    $restaurant_bill->cashier = 0;
+    $restaurant_bill->restaurant_table_customer_id = $customer_data->id;
+    $restaurant_bill->table_name = $restaurant_table->where("id",$customer_data->restaurant_table_id)->value("name");
+    $restaurant_bill->restaurant_id = $customer_data->restaurant_id;
+    $restaurant_bill->save();
+
+    $customer_data->has_bill = 1;
+    $customer_data->save();
+
+    $bill_data = $restaurant_bill->orderBy('id','DESC')->first();
+    $restaurant_bill_detail = new Restaurant_bill_detail;
+
+    $bill_preview_detail = $this->show_temp_bill($request,$id);
+    foreach ($bill_preview_detail["result"] as $preview_data) {
+      $restaurant_bill_detail = new Restaurant_bill_detail;
+      $restaurant_bill_detail->restaurant_menu_id = $preview_data->restaurant_menu_id;
+      $restaurant_bill_detail->quantity = $preview_data->quantity;
+      $restaurant_bill_detail->price = $preview_data->price;
+      $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
+      $restaurant_bill_detail->restaurant_id = $preview_data->restaurant_id;
+      $restaurant_bill_detail->save();
+    }
+
+    return $this->list_bill($request,$id);
+  }
+
+  public function show_bill(Request $request,$id)
+  {
+    $restaurant_bill = new Restaurant_bill;
+    $restaurant_menu = new Restaurant_menu;
+    $restaurant_bill_detail = new Restaurant_bill_detail;
+    $data["bill"] = $restaurant_bill->find($id);
+    $data["bill"]->date_ = date("F d, Y",$data["bill"]->date_);
+    $data["bill"]->date_time = date("h:i:s A",$data["bill"]->date_time);
+    $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
+    $data["total"] = 0;
+    foreach ($data["bill_detail"] as $bill_detail_data) {
+      $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+      $data["total"] += $bill_detail_data->price*$bill_detail_data->quantity;
+    }
+    $data["vat"] = $data["total"]*0.12;
+    $data["sc"] = $data["total"]*0.1;
+    $data["sub_total"] = $data["total"]-$data["vat"]-$data["sc"];
+    return $data;
+  }
+  public function list_bill(Request $request,$id)
+  {
+    $restaurant_bill = new Restaurant_bill;
+    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$id)->get();
+    foreach ($data["result"] as $bill_data) {
+      $data["table_name"] = $bill_data->table_name;
+    }
+    return $data;
+  }
+
+  public function destroy(Request $request,$id)
+  {
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $restaurant_table = new Restaurant_table;
+    $customer_data = $restaurant_table_customer->find($id);
+    $table_data = $restaurant_table->where("id",$customer_data->restaurant_table_id)->first();
+    $table_data->occupied = 0;
+    $table_data->save();
+    $restaurant_table_customer->where("id",$id)->delete();
   }
 
   public function test(Request $request)

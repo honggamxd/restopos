@@ -22,6 +22,7 @@ class CreateRestauranttablecustomerTable extends Migration
           $table->integer('restaurant_id');
           $table->integer('restaurant_table_id');
           $table->integer('restaurant_temp_bill_id');
+          $table->boolean('has_bill');
         });
     }
 

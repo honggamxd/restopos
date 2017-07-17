@@ -48,6 +48,7 @@
           <i class="search icon"></i>
         </button>
         <button type="button" class="ui icon primary button" ng-click="show_table()" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
+        <button type="button" class="ui icon secondary button" onclick="$('#add-list-table-modal').modal('show')" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
       </div>
   </div>
   <div class="table-responsive">
@@ -69,13 +70,15 @@
           <td class="left aligned middle aligned" style="width: 28vw;">
             <div class="ui buttons" ng-if="!customer_data.has_order">
               <button class="ui inverted green button" ng-click="add_order(this)"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-              <button class="ui inverted red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+              <button class="ui inverted red button" ng-click="delete_table_customer(this)"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
             </div>
             <div class="ui buttons" ng-if="customer_data.has_order">
               <div class="ui buttons">
                 <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-                <button class="ui inverted violet button" ng-click="bill_out(this)"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
-                <button class="ui inverted red button"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button>
+                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-if="!customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
+                <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> View Bills</button>
+                <!-- <button class="ui inverted red button" ng-if="!customer_data.has_billed_out"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button> -->
+                <button class="ui inverted red button" ng-click="delete_table_customer(this)"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
               </div>
             </div>
           </td>
@@ -88,6 +91,31 @@
 @endsection
 
 @section('modals')
+
+<div id="add-list-table-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Table</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label>Table Name:</label>
+            <input type="text" ng-model="formdata.name" placeholder="Table Name" class="form-control">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="add_list_table()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <div id="add-table-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add-table-controller">
   <div class="modal-dialog modal-sm">
@@ -318,19 +346,62 @@
         <h4 class="modal-title">Bill</h4>
       </div>
       <div class="modal-body">
-        <table class="ui unstackable compact table" id="list-order-table">
+        <table class="ui unstackable compact table">
           <thead>
             <tr>
               <th class="center aligned">Item</th>
               <th class="center aligned">Qty</th>
-              <th class="center aligned">Total</th>
+              <th class="right aligned">Price</th>
+              <th class="right aligned">Total</th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="bill_preview_data in bill_preview">
-              <td ng-bind="bill_preview.name"></td>
-              <td ng-bind="bill_preview.price"></td>
-              <td ng-bind="bill_preview.total"></td>
+              <td ng-bind="bill_preview_data.name"></td>
+              <td class="center aligned">@{{bill_preview_data.quantity}}</td>
+              <td class="right aligned">@{{bill_preview_data.price|currency:""}}</td>
+              <td class="right aligned">@{{ (bill_preview_data.quantity*bill_preview_data.price)|currency:"" }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="3" class="right aligned">Total</th>
+              <th class="right aligned">@{{bill_preview.total|currency:""}}</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id">Proceed</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-bill-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Table #: @{{bill.table_name}} Bill</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ui unstackable compact table">
+          <thead>
+            <tr>
+              <th class="center aligned">Check #</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="bill_data in bill">
+              <td ng-bind="bill_data.id" class="center aligned"></td>
+              <td>
+                <div class="btn-group">
+                  <a class="btn btn-primary" href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+                  <a class="btn btn-success" href="/restaurant/bill/@{{bill_data.id}}"><span class="glyphicon glyphicon-shopping-cart"></span> Payments</a>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -354,7 +425,7 @@
   shortcut.add("Ctrl+Shift+A",function() {
     $('#add-table-modal').modal('show');
   });
-    $('#bill-preview-modal').modal('show');
+    // $('#view-bill-modal').modal('show');
 
   $('#add-table-modal').on('shown.bs.modal', function () {
       $('#select-tablenumber').focus();
@@ -365,6 +436,23 @@
      _token: "{{csrf_token()}}",
     };
     $scope.table = {};
+
+    $scope.add_list_table = function() {
+      $http({
+         method: 'POST',
+         url: '/restaurant/table/add',
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        // console.log(response.data);
+        alertify.success(response.data+" is added.");
+        $scope.formdata.name = "";
+      }, function(rejection) {
+         var errors = rejection.data;
+         $scope.formdata.date_payment_error = errors.date_payment;
+      });
+    }
 
     $scope.add_table = function() {
       $scope.submit = true;
@@ -414,6 +502,23 @@
           console.log(response.statusText);
       });
     }
+
+    $scope.delete_table_customer = function(data) {
+      console.log(data.$parent.customer_data.id);
+      $http({
+         method: 'POST',
+         url: '/restaurant/table/customer/remove/'+data.$parent.customer_data.id,
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+        show_table_customers();
+      }, function(rejection) {
+         var errors = rejection.data;
+      });
+    }
+
     $scope.table_name = "";
 
     $scope.add_order = function(data) {
@@ -530,34 +635,76 @@
     }
 
     $scope.bill_out = function(data) {
-      // console.log(data.$parent.customer_data.has_billed_out);
+      // console.log(data.$parent.customer_data);
       if(data.$parent.customer_data.has_billed_out){
         // bill_preview
         $http({
           method : "GET",
-          url : "/restaurant/table/customer/billout/"+data.$parent.customer_data.id,
+          url : "/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
         }).then(function mySuccess(response) {
-          console.log(response.data);
-          $scope.bill_preview = response.data.response;
+          // console.log(response.data);
+          $scope.bill_preview = response.data.result;
+          $scope.bill_preview.total = data.$parent.customer_data.total;
+          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
+          $('#bill-preview-modal').modal('show');
         }, function myError(response) {
           console.log(response.statusText);
         });
       }else{
         $http({
            method: 'POST',
-           url: '/restaurant/table/customer/billout/'+data.$parent.customer_data.id,
+           url: '/restaurant/table/customer/bill/preview/'+data.$parent.customer_data.id,
            data: $.param($scope.formdata),
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(function(response) {
           console.log(response.data);
           show_table_customers();
+          $scope.bill_preview = response.data.result;
+          $scope.bill_preview.total = data.$parent.customer_data.total;
+          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
+          $('#bill-preview-modal').modal('show');
         }, function(rejection) {
            var errors = rejection.data;
            $scope.formdata.date_payment_error = errors.date_payment;
            $scope.submit = false;
         });
       }
+    }
+
+    $scope.make_bill = function(data) {
+      // console.log(data.bill_preview.table_customer_id);
+      $http({
+         method: 'POST',
+         url: '/restaurant/table/customer/bill/make/'+data.bill_preview.table_customer_id,
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        $scope.bill = response.data.result;
+        $scope.bill.table_name = response.data.table_name;
+        $("#bill-preview-modal").modal("hide");
+        $("#view-bill-modal").modal("show");
+        show_table_customers();
+      }, function(rejection) {
+         var errors = rejection.data;
+         $scope.formdata.date_payment_error = errors.date_payment;
+         $scope.submit = false;
+      });
+    }
+
+    $scope.view_bills = function(data) {
+      var id = data.$parent.$parent.customer_data.id;
+      $http({
+          method : "GET",
+          url : "/restaurant/table/customer/bill/list/"+id,
+      }).then(function mySuccess(response) {
+          $scope.bill = response.data.result;
+          $scope.bill.table_name = response.data.table_name;
+          $("#view-bill-modal").modal("show");
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
     }
     
   });

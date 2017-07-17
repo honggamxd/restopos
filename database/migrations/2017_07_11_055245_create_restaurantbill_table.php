@@ -23,6 +23,7 @@ class CreateRestaurantbillTable extends Migration
           $table->integer('cashier');
           $table->string('table_name');
           $table->integer('restaurant_id');
+          $table->integer('restaurant_table_customer_id');
           $table->boolean('deleted');
           $table->text('deleted_comment');
           $table->integer('deleted_date');
