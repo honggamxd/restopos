@@ -48,7 +48,6 @@
           <i class="search icon"></i>
         </button>
         <button type="button" class="ui icon primary button" ng-click="show_table()" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
-        <button type="button" class="ui icon secondary button" onclick="$('#add-list-table-modal').modal('show')" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
       </div>
   </div>
   <div class="table-responsive">
@@ -117,7 +116,7 @@
 
 
 
-<div id="add-table-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add-table-controller">
+<div id="add-table-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -149,7 +148,7 @@
 </div>
 
 
-<div id="add-order-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add-order-controller">
+<div id="add-order-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -399,7 +398,7 @@
               <td>
                 <div class="btn-group">
                   <a class="btn btn-primary" href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
-                  <a class="btn btn-success" href="/restaurant/bill/@{{bill_data.id}}"><span class="glyphicon glyphicon-shopping-cart"></span> Payments</a>
+                  <button class="btn btn-success" ng-click="add_payment(this)" ng-if="bill_data.is_paid == 0"><span class="glyphicon glyphicon-shopping-cart"></span> Payments</button>
                 </div>
               </td>
             </tr>
@@ -413,6 +412,74 @@
   </div>
 </div>
 
+<div id="payment-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Payment of Check #</h4>
+      </div>
+      <div class="modal-body" style="min-height: 50vh;">
+        <div class="form-group">
+          <label>Total:</label>
+          <span class="form-control">@{{formdata.total|currency:""}}</span>
+        </div>
+        <form class="form">
+          <div class="form-group">
+            <label>Settlement:</label>
+            <select name="settlement" id="settlement" multiple="" class="ui fluid dropdown" ng-model="formdata.settlement" ng-change="settlements_payment()">
+              <option value="">Select Settlement</option>
+              <option value="cash">Cash</option>
+              <option value="credit">Credit Card</option>
+              <option value="debit">Debit Card</option>
+              <option value="cheque">Cheque</option>
+              <option value="guest_ledger">Guest Ledger</option>
+              <option value="send_bill">Send Bill</option>
+              <option value="free_of_charge">FOC</option>
+            </select>
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.cash">
+            <label>Cash:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cash" ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.credit">
+            <label>Credit Card:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.credit"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.debit">
+            <label>Debit Card:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.debit"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.cheque">
+            <label>Cheque:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cheque"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.guest_ledger">
+            <label>Guest Ledger:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.guest_ledger"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.send_bill">
+            <label>Send Bill:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.send_bill"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.free_of_charge">
+            <label>FOC:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
+          </div>
+          <div class="form-group">
+            <label>Excess:</label>
+            <span class="form-control">@{{formdata.excess|currency:""}}</span>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer" ng-model="bill_id">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="make_payment(this)" ng-if="valid_payment">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -706,19 +773,154 @@
           console.log(response.statusText);
       });
     }
-    
-  });
 
-  app.controller('add-order-controller',function ($scope,$http,$sce) {
-    $scope.formdata = {
-       _token: "{{csrf_token()}}",
+    $('#settlement').dropdown();
+    $scope.add_payment = function(data) {
+      console.log(data);
+      $scope.formdata.settlements_amount = {
+        cash: 0,
+        credit: 0,
+        debit: 0,
+        cheque: 0,
+        guest_ledger: 0,
+        send_bill: 0,
+        free_of_charge: 0
+      };
+      $scope.formdata.total = data.bill_data.total;
+      $scope.bill_id = data.bill_data.id;
+      $("#payment-modal").modal("show");
+      $('#settlement').dropdown('clear');
+      $scope.formdata.settlement = {} ;
+      $scope.formdata.excess = excess($scope);
+      $scope.valid_payment = valid_payment($scope);
+
+      $scope.formdata.settlements_payment.cash = false;
+      $scope.formdata.settlements_payment.credit = false;
+      $scope.formdata.settlements_payment.debit = false;
+      $scope.formdata.settlements_payment.cheque = false;
+      $scope.formdata.settlements_payment.guest_ledger = false;
+      $scope.formdata.settlements_payment.send_bill = false;
+      $scope.formdata.settlements_payment.free_of_charge = false;
+    }
+
+
+    $scope.make_payment = function(data) {
+      // console.log(data.$parent.bill_id);
+      $http({
+         method: 'POST',
+         url: '/restaurant/table/customer/payment/make/'+data.$parent.bill_id,
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        $scope.bill = response.data.result;
+        $scope.bill.table_name = response.data.table_name;
+        $("#payment-modal").modal("hide");
+        // console.log(response.data)
+      }, function(rejection) {
+         var errors = rejection.data;
+      });
+    }
+    // $scope.formdata.total;
+    $scope.formdata.settlements_payment = {};
+    $scope.formdata.settlements_amount = {
+      cash: 0,
+      credit: 0,
+      debit: 0,
+      cheque: 0,
+      guest_ledger: 0,
+      send_bill: 0,
+      free_of_charge: 0
     };
-  });
+    $scope.input_payment = function() {
+      $scope.formdata.excess = excess($scope);
+      $scope.valid_payment = valid_payment($scope);
+    }
 
-  app.controller('add-table-controller',function($scope,$http,$sce) {
-    
-  });
+    function excess($scope) {
+      var excess = (
+        $scope.formdata.settlements_amount.cash
+      + $scope.formdata.settlements_amount.credit
+      + $scope.formdata.settlements_amount.debit
+      + $scope.formdata.settlements_amount.cheque
+      + $scope.formdata.settlements_amount.guest_ledger
+      + $scope.formdata.settlements_amount.send_bill
+      + $scope.formdata.settlements_amount.free_of_charge
+      ) - $scope.formdata.total;
+      return (excess>=0?excess:0);
+    }
 
+    function valid_payment(argument) {
+      var total_payment = (
+        $scope.formdata.settlements_amount.cash
+      + $scope.formdata.settlements_amount.credit
+      + $scope.formdata.settlements_amount.debit
+      + $scope.formdata.settlements_amount.cheque
+      + $scope.formdata.settlements_amount.guest_ledger
+      + $scope.formdata.settlements_amount.send_bill
+      + $scope.formdata.settlements_amount.free_of_charge
+      );
+      return (total_payment>=$scope.formdata.total?true:false);
+    }
+    $scope.settlements_payment = function(data) {
+      if($scope.formdata.settlement.includes('cash')){
+        $scope.formdata.settlements_payment.cash = true;
+      }else{
+        $scope.formdata.settlements_payment.cash = false;
+        $scope.formdata.settlements_amount.cash = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('credit')){
+        $scope.formdata.settlements_payment.credit = true;
+      }else{
+        $scope.formdata.settlements_payment.credit = false;
+        $scope.formdata.settlements_amount.credit = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('debit')){
+        $scope.formdata.settlements_payment.debit = true;
+      }else{
+        $scope.formdata.settlements_payment.debit = false;
+        $scope.formdata.settlements_amount.debit = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('cheque')){
+        $scope.formdata.settlements_payment.cheque = true;
+      }else{
+        $scope.formdata.settlements_payment.cheque = false;
+        $scope.formdata.settlements_amount.cheque = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('guest_ledger')){
+        $scope.formdata.settlements_payment.guest_ledger = true;
+      }else{
+        $scope.formdata.settlements_payment.guest_ledger = false;
+        $scope.formdata.settlements_amount.guest_ledger = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('send_bill')){
+        $scope.formdata.settlements_payment.send_bill = true;
+      }else{
+        $scope.formdata.settlements_payment.send_bill = false;
+        $scope.formdata.settlements_amount.send_bill = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('free_of_charge')){
+        $scope.formdata.settlements_payment.free_of_charge = true;
+      }else{
+        $scope.formdata.settlements_payment.free_of_charge = false;
+        $scope.formdata.settlements_amount.free_of_charge = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+    }
+  });
   angular.bootstrap(document, ['main']);
 </script>
 @endsection

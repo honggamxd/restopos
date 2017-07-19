@@ -22,6 +22,7 @@ class Restaurant_menu_controller extends Controller
     $restaurant_menu->category = $request->category;
     $restaurant_menu->subcategory = $request->subcategory;
     $restaurant_menu->price = $request->price;
+    $restaurant_menu->restaurant_id = $request->restaurant_id;
     $restaurant_menu->is_prepared = 1;
     $restaurant_menu->save();
   }

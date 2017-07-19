@@ -91,7 +91,7 @@
     window.close();
   });
   $(document).ready(function() {
-    setTimeout(function(){ window.print(); }, 500);
+    setTimeout(function(){ window.print(); }, 1000);
   });
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce) {

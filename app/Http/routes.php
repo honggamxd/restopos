@@ -33,6 +33,8 @@ Route::get('/restaurant/table/customer/bill/list/{id}', 'Restaurant_table_custom
 Route::get('/restaurant/table/customer/orders/{id}', 'Restaurant_table_customer_controller@show_order');
 Route::get('/restaurant/table/customer/list', 'Restaurant_table_customer_controller@get_list');
 Route::post('/restaurant/table/customer/remove/{id}', 'Restaurant_table_customer_controller@destroy');
+Route::post('/restaurant/table/customer/payment/make/{id}', 'Restaurant_payment_controller@store');
+Route::get('/restaurant/table/customer/payment/list/{id}', 'Restaurant_payment_controller@show');
 Route::get('/restaurant/table/list', 'Restaurant_table_controller@get_list');
 
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
@@ -55,6 +57,10 @@ Route::get('/inventory', function () {
 
 Route::get('/receiving', function () {
     return view('restaurant.receiving');
+});
+
+Route::get('/settings', function () {
+    return view('restaurant.settings');
 });
 
 Route::get('/reports', function () {

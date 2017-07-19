@@ -103,6 +103,17 @@ Davao City, 8000
     <td colspan="2" style="text-align: right;">TOTAL:</td>
     <td style="text-align: right;font-weight: bold;">@{{footer.total|currency:""}}</td>
   </tr>
+  <tr>
+    <td>&nbsp;</td>
+  </tr>
+  <tr ng-repeat="payment_data in payments">
+    <td colspan="2" style="text-align: right;">@{{payment_data.settlement}}:</td>
+  <td style="text-align: right;font-weight: bold;">@{{payment_data.payment|currency:""}}</td>
+  <tr>
+    <td colspan="2" style="text-align: right;">Change:</td>
+    <td style="text-align: right;font-weight: bold;">@{{excess|currency:""}}</td>
+  </tr>
+  </tr>
 </tfoot>
 </table>
 <br>
@@ -137,8 +148,10 @@ Davao City, 8000
       window.close();
     });
     $(document).ready(function() {
-      setTimeout(function(){ window.print(); }, 500);
+      setTimeout(function(){ window.print(); }, 1000);
     });
+    $scope.footer = {};
+    $scope.payments = {};
     function show_bill() {
       $http({
           method : "GET",
@@ -147,18 +160,29 @@ Davao City, 8000
           // console.log(response.data)
           $scope.bill = response.data.bill;
           $scope.bill_detail = response.data.bill_detail;
-          $scope.footer = 
-          {
-            "sub_total": response.data.sub_total,
-            "sc": response.data.sc,
-            "vat": response.data.vat,
-            "total": response.data.total,
-          }
-          ;
+          $scope.footer.sub_total =  response.data.sub_total;
+          $scope.footer.sc =  response.data.sc;
+          $scope.footer.vat =  response.data.vat;
+          $scope.footer.total =  response.data.total;
       }, function myError(response) {
           console.log(response.statusText);
       });
     }
+
+    show_payment();
+    function show_payment() {
+      $http({
+          method : "GET",
+          url : "/restaurant/table/customer/payment/list/"+{{$id}},
+      }).then(function mySuccess(response) {
+          console.log(response.data.result)
+          $scope.payments = response.data.result;
+          $scope.excess = response.data.excess;
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
+
   });
   angular.bootstrap(document, ['main']);
 </script>

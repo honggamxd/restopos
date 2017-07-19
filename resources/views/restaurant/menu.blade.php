@@ -188,6 +188,17 @@
           <form action="/restaurant/menu" method="post" id="add-items-form">
           {{ csrf_field() }}
           <div class="form-group">
+            <label>Outlet</label>
+            <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
+              <option value="">Select Outlet</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+            <p class="help-block" ng-show="formdata.restaurant_id" ng-bind="formdata.restaurant_id_error[0]"></p>
+          </div>
+
+          <div class="form-group">
             <label>Category</label>
             <input type="text" name="category" placeholder="Category" class="form-control" ng-model="formdata.category">
             <p class="help-block" ng-show="formdata.category_error" ng-bind="formdata.category_error[0]"></p>

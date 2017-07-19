@@ -147,6 +147,7 @@ class Restaurant_table_customer_controller extends Controller
     }
     $data["result"] = $restaurant_temp_bill
       ->join('restaurant_temp_bill_detail','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
+      ->where('restaurant_table_customer_id',$id)
       ->get();
     return $data;
   }
@@ -230,9 +231,11 @@ class Restaurant_table_customer_controller extends Controller
   public function list_bill(Request $request,$id)
   {
     $restaurant_bill = new Restaurant_bill;
-    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$id)->get();
+    $restaurant_bill_detail = new Restaurant_bill_detail;
+    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$id)->get(); 
     foreach ($data["result"] as $bill_data) {
       $data["table_name"] = $bill_data->table_name;
+      $bill_data->total = $restaurant_bill_detail->select(DB::raw('SUM(price*quantity) as total'))->where("restaurant_bill_id",$bill_data->id)->first()->total;
     }
     return $data;
   }

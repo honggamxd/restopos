@@ -59,7 +59,7 @@
         <i class="info icon"></i>
         Keyboard<br>Shortcuts
     </a>
-    <a class="item">
+    <a class="item" href="/settings">
         <i class="settings icon"></i>
         Settings
     </a>

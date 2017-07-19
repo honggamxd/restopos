@@ -14,6 +14,7 @@ class CreateRestaurantbillTable extends Migration
     {
         Schema::create('restaurant_bill', function (Blueprint $table) {
           $table->increments('id');
+          $table->double('excess');
           $table->integer('check_number');
           $table->boolean('is_paid');
           $table->integer('date_');
