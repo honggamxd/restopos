@@ -29,7 +29,7 @@
     <div class="field">
       <div class="six fields">
         <div class="field">
-          <label>Item Searchs</label>
+          <label>Item Search</label>
           <div class="ui icon input focus">
             <input type="text" placeholder="Search...">
             <i class="search icon"></i>
