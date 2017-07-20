@@ -21,6 +21,7 @@ Route::post('/restaurant/table/add', 'Restaurant_table_controller@store');
 Route::post('/restaurant/table/order/make/{id}', 'Restaurant_order_controller@store');
 Route::get('/restaurant/table/order/view/{id}', 'Restaurant_order_controller@show');
 Route::post('/restaurant/table/order/cart', 'Restaurant_table_customer_controller@order_cart');
+Route::post('/restaurant/table/order/cart/update/{type}/{id}', 'Restaurant_table_customer_controller@update_cart');
 Route::get('/restaurant/table/order/cart/{table_customer_id}', 'Restaurant_table_customer_controller@show');
 Route::get('/restaurant/table/order/test', 'Restaurant_table_customer_controller@test');
 Route::get('/restaurant/table/order/delete', 'Restaurant_table_customer_controller@delete');

@@ -63,7 +63,7 @@ Davao City, 8000
 </tbody>
 </table>
 <br>
-<table class="bill-table">
+<table class="bill-table" ng-cloak>
 <tbody>
   <thead>
     <tr>
@@ -74,7 +74,7 @@ Davao City, 8000
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td ng-bind="items.menu"></td>
+      <td>@{{items.menu}}<span ng-if="items.special_order != ''"><br>(@{{items.special_order}})</span></td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
       <td style="text-align: right;">@{{(items.price*items.quantity)|currency:""}}</td>
     </tr>
@@ -109,7 +109,7 @@ Davao City, 8000
   <tr ng-repeat="payment_data in payments">
     <td colspan="2" style="text-align: right;">@{{payment_data.settlement}}:</td>
   <td style="text-align: right;font-weight: bold;">@{{payment_data.payment|currency:""}}</td>
-  <tr>
+  <tr ng-hide="payments">
     <td colspan="2" style="text-align: right;">Change:</td>
     <td style="text-align: right;font-weight: bold;">@{{excess|currency:""}}</td>
   </tr>
@@ -132,8 +132,8 @@ Davao City, 8000
     <td style="border-bottom: 1px solid black;" colspan="2">Signature</td>
   </tr>
 </table>
-<a href="#" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
-<a href="#" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
+<a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
+<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
 @endsection
 
 @section('scripts')
@@ -148,7 +148,7 @@ Davao City, 8000
       window.close();
     });
     $(document).ready(function() {
-      setTimeout(function(){ window.print(); }, 1000);
+      // setTimeout(function(){ window.print(); }, 1000);
     });
     $scope.footer = {};
     $scope.payments = {};

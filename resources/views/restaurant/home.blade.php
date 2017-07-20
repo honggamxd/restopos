@@ -12,9 +12,11 @@
 @media (min-width: 992px){
   .modal-lg {
     width: 990px;
-  }  
+  }
 }
-
+.modal-lg.order{
+  width: 95vw;
+}
 
 #complete-order-table{
   width: 100%;
@@ -65,7 +67,7 @@
           <td style="width: 30vw;" class="center aligned middle aligned" ng-bind="customer_data.table_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
-          <td class="center aligned middle aligned" ng-click="view_orders(this)"><a href="#">@{{customer_data.total|currency:""}}</a></td>
+          <td class="center aligned middle aligned" ng-click="view_orders(this)"><a href="javascript:void(0);">@{{customer_data.total|currency:""}}</a></td>
           <td class="left aligned middle aligned" style="width: 28vw;">
             <div class="ui buttons" ng-if="!customer_data.has_order">
               <button class="ui inverted green button" ng-click="add_order(this)"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
@@ -149,7 +151,7 @@
 
 
 <div id="add-order-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg order">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -225,9 +227,17 @@
                 </thead>
                 <tbody>
                   <tr ng-repeat="cart_data in table_customer_cart" ng-init="table_customer_cart={};table_customer_total=''">
-                    <td class="center aligned">@{{cart_data.name}}</td>
-                    <td class="right aligned">@{{cart_data.quantity}}</td>
-                    <td class="right aligned">@{{cart_data.total|currency:""}}</td>
+                    <td class="center aligned middle aligned">
+                      <div style="width: 100%;cursor: pointer;" ng-click="toggle_special_order(this)" ng-init="cart_data.show_special_order=false">
+                        @{{cart_data.name}}
+                      </div>
+                      <input type="text" name="" ng-model="cart_data.special_order" ng-change="add_special_order(this)" ng-if="cart_data.special_order != '' || cart_data.show_special_order">
+                    </td>
+                    <td class="center aligned middle aligned" ng-init="cart_data.update_quantity=true">
+                      <div ng-hide="cart_data.show_update_quantity" ng-click="toggle_update_quantity(this)" style="width: 100%;cursor: pointer;">@{{cart_data.quantity}}</div>
+                      <input style="width: 100px" type="number" ng-show="cart_data.show_update_quantity" ng-model="cart_data.quantity" ng-blur="update_quantity(this)">
+                    </td>
+                    <td class="right aligned middle aligned">@{{cart_data.total|currency:""}}</td>
                   </tr>
                 </tbody>
                 <tfoot>
@@ -287,7 +297,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="items in order_detail" ng-cloak>
-              <td ng-bind="items.menu"></td>
+              <td>@{{items.menu}}<span ng-if="items.special_order != ''"><br>(@{{items.special_order}})</span></td>
               <td style="text-align: center;" ng-bind="items.quantity"></td>
               <td style="text-align: right;">@{{items.price|currency:""}}</td>
             </tr>
@@ -356,7 +366,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="bill_preview_data in bill_preview">
-              <td ng-bind="bill_preview_data.name"></td>
+              <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_order != ''"><br>(@{{bill_preview_data.special_order}})</span></td>
               <td class="center aligned">@{{bill_preview_data.quantity}}</td>
               <td class="right aligned">@{{bill_preview_data.price|currency:""}}</td>
               <td class="right aligned">@{{ (bill_preview_data.quantity*bill_preview_data.price)|currency:"" }}</td>
@@ -613,6 +623,51 @@
       });
     }
 
+    $scope.toggle_special_order = function(data) {
+      var toggle = (data.cart_data.show_special_order?false:true);
+      $scope.table_customer_cart["menu_"+data.cart_data.id].show_special_order = toggle;
+    }
+    $scope.toggle_update_quantity = function(data) {
+      var toggle = (data.cart_data.show_update_quantity?false:true);
+      $scope.table_customer_cart["menu_"+data.cart_data.id].show_update_quantity = toggle;
+    }
+
+    $scope.add_special_order = function(data) {
+      // console.log(data.$parent.table_customer_id);
+      $scope.formdata.special_order = data.cart_data.special_order;
+      $scope.formdata.menu_id = data.cart_data.id;
+      $http({
+         method: 'POST',
+         url: '/restaurant/table/order/cart/update/special_order/'+data.$parent.table_customer_id,
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        // console.log(response.data);
+      }, function(rejection) {
+         var errors = rejection.data;
+      });
+    }
+    $scope.update_quantity = function(data) {
+      // console.log(data.$parent.table_customer_id);
+      $scope.formdata.quantity = data.cart_data.quantity;
+      $scope.formdata.menu_id = data.cart_data.id;
+      $http({
+         method: 'POST',
+         url: '/restaurant/table/order/cart/update/quantity/'+data.$parent.table_customer_id,
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        // show_cart(data.$parent.table_customer_id);
+        $scope.table_customer_cart = response.data.cart;
+        $scope.table_customer_total = response.data.total;
+        console.log(response.data);
+      }, function(rejection) {
+         var errors = rejection.data;
+      });
+    }
+
     $scope.menu = {};
     function show_menu() {
       $http({
@@ -709,7 +764,7 @@
           method : "GET",
           url : "/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
         }).then(function mySuccess(response) {
-          // console.log(response.data);
+          console.log(response.data);
           $scope.bill_preview = response.data.result;
           $scope.bill_preview.total = data.$parent.customer_data.total;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
@@ -726,10 +781,10 @@
         })
         .then(function(response) {
           console.log(response.data);
-          show_table_customers();
           $scope.bill_preview = response.data.result;
           $scope.bill_preview.total = data.$parent.customer_data.total;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
+          show_table_customers();
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
            var errors = rejection.data;
@@ -803,7 +858,6 @@
       $scope.formdata.settlements_payment.free_of_charge = false;
     }
 
-
     $scope.make_payment = function(data) {
       // console.log(data.$parent.bill_id);
       $http({
@@ -821,7 +875,6 @@
          var errors = rejection.data;
       });
     }
-    // $scope.formdata.total;
     $scope.formdata.settlements_payment = {};
     $scope.formdata.settlements_amount = {
       cash: 0,
@@ -920,6 +973,7 @@
         $scope.valid_payment = valid_payment($scope);
       }
     }
+
   });
   angular.bootstrap(document, ['main']);
 </script>

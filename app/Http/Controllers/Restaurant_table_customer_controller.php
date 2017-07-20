@@ -54,6 +54,7 @@ class Restaurant_table_customer_controller extends Controller
       if($data["cart"]["menu_".$request->menu_id] != NULL){
         // $data["menu_".$request->menu_id]->price = 0;
         $data["cart"]["menu_".$request->menu_id]->quantity = 1;
+        $data["cart"]["menu_".$request->menu_id]->special_order = "";
         $data["cart"]["menu_".$request->menu_id]->total = $data["cart"]["menu_".$request->menu_id]->quantity*$data["cart"]["menu_".$request->menu_id]->price;
         $request->session()->put('restaurant.table_customer.'.$request->table_customer_id, $data);
       }else{
@@ -69,6 +70,24 @@ class Restaurant_table_customer_controller extends Controller
     }
     $data["total"] = $total;
     return $data;
+  }
+
+  public function update_cart(Request $request,$type,$id)
+  {
+    if($type=="special_order"){
+      $cart_data = $request->session()->get('restaurant.table_customer.'.$id.".cart");
+      $cart_data["menu_".$request->menu_id]->special_order = $request->special_order;
+      $request->session()->put('restaurant.table_customer.'.$id.".cart",$cart_data);
+      return $this->show($request,$id);
+    }elseif ($type=="quantity") {
+      if($request->quantity != 0){
+        $cart_data = $request->session()->get('restaurant.table_customer.'.$id.".cart");
+        $cart_data["menu_".$request->menu_id]->quantity = abs($request->quantity);
+        $cart_data["menu_".$request->menu_id]->total = $cart_data["menu_".$request->menu_id]->quantity * $cart_data["menu_".$request->menu_id]->price;
+        $request->session()->put('restaurant.table_customer.'.$id.".cart",$cart_data);
+      }
+      return $this->show($request,$id);
+    }
   }
 
   public function show(Request $request,$table_customer_id)
@@ -115,7 +134,7 @@ class Restaurant_table_customer_controller extends Controller
   {
     $restaurant_temp_bill = new Restaurant_temp_bill;
     $restaurant_order = new Restaurant_order;
-    $orders = $restaurant_order
+    $unique_ordered_items = $restaurant_order
       ->select('restaurant_menu_id')
       ->distinct()
       ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
@@ -131,22 +150,24 @@ class Restaurant_table_customer_controller extends Controller
     $customer_data->restaurant_temp_bill_id = $temp_bill_data->id;
     $customer_data->save();
 
-    foreach ($orders as $order_data) {
-      $quantity = $restaurant_order
-        ->select('restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
+    foreach ($unique_ordered_items as $order_item_data) {
+      $order_joined_data = $restaurant_order
+        ->select('special_order','restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
         ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
         ->where('restaurant_table_customer_id',$id)
-        ->where('restaurant_menu_id',$order_data->restaurant_menu_id)
+        ->where('restaurant_menu_id',$order_item_data->restaurant_menu_id)
         ->first();
       $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
-      $restaurant_temp_bill_detail->restaurant_menu_id = $quantity->restaurant_menu_id;
-      $restaurant_temp_bill_detail->price = $quantity->price;
-      $restaurant_temp_bill_detail->quantity = $quantity->total_quantity;
+      $restaurant_temp_bill_detail->restaurant_menu_id = $order_joined_data->restaurant_menu_id;
+      $restaurant_temp_bill_detail->price = $order_joined_data->price;
+      $restaurant_temp_bill_detail->quantity = $order_joined_data->total_quantity;
+      $restaurant_temp_bill_detail->special_order = $order_joined_data->special_order;
       $restaurant_temp_bill_detail->restaurant_temp_bill_id = $temp_bill_data->id;
       $restaurant_temp_bill_detail->save();
     }
     $data["result"] = $restaurant_temp_bill
       ->join('restaurant_temp_bill_detail','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
+      ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
       ->where('restaurant_table_customer_id',$id)
       ->get();
     return $data;
@@ -201,6 +222,7 @@ class Restaurant_table_customer_controller extends Controller
       $restaurant_bill_detail->restaurant_menu_id = $preview_data->restaurant_menu_id;
       $restaurant_bill_detail->quantity = $preview_data->quantity;
       $restaurant_bill_detail->price = $preview_data->price;
+      $restaurant_bill_detail->special_order = $preview_data->special_order;
       $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
       $restaurant_bill_detail->restaurant_id = $preview_data->restaurant_id;
       $restaurant_bill_detail->save();

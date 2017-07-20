@@ -74,19 +74,19 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span> 
       </button>
-      <a class="navbar-brand" href="#"><img src="/assets/images/logo.png"></a>
+      <a class="navbar-brand" href="javascript:void(0);"><img src="/assets/images/logo.png"></a>
     </div>
     <div class="collapse navbar-collapse" id="pos-navbar">
     <ul class="nav navbar-nav navbar-right">
-    <li><a href="#" id="time-display"></a></li>
+    <li><a href="javascript:void(0);" id="time-display"></a></li>
     <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
       <i class="fa fa-user" aria-hidden="true"></i>
       <span class="caret"></span></a>
       <ul class="dropdown-menu">
-        <li><a href="#">Page 1-1</a></li>
-        <li><a href="#">Page 1-2</a></li>
-        <li><a href="#">Page 1-3</a></li>
+        <li><a href="javascript:void(0);">Page 1-1</a></li>
+        <li><a href="javascript:void(0);">Page 1-2</a></li>
+        <li><a href="javascript:void(0);">Page 1-3</a></li>
       </ul>
     </li>
     </ul>

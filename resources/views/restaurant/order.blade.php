@@ -67,7 +67,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in order_detail" ng-cloak>
-      <td ng-bind="items.menu"></td>
+      <td>@{{items.menu}}<span ng-if="items.special_order != ''"><br>(@{{items.special_order}})</span></td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
       <td style="text-align: right;">@{{items.price|currency:""}}</td>
     </tr>
@@ -76,8 +76,8 @@
 </table>
 <br>
 <p>Server:</p>
-<a href="#" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
-<a href="#" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
+<a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
+<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
 @endsection
 
 @section('scripts')
