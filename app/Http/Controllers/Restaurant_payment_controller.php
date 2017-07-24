@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Restaurant_payment;
 use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
+use App\Restaurant_table_customer;
 
 class Restaurant_payment_controller extends Controller
 {
@@ -15,6 +16,7 @@ class Restaurant_payment_controller extends Controller
   {
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill_detail = new Restaurant_bill_detail;
+    $restaurant_table_customer = new Restaurant_table_customer;
     $bill_data = $restaurant_bill->find($id);
     foreach ($request->settlement as $settlement) {
       $restaurant_payment = new Restaurant_payment;
@@ -29,11 +31,16 @@ class Restaurant_payment_controller extends Controller
     $bill_data->is_paid = 1;
     $bill_data->excess = $request->excess;
     $bill_data->save();
-    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$id)->get(); 
+    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$bill_data->restaurant_table_customer_id)->get();
+    $has_unpaid_order = false;
+    $customer_data = $restaurant_table_customer->where("id",$bill_data->restaurant_table_customer_id)->first();
     foreach ($data["result"] as $bill_data) {
       $data["table_name"] = $bill_data->table_name;
       $bill_data->total = $restaurant_bill_detail->select(DB::raw('SUM(price*quantity) as total'))->where("restaurant_bill_id",$bill_data->id)->first()->total;
+      $data["has_paid"] = ($has_unpaid_order?0:1);
     }
+    $customer_data->has_paid = $data["has_paid"];
+    $customer_data->save();
     return $data;
   }
   public function show(Request $request,$id)

@@ -51,7 +51,7 @@
         <i class="users icon"></i>
         Users
     </a>
-    <a class="item">
+    <a class="item" href="/reports">
         <i class="bar chart icon"></i>
         Reports
     </a>

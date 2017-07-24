@@ -79,7 +79,7 @@
                 <button class="ui inverted violet button" ng-click="bill_out(this)" ng-if="!customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
                 <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> View Bills</button>
                 <!-- <button class="ui inverted red button" ng-if="!customer_data.has_billed_out"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button> -->
-                <button class="ui inverted red button" ng-click="delete_table_customer(this)"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+                <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
               </div>
             </div>
           </td>
@@ -93,31 +93,6 @@
 
 @section('modals')
 
-<div id="add-list-table-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Table</h4>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label>Table Name:</label>
-            <input type="text" ng-model="formdata.name" placeholder="Table Name" class="form-control">
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="add_list_table()">Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
 <div id="add-table-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -128,21 +103,24 @@
       <div class="modal-body">
         <form action="/items" method="post" id="add-items-form">
         {{ csrf_field() }}
-        <div class="form-group">
-          <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id">
-            <option value="">Table Number</option>
-            <option ng-repeat="table_data in table" value="@{{table_data.id}}">@{{table_data.name}}</option>
+        <div class="form-group" ng-show="has_table">
+          <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id" ng-options="item as item.name for item in table track by item.id">
+            <!-- <option ng-repeat="table_data in table" value="@{{table_data.id}}">@{{table_data.name}}</option> -->
           </select>
+        </div>
+        <div class="form-group" ng-hide="has_table">
+          <span class="form-control">No Available Table</span>
         </div>
         <div class="form-group">
           <label># of Pax</label>
-          <input class="form-control" type="text" name="pax" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax">
+          <input class="form-control" type="number" name="pax" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax" required>
+          <p class="help-block">@{{formerrors.pax[0]}}</p>
         </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-items-form" ng-click="add_table()" ng-disabled="submit">Save</button>
+        <button type="submit" class="btn btn-primary" form="add-items-form" ng-click="add_table()" ng-disabled="submit" ng-show="has_table">Save</button>
       </div>
     </div>
 
@@ -299,7 +277,7 @@
             <tr ng-repeat="items in order_detail" ng-cloak>
               <td>@{{items.menu}}<span ng-if="items.special_order != ''"><br>(@{{items.special_order}})</span></td>
               <td style="text-align: center;" ng-bind="items.quantity"></td>
-              <td style="text-align: right;">@{{items.price|currency:""}}</td>
+              <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
             </tr>
           </tbody>
         </tbody>
@@ -502,7 +480,6 @@
   shortcut.add("Ctrl+Shift+A",function() {
     $('#add-table-modal').modal('show');
   });
-    // $('#view-bill-modal').modal('show');
 
   $('#add-table-modal').on('shown.bs.modal', function () {
       $('#select-tablenumber').focus();
@@ -532,6 +509,7 @@
     }
 
     $scope.add_table = function() {
+      $scope.formerrors = {};
       $scope.submit = true;
       $http({
          method: 'POST',
@@ -540,23 +518,31 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
+        console.log(response.data)
          show_table_customers();
          show_table();
          $scope.submit = false;
          $("#add-table-modal").modal("hide");
       }, function(rejection) {
          var errors = rejection.data;
-         $scope.formdata.date_payment_error = errors.date_payment;
+         $scope.formerrors.pax = errors.pax;
          $scope.submit = false;
       });
     }
-
+    $scope.table = {};
+    $scope.has_table = false;
     function show_table() {
       $http({
           method : "GET",
           url : "/restaurant/table/list",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
+          $scope.formdata.table_id = $scope.table[0];
+          if( typeof Object.keys($scope.table)[0] === 'undefined' ){
+            $scope.has_table = false;
+          }else{
+            $scope.has_table = true;
+          }
       }, function myError(response) {
           console.log(response.statusText);
       });
@@ -821,6 +807,7 @@
           method : "GET",
           url : "/restaurant/table/customer/bill/list/"+id,
       }).then(function mySuccess(response) {
+          console.log(response.data);
           $scope.bill = response.data.result;
           $scope.bill.table_name = response.data.table_name;
           $("#view-bill-modal").modal("show");
@@ -870,7 +857,7 @@
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
         $("#payment-modal").modal("hide");
-        // console.log(response.data)
+        console.log(response.data)
       }, function(rejection) {
          var errors = rejection.data;
       });
@@ -973,6 +960,10 @@
         $scope.valid_payment = valid_payment($scope);
       }
     }
+
+    $('#view-bill-modal').on('hidden.bs.modal', function () {
+      show_table_customers();
+    });
 
   });
   angular.bootstrap(document, ['main']);

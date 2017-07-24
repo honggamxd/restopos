@@ -19,15 +19,21 @@ class Restaurant_table_customer_controller extends Controller
 {
   public function store(Request $request)
   {
+    $this->validate($request, [
+        'table_id.id' => 'required',
+        'pax' => 'integer|required|custom_min:0',
+    ],[
+      'custom_min' => 'The number of :attribute must be greater than 0'
+    ]);
     $restaurant_table_customer = new Restaurant_table_customer;
-    $restaurant_table_customer->restaurant_table_id = $request->table_id;
+    $restaurant_table_customer->restaurant_table_id = $request->table_id["id"];
     $restaurant_table_customer->restaurant_id = 1;
     $restaurant_table_customer->pax = $request->pax;
     $restaurant_table_customer->server = 1;
     $restaurant_table_customer->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_table_customer->save();
     $restaurant_table = new Restaurant_table;
-    $table_occupied = $restaurant_table->find($request->table_id);
+    $table_occupied = $restaurant_table->find($request->table_id["id"]);
     $table_occupied->occupied = 1;
     $table_occupied->save();
   }
@@ -254,11 +260,16 @@ class Restaurant_table_customer_controller extends Controller
   {
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill_detail = new Restaurant_bill_detail;
-    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$id)->get(); 
+    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$id)->get();
+    $has_unpaid_order = false;
     foreach ($data["result"] as $bill_data) {
       $data["table_name"] = $bill_data->table_name;
       $bill_data->total = $restaurant_bill_detail->select(DB::raw('SUM(price*quantity) as total'))->where("restaurant_bill_id",$bill_data->id)->first()->total;
+      if($bill_data->is_paid == 0){
+        $has_unpaid_order = true;
+      }
     }
+    $data["has_paid"] = ($has_unpaid_order?0:1);
     return $data;
   }
 

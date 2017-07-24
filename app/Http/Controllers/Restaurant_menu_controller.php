@@ -37,6 +37,13 @@ class Restaurant_menu_controller extends Controller
     return $data;
   }
 
+  public function show_category(Request $request,$restaurant_id)
+  {
+    $restaurant_menu = new Restaurant_menu;
+    $data["result"] = $restaurant_menu->select('category')->distinct()->pluck('category');
+    return $data;
+  }
+
   public function available_to_menu(Request $request,$id)
   {
     $restaurant_menu = new Restaurant_menu;

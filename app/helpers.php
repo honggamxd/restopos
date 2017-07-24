@@ -87,9 +87,9 @@
       $paging .= $post;
       return $paging;
     }
+  }
 
-    function test_helper_pox()
-    {
-      return "asdasdasd";
-    }
+  function test_helper_pox()
+  {
+    return "asdasdasd";
   }

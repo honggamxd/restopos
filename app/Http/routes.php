@@ -15,6 +15,7 @@ Route::get('/', 'Restaurant_controller@index');
 Route::get('/restaurant/menu', 'Restaurant_menu_controller@index');
 Route::post('/restaurant/menu', 'Restaurant_menu_controller@store');
 Route::get('/restaurant/menu/list', 'Restaurant_menu_controller@get_list');
+Route::get('/restaurant/menu/category/{id}', 'Restaurant_menu_controller@show_category');
 Route::put('/restaurant/menu/list/{id}', 'Restaurant_menu_controller@available_to_menu');
 
 Route::post('/restaurant/table/add', 'Restaurant_table_controller@store');
@@ -40,6 +41,12 @@ Route::get('/restaurant/table/list', 'Restaurant_table_controller@get_list');
 
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
 
+Route::get('/reports', 'Reports_controller@index');
+Route::get('/reports/restaurant/{type}', 'Reports_controller@restaurant');
+
+
+
+
 Route::get('/restaurant', function () {
     return view('restaurant.home');
 });
@@ -63,10 +70,5 @@ Route::get('/receiving', function () {
 Route::get('/settings', function () {
     return view('restaurant.settings');
 });
-
-Route::get('/reports', function () {
-    return view('restaurant.reports');
-});
-
 
 

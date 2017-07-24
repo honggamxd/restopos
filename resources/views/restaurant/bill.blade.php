@@ -106,13 +106,13 @@ Davao City, 8000
   <tr>
     <td>&nbsp;</td>
   </tr>
-  <tr ng-repeat="payment_data in payments">
+  <tr ng-repeat="payment_data in payments" ng-show="has_payment">
     <td colspan="2" style="text-align: right;">@{{payment_data.settlement}}:</td>
-  <td style="text-align: right;font-weight: bold;">@{{payment_data.payment|currency:""}}</td>
-  <tr ng-hide="payments">
+    <td style="text-align: right;font-weight: bold;">@{{payment_data.payment|currency:""}}</td>
+  </tr>
+  <tr ng-show="has_payment">
     <td colspan="2" style="text-align: right;">Change:</td>
     <td style="text-align: right;font-weight: bold;">@{{excess|currency:""}}</td>
-  </tr>
   </tr>
 </tfoot>
 </table>
@@ -148,7 +148,7 @@ Davao City, 8000
       window.close();
     });
     $(document).ready(function() {
-      // setTimeout(function(){ window.print(); }, 1000);
+      setTimeout(function(){ window.print(); }, 1000);
     });
     $scope.footer = {};
     $scope.payments = {};
@@ -169,6 +169,7 @@ Davao City, 8000
       });
     }
 
+    $scope.has_payment = false;
     show_payment();
     function show_payment() {
       $http({
@@ -177,6 +178,11 @@ Davao City, 8000
       }).then(function mySuccess(response) {
           console.log(response.data.result)
           $scope.payments = response.data.result;
+          if( typeof Object.keys($scope.payments)[0] === 'undefined' ){
+            $scope.has_payment = false;
+          }else{
+            $scope.has_payment = true;
+          }
           $scope.excess = response.data.excess;
       }, function myError(response) {
           console.log(response.statusText);
