@@ -417,41 +417,41 @@
             <label>Settlement:</label>
             <select name="settlement" id="settlement" multiple="" class="ui fluid dropdown" ng-model="formdata.settlement" ng-change="settlements_payment()">
               <option value="">Select Settlement</option>
-              <option value="cash">Cash</option>
-              <option value="credit">Credit Card</option>
-              <option value="debit">Debit Card</option>
-              <option value="cheque">Cheque</option>
-              <option value="guest_ledger">Guest Ledger</option>
-              <option value="send_bill">Send Bill</option>
-              <option value="free_of_charge">FOC</option>
+              <option value="cash">{{settlements("cash")}}</option>
+              <option value="credit">{{settlements("credit")}}</option>
+              <option value="debit">{{settlements("debit")}}</option>
+              <option value="cheque">{{settlements("cheque")}}</option>
+              <option value="guest_ledger">{{settlements("guest_ledger")}}</option>
+              <option value="send_bill">{{settlements("send_bill")}}</option>
+              <option value="free_of_charge">{{settlements("free_of_charge")}}</option>
             </select>
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.cash">
-            <label>Cash:</label>
+            <label>{{settlements("cash")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cash" ng-change="input_payment()">
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.credit">
-            <label>Credit Card:</label>
+            <label>{{settlements("credit")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.credit"  ng-change="input_payment()">
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.debit">
-            <label>Debit Card:</label>
+            <label>{{settlements("debit")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.debit"  ng-change="input_payment()">
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.cheque">
-            <label>Cheque:</label>
+            <label>{{settlements("cheque")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cheque"  ng-change="input_payment()">
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.guest_ledger">
-            <label>Guest Ledger:</label>
+            <label>{{settlements("guest_ledger")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.guest_ledger"  ng-change="input_payment()">
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.send_bill">
-            <label>Send Bill:</label>
+            <label>{{settlements("send_bill")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.send_bill"  ng-change="input_payment()">
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.free_of_charge">
-            <label>FOC:</label>
+            <label>{{settlements("free_of_charge")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
           </div>
           <div class="form-group">

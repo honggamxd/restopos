@@ -12,7 +12,9 @@ class Restaurant_menu_controller extends Controller
 
   public function index(Request $request)
   {
-    return view('restaurant.menu');
+    $app_config = DB::table('app_config')->first();
+    $data["categories"] = explode(',', $app_config->categories);
+    return view('restaurant.menu',$data);
   }
 
   public function store(Request $request)

@@ -41,8 +41,10 @@ Route::get('/restaurant/table/list', 'Restaurant_table_controller@get_list');
 
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
 
+
 Route::get('/reports', 'Reports_controller@index');
 Route::get('/reports/restaurant/{type}', 'Reports_controller@restaurant');
+Route::get('/api/reports/restaurant/{type}', 'Reports_controller@restaurant_reports');
 
 
 

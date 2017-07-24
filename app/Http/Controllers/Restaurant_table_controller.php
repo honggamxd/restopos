@@ -20,7 +20,7 @@ class Restaurant_table_controller extends Controller
   {
     $restaurant_table = new Restaurant_table;
     $restaurant_table->name = $request->name;
-    $restaurant_table->restaurant_id = 1;
+    $restaurant_table->restaurant_id = $request->restaurant_id;
     $restaurant_table->save();
     return $request->name;
   }

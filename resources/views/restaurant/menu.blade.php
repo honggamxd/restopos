@@ -88,149 +88,117 @@
 @endsection
 
 @section('modals')
-<div>
-  <div id="useinventory-modal" class="modal fade" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Use Inv Item 1</h4>
-        </div>
-        <div class="modal-body">
-          <form action="/items" method="post" id="add-items-form">
-          {{ csrf_field() }}
-          <div class="form-group">
-            <label>Stocks</label>
-            <input type="text" name="" placeholder="Stocks" class="form-control" value="1" readonly>
-          </div>
 
-          <div class="form-group">
-            <label>How Many</label>
-            <input type="text" name="" placeholder="Quantity" class="form-control">
-          </div>
-
-          <div class="form-group">
-            <label>Comments</label>
-            <textarea placeholder="Comments" class="form-control"></textarea>
-          </div>
-
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
-        </div>
+<div id="editmenu-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Menu 1</h4>
       </div>
+      <div class="modal-body">
+        <form action="/items" method="post" id="add-items-form">
+        {{ csrf_field() }}
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" name="" placeholder="Category" class="form-control" value="Food">
+        </div>
 
+        <div class="form-group">
+          <label>Subcategory</label>
+          <input type="text" name="" placeholder="Subcategory" class="form-control" value="Food">
+        </div>
+
+
+        <div class="form-group">
+          <label>Item</label>
+          <input type="text" name="" placeholder="Item" class="form-control" value="Menu 1">
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="text" name="" placeholder="Quantity" class="form-control" value="1">
+        </div>
+
+        <div class="form-group">
+          <label>Price</label>
+          <input type="text" name="" placeholder="Price" class="form-control" value="10.00">
+        </div>
+
+        <div class="form-group">
+          <label>Comments</label>
+          <textarea placeholder="Comments" class="form-control"></textarea>
+        </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
+      </div>
     </div>
+
   </div>
+</div>
 
-  <div id="editmenu-modal" class="modal fade" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Edit Menu 1</h4>
-        </div>
-        <div class="modal-body">
-          <form action="/items" method="post" id="add-items-form">
-          {{ csrf_field() }}
-          <div class="form-group">
-            <label>Category</label>
-            <input type="text" name="" placeholder="Category" class="form-control" value="Food">
-          </div>
-
-          <div class="form-group">
-            <label>Subcategory</label>
-            <input type="text" name="" placeholder="Subcategory" class="form-control" value="Food">
-          </div>
-
-
-          <div class="form-group">
-            <label>Item</label>
-            <input type="text" name="" placeholder="Item" class="form-control" value="Menu 1">
-          </div>
-
-          <div class="form-group">
-            <label>Quantity</label>
-            <input type="text" name="" placeholder="Quantity" class="form-control" value="1">
-          </div>
-
-          <div class="form-group">
-            <label>Price</label>
-            <input type="text" name="" placeholder="Price" class="form-control" value="10.00">
-          </div>
-
-          <div class="form-group">
-            <label>Comments</label>
-            <textarea placeholder="Comments" class="form-control"></textarea>
-          </div>
-
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
-        </div>
+<div id="addmenu-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add_menu-controller">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Menu</h4>
       </div>
-
-    </div>
-  </div>
-
-  <div id="addmenu-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add_menu-controller">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Add Menu</h4>
+      <div class="modal-body">
+        <form action="/restaurant/menu" method="post" id="add-items-form">
+        {{ csrf_field() }}
+        <div class="form-group">
+          <label>Outlet</label>
+          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
+            <option value="">Select Outlet</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+          <p class="help-block" ng-show="formdata.restaurant_id" ng-bind="formdata.restaurant_id_error[0]"></p>
         </div>
-        <div class="modal-body">
-          <form action="/restaurant/menu" method="post" id="add-items-form">
-          {{ csrf_field() }}
-          <div class="form-group">
-            <label>Outlet</label>
-            <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
-              <option value="">Select Outlet</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
-            <p class="help-block" ng-show="formdata.restaurant_id" ng-bind="formdata.restaurant_id_error[0]"></p>
-          </div>
 
-          <div class="form-group">
-            <label>Category</label>
-            <input type="text" name="category" placeholder="Category" class="form-control" ng-model="formdata.category">
-            <p class="help-block" ng-show="formdata.category_error" ng-bind="formdata.category_error[0]"></p>
-          </div>
-
-          <div class="form-group">
-            <label>Subcategory</label>
-            <input type="text" name="subcategory" placeholder="Subcategory" class="form-control" ng-model="formdata.subcategory">
-            <p class="help-block" ng-show="formdata.subcategory_error" ng-bind="formdata.subcategory_error[0]"></p>
-          </div>
-
-          <div class="form-group">
-            <label>Name</label>
-            <input type="text" name="name" placeholder="Name" class="form-control" ng-model="formdata.name">
-            <p class="help-block" ng-show="formdata.name_error" ng-bind="formdata.name_error[0]"></p>
-          </div>
-
-          <div class="form-group">
-            <label>Price</label>
-            <input type="text" name="price" placeholder="Price" class="form-control" ng-model="formdata.price">
-            <p class="help-block" ng-show="formdata.price_error" ng-bind="formdata.price_error[0]"></p>
-          </div>
-
-          </form>
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" class="form-control" ng-model="formdata.category">
+            <option value="">Select Category</option>
+            @foreach ($categories as $category)
+              <option value="{{$category}}">{{$category}}</option>
+            @endforeach
+          </select>
+          <p class="help-block" ng-show="formdata.category_error" ng-bind="formdata.category_error[0]"></p>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="add_menu()">Save</button>
+
+        <div class="form-group">
+          <label>Subcategory</label>
+          <input type="text" name="subcategory" placeholder="Subcategory" class="form-control" ng-model="formdata.subcategory">
+          <p class="help-block" ng-show="formdata.subcategory_error" ng-bind="formdata.subcategory_error[0]"></p>
         </div>
+
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="Name" class="form-control" ng-model="formdata.name">
+          <p class="help-block" ng-show="formdata.name_error" ng-bind="formdata.name_error[0]"></p>
+        </div>
+
+        <div class="form-group">
+          <label>Price</label>
+          <input type="text" name="price" placeholder="Price" class="form-control" ng-model="formdata.price">
+          <p class="help-block" ng-show="formdata.price_error" ng-bind="formdata.price_error[0]"></p>
+        </div>
+
+        </form>
       </div>
-
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="add_menu()">Save</button>
+      </div>
     </div>
+
   </div>
 </div>
 

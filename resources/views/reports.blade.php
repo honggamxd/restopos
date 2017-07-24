@@ -17,24 +17,24 @@
 <div class="col-sm-2">
   <label>Navigation:</label>
   <ul class="nav nav-pills nav-stacked">
-    <li class="active"><a data-toggle="pill" href="#sales">Sales</a></li>
-    <li><a data-toggle="pill" href="#settlements">Settlements</a></li>
-    <li><a data-toggle="pill" href="#all">All Reports</a></li>
+    <!-- <li><a data-toggle="pill" href="#category">Per Category</a></li> -->
+    <!-- <li><a data-toggle="pill" href="#settlements">Settlements</a></li> -->
+    <li class="active"><a data-toggle="pill" href="#all">All Reports</a></li>
   </ul>
 </div>
 <div class="col-sm-4">
   <div class="tab-content">
-    <div id="sales" class="tab-pane fade in active">
-      <form class="form" method="get" action="/reports/restaurant/sales">
-        <h1 style="text-align: center;">Sales Reports</h1>
+    <!-- <div id="category" class="tab-pane fade in active">
+      <form class="form" method="get" action="/reports/restaurant/category">
+        <h1 style="text-align: center;">Per Category Reports</h1>
         <div class="form-group">
           <label>Date From</label>
-          <input type="text" id="sales-date-from" name="date_from" class="form-control" placeholder="Date From" value="{{date('m/d/Y')}}" readonly>
+          <input type="text" id="category-date-from" name="date_from" class="form-control" placeholder="Date From" value="{{date('m/d/Y')}}" readonly>
         </div>
 
         <div class="form-group">
           <label>Date To</label>
-          <input type="text" id="sales-date-to" name="date_to" class="form-control" placeholder="Date To" value="{{date('m/d/Y')}}" readonly>
+          <input type="text" id="category-date-to" name="date_to" class="form-control" placeholder="Date To" value="{{date('m/d/Y')}}" readonly>
         </div>
 
         <div class="form-group">
@@ -59,8 +59,8 @@
           <button type="submit" class="btn btn-primary btn-block">View Report</button>
         </div>
       </form>
-    </div>
-    <div id="all" class="tab-pane fade">
+    </div> -->
+    <div id="all" class="tab-pane fade in active">
       <form class="form" method="get" action="/reports/restaurant/all">
         <h1 style="text-align: center;">All Reports</h1>
         <div class="form-group">

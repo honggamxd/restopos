@@ -55,10 +55,23 @@
       </div>
       <div class="modal-body">
         <form>
+
+          <div class="form-group">
+            <label>Outlet:</label>
+            <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
+              <option value="">Select Outlet</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+
           <div class="form-group">
             <label>Table Name:</label>
             <input type="text" ng-model="formdata.name" placeholder="Table Name" class="form-control">
           </div>
+
+
         </form>
       </div>
       <div class="modal-footer">

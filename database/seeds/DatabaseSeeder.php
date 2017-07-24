@@ -12,5 +12,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
+      DB::table('app_config')->insert([
+          'categories' => 'Food,Beverages,Sundry,Others',
+          'settlements' => 'cash,credit,debit,cheque,guest_ledger,send_bill,free_of_charge',
+          'version' => '1.0000',
+      ]);
     }
 }

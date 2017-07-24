@@ -89,7 +89,32 @@
     }
   }
 
-  function test_helper_pox()
+  function settlements($type)
   {
-    return "asdasdasd";
+    switch ($type) {
+      case 'cash':
+        return 'Cash';
+        break;
+      case 'credit':
+        return 'Credit Card';
+        break;
+      case 'debit':
+        return 'Debit Card';
+        break;
+      case 'cheque':
+        return 'Cheque';
+        break;
+      case 'guest_ledger':
+        return 'Guest Ledger';
+        break;
+      case 'send_bill':
+        return 'Send Bill';
+        break;
+      case 'free_of_charge':
+        return 'FOC';
+        break;
+      default:
+        return '';
+        break;
+    }
   }
