@@ -120,8 +120,11 @@
 <script type="text/javascript" src="/assets/semantic-ui/components/popup.min.js"></script>
 <script type="text/javascript" src="/assets/semantic-ui/components/checkbox.min.js"></script>
 
-<script type="text/javascript" src="/assets/js/angular.min.js"></script>
-<script type="text/javascript" src="/assets/js/angular-route.min.js"></script>
+<!-- Angularjs -->
+<script type="text/javascript" src="/assets/js/1.6.5/angular.min.js"></script>
+<script type="text/javascript" src="/assets/js/1.6.5/angular-route.min.js"></script>
+<script type="text/javascript" src="/assets/js/1.6.5/angular-sanitize.min.js"></script>
+
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 <script type="text/javascript" src="/assets/js/tablesort.js"></script>
 <script type="text/javascript" src="/assets/js/alertify.js"></script>

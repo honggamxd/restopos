@@ -231,6 +231,7 @@ class Restaurant_table_customer_controller extends Controller
       $restaurant_bill_detail->special_order = $preview_data->special_order;
       $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
       $restaurant_bill_detail->restaurant_id = $preview_data->restaurant_id;
+      $restaurant_bill_detail->date_ = strtotime(date("m/d/Y"));
       $restaurant_bill_detail->save();
     }
 

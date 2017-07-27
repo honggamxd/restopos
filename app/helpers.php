@@ -1,9 +1,9 @@
 <?php
 
-  function paging($page,$num_items,$maxitem,$class="",$attrib="",$pre="",$post="")
+  function paging($page,$num_items,$display_per_page,$class="",$attrib="",$pre="",$post="")
   {
-    $pre = ($pre==""?'<tr><td colspan="200" style="text-align:center">':$pre);
-    $post = ($post==""?'</td></tr>':$post);
+    $pre = ($pre==""?'':$pre);
+    $post = ($post==""?'':$post);
     if($num_items==0){
       $paging = "";
       $paging .= $pre;
@@ -14,16 +14,16 @@
       if($class==""){
         $class = "paging";
       }
-      $attrib["href"] = "#";
+      $attrib["href"] = "javascript:void(0);";
       $attrib["class"] = $class;
       $paging = "";
       $paging .= $pre;
       ($page<=1?$page=1:false);
-      $limit = ($page*$maxitem)-$maxitem;
-      if(($num_items%$maxitem)==0){
-        $lastpage=($num_items/$maxitem);
+      $limit = ($page*$display_per_page)-$display_per_page;
+      if(($num_items%$display_per_page)==0){
+        $lastpage=($num_items/$display_per_page);
       }else{
-        $lastpage=($num_items/$maxitem)-(($num_items%$maxitem)/$maxitem)+1;
+        $lastpage=($num_items/$display_per_page)-(($num_items%$display_per_page)/$display_per_page)+1;
       }
       $i = 0;
       if(is_array($attrib)){

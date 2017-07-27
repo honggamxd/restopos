@@ -37,14 +37,15 @@ Route::get('/restaurant/table/customer/list', 'Restaurant_table_customer_control
 Route::post('/restaurant/table/customer/remove/{id}', 'Restaurant_table_customer_controller@destroy');
 Route::post('/restaurant/table/customer/payment/make/{id}', 'Restaurant_payment_controller@store');
 Route::get('/restaurant/table/customer/payment/list/{id}', 'Restaurant_payment_controller@show');
-Route::get('/restaurant/table/list', 'Restaurant_table_controller@get_list');
+Route::get('/restaurant/table/list/{type}', 'Restaurant_table_controller@get_list');
 
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
 
 
 Route::get('/reports', 'Reports_controller@index');
 Route::get('/reports/restaurant/{type}', 'Reports_controller@restaurant');
-Route::get('/api/reports/restaurant/{type}', 'Reports_controller@restaurant_reports');
+Route::get('/print/reports/restaurant/{type}', 'Reports_controller@restaurant_print');
+Route::get('/api/reports/restaurant/{type}', 'Reports_controller@restaurant_api');
 
 
 

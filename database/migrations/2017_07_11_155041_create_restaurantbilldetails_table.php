@@ -18,6 +18,7 @@ class CreateRestaurantbilldetailsTable extends Migration
           $table->text('special_order');
           $table->integer('quantity');
           $table->double('price');
+          $table->integer('date_');
           $table->integer('restaurant_bill_id');
           $table->integer('restaurant_id');
           $table->boolean('deleted');

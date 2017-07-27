@@ -534,7 +534,7 @@
     function show_table() {
       $http({
           method : "GET",
-          url : "/restaurant/table/list",
+          url : "/restaurant/table/list/serve",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
           $scope.formdata.table_id = $scope.table[0];

@@ -41,6 +41,24 @@
 @section('content')
 <div class="col-sm-12">
  <button type="button" class="ui icon secondary button" onclick="$('#add-list-table-modal').modal('show')" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i> Add tables</button>
+ <div class="table-responsive">
+   <table class="ui unstackable table">
+     <thead>
+       <tr>
+         <th>Table Name</th>
+         <th>Outlet</th>
+         <th>Status</th>
+       </tr>
+       <tbody>
+         <tr ng-repeat="table_data in table" ng-cloak>
+           <td>@{{table_data.name}}</td>
+           <td>@{{table_data.restaurant_id}}</td>
+           <td>@{{(table_data.occupied==0?"Available":"Occupied")}}</td>
+         </tr>
+       </tbody>
+     </thead>
+   </table>
+ </div>
 </div>
 @endsection
 
@@ -112,6 +130,18 @@
          $scope.formdata.date_payment_error = errors.date_payment;
       });
     }
+    show_table();
+    function show_table() {
+      $http({
+          method : "GET",
+          url : "/restaurant/table/list/all",
+      }).then(function mySuccess(response) {
+          $scope.table = response.data.result;
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
+
   });
 
 

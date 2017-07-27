@@ -9,11 +9,17 @@ use App\Restaurant_table;
 
 class Restaurant_table_controller extends Controller
 {
-  public function get_list(Request $request)
+  public function get_list(Request $request,$type)
   {
-    $restaurant_table = new Restaurant_table;
-    $data["result"] = $restaurant_table->where(["occupied"=>0,"deleted"=>0])->get();
-    return $data;
+    if($type=="serve"){
+      $restaurant_table = new Restaurant_table;
+      $data["result"] = $restaurant_table->where(["occupied"=>0,"deleted"=>0])->get();
+      return $data;
+    }else{
+      $restaurant_table = new Restaurant_table;
+      $data["result"] = $restaurant_table->where(["deleted"=>0])->get();
+      return $data;
+    }
   }
 
   public function store(Request $request)

@@ -20,6 +20,10 @@ class CreateRestaurantPaymentTable extends Migration
           $table->integer('date_');
           $table->integer('date_time');
           $table->integer('restaurant_bill_id');
+          $table->boolean('bill_has_deleted');
+          $table->boolean('deleted');
+          $table->text('deleted_comment');
+          $table->integer('deleted_date');
         });
     }
 
