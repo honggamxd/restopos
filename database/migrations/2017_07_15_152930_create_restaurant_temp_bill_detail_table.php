@@ -14,11 +14,11 @@ class CreateRestaurantTempBillDetailTable extends Migration
     {
       Schema::create('restaurant_temp_bill_detail', function (Blueprint $table) {
         $table->increments('id');
-        $table->integer('restaurant_menu_id');
+        $table->integer('restaurant_menu_id')->unsigned();
         $table->integer('quantity');
         $table->double('price');
         $table->string('special_order');
-        $table->integer('restaurant_temp_bill_id');
+        $table->integer('restaurant_temp_bill_id')->unsigned();
       });
     }
 

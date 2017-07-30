@@ -14,13 +14,13 @@ class CreateRestaurantbilldetailsTable extends Migration
     {
         Schema::create('restaurant_bill_detail', function (Blueprint $table) {
           $table->increments('id');
-          $table->integer('restaurant_menu_id');
+          $table->integer('restaurant_menu_id')->unsigned();
           $table->text('special_order');
           $table->integer('quantity');
           $table->double('price');
           $table->integer('date_');
-          $table->integer('restaurant_bill_id');
-          $table->integer('restaurant_id');
+          $table->integer('restaurant_bill_id')->unsigned();
+          $table->integer('restaurant_id')->unsigned();
           $table->boolean('deleted');
           $table->text('deleted_comment');
           $table->integer('deleted_date');

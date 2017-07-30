@@ -157,7 +157,6 @@ Davao City, 8000
           method : "GET",
           url : "/restaurant/table/customer/bill/view/"+{{$id}},
       }).then(function mySuccess(response) {
-          // console.log(response.data)
           $scope.bill = response.data.bill;
           $scope.bill_detail = response.data.bill_detail;
           $scope.footer.sub_total =  response.data.sub_total;

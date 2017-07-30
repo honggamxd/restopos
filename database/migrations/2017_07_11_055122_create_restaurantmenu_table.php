@@ -19,7 +19,7 @@ class CreateRestaurantmenuTable extends Migration
         $table->string('name');
         $table->boolean('is_prepared');
         $table->double('price');
-        $table->integer('restaurant_id');
+        $table->integer('restaurant_id')->unsigned();
         $table->boolean('deleted');
         $table->text('deleted_comment');
         $table->integer('deleted_date');

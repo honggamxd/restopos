@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRestaurantorderdetailsTable extends Migration
+class CreateInventoryItemTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,17 +12,16 @@ class CreateRestaurantorderdetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('restaurant_order_detail', function (Blueprint $table) {
+        Schema::create('inventory_item', function (Blueprint $table) {
           $table->increments('id');
-          $table->integer('restaurant_menu_id')->unsigned();
-          $table->text('special_order');
-          $table->integer('quantity');
-          $table->double('price');
-          $table->integer('restaurant_order_id')->unsigned();
-          $table->integer('restaurant_id')->unsigned();
+          $table->string('category');
+          $table->string('subcategory');
+          $table->string('item_name');
+          $table->double('cost_price');
           $table->boolean('deleted');
           $table->text('deleted_comment');
           $table->integer('deleted_date');
+          $table->integer('user_id')->unsigned();
         });
     }
 
@@ -33,6 +32,6 @@ class CreateRestaurantorderdetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('restaurant_order_detail');
+        Schema::dropIfExists('inventory_item');
     }
 }

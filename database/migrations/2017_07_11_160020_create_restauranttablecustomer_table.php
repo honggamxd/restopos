@@ -20,9 +20,9 @@ class CreateRestauranttablecustomerTable extends Migration
           $table->boolean('has_order');
           $table->boolean('has_paid');
           $table->boolean('has_billed_out');
-          $table->integer('restaurant_id');
-          $table->integer('restaurant_table_id');
-          $table->integer('restaurant_temp_bill_id');
+          $table->integer('restaurant_id')->unsigned();
+          $table->integer('restaurant_table_id')->unsigned();
+          $table->integer('restaurant_temp_bill_id')->unsigned();
           $table->boolean('has_bill');
         });
     }

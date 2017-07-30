@@ -15,7 +15,7 @@ class CreateRestauranttableTable extends Migration
         Schema::create('restaurant_table', function (Blueprint $table) {
           $table->increments('id');
           $table->string('name');
-          $table->integer('restaurant_id');
+          $table->integer('restaurant_id')->unsigned();
           $table->boolean('occupied');
           $table->boolean('deleted');
           $table->text('deleted_comment');

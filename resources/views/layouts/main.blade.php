@@ -43,7 +43,7 @@
         <i class="browser icon"></i>
         Inventory
     </a>
-    <a class="item">
+    <a class="item" href="/purchases">
         <i class="in cart icon"></i>
         Purchases
     </a>

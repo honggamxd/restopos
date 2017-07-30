@@ -16,10 +16,10 @@ class CreateRestaurantPaymentTable extends Migration
           $table->increments('id');
           $table->double('payment');
           $table->string('settlement');
-          $table->integer('restaurant_id');
+          $table->integer('restaurant_id')->unsigned();
           $table->integer('date_');
           $table->integer('date_time');
-          $table->integer('restaurant_bill_id');
+          $table->integer('restaurant_bill_id')->unsigned();
           $table->boolean('bill_has_deleted');
           $table->boolean('deleted');
           $table->text('deleted_comment');

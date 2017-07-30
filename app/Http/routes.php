@@ -41,11 +41,20 @@ Route::get('/restaurant/table/list/{type}', 'Restaurant_table_controller@get_lis
 
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
 
-
 Route::get('/reports', 'Reports_controller@index');
 Route::get('/reports/restaurant/{type}', 'Reports_controller@restaurant');
 Route::get('/print/reports/restaurant/{type}', 'Reports_controller@restaurant_print');
+
+
+
+//api get
 Route::get('/api/reports/restaurant/{type}', 'Reports_controller@restaurant_api');
+
+//api post
+Route::post('/api/inventory/item/add', 'Inventory_item_controller@store');
+
+//pages
+Route::get('/purchases', 'Purchases_controller@index');
 
 
 
