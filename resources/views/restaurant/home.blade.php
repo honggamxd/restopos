@@ -213,7 +213,7 @@
                     </td>
                     <td class="center aligned middle aligned" ng-init="cart_data.update_quantity=true">
                       <div ng-hide="cart_data.show_update_quantity" ng-click="toggle_update_quantity(this)" style="width: 100%;cursor: pointer;">@{{cart_data.quantity}}</div>
-                      <input style="width: 100px" type="number" ng-show="cart_data.show_update_quantity" ng-model="cart_data.quantity" ng-blur="update_quantity(this)">
+                      <input style="width: 100px" type="number" ng-show="cart_data.show_update_quantity" ng-model="cart_data.quantity" ng-blur="update_quantity(this)" focus-me="cart_data.show_update_quantity">
                     </td>
                     <td class="right aligned middle aligned">@{{cart_data.total|currency:""}}</td>
                   </tr>
@@ -966,6 +966,24 @@
     });
 
   });
+
+  app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {
+      return {
+          link: function (scope, element, attrs) {
+              var model = $parse(attrs.focusMe);
+              scope.$watch(model, function (value) {
+                  if (value === true) {
+                      $timeout(function () {
+                          element[0].focus();
+                      });
+                  }
+              });
+              element.bind('blur', function () {
+                  scope.$apply(model.assign(scope, false));
+              });
+          }
+      };
+  }]);
   angular.bootstrap(document, ['main']);
 </script>
 @endsection

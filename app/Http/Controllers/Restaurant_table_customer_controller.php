@@ -78,7 +78,7 @@ class Restaurant_table_customer_controller extends Controller
     return $data;
   }
 
-  public function update_cart(Request $request,$type,$id)
+  public function update_cart_items(Request $request,$type,$id)
   {
     if($type=="special_order"){
       $cart_data = $request->session()->get('restaurant.table_customer.'.$id.".cart");

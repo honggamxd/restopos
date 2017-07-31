@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Validator;
+use DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,13 @@ class AppServiceProvider extends ServiceProvider
             }else{
                 return false;
             }
+        });
+
+        Validator::extend('custom_unique', function($attribute, $value, $parameters, $validator) {
+            $db = DB::table($parameters[0])->where('deleted',0);
+            $db->where($parameters[1],$value);
+            $db->where($parameters[2],$parameters[3]);
+            return ($db->count()===0);
         });
     }
 
