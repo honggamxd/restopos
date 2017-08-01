@@ -11,6 +11,7 @@
 <div class="active section">Purchases</div>
 @endsection
 @section('content')
+<h1 style="text-align: center;">Purchase</h1>
 <div class="col-sm-9">
   <div class="row">
     <div class="col-sm-10">
@@ -56,13 +57,13 @@
                 <div class="ui input" ng-show="item.edit_quantity">
                   <input type="number" placeholder="QTY" ng-model="item.quantity" ng-blur="update_cart(this,'quantity')" focus-me="item.edit_quantity">
                 </div>
-                <p style="cursor: pointer;" ng-hide="item.edit_quantity" ng-click="edit_quantity(this)">@{{item.quantity}}</p>
+                <p style="cursor: pointer;" ng-hide="item.edit_quantity" ng-click="edit_quantity(this)" data-balloon="Click to Edit" data-balloon-pos="left">@{{item.quantity}}</p>
               </td>
               <td class="middle aligned right aligned" ng-init="item.edit_cost_price=false">
                 <div class="ui input" ng-show="item.edit_cost_price">
                   <input type="number" step="0.01" placeholder="Cost Price" ng-model="item.cost_price" ng-blur="update_cart(this,'cost_price')" focus-me="item.edit_cost_price">
                 </div>
-                <p style="cursor: pointer;" ng-hide="item.edit_cost_price" ng-click="edit_cost_price(this)">@{{item.cost_price|currency:""}}</p>
+                <p style="cursor: pointer;" ng-hide="item.edit_cost_price" ng-click="edit_cost_price(this)" data-balloon="Click to Edit" data-balloon-pos="left">@{{item.cost_price|currency:""}}</p>
               </td>
               <td class="right aligned middle aligned">@{{item.total | currency:""}}</td>
               <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(this)">&times;</button></td>
@@ -71,7 +72,7 @@
           <tfoot ng-cloak>
             <tr>
               <th class="right aligned middle aligned" colspan="4">TOTAL</th>
-              <th class="right aligned middle aligned">@{{cart.total|currency:""}}</th>
+              <th class="right aligned middle aligned"><span ng-if="cart.total!=0">@{{cart.total|currency:""}}</span></th>
               <th class="right aligned middle aligned"></th>
             </tr>
           </tfoot>
@@ -81,19 +82,23 @@
   </div>
 </div>
 <div class="col-sm-3">
-  <div class="form-group">
-    <label>PO Number</label>
-    <input type="text" name="" placeholder="PO Number" class="form-control" ng-model="cart.info.po_number" ng-blur="add_info_cart(this)">
-  </div>
-  <div class="form-group">
-    <label>Comments</label>
-    <textarea placeholder="Comments" class="form-control" ng-model="cart.info.comments" ng-blur="add_info_cart(this)"></textarea>
-  </div>
-  <div class="form-group">
-    <label>Controls</label>
-    <button class="btn btn-primary btn-block"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
-    <button class="btn btn-danger btn-block" ng-click="destroy_cart()"><span class="glyphicon glyphicon-trash"></span> Cancel</button>
-  </div>
+  <form ng-submit="make_purchase()">
+    <input type="hidden" ng-model="cart.items">
+    <div class="form-group">
+      <label>PO Number</label>
+      <input type="text" name="" placeholder="PO Number" class="form-control" ng-model="cart.info.po_number" ng-blur="add_info_cart(this)">
+      <p class="help-block">@{{formerrors.po_number}}</p>
+    </div>
+    <div class="form-group">
+      <label>Comments</label>
+      <textarea placeholder="Comments" class="form-control" ng-model="cart.info.comments" ng-blur="add_info_cart(this)"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Controls</label>
+      <button type="submit" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
+      <button type="button" class="btn btn-danger btn-block" ng-click="destroy_cart()"><span class="glyphicon glyphicon-trash"></span> Cancel</button>
+    </div>
+  </form>
 </div>
 @endsection
 
@@ -145,10 +150,13 @@
   $('table').tablesort();
   // $("#add-item-modal").modal("show");
   var app = angular.module('main', ['ngSanitize']);
-  app.controller('content-controller', function($scope,$http, $sce) {
+  app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.formdata = {};
     $scope.formerrors = {};
     $scope.cart = {};
+    $scope.cart.info = {};
+    $scope.cart.info.po_number = "";
+    $scope.cart.info.comments = "";
     $scope.search_item_name = "";
 
     $scope.edit_cost_price = function(data) {
@@ -213,7 +221,7 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        // console.log(response.data);
+        console.log(response.data);
         $scope.cart.total = response.data.total;
       }, function(rejection) {
          var errors = rejection.data;
@@ -259,11 +267,36 @@
       });
     }
 
+    $scope.make_purchase = function(){
+      if(isEmpty($scope.cart.items)){
+        alertify.error("Cart is empty. Please add items in the cart.");
+      }else{
+        $http({
+           method: 'POST',
+           url: '/api/purchases/make',
+           data: $.param({
+            'items':$scope.cart.items,
+            'po_number':$scope.cart.info.po_number,
+            'comments':$scope.cart.info.comments,
+           }),
+           headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(response) {
+          console.log(response.data);
+          $window.location.assign('/purchases/view/'+response.data);
+        }, function(rejection) {
+           var errors = rejection.data;
+           console.log(errors);
+           $scope.formerrors = errors;
+        });
+      }
+    }
+
     show_cart();
 
 
     $( "#search-item-name" ).autocomplete({
-      source: "/api/search/inventory/item/category/value",
+      source: "/api/search/inventory/item/item_name/value",
       select: function( event, ui ) {
         add_items_cart(ui.item.id);
         $scope.search_item_name = "";

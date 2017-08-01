@@ -91,24 +91,12 @@
     window.close();
   });
   $(document).ready(function() {
-    setTimeout(function(){ window.print(); }, 1000);
+    setTimeout(function(){ window.print(); }, 500);
   });
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce) {
-    show_order();
-    function show_order() {
-      $http({
-        method : "GET",
-        url : "/restaurant/table/order/view/"+{{$id}},
-      }).then(function mySuccess(response) {
-        console.log(response.data);
-        $scope.order = response.data.order;
-        $scope.order_detail = response.data.order_detail;
-
-      }, function myError(response) {
-        console.log(response.statusText);
-      });
-    }
+        $scope.order = {!! $order !!};
+        $scope.order_detail = {!! $order_detail !!};
   });
   angular.bootstrap(document, ['main']);
 </script>

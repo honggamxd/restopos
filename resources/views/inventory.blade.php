@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Restaurant POS')
+@section('title', 'Inventory')
 
 @section('css')
 <style type="text/css">
@@ -41,126 +41,20 @@
   </form>
   <div class="table-responsive">
     <table class="ui sortable compact table unstackable" id="menu-table">
-      <thead class="full-width">
+      <thead>
         <tr>
-          <th class="center aligned">Category</th>
-          <th class="center aligned">Item</th>
-          <th class="center aligned">Unit</th>
-          <th class="center aligned">Qty</th>
-          <th class="center aligned">Cost Price</th>
-          <th class="center aligned"></th>
+          <th class="center aligned middle aligned">Category</th>
+          <th class="center aligned middle aligned">Item</th>
+          <th class="center aligned middle aligned">Qty</th>
+          <th class="center aligned middle aligned">Cost Price</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 1</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">1</td>
-          <td class="right aligned">10.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success" onclick="$('#useinventory-modal').modal('show')">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 2</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">2</td>
-          <td class="right aligned">20.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 3</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">3</td>
-          <td class="right aligned">30.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 4</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">4</td>
-          <td class="right aligned">40.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 5</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">5</td>
-          <td class="right aligned">50.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 6</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">6</td>
-          <td class="right aligned">60.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 7</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">7</td>
-          <td class="right aligned">70.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 8</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">8</td>
-          <td class="right aligned">80.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 9</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">9</td>
-          <td class="right aligned">90.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 10</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">10</td>
-          <td class="right aligned">100.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="center aligned">Inv Category</td>
-          <td class="center aligned">Inv Item 11</td>
-          <td class="center aligned">Inv Unit</td>
-          <td class="center aligned">11</td>
-          <td class="right aligned">110.00</td>
-          <td class="center aligned">
-            <button class="btn btn-success">Use</button>
-          </td>
+      <tbody ng-cloak>
+        <tr ng-repeat="item_data in items">
+          <td class="center aligned middle aligned">@{{item_data.category}}</td>
+          <td class="center aligned middle aligned">@{{item_data.item_name}}</td>
+          <td class="center aligned middle aligned">@{{item_data.quantity}}</td>
+          <td class="right aligned middle aligned">@{{item_data.cost_price|currency:""}}</td>
         </tr>
       </tbody>
     </table>
@@ -323,5 +217,42 @@
 <script type="text/javascript">
   $('table').tablesort();
   $('.ui.checkbox').checkbox('enable');
+
+  
+
+  var app = angular.module('main', ['ngSanitize']);
+  app.controller('content-controller', function($scope,$http, $sce, $window) {
+    show_items();
+    function show_items() {
+      $http({
+          method : "GET",
+          url : "/api/inventory/item/show",
+      }).then(function mySuccess(response) {
+          // console.log(response.data.items);
+          $scope.items = response.data.items;
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
+  });
+
+  app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {
+      return {
+          link: function (scope, element, attrs) {
+              var model = $parse(attrs.focusMe);
+              scope.$watch(model, function (value) {
+                  if (value === true) {
+                      $timeout(function () {
+                          element[0].focus();
+                      });
+                  }
+              });
+              element.bind('blur', function () {
+                  scope.$apply(model.assign(scope, false));
+              });
+          }
+      };
+  }]);
+  angular.bootstrap(document, ['main']);
 </script>
 @endsection

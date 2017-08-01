@@ -52,19 +52,32 @@ Route::get('/api/reports/restaurant/{type}', 'Reports_controller@restaurant_api'
 Route::get('/api/search/inventory/item/{type}/{option}', 'Inventory_item_controller@search_item');
 
 
-Route::get('/api/purchases/cart', 'Purchases_controller@show');
+Route::get('/api/purchases/cart', 'Purchases_controller@show_cart');
 Route::get('/api/purchases/cart/show', 'Purchases_controller@cart');
+Route::get('/api/inventory/item/show', 'Inventory_item_controller@show');
 
 //api post
 Route::post('/api/inventory/item/add', 'Inventory_item_controller@store');
 Route::post('/api/purchases/cart/item/add/{id}', 'Purchases_controller@store_cart');
 Route::post('/api/purchases/cart/info', 'Purchases_controller@add_info_cart');
+Route::post('/api/purchases/make', 'Purchases_controller@store_purchase');
 Route::put('/api/purchases/cart/item/update/{id}', 'Purchases_controller@update_cart_items');
 Route::delete('/api/purchases/cart/item/delete/{id}', 'Purchases_controller@delete_cart_items');
 Route::delete('/api/purchases/cart/delete', 'Purchases_controller@destroy_cart');
 
+Route::get('/api/issuance/cart', 'Issuance_controller@show_cart');
+Route::post('/api/issuance/cart/item/add/{id}', 'Issuance_controller@store_cart');
+Route::post('/api/issuance/cart/info', 'Issuance_controller@add_info_cart');
+Route::post('/api/issuance/make', 'Issuance_controller@store_purchase');
+Route::put('/api/issuance/cart/item/update/{id}', 'Issuance_controller@update_cart_items');
+Route::delete('/api/issuance/cart/item/delete/{id}', 'Issuance_controller@delete_cart_items');
+Route::delete('/api/issuance/cart/delete', 'Issuance_controller@destroy_cart');
+
 //pages
 Route::get('/purchases', 'Purchases_controller@index');
+Route::get('/purchases/view/{id}', 'Purchases_controller@show');
+Route::get('/inventory', 'Inventory_item_controller@index');
+Route::get('/issuance', 'Issuance_controller@index');
 
 
 
@@ -79,10 +92,6 @@ Route::get('/order', function () {
 
 Route::get('restaurant/bill/{id}', function ($id) {
     return view('restaurant.bill',["id"=>$id]);
-});
-
-Route::get('/inventory', function () {
-    return view('restaurant.inventory');
 });
 
 Route::get('/receiving', function () {

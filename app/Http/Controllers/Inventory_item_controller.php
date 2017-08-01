@@ -13,7 +13,12 @@ class Inventory_item_controller extends Controller
 {
   public function index(Request $request)
   {
-    # code...
+    return view('inventory');
+  }
+
+  public function issuance_index(Request $request)
+  {
+    return view('issuance');
   }
   public function store(Request $request)
   {
@@ -39,6 +44,20 @@ class Inventory_item_controller extends Controller
     $data["cart"] = $request->session()->get("inventory"); 
     return $data;
     // $inventory_item->date_ = $request->cost_price;
+  }
+
+  public function show(Request $request)
+  {
+    $inventory_item = new Inventory_item;
+    $inventory_item_detail = new Inventory_item_detail;
+    $data["items"] = $inventory_item
+      ->where('deleted',0)
+      ->get();
+    foreach ($data["items"] as $item_data) {
+      $item_data->quantity = $inventory_item_detail->select(DB::raw('SUM(quantity) as total'))->where('inventory_item_id',$item_data->id)->value('total');
+      $item_data->quantity = ($item_data->quantity==null?0:$item_data->quantity);
+    }
+    return $data;
   }
 
   public function search_item(Request $request,$type,$option)

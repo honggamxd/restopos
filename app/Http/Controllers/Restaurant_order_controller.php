@@ -68,6 +68,17 @@ class Restaurant_order_controller extends Controller
 
   public function index(Request $request,$id)
   {
-    return view("restaurant.order",["id"=>$id]);
+    $restaurant_order = new Restaurant_order;
+    $restaurant_order_detail = new Restaurant_order_detail;
+    $restaurant_menu = new Restaurant_menu;
+    $data["order"] = $restaurant_order->find($id);
+    $data["order_detail"] = $restaurant_order_detail->where("restaurant_order_id",$id)->get();
+    foreach ($data["order_detail"] as $order_detail) {
+      $order_detail->menu = $restaurant_menu->find($order_detail->restaurant_menu_id)->name;
+    }
+    $data["order"]->date_ = date("F d, Y",$data["order"]->date_);
+    $data["order"]->date_time = date("h:i:s A",$data["order"]->date_time);
+    $data["id"] = $id;
+    return view("restaurant.order",$data);
   }
 }
