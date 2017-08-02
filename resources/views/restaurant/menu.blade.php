@@ -31,8 +31,9 @@
         <div class="field">
           <label>Category</label>
           <select class="ui dropdown fluid">
-            <option value="food">Food</option>
-            <option value="beverage">Beverage</option>
+          @foreach ($categories as $category)
+            <option value="{{$category}}">{{$category}}</option>
+          @endforeach
           </select>
         </div>
         <div class="field">
@@ -155,9 +156,9 @@
           <label>Outlet</label>
           <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
             <option value="">Select Outlet</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            @foreach($restaurants as $restaurant)
+              <option value="{{$restaurant->id}}">{{$restaurant->name}}</option>
+            @endforeach
           </select>
           <p class="help-block" ng-show="formdata.restaurant_id" ng-bind="formdata.restaurant_id_error[0]"></p>
         </div>

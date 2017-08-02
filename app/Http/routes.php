@@ -68,7 +68,7 @@ Route::delete('/api/purchases/cart/delete', 'Purchases_controller@destroy_cart')
 Route::get('/api/issuance/cart', 'Issuance_controller@show_cart');
 Route::post('/api/issuance/cart/item/add/{id}', 'Issuance_controller@store_cart');
 Route::post('/api/issuance/cart/info', 'Issuance_controller@add_info_cart');
-Route::post('/api/issuance/make', 'Issuance_controller@store_purchase');
+Route::post('/api/issuance/make', 'Issuance_controller@store_issuance');
 Route::put('/api/issuance/cart/item/update/{id}', 'Issuance_controller@update_cart_items');
 Route::delete('/api/issuance/cart/item/delete/{id}', 'Issuance_controller@delete_cart_items');
 Route::delete('/api/issuance/cart/delete', 'Issuance_controller@destroy_cart');
@@ -78,6 +78,7 @@ Route::get('/purchases', 'Purchases_controller@index');
 Route::get('/purchases/view/{id}', 'Purchases_controller@show');
 Route::get('/inventory', 'Inventory_item_controller@index');
 Route::get('/issuance', 'Issuance_controller@index');
+Route::get('/issuance/view/{id}', 'Issuance_controller@show');
 
 
 

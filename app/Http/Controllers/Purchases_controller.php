@@ -45,6 +45,7 @@ class Purchases_controller extends Controller
       ];
       $request->session()->put("purchase_cart",$data);
     }
+      return $this->show_cart($request);
   }
 
   public function update_cart_items(Request $request,$id)
@@ -66,11 +67,13 @@ class Purchases_controller extends Controller
       'comments' => $request->comments
     ];
     $request->session()->put("purchase_cart",$data);
+    return $this->show_cart($request);
   }
 
   public function delete_cart_items(Request $request,$id)
   {
     $request->session()->forget("purchase_cart.items.item_".$id);
+    return $this->show_cart($request);
   }
   public function show_cart(Request $request)
   {
@@ -109,34 +112,41 @@ class Purchases_controller extends Controller
   public function destroy_cart(Request $request)
   {
     $request->session()->forget("purchase_cart");
-    return $this->show($request);
+    return $this->show_cart($request);
   }
 
   public function store_purchase(Request $request)
   {
-
-    $data = $request->session()->get("purchase_cart");
+    $this->validate($request, [
+        'items' => 'not_zero_quantity',
+        'po_number' => 'required|max:255',
+        'comments' => 'max:255'
+    ],[
+      'not_zero_quantity' => 'The quantity of items to be purchased must not be less than 1.'
+    ]);
+    // $data = $request->session()->get("purchase_cart");
     $purchase = new Purchase;
     $purchase->po_number = $request->po_number;
-    $purchase->comment = $request->comments;
+    $purchase->comments = $request->comments;
     $purchase->date_ = strtotime(date("m/d/Y"));
     $purchase->date_time = strtotime(date("m/d/Y h:i:s A"));
     $purchase->save();
     $purchase_data = $purchase->orderBy("id","DESC")->first();
-    foreach ($data["items"] as $item_data) {
+    
+    foreach ($request->items as $cart_item) {
       $purchase_detail = new Purchase_detail;
-      $purchase_detail->inventory_item_id = $item_data["inventory_item_id"];
-      $purchase_detail->quantity = $item_data["quantity"];
-      $purchase_detail->cost_price = $item_data["cost_price"];
+      $purchase_detail->inventory_item_id = $cart_item["inventory_item_id"];
+      $purchase_detail->quantity = $cart_item["quantity"];
+      $purchase_detail->cost_price = $cart_item["cost_price"];
       $purchase_detail->date_ = $purchase_data->date_;
       $purchase_detail->purchase_id = $purchase_data->id;
       $purchase_detail->user_id = $purchase_data->user_id;
       $purchase_detail->save();
 
       $inventory_item_detail = new Inventory_item_detail;
-      $inventory_item_detail->inventory_item_id = $item_data["inventory_item_id"];
-      $inventory_item_detail->quantity = $item_data["quantity"];
-      $inventory_item_detail->cost_price = $item_data["cost_price"];
+      $inventory_item_detail->inventory_item_id = $cart_item["inventory_item_id"];
+      $inventory_item_detail->quantity = $cart_item["quantity"];
+      $inventory_item_detail->cost_price = $cart_item["cost_price"];
       $inventory_item_detail->date_ = $purchase_data->date_;
       $inventory_item_detail->date_time = $purchase_data->date_time;
       $inventory_item_detail->remarks = "Purchase";
@@ -145,14 +155,14 @@ class Purchases_controller extends Controller
       $inventory_item_detail->user_id = $purchase_data->user_id;
       $inventory_item_detail->save();
 
-
       $inventory_item = new Inventory_item;
-      $item_data = $inventory_item->find($item_data["inventory_item_id"]);
-      $item_data->cost_price = $item_data["cost_price"];
+      $item_data = $inventory_item->find($cart_item["inventory_item_id"]);
+      $item_data->cost_price = $cart_item["cost_price"];
       $item_data->save();
     }
     $request->session()->forget("purchase_cart");
     return $purchase_data->id;
+    // return $item_data;
   }
 
   public function cart(Request $request)

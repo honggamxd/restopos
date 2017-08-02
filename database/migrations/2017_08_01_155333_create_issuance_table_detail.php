@@ -12,7 +12,15 @@ class CreateIssuanceTableDetail extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('issuance_detail', function (Blueprint $table) {
+          $table->increments('id');
+          $table->integer('inventory_item_id')->unsigned();
+          $table->integer('quantity');
+          $table->integer('date_');
+          $table->boolean('deleted');
+          $table->integer('issuance_id')->unsigned();
+          $table->integer('user_id')->unsigned();
+        });
     }
 
     /**
@@ -22,6 +30,6 @@ class CreateIssuanceTableDetail extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('issuance_detail');
     }
 }

@@ -13,7 +13,9 @@ class Restaurant_menu_controller extends Controller
   public function index(Request $request)
   {
     $app_config = DB::table('app_config')->first();
+    $restaurant = DB::table('restaurant')->get();
     $data["categories"] = explode(',', $app_config->categories);
+    $data["restaurants"] = $restaurant;
     return view('restaurant.menu',$data);
   }
 

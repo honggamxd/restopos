@@ -12,7 +12,18 @@ class CreateIssuanceTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('issuance', function (Blueprint $table) {
+          $table->increments('id');
+          $table->string('issuance_from');
+          $table->string('issuance_number');
+          $table->text('comments');
+          $table->integer('date_');
+          $table->integer('date_time');
+          $table->integer('user_id')->unsigned();
+          $table->boolean('deleted');
+          $table->text('deleted_comment');
+          $table->integer('deleted_date');
+        });
     }
 
     /**
@@ -22,6 +33,7 @@ class CreateIssuanceTable extends Migration
      */
     public function down()
     {
-        //
+
+        Schema::dropIfExists('issuance');
     }
 }

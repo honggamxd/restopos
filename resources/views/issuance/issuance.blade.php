@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Purchases  ')
+@section('title', 'Issuance  ')
 
 @section('css')
 <style type="text/css">
@@ -8,17 +8,20 @@
 </style>
 @endsection
 @section('breadcrumb')
-<a class="section" href="/purchases">Purchases</a>
+<a class="section" href="/inventory">Inventory</a>
+<i class="right angle icon divider"></i>
+<a class="section" href="/issuance">Issuance</a>
 <i class="right angle icon divider"></i>
 <div class="active section">View</div>
 @endsection
 @section('content')
 <div class="col-sm-12">
   <p ng-cloak>
-    ID : @{{purchase.id}} <br>
-    Date : @{{purchase.date_}} <br>
-    Time : @{{purchase.date_time}} <br>
-    PO # : @{{purchase.po_number}} <br>
+    ID : @{{issuance.id}} <br>
+    Date : @{{issuance.date_}} <br>
+    Time : @{{issuance.date_time}} <br>
+    Issuance # : @{{issuance.issuance_number}} <br>
+    Issuance From : @{{issuance.issuance_from}} <br>
   </p>
   <div class="table-responsive">
     <table class="ui single line unstackable table">
@@ -27,25 +30,15 @@
           <th class="center aligned middle aligned">Category</th>
           <th class="center aligned middle aligned">Item Name</th>
           <th class="center aligned middle aligned">Quantity</th>
-          <th class="center aligned middle aligned">Cost Price</th>
-          <th class="center aligned middle aligned">Total</th>
         </tr>
       </thead>
       <tbody ng-init="total=0" ng-cloak>
-        <tr ng-repeat="item in purchase.items">
+        <tr ng-repeat="item in issuance.items">
           <td class="center aligned middle aligned">@{{item.category}}</td>
           <td class="center aligned middle aligned">@{{item.item_name}}</td>
           <td class="center aligned middle aligned">@{{item.quantity}}</td>
-          <td class="right aligned middle aligned">@{{item.cost_price|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-init="$parent.total = $parent.total + (item.cost_price*item.quantity)">@{{(item.cost_price*item.quantity)|currency:""}}</td>
         </tr>
       </tbody>
-      <tfoot ng-cloak>
-        <tr>
-          <th class="right aligned middle aligned" colspan="4">TOTAL</th>
-          <th class="right aligned middle aligned">@{{total}}</th>
-        </tr>
-      </tfoot>
     </table>
   </div>
   
@@ -101,9 +94,9 @@
   // $("#add-item-modal").modal("show");
   var app = angular.module('main', ['ngSanitize']);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
-    $scope.purchase = {!! $purchase_data !!};
-    $scope.purchase.items = {!! $items !!};
-    console.log($scope.purchase.id);
+    $scope.issuance = {!! $issuance_data !!};
+    $scope.issuance.items = {!! $items !!};
+    console.log($scope.issuance.id);
   });
 
   app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {

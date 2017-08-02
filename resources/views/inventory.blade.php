@@ -19,6 +19,8 @@
 @endsection
 @section('breadcrumb')
 <div class="active section">Inventory</div>
+<i class="right angle icon divider"></i>
+<a class="section" href="/issuance">Issuance</a>
 @endsection
 @section('content')
 <div class="col-sm-12">
@@ -46,7 +48,6 @@
           <th class="center aligned middle aligned">Category</th>
           <th class="center aligned middle aligned">Item</th>
           <th class="center aligned middle aligned">Qty</th>
-          <th class="center aligned middle aligned">Cost Price</th>
         </tr>
       </thead>
       <tbody ng-cloak>
@@ -54,7 +55,6 @@
           <td class="center aligned middle aligned">@{{item_data.category}}</td>
           <td class="center aligned middle aligned">@{{item_data.item_name}}</td>
           <td class="center aligned middle aligned">@{{item_data.quantity}}</td>
-          <td class="right aligned middle aligned">@{{item_data.cost_price|currency:""}}</td>
         </tr>
       </tbody>
     </table>

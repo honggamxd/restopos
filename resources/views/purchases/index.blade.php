@@ -50,10 +50,10 @@
             </tr>
           </thead>
           <tbody ng-cloak>
-            <tr ng-repeat="item in cart.items">
+            <tr ng-repeat="item in cart.items" ng-class="item.quantity == 0 ? 'error' : ''">
               <td class="center aligned middle aligned">@{{item.category}}</td>
               <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
-              <td class="middle aligned right aligned" ng-init="item.edit_cost_price=false">
+              <td class="middle aligned center aligned" ng-init="item.edit_cost_price=false">
                 <div class="ui input" ng-show="item.edit_quantity">
                   <input type="number" placeholder="QTY" ng-model="item.quantity" ng-blur="update_cart(this,'quantity')" focus-me="item.edit_quantity">
                 </div>
@@ -87,11 +87,12 @@
     <div class="form-group">
       <label>PO Number</label>
       <input type="text" name="" placeholder="PO Number" class="form-control" ng-model="cart.info.po_number" ng-blur="add_info_cart(this)">
-      <p class="help-block">@{{formerrors.po_number}}</p>
+      <p class="help-block" ng-cloak>@{{formerrors.po_number[0]}}</p>
     </div>
     <div class="form-group">
       <label>Comments</label>
       <textarea placeholder="Comments" class="form-control" ng-model="cart.info.comments" ng-blur="add_info_cart(this)"></textarea>
+      <p class="help-block" ng-cloak>@{{formerrors.comments[0]}}</p>
     </div>
     <div class="form-group">
       <label>Controls</label>
@@ -116,22 +117,22 @@
           <div class="form-group">
             <label>Category:</label>
             <input type="text" name="category" class="form-control" placeholder="Enter Category" ng-model="formdata.category">
-            <p class="help-block">@{{formerrors.category[0]}}</p>
+            <p class="help-block" ng-cloak>@{{formerrors.category[0]}}</p>
           </div>
 <!--           <div class="form-group">
             <label>Subcategory:</label>
             <input type="text" name="subcategory" class="form-control" placeholder="Enter Subcategory" ng-model="formdata.subcategory">
-            <p class="help-block">@{{formerrors.subcategory[0]}}</p>
+            <p class="help-block" ng-cloak>@{{formerrors.subcategory[0]}}</p>
           </div> -->
           <div class="form-group">
             <label>Item Name:</label>
             <input type="text" name="item_name" class="form-control" placeholder="Enter Item Name" ng-model="formdata.item_name">
-            <p class="help-block">@{{formerrors.item_name[0]}}</p>
+            <p class="help-block" ng-cloak>@{{formerrors.item_name[0]}}</p>
           </div>
           <div class="form-group">
             <label>Cost Price:</label>
             <input type="number" step="0.01" name="cost_price" class="form-control" placeholder="Enter Cost Price" ng-model="formdata.cost_price">
-            <p class="help-block">@{{formerrors.cost_price[0]}}</p>
+            <p class="help-block" ng-cloak>@{{formerrors.cost_price[0]}}</p>
           </div>
         </form>
       </div>
@@ -187,7 +188,6 @@
     }
 
     $scope.delete_item = function(data) {
-      data.item.total = data.item.cost_price * data.item.quantity;
       $http({
          method: 'DELETE',
          url: '/api/purchases/cart/item/delete/'+data.item.inventory_item_id,
@@ -196,7 +196,10 @@
       })
       .then(function(response) {
         // console.log(response.data);
-        show_cart();
+        // show_cart();
+        $scope.cart.items = response.data.items;
+        $scope.cart.total = response.data.total;
+        $scope.cart.info = response.data.info;
       }, function(rejection) {
          var errors = rejection.data;
          console.log(errors);
@@ -210,7 +213,6 @@
       }else{
         data.item.edit_cost_price = (data.item.edit_cost_price?false:true);
       }
-      data.item.total = data.item.cost_price * data.item.quantity;
       $http({
          method: 'PUT',
          url: '/api/purchases/cart/item/update/'+data.item.inventory_item_id,
@@ -221,8 +223,12 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
+        // console.log(response.data);
+        // $scope.cart.total = response.data.total;
+        $scope.cart.items = response.data.items;
         $scope.cart.total = response.data.total;
+        $scope.cart.info = response.data.info;
+
       }, function(rejection) {
          var errors = rejection.data;
          console.log(errors);
@@ -241,7 +247,7 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
+        // console.log(response.data);
         // $scope.cart.total = response.data.total;
       }, function(rejection) {
          var errors = rejection.data;
@@ -257,7 +263,10 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        show_cart();
+        $scope.cart.items = response.data.items;
+        $scope.cart.total = response.data.total;
+        $scope.cart.info = response.data.info;
+        // show_cart();
         // console.log(response.data);
         // $scope.cart.total = response.data.total;
       }, function(rejection) {
@@ -282,12 +291,16 @@
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(function(response) {
-          console.log(response.data);
+          // console.log(response.data);
           $window.location.assign('/purchases/view/'+response.data);
         }, function(rejection) {
            var errors = rejection.data;
            console.log(errors);
            $scope.formerrors = errors;
+           if($scope.formerrors.hasOwnProperty('items')){
+             alertify.error($scope.formerrors.items[0]);
+            
+           }
         });
       }
     }
@@ -313,7 +326,10 @@
       })
       .then(function(response) {
         // console.log(response.data);
-        show_cart();
+        $scope.cart.items = response.data.items;
+        $scope.cart.total = response.data.total;
+        $scope.cart.info = response.data.info;
+        // show_cart();
       }, function(rejection) {
          var errors = rejection.data;
          console.log(errors);

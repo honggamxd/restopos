@@ -9,6 +9,8 @@
 </style>
 @endsection
 @section('breadcrumb')
+<a class="section" href="/inventory">Inventory</a>
+<i class="right angle icon divider"></i>
 <div class="active section">Issuance</div>
 @endsection
 @section('content')
@@ -37,7 +39,7 @@
               </tr>
             </thead>
             <tbody ng-cloak>
-              <tr ng-repeat="item in cart.items" ng-init="item.edit_quantity=false;item.valid=(item.stocks>=item.quantity?true:false)">
+              <tr ng-repeat="item in cart.items" ng-init="item.edit_quantity=false" ng-class="item.quantity == 0 ? 'error' : (item.valid == 0 ? 'warning' : '')">
                 <td class="center aligned middle aligned">@{{item.category}}</td>
                 <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
                 <td class="center aligned middle aligned">@{{item.stocks}}</td>
@@ -60,14 +62,17 @@
       <div class="form-group">
         <label>Issuance #</label>
         <input type="text" name="" placeholder="Issuance #" class="form-control" ng-model="cart.info.issuance_number" ng-blur="add_info_cart(this)">
+        <p class="help-block" ng-cloak>@{{formerrors.issuance_number[0]}}</p>
       </div>
       <div class="form-group">
         <label>Issuance From:</label>
         <input type="text" name="" placeholder="Issuance From:" class="form-control" ng-model="cart.info.issuance_from" ng-blur="add_info_cart(this)">
+        <p class="help-block" ng-cloak>@{{formerrors.issuance_from[0]}}</p>
       </div>
       <div class="form-group">
         <label>Comments</label>
         <textarea placeholder="Comments" class="form-control" ng-model="cart.info.comments" ng-blur="add_info_cart(this)"></textarea>
+        <p class="help-block" ng-cloak>@{{formerrors.comments[0]}}</p>
       </div>
       <div class="form-group">
         <label>Controls</label>
@@ -105,8 +110,93 @@
     }
 
 
+    $scope.update_cart = function(data) {
+      data.item.edit_quantity = (data.item.edit_quantity?false:true);
+      $http({
+         method: 'PUT',
+         url: '/api/issuance/cart/item/update/'+data.item.inventory_item_id,
+         data: $.param({
+          'quantity':data.item.quantity,
+         }),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        // console.log(response.data);
+        $scope.cart.items = response.data.items;
+        $scope.cart.info = response.data.info;
+        // show_cart();
+      }, function(rejection) {
+         var errors = rejection.data;
+         console.log(errors);
+         $scope.formerrors = errors;
+      });
+    }
+    $scope.add_info_cart = function(data) {
+      $http({
+         method: 'POST',
+         url: '/api/issuance/cart/info',
+         data: $.param({
+          'issuance_number':$scope.cart.info.issuance_number,
+          'issuance_from':$scope.cart.info.issuance_from,
+          'comments':$scope.cart.info.comments,
+         }),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        // console.log(response.data);
+      }, function(rejection) {
+         var errors = rejection.data;
+         console.log(errors);
+         $scope.formerrors = errors;
+      });
+    }
+    $scope.delete_item = function(data) {
+      $http({
+         method: 'DELETE',
+         url: '/api/issuance/cart/item/delete/'+data.item.inventory_item_id,
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        // console.log(response.data);
+        $scope.cart.items = response.data.items;
+        $scope.cart.info = response.data.info;
+        // show_cart();
+      }, function(rejection) {
+         var errors = rejection.data;
+         console.log(errors);
+         $scope.formerrors = errors;
+      });
+    }
+
     $scope.make_issuance = function() {
-      console.log($scope.cart.items);
+      if(isEmpty($scope.cart.items)){
+        alertify.error("Cart is empty. Please add items in the cart.");
+      }else{
+        $http({
+           method: 'POST',
+           url: '/api/issuance/make',
+           data: $.param({
+            'items':$scope.cart.items,
+            'issuance_number':$scope.cart.info.issuance_number,
+            'issuance_from':$scope.cart.info.issuance_from,
+            'comments':$scope.cart.info.comments,
+           }),
+           headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(response) {
+          // console.log(response.data);
+          $window.location.assign('/issuance/view/'+response.data);
+        }, function(rejection) {
+           var errors = rejection.data;
+           console.log(errors);
+           $scope.formerrors = errors;
+           if($scope.formerrors.hasOwnProperty('items')){
+             alertify.error($scope.formerrors.items[0]);
+            
+           }
+        });
+      }
     }
 
 
@@ -119,26 +209,10 @@
       })
       .then(function(response) {
         // console.log(response.data);
-        show_cart();
-      }, function(rejection) {
-         var errors = rejection.data;
-         console.log(errors);
-         $scope.formerrors = errors;
-      });
-    }
-
-    $scope.update_cart = function(data) {
-      data.item.edit_quantity = (data.item.edit_quantity?false:true);
-      $http({
-         method: 'PUT',
-         url: '/api/issuance/cart/item/update/'+data.item.inventory_item_id,
-         data: $.param({
-          'quantity':data.item.quantity,
-         }),
-         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-      .then(function(response) {
-        console.log(response.data);
+        // show_cart();
+        $scope.cart.items = response.data.items;
+        $scope.cart.total = response.data.total;
+        $scope.cart.info = response.data.info;
       }, function(rejection) {
          var errors = rejection.data;
          console.log(errors);

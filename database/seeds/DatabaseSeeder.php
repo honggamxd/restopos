@@ -17,5 +17,13 @@ class DatabaseSeeder extends Seeder
           'settlements' => 'cash,credit,debit,cheque,guest_ledger,send_bill,free_of_charge',
           'version' => '1.0000',
       ]);
+
+      DB::table('restaurant')->insert(
+        [
+          ['name' => 'Viewdeck Café'],
+          ['name' => 'Koi Café'],
+          ['name' => 'Roberto’s Garden Restaurant']
+        ]
+      );
     }
 }

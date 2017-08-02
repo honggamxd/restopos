@@ -15,7 +15,7 @@ class CreatePurchaseTable extends Migration
         Schema::create('purchase', function (Blueprint $table) {
           $table->increments('id');
           $table->string('po_number');
-          $table->text('comment');
+          $table->text('comments');
           $table->integer('date_');
           $table->integer('date_time');
           $table->integer('user_id')->unsigned();
