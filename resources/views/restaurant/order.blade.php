@@ -42,7 +42,7 @@
 <table class="order-table">
 <tbody>
   <tr>
-    <td style="width: 50%">Outlet:<span ng-cloak></span></td>
+    <td style="width: 50%">Outlet: <span ng-cloak>@{{order.restaurant_name}}</span></td>
     <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
   </tr>
   <tr>

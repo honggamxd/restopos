@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>@yield('title')</title>
+<title>Login</title>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-@yield('meta')
 <link rel="stylesheet" type="text/css" href="/assets/jqueryui/jquery-ui.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/balloon.css">
@@ -26,91 +25,71 @@
 <link rel="stylesheet" type="text/css" href="/assets/css/alertify-css/themes/default.min.css">
 
 <link rel="stylesheet" type="text/css" href="/assets/css/core.css">
-
-@yield('css')
+<style>
+#login-container{
+  margin-top: 20vh;
+  border: 1px solid grey;
+  padding: 1rem 1rem 1rem 1rem;
+}
+</style>
 </head>
-<body ng-controller="content-controller">
-<div class="ui left vertical inverted labeled icon sidebar menu">
-    @if(Session::get('users.user_data')->privilege=="restaurant")
-    <a class="item" href="/">
-        <i class="food icon"></i>
-        Restaurant
-    </a>
-    <a class="item" href="/restaurant/menu">
-        <i class="food icon"></i>
-        Restaurant<br>Menu
-    </a>
-    @endif
-    @if(Session::get('users.user_data')->privilege=="admin")
-    <a class="item" href="/inventory">
-        <i class="browser icon"></i>
-        Inventory
-    </a>
-    <a class="item" href="/issuance">
-        <i class="browser icon"></i>
-        Issuance
-    </a>
-    <a class="item" href="/purchases">
-        <i class="in cart icon"></i>
-        Purchases
-    </a>
-    <a class="item">
-        <i class="users icon"></i>
-        Users
-    </a>
-    <a class="item" href="/reports">
-        <i class="bar chart icon"></i>
-        Reports
-    </a>
-    @endif
-    @if(Session::get('users.user_data')->privilege=="restaurant")
-    <a class="item" href="/settings">
-        <i class="settings icon"></i>
-        Settings
-    </a>
-    @endif
-
-</div>
-<div class="pusher">
-<nav class="navbar navbar-default nav-stacked navbar-fixed-bottom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pos-navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span> 
-      </button>
-      <a class="navbar-brand" href="javascript:void(0);"><img src="/assets/images/logo.png"></a>
-    </div>
-    <div class="collapse navbar-collapse" id="pos-navbar">
-    <ul class="nav navbar-nav navbar-right">
-    <li><a href="javascript:void(0);" id="time-display"></a></li>
-    <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-      <i class="fa fa-user" aria-hidden="true"></i>
-      <span class="caret"></span></a>
-      <ul class="dropdown-menu">
-        <li><a href="javascript:void(0);">Change Password</a></li>
-        <li><a href="/logout">Logout</a></li>
-      </ul>
-    </li>
-    </ul>
+<body id="has-logo" ng-controller="content-controller">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-8 col-md-4 col-lg-4 col-sm-push-2 col-md-push-4 col-lg-push-4">
+      <div id="login-container" style="background-color: white;">
+      <h1 style="text-align: center;">LOGIN</h1>
+        <form action="/login" method="post" class="form-horizontal">
+          {{csrf_field()}}
+          <div class="form-group">
+            <label class="col-sm-2 col-xs-4 col-md-3" for="email">Username:</label>
+            <div class="col-sm-10 col-xs-8 col-md-9">
+              <div class="ui left icon input fluid">
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username">
+                <i class="user icon"></i>
+              </div>
+              <p class="help-block" id="account_help-block">{{ $errors->first('username') }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 col-xs-4 col-md-3" for="pwd">Password:</label>
+            <div class="col-sm-10 col-xs-8 col-md-9"> 
+              <div class="ui left icon input fluid">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password">
+                <i class="lock icon"></i>
+              </div>
+              <p class="help-block" id="account_password_help-block">{{ $errors->first('password') }}</p>
+            </div>
+          </div>
+          <div class="form-group"> 
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div>
+        <br>
+        Admin Password<br>
+        Username: <b>admin</b><br>
+        Password: <b>admin</b><br>
+        <br>
+        Viewdeck Café User<br>
+        Username: <b>user1</b><br>
+        Password: <b>user1</b><br>
+        <br>
+        Koi Café<br>
+        Username: <b>user2</b><br>
+        Password: <b>user2</b><br>
+        <br>
+        Roberto’s Garden Restaurant<br>
+        Username: <b>user3</b><br>
+        Password: <b>user3</b><br>
+      </div>
     </div>
   </div>
-</nav>
-    <div class="container-fluid">
-      <div class="ui breadcrumb">
-        <a class="section hideprint hideprint" id="menu">App Menu</a>
-        <i class="right angle icon divider hideprint"></i>
-        @yield('breadcrumb')
-      </div>
-      <div class="row">
-        @yield('content')
-      </div>
-    </div>
-</div>
 
-@yield('modals')
+</div>
 <!-- jQuery -->
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
@@ -136,6 +115,12 @@
 <script type="text/javascript" src="/assets/js/shortcut.js"></script>
 
 <script type="text/javascript" src="/assets/js/core.js"></script>
-@yield('scripts')
+<script type="text/javascript">
+  var app = angular.module('main', ['ngSanitize']);
+  app.controller('content-controller', function($scope,$http, $sce) {
+
+  });
+  angular.bootstrap(document, ['main']);
+</script>
 </body>
 </html>

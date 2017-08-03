@@ -78,6 +78,7 @@ class Restaurant_order_controller extends Controller
     }
     $data["order"]->date_ = date("F d, Y",$data["order"]->date_);
     $data["order"]->date_time = date("h:i:s A",$data["order"]->date_time);
+    $data["order"]->restaurant_name = DB::table('restaurant')->find($data["order"]->restaurant_id)->name;
     $data["id"] = $id;
     return view("restaurant.order",$data);
   }

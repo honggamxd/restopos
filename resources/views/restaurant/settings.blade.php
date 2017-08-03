@@ -15,7 +15,6 @@
   }  
 }
 
-
 #complete-order-table{
   width: 100%;
   border-collapse: collapse;
@@ -30,8 +29,6 @@
   border-collapse: collapse;
   margin: 0;
 }
-
-
 
 </style>
 @endsection
@@ -52,7 +49,7 @@
        <tbody>
          <tr ng-repeat="table_data in table" ng-cloak>
            <td>@{{table_data.name}}</td>
-           <td>@{{table_data.restaurant_id}}</td>
+           <td>@{{table_data.restaurant_name}}</td>
            <td>@{{(table_data.occupied==0?"Available":"Occupied")}}</td>
          </tr>
        </tbody>
@@ -74,15 +71,17 @@
       <div class="modal-body">
         <form>
 
-          <div class="form-group">
+<!--           <div class="form-group">
             <label>Outlet:</label>
             <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
               <option value="">Select Outlet</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+              @foreach($restaurants as $restaurant)
+                <option value="{{$restaurant->id}}">{{$restaurant->name}}</option>
+              @endforeach
             </select>
-          </div>
+          </div> -->
+          
+          <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
 
           <div class="form-group">
             <label>Table Name:</label>
@@ -114,6 +113,7 @@
     $scope.formdata = {
      _token: "{{csrf_token()}}",
     };
+    $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
     $scope.add_list_table = function() {
       $http({
          method: 'POST',
@@ -125,6 +125,7 @@
         // console.log(response.data);
         alertify.success(response.data+" is added.");
         $scope.formdata.name = "";
+            show_table();
       }, function(rejection) {
          var errors = rejection.data;
          $scope.formdata.date_payment_error = errors.date_payment;
@@ -134,6 +135,9 @@
     function show_table() {
       $http({
           method : "GET",
+          params: {
+            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
+          },
           url : "/restaurant/table/list/all",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;

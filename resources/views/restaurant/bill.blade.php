@@ -49,7 +49,7 @@ Davao City, 8000
 <table class="bill-table">
 <tbody>
   <tr>
-    <td style="width: 50%">Outlet:<span ng-cloak></span></td>
+    <td style="width: 50%">Outlet: <span ng-cloak>@{{bill.restaurant_name}}</span></td>
     <td>Date: <span ng-cloak>@{{bill.date_}}</span></td>
   </tr>
   <tr>

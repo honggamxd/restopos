@@ -8,28 +8,37 @@ use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
 use App\Restaurant_menu;
 use App\Restaurant_payment;
+use App\Purchase;
+use App\Purchase_detail;
+use App\Issuance;
+use App\Issuance_detail;
 use DB;
 
 class Reports_controller extends Controller
 {
   public function index(Request $request)
   {
-    return view('reports');
+    return view('reports.index');
   }
 
-  public function restaurant(Request $request,$type)
+  public function show(Request $request,$type)
   {
+    $data["date_from"] = $request->get('date_from');
+    $data["date_to"] = $request->get('date_to');
     if($type=="all"){
       $app_config = DB::table('app_config')->first();
       $data["categories"] = explode(',', $app_config->categories);
       $data["settlements"] = explode(',', $app_config->settlements);
-      $data["date_from"] = $request->get('date_from');
-      $data["date_to"] = $request->get('date_to');
-      return view('restaurant.reports.all',$data);
+      return view('reports.all',$data);
+    }elseif ($type=="purchases") {
+      # code...
+      return view('reports.purchases',$data);
+    }else{
+      return view('reports.issuances',$data);
     }
   } 
 
-  public function restaurant_print(Request $request,$type)
+  public function show_print(Request $request,$type)
   {
     if($type=="all"){
       $app_config = DB::table('app_config')->first();
@@ -37,10 +46,10 @@ class Reports_controller extends Controller
       $data["settlements"] = explode(',', $app_config->settlements);
       $data["date_from"] = $request->get('date_from');
       $data["date_to"] = $request->get('date_to');
-      return view('restaurant.reports.printable.all',$data);
+      return view('reports.printable.all',$data);
     }
   }
-  public function restaurant_api(Request $request,$type)
+  public function api(Request $request,$type)
   {
     if($type=="all"){
       DB::enableQueryLog();
@@ -69,13 +78,22 @@ class Reports_controller extends Controller
         $display_per_page = $bills->count();
       }
       $bills = $bills->get();
-      $data["footer"]["pax"] = $restaurant_bill->select('*',DB::raw('SUM(pax) as total_pax'))->where('deleted',0)->value('total_pax');
-      $data["footer"]["excess"] = $restaurant_bill->select('*',DB::raw('SUM(excess) as total_excess'))->where('deleted',0)->value('total_excess');
+      $data["footer"]["pax"] = $restaurant_bill
+        ->select('*',DB::raw('SUM(pax) as total_pax'))
+        ->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)])
+        ->where('deleted',0)->value('total_pax');
+      $data["footer"]["excess"] = $restaurant_bill
+        ->select('*',DB::raw('SUM(excess) as total_excess'))
+        ->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)])
+        ->where('deleted',0)
+        ->value('total_excess');
+
       $data["footer"]["total"] = 0;
       foreach ($categories as $category) {
         $category_total = $restaurant_bill_detail->join('restaurant_bill','restaurant_bill.id','=','restaurant_bill_detail.restaurant_bill_id');
         $category_total->join('restaurant_menu','restaurant_bill_detail.restaurant_menu_id','=','restaurant_menu.id');
         $category_total->where('restaurant_bill.deleted',0);
+        $category_total->whereBetween('restaurant_bill.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
         $category_total->select(
             'restaurant_bill.*',
             'restaurant_bill_detail.*',
@@ -91,6 +109,7 @@ class Reports_controller extends Controller
       foreach ($settlements as $settlement) {
         $settlement_total = $restaurant_bill->join('restaurant_payment','restaurant_bill.id','=','restaurant_payment.restaurant_bill_id');
         $settlement_total->where('restaurant_bill.deleted',0);
+        $settlement_total->whereBetween('restaurant_payment.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
         $settlement_total->select(
             'restaurant_bill.*',
             'restaurant_payment.payment',
@@ -126,9 +145,66 @@ class Reports_controller extends Controller
       }
       $data["result"] = $bills;
       $data["getQueryLog"] = DB::getQueryLog();
-    }elseif ($type=="settlements") {
-      # code...
+    }elseif ($type=="purchases") {
+      DB::enableQueryLog();
+      $purchase = new Purchase;
+      $purchase_detail = new Purchase_detail;
+
+      $page = $request->page;
+      $display_per_page = $request->display_per_page;
+      $limit = ($page*$display_per_page)-$display_per_page;
+
+      $purchases = $purchase->where('deleted',0);
+      $purchases->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+      $num_items = $purchases->count();
+      if($request->paging=="true"){
+        $purchases->skip($limit);
+        $purchases->take($display_per_page);
+      }else{
+        $display_per_page = $purchases->count();
+      }
+      $purchases = $purchases->get();
+
+      foreach ($purchases as $purchase_data) {
+        $purchase_data->total = $purchase_detail->select(DB::raw('SUM(cost_price*quantity) as total'))->where('purchase_id',$purchase_data->id)->value('total');
+        $purchase_data->date_ = date("j-M",$purchase_data->date_);
+      }
+      $data["footer"]["total"] = $purchase_detail
+        ->select(DB::raw('SUM(cost_price*quantity) as total'))
+        ->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)])
+        ->where('deleted',0)
+        ->value('total');
+      $data["paging"] = paging($page,$num_items,$display_per_page);
+      $data["result"] = $purchases;
+      $data["getQueryLog"] = DB::getQueryLog();
+    }elseif ($type=="issuances") {
+      DB::enableQueryLog();
+      $issuance = new Issuance;
+      $issuance_detail = new Issuance_detail;
+
+      $page = $request->page;
+      $display_per_page = $request->display_per_page;
+      $limit = ($page*$display_per_page)-$display_per_page;
+
+      $issuances = $issuance->where('deleted',0);
+      $issuances->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+      $num_items = $issuances->count();
+      if($request->paging=="true"){
+        $issuances->skip($limit);
+        $issuances->take($display_per_page);
+      }else{
+        $display_per_page = $issuances->count();
+      }
+      $issuances = $issuances->get();
+
+      foreach ($issuances as $issuance_data) {
+        $issuance_data->date_ = date("j-M",$issuance_data->date_);
+      }
+      $data["paging"] = paging($page,$num_items,$display_per_page);
+      $data["result"] = $issuances;
+      $data["getQueryLog"] = DB::getQueryLog();
     }
     return $data;
   }
+
 }
