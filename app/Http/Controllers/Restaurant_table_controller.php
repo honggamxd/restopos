@@ -13,17 +13,11 @@ class Restaurant_table_controller extends Controller
   {
     if($type=="serve"){
       $restaurant_table = new Restaurant_table;
-      $data["result"] = $restaurant_table->where(["occupied"=>0,"deleted"=>0,'restaurant_id'=>$request->session()->get('users.user_data')->restaurant_id])->get();
-      foreach ($data["result"] as $table_data) {
-        $table_data->restaurant_name = DB::table('restaurant')->find($table_data->restaurant_id)->name;
-      }
+      $data["result"] = $restaurant_table->where(["occupied"=>0,"deleted"=>0])->get();
       return $data;
     }else{
       $restaurant_table = new Restaurant_table;
-      $data["result"] = $restaurant_table->where(["deleted"=>0,'restaurant_id'=>$request->session()->get('users.user_data')->restaurant_id])->get();
-      foreach ($data["result"] as $table_data) {
-        $table_data->restaurant_name = DB::table('restaurant')->find($table_data->restaurant_id)->name;
-      }
+      $data["result"] = $restaurant_table->where(["deleted"=>0])->get();
       return $data;
     }
   }
@@ -32,7 +26,7 @@ class Restaurant_table_controller extends Controller
   {
     $restaurant_table = new Restaurant_table;
     $restaurant_table->name = $request->name;
-    $restaurant_table->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+    $restaurant_table->restaurant_id = $request->restaurant_id;
     $restaurant_table->save();
     return $request->name;
   }

@@ -9,6 +9,8 @@
 </style>
 @endsection
 @section('breadcrumb')
+<a class="section" href="/inventory">Inventory</a>
+<i class="right angle icon divider"></i>
 <div class="active section">Issuance</div>
 @endsection
 @section('content')

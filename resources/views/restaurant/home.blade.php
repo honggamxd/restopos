@@ -42,14 +42,14 @@
 @endsection
 @section('content')
 <div class="col-sm-12">
-  <h1 style="text-align: center;">{{$restaurant_name}}</h1>
+  <h1 style="text-align: center;">Name of Outlet</h1>
   <div class="form-group">
       <div class="ui action input">
         <input type="text" placeholder="Search Table">
         <button class="ui icon button" type="submit">
           <i class="search icon"></i>
         </button>
-        <button type="button" class="ui icon primary button" ng-click="show_table()"><i class="add icon"></i> Add Customer</button>
+        <button type="button" class="ui icon primary button" ng-click="show_table()" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i></button>
       </div>
   </div>
   <div class="table-responsive">
@@ -103,7 +103,6 @@
       <div class="modal-body">
         <form action="/items" method="post" id="add-items-form">
         {{ csrf_field() }}
-        <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
         <div class="form-group" ng-show="has_table">
           <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id" ng-options="item as item.name for item in table track by item.id">
             <!-- <option ng-repeat="table_data in table" value="@{{table_data.id}}">@{{table_data.name}}</option> -->
@@ -491,7 +490,7 @@
      _token: "{{csrf_token()}}",
     };
     $scope.table = {};
-    $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+
     $scope.add_list_table = function() {
       $http({
          method: 'POST',
@@ -535,9 +534,6 @@
     function show_table() {
       $http({
           method : "GET",
-          params: {
-            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-          },
           url : "/restaurant/table/list/serve",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
@@ -562,9 +558,6 @@
     function show_table_customers() {
       $http({
           method : "GET",
-          params: {
-            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-          },
           url : "/restaurant/table/customer/list",
       }).then(function mySuccess(response) {
           $scope.table_customers = response.data.result;
@@ -667,10 +660,8 @@
           method : "GET",
           url : "/restaurant/menu/list",
           params: {
-            for: "orders",
-            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
+            for: "orders"
           },
-
       }).then(function mySuccess(response) {
           $scope.menu = response.data.result;
       }, function myError(response) {

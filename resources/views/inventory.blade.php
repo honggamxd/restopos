@@ -19,6 +19,8 @@
 @endsection
 @section('breadcrumb')
 <div class="active section">Inventory</div>
+<i class="right angle icon divider"></i>
+<a class="section" href="/issuance">Issuance</a>
 @endsection
 @section('content')
 <div class="col-sm-12">

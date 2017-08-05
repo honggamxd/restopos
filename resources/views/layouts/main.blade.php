@@ -31,7 +31,6 @@
 </head>
 <body ng-controller="content-controller">
 <div class="ui left vertical inverted labeled icon sidebar menu">
-    @if(Session::get('users.user_data')->privilege=="restaurant")
     <a class="item" href="/">
         <i class="food icon"></i>
         Restaurant
@@ -40,15 +39,9 @@
         <i class="food icon"></i>
         Restaurant<br>Menu
     </a>
-    @endif
-    @if(Session::get('users.user_data')->privilege=="admin")
     <a class="item" href="/inventory">
         <i class="browser icon"></i>
         Inventory
-    </a>
-    <a class="item" href="/issuance">
-        <i class="browser icon"></i>
-        Issuance
     </a>
     <a class="item" href="/purchases">
         <i class="in cart icon"></i>
@@ -62,13 +55,14 @@
         <i class="bar chart icon"></i>
         Reports
     </a>
-    @endif
-    @if(Session::get('users.user_data')->privilege=="restaurant")
+    <a class="item">
+        <i class="info icon"></i>
+        Keyboard<br>Shortcuts
+    </a>
     <a class="item" href="/settings">
         <i class="settings icon"></i>
         Settings
     </a>
-    @endif
 
 </div>
 <div class="pusher">
@@ -90,8 +84,9 @@
       <i class="fa fa-user" aria-hidden="true"></i>
       <span class="caret"></span></a>
       <ul class="dropdown-menu">
-        <li><a href="javascript:void(0);">Change Password</a></li>
-        <li><a href="/logout">Logout</a></li>
+        <li><a href="javascript:void(0);">Page 1-1</a></li>
+        <li><a href="javascript:void(0);">Page 1-2</a></li>
+        <li><a href="javascript:void(0);">Page 1-3</a></li>
       </ul>
     </li>
     </ul>

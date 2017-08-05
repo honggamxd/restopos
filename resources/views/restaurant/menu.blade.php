@@ -152,9 +152,7 @@
       <div class="modal-body">
         <form action="/restaurant/menu" method="post" id="add-items-form">
         {{ csrf_field() }}
-          <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
-        
-<!--         <div class="form-group">
+        <div class="form-group">
           <label>Outlet</label>
           <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
             <option value="">Select Outlet</option>
@@ -163,7 +161,7 @@
             @endforeach
           </select>
           <p class="help-block" ng-show="formdata.restaurant_id" ng-bind="formdata.restaurant_id_error[0]"></p>
-        </div> -->
+        </div>
 
         <div class="form-group">
           <label>Category</label>
@@ -226,14 +224,11 @@
     $scope.formdata = {
       _token: "{{csrf_token()}}",
     };
-    $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+
     show_menu();
     function show_menu() {
       $http({
         method : "GET",
-        params: {
-          'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-        },
         url : "/restaurant/menu/list",
       }).then(function mySuccess(response) {
         $scope.menu = response.data.result;
@@ -258,7 +253,6 @@
         $scope.formdata = {
           _token: "{{csrf_token()}}",
         };
-        $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
         show_menu();
       }, function(rejection) {
         var errors = rejection.data;

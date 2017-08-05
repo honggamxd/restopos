@@ -18,9 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('privilege');
             $table->integer('restaurant_id');
-            $table->boolean('deleted');
-            $table->text('deleted_comment');
-            $table->integer('deleted_date');
+            $table->string('deleted');
         });
     }
 
