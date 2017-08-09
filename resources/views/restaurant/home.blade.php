@@ -492,29 +492,13 @@
     };
     $scope.table = {};
     $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
-    $scope.add_list_table = function() {
-      $http({
-         method: 'POST',
-         url: '/restaurant/table/add',
-         data: $.param($scope.formdata),
-         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-      .then(function(response) {
-        // console.log(response.data);
-        alertify.success(response.data+" is added.");
-        $scope.formdata.name = "";
-      }, function(rejection) {
-         var errors = rejection.data;
-         $scope.formdata.date_payment_error = errors.date_payment;
-      });
-    }
 
     $scope.add_table = function() {
       $scope.formerrors = {};
       $scope.submit = true;
       $http({
          method: 'POST',
-         url: '/restaurant/table/customer/add',
+         url: '/api/restaurant/table/customer/add',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -538,7 +522,7 @@
           params: {
             'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
           },
-          url : "/restaurant/table/list/serve",
+          url : "/api/restaurant/table/list/serve",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
           $scope.formdata.table_id = $scope.table[0];
@@ -565,7 +549,7 @@
           params: {
             'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
           },
-          url : "/restaurant/table/customer/list",
+          url : "/api/restaurant/table/customer/list",
       }).then(function mySuccess(response) {
           $scope.table_customers = response.data.result;
       }, function myError(response) {
@@ -577,7 +561,7 @@
       console.log(data.$parent.customer_data.id);
       $http({
          method: 'POST',
-         url: '/restaurant/table/customer/remove/'+data.$parent.customer_data.id,
+         url: '/api/restaurant/table/customer/remove/'+data.$parent.customer_data.id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -607,7 +591,7 @@
       $scope.table_customer_total = "";
       $http({
           method : "GET",
-          url : "/restaurant/table/order/cart/"+table_customer_id,
+          url : "/api/restaurant/table/order/cart/"+table_customer_id,
       }).then(function mySuccess(response) {
         $scope.table_customer_cart = response.data.cart;
         $scope.table_customer_total = response.data.total;
@@ -631,7 +615,7 @@
       $scope.formdata.menu_id = data.cart_data.id;
       $http({
          method: 'POST',
-         url: '/restaurant/table/order/cart/update/special_order/'+data.$parent.table_customer_id,
+         url: '/api/restaurant/table/order/cart/update/special_order/'+data.$parent.table_customer_id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -647,7 +631,7 @@
       $scope.formdata.menu_id = data.cart_data.id;
       $http({
          method: 'POST',
-         url: '/restaurant/table/order/cart/update/quantity/'+data.$parent.table_customer_id,
+         url: '/api/restaurant/table/order/cart/update/quantity/'+data.$parent.table_customer_id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -665,7 +649,7 @@
     function show_menu() {
       $http({
           method : "GET",
-          url : "/restaurant/menu/list",
+          url : "/api/restaurant/menu/list",
           params: {
             for: "orders",
             'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
@@ -683,7 +667,7 @@
       $scope.submit = true;
       $http({
         method: 'POST',
-        url: '/restaurant/table/order/make/'+$scope.table_customer_id,
+        url: '/api/restaurant/table/order/make/'+$scope.table_customer_id,
         data: $.param($scope.formdata),
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -706,7 +690,7 @@
     function show_order(id) {
       $http({
         method : "GET",
-        url : "/restaurant/table/order/view/"+id,
+        url : "/api/restaurant/table/order/view/"+id,
       }).then(function mySuccess(response) {
         // console.log(response.data);
         $scope.order = response.data.order;
@@ -721,7 +705,7 @@
       $scope.formdata.table_customer_id = $scope.table_customer_id;
       $http({
          method: 'POST',
-         url: '/restaurant/table/order/cart',
+         url: '/api/restaurant/table/order/cart',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -741,7 +725,7 @@
     $scope.view_orders = function(data) {
       $http({
           method : "GET",
-          url : "/restaurant/table/customer/orders/"+data.customer_data.id,
+          url : "/api/restaurant/table/customer/orders/"+data.customer_data.id,
       }).then(function mySuccess(response) {
           $('#view-list-order-modal').modal('show');
           $scope.orders = response.data.result;
@@ -757,7 +741,7 @@
         // bill_preview
         $http({
           method : "GET",
-          url : "/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
+          url : "/api/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
         }).then(function mySuccess(response) {
           console.log(response.data);
           $scope.bill_preview = response.data.result;
@@ -770,7 +754,7 @@
       }else{
         $http({
            method: 'POST',
-           url: '/restaurant/table/customer/bill/preview/'+data.$parent.customer_data.id,
+           url: '/api/restaurant/table/customer/bill/preview/'+data.$parent.customer_data.id,
            data: $.param($scope.formdata),
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
@@ -793,7 +777,7 @@
       // console.log(data.bill_preview.table_customer_id);
       $http({
          method: 'POST',
-         url: '/restaurant/table/customer/bill/make/'+data.bill_preview.table_customer_id,
+         url: '/api/restaurant/table/customer/bill/make/'+data.bill_preview.table_customer_id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -814,7 +798,7 @@
       var id = data.$parent.$parent.customer_data.id;
       $http({
           method : "GET",
-          url : "/restaurant/table/customer/bill/list/"+id,
+          url : "/api/restaurant/table/customer/bill/list/"+id,
       }).then(function mySuccess(response) {
           console.log(response.data);
           $scope.bill = response.data.result;
@@ -858,7 +842,7 @@
       // console.log(data.$parent.bill_id);
       $http({
          method: 'POST',
-         url: '/restaurant/table/customer/payment/make/'+data.$parent.bill_id,
+         url: '/api/restaurant/table/customer/payment/make/'+data.$parent.bill_id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })

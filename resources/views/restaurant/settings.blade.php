@@ -43,13 +43,13 @@
      <thead>
        <tr>
          <th>Table Name</th>
-         <th>Outlet</th>
+         <!-- <th>Outlet</th> -->
          <th>Status</th>
        </tr>
        <tbody>
          <tr ng-repeat="table_data in table" ng-cloak>
            <td>@{{table_data.name}}</td>
-           <td>@{{table_data.restaurant_name}}</td>
+           <!-- <td>@{{table_data.restaurant_name}}</td> -->
            <td>@{{(table_data.occupied==0?"Available":"Occupied")}}</td>
          </tr>
        </tbody>
@@ -117,7 +117,7 @@
     $scope.add_list_table = function() {
       $http({
          method: 'POST',
-         url: '/restaurant/table/add',
+         url: '/api/restaurant/table/add',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -138,7 +138,7 @@
           params: {
             'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
           },
-          url : "/restaurant/table/list/all",
+          url : "/api/restaurant/table/list/all",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
       }, function myError(response) {

@@ -155,7 +155,7 @@ Davao City, 8000
     function show_bill() {
       $http({
           method : "GET",
-          url : "/restaurant/table/customer/bill/view/"+{{$id}},
+          url : "/api/restaurant/table/customer/bill/view/"+{{$id}},
       }).then(function mySuccess(response) {
           $scope.bill = response.data.bill;
           $scope.bill_detail = response.data.bill_detail;
@@ -173,7 +173,7 @@ Davao City, 8000
     function show_payment() {
       $http({
           method : "GET",
-          url : "/restaurant/table/customer/payment/list/"+{{$id}},
+          url : "/api/restaurant/table/customer/payment/list/"+{{$id}},
       }).then(function mySuccess(response) {
           console.log(response.data.result)
           $scope.payments = response.data.result;

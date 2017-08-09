@@ -234,7 +234,7 @@
         params: {
           'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
         },
-        url : "/restaurant/menu/list",
+        url : "/api/restaurant/menu/list",
       }).then(function mySuccess(response) {
         $scope.menu = response.data.result;
       }, function myError(response) {
@@ -247,7 +247,7 @@
 
       $http({
         method: 'POST',
-        url: '/restaurant/menu',
+        url: '/api/restaurant/menu',
         data: $.param($scope.formdata),
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -275,7 +275,7 @@
       $scope.formdata.is_prepared = data.menu_data.is_prepared;
       $http({
         method: 'PUT',
-        url: '/restaurant/menu/list/'+data.menu_data.id,
+        url: '/api/restaurant/menu/list/'+data.menu_data.id,
         data: $.param($scope.formdata),
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })

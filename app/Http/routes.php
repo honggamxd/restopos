@@ -13,31 +13,33 @@
 
 Route::get('/', 'Restaurant_controller@index')->middleware('logged');
 Route::get('/restaurant/menu', 'Restaurant_menu_controller@index')->middleware('logged');
-Route::post('/restaurant/menu', 'Restaurant_menu_controller@store');
-Route::get('/restaurant/menu/list', 'Restaurant_menu_controller@get_list')->middleware('logged');
-Route::get('/restaurant/menu/category/{id}', 'Restaurant_menu_controller@show_category');
-Route::put('/restaurant/menu/list/{id}', 'Restaurant_menu_controller@available_to_menu');
+Route::post('/api/restaurant/menu', 'Restaurant_menu_controller@store');
 
-Route::post('/restaurant/table/add', 'Restaurant_table_controller@store');
-Route::post('/restaurant/table/order/make/{id}', 'Restaurant_order_controller@store');
-Route::get('/restaurant/table/order/view/{id}', 'Restaurant_order_controller@show');
-Route::post('/restaurant/table/order/cart', 'Restaurant_table_customer_controller@order_cart');
-Route::post('/restaurant/table/order/cart/update/{type}/{id}', 'Restaurant_table_customer_controller@update_cart_items');
-Route::get('/restaurant/table/order/cart/{table_customer_id}', 'Restaurant_table_customer_controller@show');
-Route::get('/restaurant/table/order/test', 'Restaurant_table_customer_controller@test');
-Route::get('/restaurant/table/order/delete', 'Restaurant_table_customer_controller@delete');
-Route::post('/restaurant/table/customer/add', 'Restaurant_table_customer_controller@store');
-Route::post('/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@bill_out');
-Route::get('/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@show_temp_bill');
-Route::post('/restaurant/table/customer/bill/make/{id}', 'Restaurant_table_customer_controller@make_bill');
-Route::get('/restaurant/table/customer/bill/view/{id}', 'Restaurant_table_customer_controller@show_bill');
-Route::get('/restaurant/table/customer/bill/list/{id}', 'Restaurant_table_customer_controller@list_bill');
-Route::get('/restaurant/table/customer/orders/{id}', 'Restaurant_table_customer_controller@show_order');
-Route::get('/restaurant/table/customer/list', 'Restaurant_table_customer_controller@get_list');
-Route::post('/restaurant/table/customer/remove/{id}', 'Restaurant_table_customer_controller@destroy');
-Route::post('/restaurant/table/customer/payment/make/{id}', 'Restaurant_payment_controller@store');
-Route::get('/restaurant/table/customer/payment/list/{id}', 'Restaurant_payment_controller@show');
-Route::get('/restaurant/table/list/{type}', 'Restaurant_table_controller@get_list');
+Route::get('/api/restaurant/menu/list', 'Restaurant_menu_controller@get_list');
+Route::get('/api/restaurant/menu/category/{id}', 'Restaurant_menu_controller@show_category');
+Route::put('/api/restaurant/menu/list/{id}', 'Restaurant_menu_controller@available_to_menu');
+
+Route::post('/api/restaurant/table/add', 'Restaurant_table_controller@store');
+Route::post('/api/restaurant/table/order/make/{id}', 'Restaurant_order_controller@store');
+
+Route::get('/api/restaurant/table/order/view/{id}', 'Restaurant_order_controller@show');
+Route::post('/api/restaurant/table/order/cart', 'Restaurant_table_customer_controller@order_cart');
+Route::post('/api/restaurant/table/order/cart/update/{type}/{id}', 'Restaurant_table_customer_controller@update_cart_items');
+Route::get('/api/restaurant/table/order/cart/{table_customer_id}', 'Restaurant_table_customer_controller@show');
+Route::get('/api/restaurant/table/order/delete', 'Restaurant_table_customer_controller@delete');
+
+Route::post('/api/restaurant/table/customer/add', 'Restaurant_table_customer_controller@store');
+Route::post('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@bill_out');
+Route::post('/api/restaurant/table/customer/bill/make/{id}', 'Restaurant_table_customer_controller@make_bill');
+Route::get('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@show_temp_bill');
+Route::get('/api/restaurant/table/customer/bill/view/{id}', 'Restaurant_table_customer_controller@show_bill');
+Route::get('/api/restaurant/table/customer/bill/list/{id}', 'Restaurant_table_customer_controller@list_bill');
+Route::get('/api/restaurant/table/customer/orders/{id}', 'Restaurant_table_customer_controller@show_order');
+Route::get('/api/restaurant/table/customer/list', 'Restaurant_table_customer_controller@get_list');
+Route::post('/api/restaurant/table/customer/remove/{id}', 'Restaurant_table_customer_controller@destroy');
+Route::post('/api/restaurant/table/customer/payment/make/{id}', 'Restaurant_payment_controller@store');
+Route::get('/api/restaurant/table/customer/payment/list/{id}', 'Restaurant_payment_controller@show');
+Route::get('/api/restaurant/table/list/{type}', 'Restaurant_table_controller@get_list');
 
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index')->middleware('logged');
 Route::get('/restaurant/bill/{id}', 'Restaurant_bill_controller@index')->middleware('logged');
