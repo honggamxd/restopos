@@ -22,6 +22,7 @@ class CreateRestaurantbilldetailsTable extends Migration
           $table->integer('restaurant_bill_id')->unsigned();
           $table->integer('restaurant_id')->unsigned();
           $table->boolean('deleted');
+          $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
         });

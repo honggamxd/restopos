@@ -75,7 +75,7 @@
 </tbody>
 </table>
 <br>
-<p>Server:</p>
+<p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
 <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
 <a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
 @endsection
@@ -83,16 +83,18 @@
 @section('scripts')
 <script type="text/javascript">
   $('table').tablesort();
-  
   shortcut.add("x",function() {
     window.close();
   });
   shortcut.add("esc",function() {
     window.close();
   });
+
+  @if($print==1)
   $(document).ready(function() {
     setTimeout(function(){ window.print(); }, 500);
   });
+  @endif
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce) {
         $scope.order = {!! $order !!};

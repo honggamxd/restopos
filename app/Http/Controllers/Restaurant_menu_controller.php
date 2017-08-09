@@ -16,6 +16,7 @@ class Restaurant_menu_controller extends Controller
     $restaurant = DB::table('restaurant')->get();
     $data["categories"] = explode(',', $app_config->categories);
     $data["restaurants"] = $restaurant;
+    $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
     return view('restaurant.menu',$data);
   }
 

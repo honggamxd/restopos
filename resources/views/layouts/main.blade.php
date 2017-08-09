@@ -31,14 +31,14 @@
 </head>
 <body ng-controller="content-controller">
 <div class="ui left vertical inverted labeled icon sidebar menu">
-    @if(Session::get('users.user_data')->privilege=="restaurant")
+    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
     <a class="item" href="/">
         <i class="food icon"></i>
-        Restaurant
+        {{Session::get('users.user_data')->restaurant}}
     </a>
     <a class="item" href="/restaurant/menu">
         <i class="food icon"></i>
-        Restaurant<br>Menu
+        {{Session::get('users.user_data')->restaurant}}<br>Menu
     </a>
     @endif
     @if(Session::get('users.user_data')->privilege=="admin")
@@ -63,9 +63,10 @@
         Reports
     </a>
     @endif
-    @if(Session::get('users.user_data')->privilege=="restaurant")
+    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
     <a class="item" href="/settings">
         <i class="settings icon"></i>
+        {{Session::get('users.user_data')->restaurant}}<br>
         Settings
     </a>
     @endif

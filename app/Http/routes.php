@@ -21,12 +21,15 @@ Route::put('/api/restaurant/menu/list/{id}', 'Restaurant_menu_controller@availab
 
 Route::post('/api/restaurant/table/add', 'Restaurant_table_controller@store');
 Route::post('/api/restaurant/table/order/make/{id}', 'Restaurant_order_controller@store');
+Route::post('/api/restaurant/server/add', 'Restaurant_controller@add_server');
+Route::get('/api/restaurant/server/list', 'Restaurant_controller@show_server');
 
 Route::get('/api/restaurant/table/order/view/{id}', 'Restaurant_order_controller@show');
 Route::post('/api/restaurant/table/order/cart', 'Restaurant_table_customer_controller@order_cart');
-Route::post('/api/restaurant/table/order/cart/update/{type}/{id}', 'Restaurant_table_customer_controller@update_cart_items');
+Route::post('/api/restaurant/table/order/cart/update/{type}/{id}', 'Restaurant_table_customer_controller@update_cart_item');
 Route::get('/api/restaurant/table/order/cart/{table_customer_id}', 'Restaurant_table_customer_controller@show');
 Route::get('/api/restaurant/table/order/delete', 'Restaurant_table_customer_controller@delete');
+Route::delete('/api/restaurant/table/order/remove', 'Restaurant_table_customer_controller@remove_cart_item');
 
 Route::post('/api/restaurant/table/customer/add', 'Restaurant_table_customer_controller@store');
 Route::post('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@bill_out');

@@ -20,8 +20,9 @@ class CreateRestaurantorderTable extends Migration
           $table->integer('pax');
           $table->string('table_name');
           $table->integer('restaurant_id')->unsigned();
-          $table->integer('server');
+          $table->integer('server_id')->unsigned();
           $table->boolean('deleted');
+          $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
           $table->integer('restaurant_table_customer_id')->unsigned();

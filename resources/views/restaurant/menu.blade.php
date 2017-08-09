@@ -18,11 +18,11 @@
 </style>
 @endsection
 @section('breadcrumb')
-<div class="active section">Restaurant Menu</div>
+<div class="active section">{{Session::get('users.user_data')->restaurant}} Menu</div>
 @endsection
 @section('content')
 <div class="col-sm-12">
-<h1 style="text-align: center;">Restaurant's Menu</h1>
+<h1 style="text-align: center;">{{Session::get('users.user_data')->restaurant}} Menu</h1>
 <br><br>
   <form action="/items" method="post" class="form-horizontal ui form" id="add-items-form">
   {{ csrf_field() }}

@@ -21,6 +21,7 @@ class Restaurant_table_customer_controller extends Controller
   {
     $this->validate($request, [
         'table_id.id' => 'required',
+        'server_id.id' => 'required',
         'pax' => 'integer|required|custom_min:0',
     ],[
       'custom_min' => 'The number of :attribute must be greater than 0'
@@ -29,7 +30,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_table_customer->restaurant_table_id = $request->table_id["id"];
     $restaurant_table_customer->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;;
     $restaurant_table_customer->pax = $request->pax;
-    $restaurant_table_customer->server = 1;
+    $restaurant_table_customer->server_id = $request->server_id["id"];
     $restaurant_table_customer->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_table_customer->save();
     $restaurant_table = new Restaurant_table;
@@ -78,7 +79,7 @@ class Restaurant_table_customer_controller extends Controller
     return $data;
   }
 
-  public function update_cart_items(Request $request,$type,$id)
+  public function update_cart_item(Request $request,$type,$id)
   {
     if($type=="special_order"){
       $cart_data = $request->session()->get('restaurant.table_customer.'.$id.".cart");
@@ -94,6 +95,15 @@ class Restaurant_table_customer_controller extends Controller
       }
       return $this->show($request,$id);
     }
+  }
+
+  public function remove_cart_item(Request $request)
+  {
+    if($request->session()->has('restaurant.table_customer.'.$request->table_customer_id.'.cart.menu_'.$request->menu_id)&&$request->session()->get('restaurant.table_customer.'.$request->table_customer_id.'.cart.menu_'.$request->menu_id)!=array()){
+      $request->session()->forget('restaurant.table_customer.'.$request->table_customer_id.'.cart.menu_'.$request->menu_id);
+    }
+    return $this->show($request,$request->table_customer_id);
+    // if($request->session()->has())
   }
 
   public function show(Request $request,$table_customer_id)
@@ -126,6 +136,7 @@ class Restaurant_table_customer_controller extends Controller
       $customer_data->has_billed_out = ($customer_data->has_billed_out==1?TRUE:FALSE);
       $customer_data->has_bill = ($customer_data->has_bill==1?TRUE:FALSE);
       $customer_data->table_name = $restaurant_table->where("id",$customer_data->restaurant_table_id)->value("name");
+      $customer_data->server_name = DB::table('restaurant_server')->find($customer_data->server_id)->name;
       $customer_data->total = $restaurant_order
         ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
         ->select( DB::raw('SUM(quantity*price) as total'))
@@ -187,6 +198,12 @@ class Restaurant_table_customer_controller extends Controller
       ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
       ->where('restaurant_table_customer_id',$id)
       ->get();
+    $restaurant_temp_bill_data = $restaurant_temp_bill->where('restaurant_table_customer_id',$id)->first();
+    $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+    $data["total"] = $restaurant_temp_bill_detail
+      ->select(DB::raw('SUM(price*quantity) as total'))
+      ->where('restaurant_temp_bill_id',$restaurant_temp_bill_data->id)
+      ->value("total");
     return $data;
   }
 
@@ -199,41 +216,68 @@ class Restaurant_table_customer_controller extends Controller
 
   public function make_bill(Request $request,$id)
   {
+    $this->validate($request, [
+        'items' => 'valid_restaurant_billing'
+      ],[
+        'valid_restaurant_billing' => 'The quantity for billing of the item is not valid.'
+      ]);
+    // return $request->items;
+    // exit;
     $restaurant_table_customer = new Restaurant_table_customer;
     $restaurant_table = new Restaurant_table;
     $restaurant_temp_bill = new Restaurant_temp_bill;
-    $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+    
     $customer_data = $restaurant_table_customer->find($id);
     
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill->date_ = strtotime(date("m/d/Y"));
     $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_bill->pax = $customer_data->pax;
-    $restaurant_bill->server = $customer_data->server;
-    $restaurant_bill->cashier = 0;
+    $restaurant_bill->server_id = $customer_data->server_id;
+    $restaurant_bill->cashier = $request->session()->get('users.user_data')->id;
     $restaurant_bill->restaurant_table_customer_id = $customer_data->id;
     $restaurant_bill->table_name = $restaurant_table->where("id",$customer_data->restaurant_table_id)->value("name");
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
     $restaurant_bill->save();
 
-    $customer_data->has_bill = 1;
-    $customer_data->save();
+
 
     $bill_data = $restaurant_bill->orderBy('id','DESC')->first();
-    $restaurant_bill_detail = new Restaurant_bill_detail;
 
-    $bill_preview_detail = $this->show_temp_bill($request,$id);
-    foreach ($bill_preview_detail["result"] as $preview_data) {
-      $restaurant_bill_detail = new Restaurant_bill_detail;
-      $restaurant_bill_detail->restaurant_menu_id = $preview_data->restaurant_menu_id;
-      $restaurant_bill_detail->quantity = $preview_data->quantity;
-      $restaurant_bill_detail->price = $preview_data->price;
-      $restaurant_bill_detail->special_order = $preview_data->special_order;
-      $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
-      $restaurant_bill_detail->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
-      $restaurant_bill_detail->date_ = strtotime(date("m/d/Y"));
-      $restaurant_bill_detail->save();
+    $bill_preview_detail = $request->items;
+    foreach ($bill_preview_detail as $preview_data) {
+      if(abs($preview_data["quantity_to_bill"]) != 0){
+        $restaurant_bill_detail = new Restaurant_bill_detail;
+        $restaurant_bill_detail->restaurant_menu_id = $preview_data["restaurant_menu_id"];
+        $restaurant_bill_detail->quantity = abs($preview_data["quantity_to_bill"]);
+        $restaurant_bill_detail->price = $preview_data["price"];
+        $restaurant_bill_detail->special_order = $preview_data["special_order"];
+        $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
+        $restaurant_bill_detail->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+        $restaurant_bill_detail->date_ = strtotime(date("m/d/Y"));
+        $restaurant_bill_detail->save();
+        $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+        $restaurant_temp_bill_detail_data = $restaurant_temp_bill_detail
+          ->where('restaurant_temp_bill_id',$preview_data["restaurant_temp_bill_id"])
+          ->where('restaurant_menu_id',$preview_data["restaurant_menu_id"])
+          ->first();
+        $restaurant_temp_bill_detail_data->quantity -= abs($preview_data["quantity_to_bill"]);
+        $restaurant_temp_bill_detail_data->save();
+      }
     }
+    $restaurant_temp_bill = new Restaurant_temp_bill;
+    $restaurant_temp_bill_data = $restaurant_temp_bill
+      ->where('restaurant_table_customer_id',$id)
+      ->first();
+    $remaining_balance = $restaurant_temp_bill_detail
+      ->select(DB::raw('SUM(quantity*price) as total'))
+      ->where('restaurant_temp_bill_id',$restaurant_temp_bill_data->id)
+      ->value('total');
+    if($remaining_balance==0){
+      $customer_data->has_billed_completely = 1;
+    }
+    $customer_data->has_bill = 1;
+    $customer_data->save();
 
     return $this->list_bill($request,$id);
   }
@@ -247,6 +291,8 @@ class Restaurant_table_customer_controller extends Controller
     $data["bill"]->date_ = date("F d, Y",$data["bill"]->date_);
     $data["bill"]->date_time = date("h:i:s A",$data["bill"]->date_time);
     $data["bill"]->restaurant_name = DB::table('restaurant')->find($data["bill"]->restaurant_id)->name;
+    $data["bill"]->cashier_name = DB::table('user')->find($data["bill"]->cashier)->name;
+    $data["bill"]->server_name = DB::table('restaurant_server')->find($data["bill"]->server_id)->name;
     $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
     $data["total"] = 0;
     foreach ($data["bill_detail"] as $bill_detail_data) {

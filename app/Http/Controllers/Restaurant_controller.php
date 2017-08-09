@@ -38,4 +38,26 @@ class Restaurant_controller extends Controller
       $request->session()->flush();
       return redirect('/login');
     }
+
+    public function add_server(Request $request)
+    {
+      $this->validate($request, [
+        'name' => 'required|custom_unique:restaurant_server,name,restaurant_id,'.$request->session()->get('users.user_data')->restaurant_id.'|max:255',
+      ],[
+        'custom_unique' => 'This server is already added in this outlet.'
+      ]);
+      DB::table('restaurant_server')->insert([
+          [
+            'name' => $request->name,
+            'restaurant_id' => $request->session()->get('users.user_data')->restaurant_id
+          ]
+        ]);
+      return $request->name;
+    }
+
+    public function show_server(Request $request)
+    {
+      $data["result"] = DB::table('restaurant_server')->where(['deleted'=>0,'restaurant_id'=>$request->restaurant_id])->get();
+      return $data;
+    }
 }

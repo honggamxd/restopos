@@ -30,6 +30,11 @@ class Restaurant_table_controller extends Controller
 
   public function store(Request $request)
   {
+    $this->validate($request, [
+      'name' => 'required|custom_unique:restaurant_table,name,restaurant_id,'.$request->session()->get('users.user_data')->restaurant_id.'|max:255',
+    ],[
+      'custom_unique' => 'This table name is already added in this outlet.'
+    ]);
     $restaurant_table = new Restaurant_table;
     $restaurant_table->name = $request->name;
     $restaurant_table->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;

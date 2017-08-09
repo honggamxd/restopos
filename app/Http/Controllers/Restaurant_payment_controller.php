@@ -37,9 +37,13 @@ class Restaurant_payment_controller extends Controller
     foreach ($data["result"] as $bill_data) {
       $data["table_name"] = $bill_data->table_name;
       $bill_data->total = $restaurant_bill_detail->select(DB::raw('SUM(price*quantity) as total'))->where("restaurant_bill_id",$bill_data->id)->first()->total;
-      $data["has_paid"] = ($has_unpaid_order?0:1);
+      if($bill_data->is_paid==0){
+        $has_unpaid_order = true;
+      }
     }
-    $customer_data->has_paid = $data["has_paid"];
+    if($customer_data->has_billed_completely==1){
+      $customer_data->has_paid = ($has_unpaid_order?0:1);
+    }
     $customer_data->save();
     return $data;
   }

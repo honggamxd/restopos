@@ -18,6 +18,7 @@ class CreateRestauranttableTable extends Migration
           $table->integer('restaurant_id')->unsigned();
           $table->boolean('occupied');
           $table->boolean('deleted');
+          $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
         });

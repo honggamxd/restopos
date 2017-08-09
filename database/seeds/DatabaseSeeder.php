@@ -30,26 +30,30 @@ class DatabaseSeeder extends Seeder
         [
           [
             'username' => 'admin',
+            'name' => 'admin',
             'password' => md5('admin'),
             'privilege' => 'admin',
             'restaurant_id' => 0
           ],
           [
             'username' => 'user1',
+            'name' => 'user1',
             'password' => md5('user1'),
-            'privilege' => 'restaurant',
+            'privilege' => 'restaurant_cashier',
             'restaurant_id' => 1
           ],
           [
             'username' => 'user2',
+            'name' => 'user2',
             'password' => md5('user2'),
-            'privilege' => 'restaurant',
+            'privilege' => 'restaurant_cashier',
             'restaurant_id' => 2
           ],
           [
             'username' => 'user3',
+            'name' => 'user3',
             'password' => md5('user3'),
-            'privilege' => 'restaurant',
+            'privilege' => 'restaurant_cashier',
             'restaurant_id' => 3
           ]
         ]

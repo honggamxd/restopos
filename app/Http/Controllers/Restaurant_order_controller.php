@@ -29,7 +29,7 @@ class Restaurant_order_controller extends Controller
     $restaurant_order->table_name = $table_data->name;
     $restaurant_order->restaurant_id = $customer_data->restaurant_id;
     $restaurant_order->restaurant_table_customer_id = $id;
-    $restaurant_order->server = $customer_data->server;
+    $restaurant_order->server_id = $customer_data->server_id;
     $restaurant_order->save();
 
     $customer_data->has_order = 1;
@@ -63,6 +63,8 @@ class Restaurant_order_controller extends Controller
     }
     $data["order"]->date_ = date("F d, Y",$data["order"]->date_);
     $data["order"]->date_time = date("h:i:s A",$data["order"]->date_time);
+    $data["order"]->restaurant_name = DB::table('restaurant')->find($data["order"]->restaurant_id)->name;
+    $data["order"]->server_name = DB::table('restaurant_server')->find($data["order"]->server_id)->name;
     return $data;
   }
 
@@ -79,7 +81,9 @@ class Restaurant_order_controller extends Controller
     $data["order"]->date_ = date("F d, Y",$data["order"]->date_);
     $data["order"]->date_time = date("h:i:s A",$data["order"]->date_time);
     $data["order"]->restaurant_name = DB::table('restaurant')->find($data["order"]->restaurant_id)->name;
+    $data["order"]->server_name = DB::table('restaurant_server')->find($data["order"]->server_id)->name;
     $data["id"] = $id;
+    $data["print"] = $request->print;
     return view("restaurant.order",$data);
   }
 }

@@ -64,6 +64,30 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
+        Validator::extend('valid_restaurant_billing', function($attribute, $value, $parameters, $validator) {
+            $valid = true;
+            $count_zero_quantity = 0;
+            foreach ($value as $bill_preview) {
+                $item_data = DB::table('restaurant_temp_bill_detail')
+                ->where('restaurant_menu_id',$bill_preview["id"])
+                ->where('restaurant_temp_bill_id',$bill_preview["restaurant_temp_bill_id"])
+                ->first();
+                $quantity_to_bill = abs($bill_preview["quantity_to_bill"]);
+                $quantity = $item_data->quantity;
+                if($quantity_to_bill>$quantity){
+                    $valid = false;
+                }
+                if($quantity_to_bill==0){
+                    $count_zero_quantity++;
+                }
+            }
+            if(count($value)==$count_zero_quantity){
+                return false;
+            }else{
+                return $valid;
+            }
+        });
     }
 
     /**

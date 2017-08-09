@@ -14,12 +14,13 @@ class CreateRestauranttablecustomerTable extends Migration
     {
         Schema::create('restaurant_table_customer', function (Blueprint $table) {
           $table->increments('id');
-          $table->integer('server');
+          $table->integer('server_id')->unsigned();;
           $table->integer('date_time');
           $table->integer('pax');
           $table->boolean('has_order');
           $table->boolean('has_paid');
           $table->boolean('has_billed_out');
+          $table->boolean('has_billed_completely');
           $table->integer('restaurant_id')->unsigned();
           $table->integer('restaurant_table_id')->unsigned();
           $table->integer('restaurant_temp_bill_id')->unsigned();

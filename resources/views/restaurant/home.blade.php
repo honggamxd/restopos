@@ -38,18 +38,18 @@
 </style>
 @endsection
 @section('breadcrumb')
-<div class="active section">Restaurant</div>
+<div class="active section">{{Session::get('users.user_data')->restaurant}}</div>
 @endsection
 @section('content')
 <div class="col-sm-12">
-  <h1 style="text-align: center;">{{$restaurant_name}}</h1>
+  <h1 style="text-align: center;">{{Session::get('users.user_data')->restaurant}}</h1>
   <div class="form-group">
-      <div class="ui action input">
-        <input type="text" placeholder="Search Table">
+      <div class="ui buttons">
+<!--         <input type="text" placeholder="Search Table">
         <button class="ui icon button" type="submit">
           <i class="search icon"></i>
-        </button>
-        <button type="button" class="ui icon primary button" ng-click="show_table()"><i class="add icon"></i> Add Customer</button>
+        </button> -->
+        <button type="button" class="ui icon primary button" ng-click="show_table()" data-balloon="Keyboard Shortcut: Ctrl + Shift + A" data-balloon-pos="down" data-balloon-length="fit"><i class="add icon"></i> Add Customer</button>
       </div>
   </div>
   <div class="table-responsive">
@@ -57,6 +57,7 @@
       <thead>
         <tr>
           <th class="center aligned">Table</th>
+          <th class="center aligned">Server</th>
           <th class="center aligned">Time</th>
           <th class="center aligned">Pax</th>
           <th class="center aligned">Total</th>
@@ -65,6 +66,7 @@
       <tbody>
         <tr ng-repeat="customer_data in table_customers" ng-cloak>
           <td style="width: 30vw;" class="center aligned middle aligned" ng-bind="customer_data.table_name"></td>
+          <td class="center aligned middle aligned" ng-bind="customer_data.server_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
           <td class="center aligned middle aligned" ng-click="view_orders(this)"><a href="javascript:void(0);">@{{customer_data.total|currency:""}}</a></td>
@@ -76,7 +78,7 @@
             <div class="ui buttons" ng-if="customer_data.has_order">
               <div class="ui buttons">
                 <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-if="!customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
+                <button class="ui inverted violet button" ng-click="bill_out(this)"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
                 <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> View Bills</button>
                 <!-- <button class="ui inverted red button" ng-if="!customer_data.has_billed_out"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button> -->
                 <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
@@ -98,15 +100,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Table</h4>
+        <h4 class="modal-title">Add Customer</h4>
       </div>
       <div class="modal-body">
-        <form action="/items" method="post" id="add-items-form">
+        <form id="add-items-form">
         {{ csrf_field() }}
         <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
         <div class="form-group" ng-show="has_table">
           <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id" ng-options="item as item.name for item in table track by item.id">
-            <!-- <option ng-repeat="table_data in table" value="@{{table_data.id}}">@{{table_data.name}}</option> -->
           </select>
         </div>
         <div class="form-group" ng-hide="has_table">
@@ -114,8 +115,15 @@
         </div>
         <div class="form-group">
           <label># of Pax</label>
-          <input class="form-control" type="number" name="pax" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax" required>
+          <input class="form-control" type="number" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax" required>
           <p class="help-block">@{{formerrors.pax[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Server</label>
+          <select class="form-control" ng-model="formdata.server_id" ng-options="item as item.name for item in server track by item.id">
+          </select>
+          <p class="help-block">@{{formerrors.server_id[0]}}</p>
         </div>
         </form>
       </div>
@@ -137,7 +145,7 @@
         <h4 class="modal-title">Orders</h4>
       </div>
       <div class="modal-body">
-        <form action="/items" method="post" class="form-horizontal ui form" id="add-items-form">
+        <form class="form-horizontal ui form" id="add-items-form">
         {{ csrf_field() }}
         <input type="hidden" name="table_customer_id" ng-model="table_customer_id">
         <div class="row">
@@ -199,9 +207,10 @@
               <table class="ui compact table unstackable">
                 <thead>
                   <tr>
-                    <th class="center aligned">Menu</th>
+                    <th class="center aligned" style="width: 100%">Orders</th>
                     <th class="center aligned">Quantity</th>
                     <th class="center aligned">Total</th>
+                    <th class="center aligned"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -217,12 +226,18 @@
                       <input style="width: 100px" type="number" ng-show="cart_data.show_update_quantity" ng-model="cart_data.quantity" ng-blur="update_quantity(this)" focus-me="cart_data.show_update_quantity">
                     </td>
                     <td class="right aligned middle aligned">@{{cart_data.total|currency:""}}</td>
+                    <td class="right aligned middle aligned">
+                      <button class="ui icon red inverted button" ng-click="remove_item_cart(this)">
+                        <i class="trash outline icon"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
                 <tfoot>
                   <tr>
                     <th class="right aligned" colspan="2">Total:</th>
                     <th class="right aligned">@{{table_customer_total|currency:""}}</th>
+                    <th class="right aligned"></th>
                   </tr>
                 </tfoot>
               </table>
@@ -240,6 +255,36 @@
   </div>
 </div>
 
+<div id="view-list-order-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Orders of Table @{{table_name}}</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ui unstackable sortable compact table" id="list-order-table">
+          <thead>
+            <tr>
+              <th class="center aligned" width="100%">Order #</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="order_data in orders">
+              <td class="center aligned"><p style="cursor: pointer;" data-balloon="Click to View" data-balloon-pos="up" ng-bind="order_data.id" ng-click="preview_order(this)"></p></td>
+              <td>
+                <a class="btn btn-primary" href="/restaurant/order/@{{order_data.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="view-order-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -251,7 +296,7 @@
         <table class="order-table">
         <tbody>
           <tr>
-            <td style="width: 50%">Outlet:<span ng-cloak></span></td>
+            <td style="width: 50%">Outlet:<span ng-cloak>@{{order.restaurant_name}}</span></td>
             <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
           </tr>
           <tr>
@@ -284,76 +329,51 @@
         </tbody>
         </table>
         <br>
-        <p>Server:</p>
+        <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <a class="btn btn-primary" href="/restaurant/order/@{{order.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+        <a class="btn btn-primary" href="/restaurant/order/@{{order.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
       </div>
     </div>
   </div>
 </div>
 
 
-<div id="view-list-order-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Orders of Table @{{table_name}}</h4>
-      </div>
-      <div class="modal-body">
-        <table class="ui unstackable sortable compact table" id="list-order-table">
-          <thead>
-            <tr>
-              <th class="center aligned" width="100%">Order #</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="order_data in orders">
-              <td ng-bind="order_data.id"></td>
-              <td>
-                <a class="btn btn-primary" href="/restaurant/order/@{{order_data.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <div id="bill-preview-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Bill</h4>
+        <h4 class="modal-title">Bill Summary</h4>
       </div>
       <div class="modal-body">
-        <table class="ui unstackable compact table">
+        <table class="ui compact table unstackable">
           <thead>
             <tr>
-              <th class="center aligned">Item</th>
+              <th class="center aligned" style="width: 100%">Item</th>
               <th class="center aligned">Qty</th>
+              <th class="center aligned">Qty to bill</th>
               <th class="right aligned">Price</th>
               <th class="right aligned">Total</th>
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="bill_preview_data in bill_preview">
+            <tr ng-repeat="bill_preview_data in bill_preview" ng-init="bill_preview_data.quantity_to_bill = bill_preview_data.quantity">
               <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_order != ''"><br>(@{{bill_preview_data.special_order}})</span></td>
-              <td class="center aligned">@{{bill_preview_data.quantity}}</td>
-              <td class="right aligned">@{{bill_preview_data.price|currency:""}}</td>
-              <td class="right aligned">@{{ (bill_preview_data.quantity*bill_preview_data.price)|currency:"" }}</td>
+              <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
+              <td class="center aligned middle aligned">
+                <input style="width: 100px" type="number" ng-model="bill_preview_data.quantity_to_bill" ng-change="bill_preview_total(this)">
+              </td>
+              <td class="right aligned middle aligned">@{{bill_preview_data.price|currency:""}}</td>
+              <td class="right aligned middle aligned">@{{ (bill_preview_data.quantity_to_bill*bill_preview_data.price)|currency:"" }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <th colspan="3" class="right aligned">Total</th>
+              <th colspan="4" class="right aligned">Total</th>
               <th class="right aligned">@{{bill_preview.total|currency:""}}</th>
             </tr>
           </tfoot>
@@ -386,7 +406,7 @@
               <td ng-bind="bill_data.id" class="center aligned"></td>
               <td>
                 <div class="btn-group">
-                  <a class="btn btn-primary" href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+                  <a class="btn btn-primary" href="/restaurant/bill/@{{bill_data.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
                   <button class="btn btn-success" ng-click="add_payment(this)" ng-if="bill_data.is_paid == 0"><span class="glyphicon glyphicon-shopping-cart"></span> Payments</button>
                 </div>
               </td>
@@ -478,15 +498,18 @@
 <script type="text/javascript">
   $('#customer-table').tablesort();
   $('#list-order-table').tablesort();
-  shortcut.add("Ctrl+Shift+A",function() {
-    $('#add-table-modal').modal('show');
-  });
-
   $('#add-table-modal').on('shown.bs.modal', function () {
       $('#select-tablenumber').focus();
   });
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
+
+    shortcut.add("Ctrl+Shift+A",function() {
+      show_table();
+      show_server();
+      $('#add-table-modal').modal('show');
+    });
+
     $scope.formdata = {
      _token: "{{csrf_token()}}",
     };
@@ -539,6 +562,7 @@
     $scope.show_table = function() {
       $('#add-table-modal').modal('show');
       show_table();
+      show_server();
     }
 
     $scope.table_customers = {};
@@ -686,6 +710,11 @@
         $scope.submit = false;
       }); 
     }
+    $scope.preview_order = function(data) {
+      console.log(data.order_data.id);
+      $('#view-order-modal').modal('show');
+      show_order(data.order_data.id);
+    }
 
     function show_order(id) {
       $http({
@@ -706,6 +735,28 @@
       $http({
          method: 'POST',
          url: '/api/restaurant/table/order/cart',
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+         // console.log(response.data);
+         $scope.table_customer_cart = response.data.cart;
+         $scope.table_customer_total = response.data.total;
+         // alertify.success("Order has been placed.");
+      }, function(rejection) {
+         var errors = rejection.data;
+         alertify.error(rejection.data.error);
+         $scope.formdata.date_payment_error = errors.date_payment;
+      });
+    }
+
+    $scope.remove_item_cart = function(data) {
+      // console.log(data);
+      $scope.formdata.menu_id = data.cart_data.id;
+      $scope.formdata.table_customer_id = data.$parent.table_customer_id;
+      $http({
+         method: 'DELETE',
+         url: '/api/restaurant/table/order/remove',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -745,7 +796,7 @@
         }).then(function mySuccess(response) {
           console.log(response.data);
           $scope.bill_preview = response.data.result;
-          $scope.bill_preview.total = data.$parent.customer_data.total;
+          $scope.bill_preview.total = response.data.total;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#bill-preview-modal').modal('show');
         }, function myError(response) {
@@ -774,7 +825,9 @@
     }
 
     $scope.make_bill = function(data) {
+      // console.log(data);
       // console.log(data.bill_preview.table_customer_id);
+      $scope.formdata.items = data.bill_preview;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/customer/bill/make/'+data.bill_preview.table_customer_id,
@@ -782,6 +835,7 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
+        // console.log(response.data)
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
         $("#bill-preview-modal").modal("hide");
@@ -789,8 +843,16 @@
         show_table_customers();
       }, function(rejection) {
          var errors = rejection.data;
-         $scope.formdata.date_payment_error = errors.date_payment;
+         alertify.error(errors.items[0]);
          $scope.submit = false;
+      });
+    }
+
+    $scope.bill_preview_total = function(data) {
+      // console.log(data.$parent.bill_preview);
+      data.$parent.bill_preview.total = 0;
+      angular.forEach(data.$parent.bill_preview, function(value, key) {
+        data.$parent.bill_preview.total = data.$parent.bill_preview.total + (Math.abs(value.quantity_to_bill)*value.price);
       });
     }
 
@@ -847,6 +909,7 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
+        console.log(response.data);
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
         $("#payment-modal").modal("hide");
@@ -868,6 +931,22 @@
     $scope.input_payment = function() {
       $scope.formdata.excess = excess($scope);
       $scope.valid_payment = valid_payment($scope);
+    }
+
+    
+    function show_server() {
+      $http({
+          method : "GET",
+          params: {
+            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
+          },
+          url : "/api/restaurant/server/list",
+      }).then(function mySuccess(response) {
+          $scope.server = response.data.result;
+          $scope.formdata.server_id = $scope.server[0];
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
     }
 
     function excess($scope) {

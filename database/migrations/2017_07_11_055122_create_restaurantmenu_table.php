@@ -21,6 +21,7 @@ class CreateRestaurantmenuTable extends Migration
         $table->double('price');
         $table->integer('restaurant_id')->unsigned();
         $table->boolean('deleted');
+        $table->integer('deleted_by')->unsigned();
         $table->text('deleted_comment');
         $table->integer('deleted_date');
       });

@@ -19,6 +19,7 @@ class CreateInventoryItemTable extends Migration
           $table->string('item_name');
           $table->double('cost_price');
           $table->boolean('deleted');
+          $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
           $table->integer('user_id')->unsigned();

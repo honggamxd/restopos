@@ -119,8 +119,8 @@ Davao City, 8000
 <br>
 <table style="width: 100%">
   <tr>
-    <td style="width: 50%;border-bottom: 1px solid black;">Server:</td>
-    <td style="width: 50%;border-bottom: 1px solid black;">Cashier:</td>
+    <td style="width: 50%;border-bottom: 1px solid black;">Server: <span ng-cloak>@{{bill.server_name}}</span></td>
+    <td style="width: 50%;border-bottom: 1px solid black;">Cashier: <span ng-cloak>@{{bill.cashier_name}}</span></td>
   </tr>
   <tr>
     <td style="border-bottom: 1px solid black;" colspan="2">Guest Name:</td>
@@ -147,9 +147,11 @@ Davao City, 8000
     shortcut.add("esc",function() {
       window.close();
     });
+    @if($print==1)
     $(document).ready(function() {
-      setTimeout(function(){ window.print(); }, 1000);
+      setTimeout(function(){ window.print(); }, 500);
     });
+    @endif
     $scope.footer = {};
     $scope.payments = {};
     function show_bill() {

@@ -20,12 +20,13 @@ class CreateRestaurantbillTable extends Migration
           $table->integer('date_');
           $table->integer('date_time');
           $table->integer('pax');
-          $table->integer('server');
-          $table->integer('cashier');
+          $table->integer('server_id')->unsigned();
+          $table->integer('cashier')->unsigned();
           $table->string('table_name');
           $table->integer('restaurant_id')->unsigned();
           $table->integer('restaurant_table_customer_id')->unsigned();
           $table->boolean('deleted');
+          $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
           $table->text('guest_name');
