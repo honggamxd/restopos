@@ -231,10 +231,7 @@
     function show_menu() {
       $http({
         method : "GET",
-        params: {
-          'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-        },
-        url : "/api/restaurant/menu/list",
+        url : "/api/restaurant/menu/list/list",
       }).then(function mySuccess(response) {
         $scope.menu = response.data.result;
       }, function myError(response) {

@@ -58,5 +58,14 @@ class DatabaseSeeder extends Seeder
           ]
         ]
       );
+
+      DB::table('issuance_to')->insert(
+        [
+          ['name' => 'Viewdeck Café'],
+          ['name' => 'Koi Café'],
+          ['name' => 'Roberto’s Garden Restaurant']
+        ]
+      );
+
     }
 }

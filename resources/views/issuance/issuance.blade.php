@@ -20,7 +20,7 @@
     Date : @{{issuance.date_}} <br>
     Time : @{{issuance.date_time}} <br>
     Issuance # : @{{issuance.issuance_number}} <br>
-    Issuance From : @{{issuance.issuance_from}} <br>
+    Issuance To : @{{issuance.issuance_to}} <br>
   </p>
   <div class="table-responsive">
     <table class="ui single line unstackable table">

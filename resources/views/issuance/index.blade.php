@@ -63,9 +63,15 @@
         <p class="help-block" ng-cloak>@{{formerrors.issuance_number[0]}}</p>
       </div>
       <div class="form-group">
-        <label>Issuance From:</label>
-        <input type="text" name="" placeholder="Issuance From:" class="form-control" ng-model="cart.info.issuance_from" ng-blur="add_info_cart(this)">
-        <p class="help-block" ng-cloak>@{{formerrors.issuance_from[0]}}</p>
+        <label>Issuance To:</label>
+        <!-- <input type="text" name="" placeholder="Issuance To:" class="form-control" ng-model="cart.info.issuance_to" ng-blur="add_info_cart(this)"> -->
+        <select class="form-control" ng-model="cart.info.issuance_to" ng-change="add_info_cart(this)">          
+          <option value="">Select Issuance To</option>
+        @foreach($issuance_to as $issuance_to_data)
+          <option value="{{$issuance_to_data->id}}">{{$issuance_to_data->name}}</option>
+        @endforeach
+        </select>
+        <p class="help-block" ng-cloak>@{{formerrors.issuance_to[0]}}</p>
       </div>
       <div class="form-group">
         <label>Comments</label>
@@ -135,7 +141,7 @@
          url: '/api/issuance/cart/info',
          data: $.param({
           'issuance_number':$scope.cart.info.issuance_number,
-          'issuance_from':$scope.cart.info.issuance_from,
+          'issuance_to':$scope.cart.info.issuance_to,
           'comments':$scope.cart.info.comments,
          }),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -177,7 +183,7 @@
            data: $.param({
             'items':$scope.cart.items,
             'issuance_number':$scope.cart.info.issuance_number,
-            'issuance_from':$scope.cart.info.issuance_from,
+            'issuance_to':$scope.cart.info.issuance_to,
             'comments':$scope.cart.info.comments,
            }),
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }

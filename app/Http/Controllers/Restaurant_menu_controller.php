@@ -32,10 +32,10 @@ class Restaurant_menu_controller extends Controller
     $restaurant_menu->save();
   }
 
-  public function get_list(Request $request)
+  public function get_list(Request $request,$type)
   {
     $restaurant_menu = new Restaurant_menu;
-    $data["result"] = ($request->for=="orders"?$restaurant_menu->where(["is_prepared"=>1,"deleted"=>0,'restaurant_id'=>$request->restaurant_id])->get():$restaurant_menu->where(["deleted"=>0,'restaurant_id'=>$request->session()->get('users.user_data')->restaurant_id])->get());
+    $data["result"] = ($type=="orders"?$restaurant_menu->where(["is_prepared"=>1,"deleted"=>0,'restaurant_id'=>$request->session()->get('users.user_data')->restaurant_id])->get():$restaurant_menu->where(["deleted"=>0,'restaurant_id'=>$request->session()->get('users.user_data')->restaurant_id])->get());
     foreach ($data["result"] as $menu_data) {
       $menu_data->is_prepared = ($menu_data->is_prepared==1?TRUE:FALSE);
     }

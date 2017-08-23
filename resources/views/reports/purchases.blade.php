@@ -25,27 +25,20 @@
   <table class="ui unstackable striped celled structured table">
     <thead>
       <tr>
-        <th class="center aligned middle aligned">ID</th>
-        <th class="center aligned middle aligned">Date</th>
-        <th class="center aligned middle aligned">PO #</th>
+        <th class="center aligned middle aligned">Item</th>
         <th class="center aligned middle aligned">Cost</th>
-        <th class="center aligned middle aligned">Comments</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="purchase_data in purchases">
-        <td class="center aligned middle aligned"><a href="/purchase/view/@{{purchase_data.id}}">@{{purchase_data.id}}</a></td>
-        <td class="center aligned middle aligned">@{{purchase_data.date_}}</td>
-        <td class="center aligned middle aligned">@{{purchase_data.po_number}}</td>
-        <td class="right aligned middle aligned">@{{purchase_data.total|currency:""}}</td>
-        <td class="center aligned middle aligned">@{{purchase_data.comments}}</td>
+        <td class="center aligned middle aligned">@{{purchase_data.item_name}}</td>
+        <td class="right aligned middle aligned">@{{purchase_data.total_cost|currency:""}}</td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
-        <th class="center aligned middle aligned" colspan="3">TOTAL</th>
-        <th class="right aligned middle aligned">@{{footer.total|currency:""}}</th>
-        <th class="center aligned middle aligned"></th>
+        <th class="center aligned middle aligned">TOTAL</th>
+        <th class="right aligned middle aligned">@{{footer.total_cost|currency:""}}</th>
       </tr>
     </tfoot>
   </table>

@@ -78,7 +78,7 @@
             <div class="ui buttons" ng-if="customer_data.has_order">
               <div class="ui buttons">
                 <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-                <button class="ui inverted violet button" ng-click="bill_out(this)"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
+                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-disabled="submit"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
                 <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> View Bills</button>
                 <!-- <button class="ui inverted red button" ng-if="!customer_data.has_billed_out"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button> -->
                 <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
@@ -103,7 +103,7 @@
         <h4 class="modal-title">Add Customer</h4>
       </div>
       <div class="modal-body">
-        <form id="add-items-form">
+        <form id="add-table-form" ng-submit="add_table()">
         {{ csrf_field() }}
         <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
         <div class="form-group" ng-show="has_table">
@@ -129,7 +129,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-items-form" ng-click="add_table()" ng-disabled="submit" ng-show="has_table">Save</button>
+        <button type="submit" class="btn btn-primary" form="add-table-form" ng-disabled="submit" ng-show="has_table">Save</button>
       </div>
     </div>
 
@@ -145,7 +145,7 @@
         <h4 class="modal-title">Orders</h4>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal ui form" id="add-items-form">
+        <form class="form-horizontal ui form">
         {{ csrf_field() }}
         <input type="hidden" name="table_customer_id" ng-model="table_customer_id">
         <div class="row">
@@ -248,7 +248,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="make_orders(this)" ng-disabled="submit">Confirm</button>
+        <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="make_orders(this)">Confirm</button>
       </div>
     </div>
 
@@ -381,7 +381,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id">Proceed</button>
+        <button type="button" class="btn btn-primary" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit">Proceed</button>
       </div>
     </div>
   </div>
@@ -433,7 +433,7 @@
           <label>Total:</label>
           <span class="form-control">@{{formdata.total|currency:""}}</span>
         </div>
-        <form class="form">
+        <form class="form" id="make-payment-form">
           <div class="form-group">
             <label>Settlement:</label>
             <select name="settlement" id="settlement" multiple="" class="ui fluid dropdown" ng-model="formdata.settlement" ng-change="settlements_payment()">
@@ -484,7 +484,7 @@
       </div>
       <div class="modal-footer" ng-model="bill_id">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="make_payment(this)" ng-if="valid_payment">Save</button>
+        <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="make_payment(this)" ng-if="valid_payment">Save</button>
       </div>
     </div>
   </div>
@@ -542,9 +542,6 @@
     function show_table() {
       $http({
           method : "GET",
-          params: {
-            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-          },
           url : "/api/restaurant/table/list/serve",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
@@ -570,9 +567,6 @@
     function show_table_customers() {
       $http({
           method : "GET",
-          params: {
-            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-          },
           url : "/api/restaurant/table/customer/list",
       }).then(function mySuccess(response) {
           $scope.table_customers = response.data.result;
@@ -673,12 +667,7 @@
     function show_menu() {
       $http({
           method : "GET",
-          url : "/api/restaurant/menu/list",
-          params: {
-            for: "orders",
-            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-          },
-
+          url : "/api/restaurant/menu/list/orders",
       }).then(function mySuccess(response) {
           $scope.menu = response.data.result;
       }, function myError(response) {
@@ -803,6 +792,7 @@
           console.log(response.statusText);
         });
       }else{
+        $scope.submit = true;
         $http({
            method: 'POST',
            url: '/api/restaurant/table/customer/bill/preview/'+data.$parent.customer_data.id,
@@ -811,6 +801,7 @@
         })
         .then(function(response) {
           console.log(response.data);
+          $scope.submit = false;
           $scope.bill_preview = response.data.result;
           $scope.bill_preview.total = data.$parent.customer_data.total;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
@@ -827,6 +818,7 @@
     $scope.make_bill = function(data) {
       // console.log(data);
       // console.log(data.bill_preview.table_customer_id);
+      $scope.submit = true;
       $scope.formdata.items = data.bill_preview;
       $http({
          method: 'POST',
@@ -835,6 +827,7 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
+        $scope.submit = false;
         // console.log(response.data)
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
@@ -902,6 +895,7 @@
 
     $scope.make_payment = function(data) {
       // console.log(data.$parent.bill_id);
+      $scope.submit = true;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/customer/payment/make/'+data.$parent.bill_id,
@@ -910,12 +904,14 @@
       })
       .then(function(response) {
         console.log(response.data);
+        $scope.submit = false;
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
         $("#payment-modal").modal("hide");
         console.log(response.data)
       }, function(rejection) {
          var errors = rejection.data;
+         $scope.submit = false;
       });
     }
     $scope.formdata.settlements_payment = {};
@@ -937,9 +933,6 @@
     function show_server() {
       $http({
           method : "GET",
-          params: {
-            'restaurant_id': {{Session::get('users.user_data')->restaurant_id}}
-          },
           url : "/api/restaurant/server/list",
       }).then(function mySuccess(response) {
           $scope.server = response.data.result;

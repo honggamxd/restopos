@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIssuanceTable extends Migration
+class CreateIssuancesToTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,9 @@ class CreateIssuanceTable extends Migration
      */
     public function up()
     {
-        Schema::create('issuance', function (Blueprint $table) {
+        Schema::create('issuance_to', function (Blueprint $table) {
           $table->increments('id');
-          $table->integer('issuance_to')->unsigned();
-          $table->string('issuance_number');
-          $table->text('comments');
-          $table->integer('date_');
-          $table->integer('date_time');
-          $table->integer('user_id')->unsigned();
+          $table->string('name');
           $table->boolean('deleted');
           $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
@@ -34,7 +29,7 @@ class CreateIssuanceTable extends Migration
      */
     public function down()
     {
-
-        Schema::dropIfExists('issuance');
+        //
+        Schema::dropIfExists('issuance_to');
     }
 }

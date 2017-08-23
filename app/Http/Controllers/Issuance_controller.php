@@ -14,7 +14,8 @@ class Issuance_controller extends Controller
 {
   public function index(Request $request)
   {
-    return view('issuance.index');
+    $data["issuance_to"] = DB::table('issuance_to')->where('deleted',0)->get();
+    return view('issuance.index',$data);
   }
   public function show(Request $request,$id)
   {
@@ -25,6 +26,7 @@ class Issuance_controller extends Controller
       $data["issuance_data"] = $issuance->find($id);
       $data["issuance_data"]->date_ = date("m/d/Y",$data["issuance_data"]->date_);
       $data["issuance_data"]->date_time = date("h:i:s A",$data["issuance_data"]->date_time);
+      $data["issuance_data"]->issuance_to = DB::table('issuance_to')->find($data["issuance_data"]->issuance_to)->name;
       $data["items"] = $issuance_detail->select('issuance_detail.*','inventory_item.item_name','inventory_item.category')->join('inventory_item','issuance_detail.inventory_item_id','=','inventory_item.id')->where("issuance_id",$id)->get();
     }else{
       abort(404);
@@ -44,10 +46,12 @@ class Issuance_controller extends Controller
   {
     if($request->session()->has("issuance_cart")&&$request->session()->get("issuance_cart")!=array()){
       $data = $request->session()->get("issuance_cart");
+    }else{
+      $data["items"] = array();
     }
     $data["info"] = [
       'issuance_number' => $request->issuance_number,
-      'issuance_from' => $request->issuance_from,
+      'issuance_to' => $request->issuance_to,
       'comments' => $request->comments
     ];
     $request->session()->put("issuance_cart",$data);
@@ -73,7 +77,7 @@ class Issuance_controller extends Controller
       ];
       $data["info"] = [
         'issuance_number' => '',
-        'issuance_from' => '',
+        'issuance_to' => '',
         'comments' => '',
       ];
     }
@@ -82,6 +86,7 @@ class Issuance_controller extends Controller
   }
   public function show_cart(Request $request)
   {
+    // return $request->session()->get('issuance_cart');
     $inventory_item = new Inventory_item;
     $data = array();
     if($request->session()->has("issuance_cart")&&$request->session()->get("issuance_cart")!=array()){
@@ -110,7 +115,7 @@ class Issuance_controller extends Controller
 
     $this->validate($request, [
         'items' => 'not_zero_quantity|valid_inventory_control:inventory_item_detail,inventory_item_id',
-        'issuance_from' => 'required|max:255',
+        'issuance_to' => 'required',
         'issuance_number' => 'required|max:255',
         'comments' => 'max:255'
     ],[
@@ -120,7 +125,7 @@ class Issuance_controller extends Controller
     $inventory_item = new Inventory_item;
     $issuance = new Issuance;
     $issuance->issuance_number = $request->issuance_number;
-    $issuance->issuance_from = $request->issuance_from;
+    $issuance->issuance_to = $request->issuance_to;
     $issuance->comments = $request->comments;
     $issuance->date_ = strtotime(date("m/d/Y"));
     $issuance->date_time = strtotime(date("m/d/Y h:i:s A"));

@@ -119,7 +119,7 @@
     function show_reports(page=1) {
       $http({
           method : "GET",
-          url : "/api/reports/general/all",
+          url : "/api/reports/general/f_and_b",
           params: {
             "date_from":"{{$date_from}}",
             "date_to":"{{$date_to}}",

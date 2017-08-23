@@ -25,19 +25,23 @@
   <table class="ui unstackable striped celled structured table">
     <thead>
       <tr>
-        <th class="center aligned middle aligned">ID</th>
         <th class="center aligned middle aligned">Date</th>
+        <th class="center aligned middle aligned">ID</th>
+        <th class="center aligned middle aligned">Item</th>
+        <th class="center aligned middle aligned">Quantity</th>
         <th class="center aligned middle aligned">Issuance #</th>
-        <th class="center aligned middle aligned">Issuance From</th>
+        <th class="center aligned middle aligned">Issuance To</th>
         <th class="center aligned middle aligned">Comments</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="issuance_data in issuances">
-        <td class="center aligned middle aligned"><a href="/issuance/view/@{{issuance_data.id}}">@{{issuance_data.id}}</a></td>
         <td class="center aligned middle aligned">@{{issuance_data.date_}}</td>
+        <td class="center aligned middle aligned"><a href="/issuance/view/@{{issuance_data.issuance_id}}">@{{issuance_data.issuance_id}}</a></td>
+        <td class="center aligned middle aligned">@{{issuance_data.item_name}}</td>
+        <td class="center aligned middle aligned">@{{issuance_data.quantity}}</td>
         <td class="center aligned middle aligned">@{{issuance_data.issuance_number}}</td>
-        <td class="center aligned middle aligned">@{{issuance_data.issuance_from}}</td>
+        <td class="center aligned middle aligned">@{{issuance_data.issuance_to}}</td>
         <td class="center aligned middle aligned">@{{issuance_data.comments}}</td>
       </tr>
     </tbody>

@@ -57,7 +57,7 @@ class Restaurant_controller extends Controller
 
     public function show_server(Request $request)
     {
-      $data["result"] = DB::table('restaurant_server')->where(['deleted'=>0,'restaurant_id'=>$request->restaurant_id])->get();
+      $data["result"] = DB::table('restaurant_server')->where(['deleted'=>0,'restaurant_id'=>$request->session()->get('users.user_data')->restaurant_id])->get();
       return $data;
     }
 }
