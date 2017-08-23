@@ -15,10 +15,11 @@ class CreateInventoryItemTable extends Migration
         Schema::create('inventory_item', function (Blueprint $table) {
           $table->increments('id');
           $table->string('category');
-          $table->string('subcategory');
+          $table->string('unit');
           $table->string('item_name');
           $table->double('cost_price');
           $table->boolean('deleted');
+          $table->string('type');
           $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');

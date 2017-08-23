@@ -43,6 +43,7 @@
             <tr>
               <th class="center aligned middle aligned">Category</th>
               <th class="center aligned middle aligned">Item</th>
+              <th class="center aligned middle aligned">Unit</th>
               <th class="center aligned middle aligned">Qty</th>
               <th class="center aligned middle aligned">Cost Price</th>
               <th class="center aligned middle aligned">Total</th>
@@ -53,6 +54,7 @@
             <tr ng-repeat="item in cart.items" ng-class="item.quantity == 0 ? 'error' : ''">
               <td class="center aligned middle aligned">@{{item.category}}</td>
               <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
+              <td class="center aligned middle aligned">@{{item.unit}}</td>
               <td class="middle aligned center aligned" ng-init="item.edit_cost_price=false">
                 <div class="ui input" ng-show="item.edit_quantity">
                   <input type="number" placeholder="QTY" ng-model="item.quantity" ng-blur="update_cart(this,'quantity')" focus-me="item.edit_quantity">
@@ -71,7 +73,7 @@
           </tbody>
           <tfoot ng-cloak>
             <tr>
-              <th class="right aligned middle aligned" colspan="4">TOTAL</th>
+              <th class="right aligned middle aligned" colspan="5">TOTAL</th>
               <th class="right aligned middle aligned"><span ng-if="cart.total!=0">@{{cart.total|currency:""}}</span></th>
               <th class="right aligned middle aligned"></th>
             </tr>
@@ -129,6 +131,19 @@
             <input type="text" name="item_name" class="form-control" placeholder="Enter Item Name" ng-model="formdata.item_name">
             <p class="help-block" ng-cloak>@{{formerrors.item_name[0]}}</p>
           </div>
+          <div class="form-group">
+            <label>Unit of Measure:</label>
+            <input type="text" name="unit" class="form-control" placeholder="Enter Unit of Measure" ng-model="formdata.unit">
+            <p class="help-block" ng-cloak>@{{formerrors.unit[0]}}</p>
+          </div>
+<!--           <div class="form-group">
+            <label>Type:</label>
+            <select class="form-control" ng-model="formdata.type" ng-init="formdata.type='ingredient'">
+              <option value="ingredient">Ingredient</option>
+              <option value="general">General Item</option>
+            </select>
+            <p class="help-block" ng-cloak>@{{formerrors.type[0]}}</p>
+          </div> -->
           <div class="form-group">
             <label>Cost Price:</label>
             <input type="number" step="0.01" name="cost_price" class="form-control" placeholder="Enter Cost Price" ng-model="formdata.cost_price">

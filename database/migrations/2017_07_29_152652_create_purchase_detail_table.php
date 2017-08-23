@@ -15,7 +15,7 @@ class CreatePurchaseDetailTable extends Migration
         Schema::create('purchase_detail', function (Blueprint $table) {
           $table->increments('id');
           $table->integer('inventory_item_id')->unsigned();
-          $table->integer('quantity');
+          $table->double('quantity');
           $table->double('cost_price');
           $table->integer('date_');
           $table->boolean('deleted');

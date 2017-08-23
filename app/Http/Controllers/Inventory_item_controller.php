@@ -24,6 +24,7 @@ class Inventory_item_controller extends Controller
   {
     $this->validate($request, [
         'category' => 'required|max:255',
+        'unit' => 'required|max:255',
         // 'subcategory' => 'required|max:255',
         'cost_price' => 'required|numeric',
         'item_name' => 'required|custom_unique:inventory_item,item_name,category,'.$request->category.'|max:255',
@@ -32,9 +33,11 @@ class Inventory_item_controller extends Controller
     ]);
     $inventory_item = new Inventory_item;
     $inventory_item->category = $request->category;
+    $inventory_item->unit = $request->unit;
+    // $inventory_item->type = $request->type;
     // $inventory_item->subcategory = $request->subcategory;
     $inventory_item->item_name = $request->item_name;
-    $inventory_item->cost_price = $request->cost_price;
+    $inventory_item->cost_price = round($request->cost_price,2);
     $inventory_item->save();
 
     $item_data = $inventory_item->orderBy("id","DESC")->first();

@@ -9,6 +9,7 @@ use App\Issuance;
 use App\Issuance_detail;
 use App\Inventory_item;
 use App\Inventory_item_detail;
+use App\Restaurant_inventory;
 
 class Issuance_controller extends Controller
 {
@@ -37,7 +38,7 @@ class Issuance_controller extends Controller
   public function update_cart_items(Request $request,$id)
   {
     $data = $request->session()->get("issuance_cart");
-    $data["items"]["item_".$id]["quantity"] = abs((integer)$request->quantity);
+    $data["items"]["item_".$id]["quantity"] = abs((float)round($request->quantity,2));
     $request->session()->put("issuance_cart",$data);
     return $this->show_cart($request);
   }
@@ -95,6 +96,7 @@ class Issuance_controller extends Controller
         $item_data = $inventory_item->find($cart_item["inventory_item_id"]);
         $data["items"]["item_".$cart_item["inventory_item_id"]]["category"] = $item_data->category;
         $data["items"]["item_".$cart_item["inventory_item_id"]]["item_name"] = $item_data->item_name;
+        $data["items"]["item_".$cart_item["inventory_item_id"]]["unit"] = $item_data->unit;
         $stocks = $inventory_item
           ->join('inventory_item_detail','inventory_item.id','=','inventory_item_detail.inventory_item_id')
           ->select('inventory_item.*',DB::raw('SUM(quantity) as total'))
@@ -112,7 +114,7 @@ class Issuance_controller extends Controller
 
   public function store_issuance(Request $request)
   {
-
+    // exit;
     $this->validate($request, [
         'items' => 'not_zero_quantity|valid_inventory_control:inventory_item_detail,inventory_item_id',
         'issuance_to' => 'required',
@@ -154,6 +156,13 @@ class Issuance_controller extends Controller
       $inventory_item_detail->reference_id = $issuance_data->id;
       $inventory_item_detail->user_id = $issuance_data->user_id;
       $inventory_item_detail->save();
+
+      $restaurant_inventory = new Restaurant_inventory;
+      $restaurant_inventory->inventory_item_id = $cart_item["inventory_item_id"];
+      $restaurant_inventory->quantity = $cart_item["quantity"];
+      $restaurant_inventory->issuance_id = $issuance_data->id;
+      $restaurant_inventory->restaurant_id = DB::table('issuance_to')->find($request->issuance_to)->ref_id;
+      $restaurant_inventory->save();
     }
     $request->session()->forget('issuance_cart');
     return $issuance_data->id;

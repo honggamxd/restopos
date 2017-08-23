@@ -45,6 +45,7 @@
         <tr>
           <th class="center aligned middle aligned">Category</th>
           <th class="center aligned middle aligned">Item</th>
+          <th class="center aligned middle aligned">Unit</th>
           <th class="center aligned middle aligned">Qty</th>
         </tr>
       </thead>
@@ -52,6 +53,7 @@
         <tr ng-repeat="item_data in items">
           <td class="center aligned middle aligned">@{{item_data.category}}</td>
           <td class="center aligned middle aligned">@{{item_data.item_name}}</td>
+          <td class="center aligned middle aligned">@{{item_data.unit}}</td>
           <td class="center aligned middle aligned">@{{item_data.quantity}}</td>
         </tr>
       </tbody>

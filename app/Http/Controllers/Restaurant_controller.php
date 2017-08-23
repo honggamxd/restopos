@@ -60,4 +60,14 @@ class Restaurant_controller extends Controller
       $data["result"] = DB::table('restaurant_server')->where(['deleted'=>0,'restaurant_id'=>$request->session()->get('users.user_data')->restaurant_id])->get();
       return $data;
     }
+
+    public function inventory(Request $request)
+    {
+      return view('restaurant.inventory');
+    }
+
+    public function show_items(Request $request,$restaurant_id)
+    {
+      # code...
+    }
 }

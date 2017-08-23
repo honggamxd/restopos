@@ -61,9 +61,9 @@ class DatabaseSeeder extends Seeder
 
       DB::table('issuance_to')->insert(
         [
-          ['name' => 'Viewdeck Café'],
-          ['name' => 'Koi Café'],
-          ['name' => 'Roberto’s Garden Restaurant']
+          ['name' => 'Viewdeck Café','ref_id'=>1,'ref_table'=>'restaurant'],
+          ['name' => 'Koi Café','ref_id'=>2,'ref_table'=>'restaurant'],
+          ['name' => 'Roberto’s Garden Restaurant','ref_id'=>3,'ref_table'=>'restaurant']
         ]
       );
 

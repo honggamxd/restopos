@@ -63,6 +63,10 @@ Route::get('/api/inventory/item/show', 'Inventory_item_controller@show');
 Route::get('/inventory', 'Inventory_item_controller@index')->middleware('logged');
 Route::post('/api/inventory/item/add', 'Inventory_item_controller@store');
 
+//Restaurant Inventory
+Route::get('/restaurant/inventory', 'Restaurant_controller@inventory')->middleware('logged');
+
+
 //Purchases
 Route::get('/purchases', 'Purchases_controller@index')->middleware('logged');
 Route::get('/purchases/view/{id}', 'Purchases_controller@show')->middleware('logged');

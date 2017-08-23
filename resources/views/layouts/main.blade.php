@@ -40,6 +40,10 @@
         <i class="food icon"></i>
         {{Session::get('users.user_data')->restaurant}}<br>Menu
     </a>
+    <a class="item" href="/restaurant/inventory">
+        <i class="browser icon"></i>
+        {{Session::get('users.user_data')->restaurant}}<br>Inventory
+    </a>
     @endif
     @if(Session::get('users.user_data')->privilege=="admin")
     <a class="item" href="/inventory">

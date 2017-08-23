@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIssuanceTableDetail extends Migration
+class CreateRestaurantInventory extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,19 @@ class CreateIssuanceTableDetail extends Migration
      */
     public function up()
     {
-        Schema::create('issuance_detail', function (Blueprint $table) {
+        //
+        Schema::create('restaurant_inventory', function (Blueprint $table) {
           $table->increments('id');
           $table->integer('inventory_item_id')->unsigned();
           $table->double('quantity');
-          $table->integer('date_');
-          $table->boolean('deleted');
           $table->integer('issuance_id')->unsigned();
-          $table->integer('user_id')->unsigned();
+          $table->integer('restaurant_id')->unsigned();
+          $table->boolean('deleted');
+          $table->integer('deleted_by')->unsigned();
+          $table->text('deleted_comment');
+          $table->integer('deleted_date');
         });
+        
     }
 
     /**
@@ -30,6 +34,7 @@ class CreateIssuanceTableDetail extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('issuance_detail');
+        //
+        Schema::dropIfExists('restaurant_inventory');
     }
 }

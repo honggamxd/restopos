@@ -31,6 +31,7 @@
               <tr>
                 <th class="center aligned middle aligned">Category</th>
                 <th class="center aligned middle aligned">Item</th>
+                <th class="center aligned middle aligned">Unit</th>
                 <th class="center aligned middle aligned">Stocks</th>
                 <th class="center aligned middle aligned">Qty</th>
                 <th class="center aligned middle aligned"></th>
@@ -40,6 +41,7 @@
               <tr ng-repeat="item in cart.items" ng-init="item.edit_quantity=false" ng-class="item.quantity == 0 ? 'error' : (item.valid == 0 ? 'warning' : '')">
                 <td class="center aligned middle aligned">@{{item.category}}</td>
                 <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
+                <td class="center aligned middle aligned">@{{item.unit}}</td>
                 <td class="center aligned middle aligned">@{{item.stocks}}</td>
                 <td class="center aligned middle aligned">
                   <div class="ui input" ng-show="item.edit_quantity">

@@ -51,8 +51,8 @@ class Purchases_controller extends Controller
   public function update_cart_items(Request $request,$id)
   {
     $data = $request->session()->get("purchase_cart");
-    $data["items"]["item_".$id]["quantity"] = abs((integer)$request->quantity);
-    $data["items"]["item_".$id]["cost_price"] = abs((float)$request->cost_price);
+    $data["items"]["item_".$id]["quantity"] = abs((float)round($request->quantity,2));
+    $data["items"]["item_".$id]["cost_price"] = abs((float)round($request->cost_price,2));
     $request->session()->put("purchase_cart",$data);
     return $this->show_cart($request);
   }
@@ -86,6 +86,7 @@ class Purchases_controller extends Controller
         $item_data = $inventory->find($cart_item["inventory_item_id"]);
         $data["items"]["item_".$cart_item["inventory_item_id"]]["category"] = $item_data->category;
         $data["items"]["item_".$cart_item["inventory_item_id"]]["item_name"] = $item_data->item_name;
+        $data["items"]["item_".$cart_item["inventory_item_id"]]["unit"] = $item_data->unit;
         $data["items"]["item_".$cart_item["inventory_item_id"]]["total"] = $cart_item["quantity"] * $cart_item["cost_price"];
         $data["total"] += $cart_item["quantity"] * $cart_item["cost_price"];
       }
