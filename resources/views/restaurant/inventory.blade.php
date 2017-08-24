@@ -21,10 +21,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td class="center aligned middle aligned"></td>
-          <td class="center aligned middle aligned"></td>
-          <td class="center aligned middle aligned"></td>
+        <tr ng-repeat="item in items">
+          <td class="center aligned middle aligned">@{{item.item_name}}</td>
+          <td class="center aligned middle aligned">@{{item.unit}}</td>
+          <td class="center aligned middle aligned">@{{item.total_quantity|currency:""}}</td>
         </tr>
       </tbody>
     </table>
@@ -40,7 +40,17 @@
 <script type="text/javascript">
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
-
+    show_items();
+    function show_items() {
+      $http({
+          method : "GET",
+          url : "/api/restaurant/inventory/items",
+      }).then(function mySuccess(response) {
+          $scope.items = response.data.result;
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
   });
   angular.bootstrap(document, ['main']);
 </script>

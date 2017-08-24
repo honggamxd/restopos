@@ -64,7 +64,8 @@ Route::get('/inventory', 'Inventory_item_controller@index')->middleware('logged'
 Route::post('/api/inventory/item/add', 'Inventory_item_controller@store');
 
 //Restaurant Inventory
-Route::get('/restaurant/inventory', 'Restaurant_controller@inventory')->middleware('logged');
+Route::get('/restaurant/inventory', 'Restaurant_inventory_controller@index')->middleware('logged');
+Route::get('/api/restaurant/inventory/items', 'Restaurant_inventory_controller@show_items');
 
 
 //Purchases
