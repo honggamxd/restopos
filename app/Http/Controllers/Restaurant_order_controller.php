@@ -42,7 +42,7 @@ class Restaurant_order_controller extends Controller
       $restaurant_order_detail->restaurant_menu_id = $cart_data->id;
       $restaurant_order_detail->quantity = $cart_data->quantity;
       $restaurant_order_detail->price = $cart_data->price;
-      $restaurant_order_detail->special_order = $cart_data->special_order;
+      $restaurant_order_detail->special_instruction = $cart_data->special_instruction;
       $restaurant_order_detail->restaurant_order_id = $order_data->id;
       $restaurant_order_detail->restaurant_id = $customer_data->restaurant_id;
       $restaurant_order_detail->save();

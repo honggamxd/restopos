@@ -67,7 +67,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in order_detail" ng-cloak>
-      <td>@{{items.menu}}<span ng-if="items.special_order != ''"><br>(@{{items.special_order}})</span></td>
+      <td>@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
       <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
     </tr>

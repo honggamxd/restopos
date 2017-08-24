@@ -67,5 +67,14 @@ class DatabaseSeeder extends Seeder
         ]
       );
 
+      DB::table('restaurant_menu')->insert(
+        [
+          ['restaurant_id' => 1,'is_prepared'=> 1],
+          ['restaurant_id' => 2,'is_prepared'=> 1],
+          ['restaurant_id' => 3,'is_prepared'=> 1]
+        ]
+      );
+
+
     }
 }

@@ -15,7 +15,8 @@ class CreateRestaurantbilldetailsTable extends Migration
         Schema::create('restaurant_bill_detail', function (Blueprint $table) {
           $table->increments('id');
           $table->integer('restaurant_menu_id')->unsigned();
-          $table->text('special_order');
+          $table->text('special_instruction');
+          // $table->string('restaurant_menu_name');
           $table->integer('quantity');
           $table->double('price');
           $table->integer('date_');

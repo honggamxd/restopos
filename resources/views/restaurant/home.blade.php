@@ -216,10 +216,10 @@
                 <tbody>
                   <tr ng-repeat="cart_data in table_customer_cart" ng-init="table_customer_cart={};table_customer_total=''">
                     <td class="center aligned middle aligned">
-                      <div style="width: 100%;cursor: pointer;" ng-click="toggle_special_order(this)" ng-init="cart_data.show_special_order=false">
+                      <div style="width: 100%;cursor: pointer;" ng-click="toggle_special_instruction(this)" ng-init="cart_data.show_special_instruction=false">
                         @{{cart_data.name}}
                       </div>
-                      <input type="text" name="" ng-model="cart_data.special_order" ng-change="add_special_order(this)" ng-if="cart_data.special_order != '' || cart_data.show_special_order">
+                      <input type="text" name="" ng-model="cart_data.special_instruction" ng-change="add_special_instruction(this)" ng-if="cart_data.special_instruction != '' || cart_data.show_special_instruction">
                     </td>
                     <td class="center aligned middle aligned" ng-init="cart_data.update_quantity=true">
                       <div ng-hide="cart_data.show_update_quantity" ng-click="toggle_update_quantity(this)" style="width: 100%;cursor: pointer;">@{{cart_data.quantity}}</div>
@@ -321,7 +321,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="items in order_detail" ng-cloak>
-              <td>@{{items.menu}}<span ng-if="items.special_order != ''"><br>(@{{items.special_order}})</span></td>
+              <td>@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
               <td style="text-align: center;" ng-bind="items.quantity"></td>
               <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
             </tr>
@@ -362,7 +362,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="bill_preview_data in bill_preview">
-              <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_order != ''"><br>(@{{bill_preview_data.special_order}})</span></td>
+              <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != ''"><br>(@{{bill_preview_data.special_instruction}})</span></td>
               <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
               <td class="center aligned middle aligned">
                 <input style="width: 100px" type="number" ng-init="bill_preview_data.quantity_to_bill = bill_preview_data.quantity" ng-model="bill_preview_data.quantity_to_bill" ng-change="bill_preview_total(this)" value="@{{bill_preview_data.quantity}}">
@@ -618,22 +618,22 @@
       });
     }
 
-    $scope.toggle_special_order = function(data) {
-      var toggle = (data.cart_data.show_special_order?false:true);
-      $scope.table_customer_cart["menu_"+data.cart_data.id].show_special_order = toggle;
+    $scope.toggle_special_instruction = function(data) {
+      var toggle = (data.cart_data.show_special_instruction?false:true);
+      $scope.table_customer_cart["menu_"+data.cart_data.id].show_special_instruction = toggle;
     }
     $scope.toggle_update_quantity = function(data) {
       var toggle = (data.cart_data.show_update_quantity?false:true);
       $scope.table_customer_cart["menu_"+data.cart_data.id].show_update_quantity = toggle;
     }
 
-    $scope.add_special_order = function(data) {
+    $scope.add_special_instruction = function(data) {
       // console.log(data.$parent.table_customer_id);
-      $scope.formdata.special_order = data.cart_data.special_order;
+      $scope.formdata.special_instruction = data.cart_data.special_instruction;
       $scope.formdata.menu_id = data.cart_data.id;
       $http({
          method: 'POST',
-         url: '/api/restaurant/table/order/cart/update/special_order/'+data.$parent.table_customer_id,
+         url: '/api/restaurant/table/order/cart/update/special_instruction/'+data.$parent.table_customer_id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
