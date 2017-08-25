@@ -15,6 +15,8 @@ class Restaurant_controller extends Controller
         return view('home');
       }else{
         $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
+        $app_config = DB::table('app_config')->first();
+        $data["categories"] = explode(',', $app_config->categories);
         return view('restaurant.home',$data);
       }
     }

@@ -22,6 +22,13 @@ class Restaurant_menu_controller extends Controller
 
   public function store(Request $request)
   {
+
+    $this->validate($request,[
+        'name' => 'required',
+        'category' => 'required',
+        'subcategory' => 'required',
+        'price' => 'required',
+      ]);
     $restaurant_menu = new Restaurant_menu;
     $restaurant_menu->name = $request->name;
     $restaurant_menu->category = $request->category;
@@ -30,6 +37,8 @@ class Restaurant_menu_controller extends Controller
     $restaurant_menu->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
     $restaurant_menu->is_prepared = 1;
     $restaurant_menu->save();
+
+    return $restaurant_menu->orderBy('id','DESC')->first();
   }
 
   public function get_list(Request $request,$type)

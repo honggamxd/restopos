@@ -97,6 +97,7 @@ Route::get('/reports/print/{type}', 'Reports_controller@show_print')->middleware
 Route::get('/api/reports/general/purchases', 'Reports_controller@purhcased_item');
 Route::get('/api/reports/general/issuances', 'Reports_controller@issued_items');
 Route::get('/api/reports/general/f_and_b', 'Reports_controller@f_and_b');
+Route::get('/api/reports/general/menu_popularity', 'Reports_controller@menu_popularity');
 // Route::get('/api/reports/general/{type}', 'Reports_controller@api');
 
 

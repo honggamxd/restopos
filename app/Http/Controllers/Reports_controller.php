@@ -33,6 +33,9 @@ class Reports_controller extends Controller
     }elseif ($type=="purchases") {
       # code...
       return view('reports.purchases',$data);
+    }elseif ($type=="menu_popularity") {
+      # code...
+      return view('reports.menu_popularity',$data);
     }else{
       return view('reports.issuances',$data);
     }
@@ -387,6 +390,11 @@ class Reports_controller extends Controller
     $data["result"] = $issued_items;
     $data["getQueryLog"] = DB::getQueryLog();
     return $data;
+  }
+
+  public function menu_popularity($value='')
+  {
+    # code...
   }
 
 }

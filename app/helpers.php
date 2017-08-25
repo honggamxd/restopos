@@ -14,6 +14,9 @@
       if($class==""){
         $class = "paging";
       }
+      if($attrib==''){
+        $attrib = array();
+      }
       $attrib["href"] = "javascript:void(0);";
       $attrib["class"] = $class;
       $paging = "";

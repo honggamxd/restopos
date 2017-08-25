@@ -151,20 +151,8 @@
       </div>
       <div class="modal-body">
         <form action="/restaurant/menu" method="post" id="add-items-form">
-        {{ csrf_field() }}
-          <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
+        <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
         
-<!--         <div class="form-group">
-          <label>Outlet</label>
-          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id" required>
-            <option value="">Select Outlet</option>
-            @foreach($restaurants as $restaurant)
-              <option value="{{$restaurant->id}}">{{$restaurant->name}}</option>
-            @endforeach
-          </select>
-          <p class="help-block" ng-show="formdata.restaurant_id" ng-bind="formdata.restaurant_id_error[0]"></p>
-        </div> -->
-
         <div class="form-group">
           <label>Category</label>
           <select name="category" class="form-control" ng-model="formdata.category">

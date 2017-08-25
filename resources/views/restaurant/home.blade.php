@@ -95,6 +95,8 @@
 
 @section('modals')
 
+
+
 <div id="add-table-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -151,6 +153,8 @@
         <div class="row">
           <div class="col-sm-6">
             <div class="field">
+
+
               <div class="two fields">
                 <div class="field">
                   <label>Category</label>
@@ -168,12 +172,25 @@
                 </div>
               </div>
 
-              <div class="field">
-                <label>Menu Search</label>
-                <div class="ui fluid icon input focus">
-                  <input type="text" placeholder="Search...">
-                  <i class="search icon"></i>
+              <div class="fields">
+                <div class="twelve wide field">
+                  <label>Menu Search</label>
+                  <div class="ui fluid icon input focus">
+                    <input type="text" placeholder="Search...">
+                    <i class="search icon"></i>
+                  </div>
                 </div>
+                <div class="four wide field">
+                  <label>&nbsp;</label>
+                  <button type="button" class="ui primary button fluid" onclick="$('#add-menu-modal').modal('show')">
+                    Add Menu
+                  </button>
+                </div>
+              </div>
+
+
+              <div class="field">
+
               </div>
             </div>
 
@@ -492,6 +509,56 @@
 
 
 
+<div id="add-menu-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Menu</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="add-items-form" ng-submit="add_menu()">
+        
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" class="form-control" ng-model="formdata.category">
+            <option value="">Select Category</option>
+            @foreach ($categories as $category)
+              <option value="{{$category}}">{{$category}}</option>
+            @endforeach
+          </select>
+          <p class="help-block">@{{formerrors.category[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Subcategory</label>
+          <input type="text" name="subcategory" placeholder="Subcategory" class="form-control" ng-model="formdata.subcategory">
+          <p class="help-block">@{{formerrors.subcategory[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="Name" class="form-control" ng-model="formdata.name">
+          <p class="help-block">@{{formerrors.name[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Price</label>
+          <input type="text" name="price" placeholder="Price" class="form-control" ng-model="formdata.price">
+          <p class="help-block">@{{formerrors.price[0]}}</p>
+        </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" ng-disabled="submit" form="add-items-form">Save</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -510,11 +577,39 @@
       $('#add-table-modal').modal('show');
     });
 
-    $scope.formdata = {
-     _token: "{{csrf_token()}}",
-    };
+    $scope.formdata = {};
     $scope.table = {};
     $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+
+    $scope.add_menu = function() {
+      $scope.submit = true;
+      $scope.formerrors = {};
+      $http({
+        method: 'POST',
+        url: '/api/restaurant/menu',
+        data: $.param($scope.formdata),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+        $scope.submit = false;
+        alertify.success($scope.formdata.name+" is added.");
+        $scope.formdata.category = "";
+        $scope.formdata.subcategory = "";
+        $scope.formdata.name = "";
+        $scope.formdata.price = "";
+
+        response.data.menu_data = response.data;
+        $scope.add_cart(response.data);
+        $('#add-menu-modal').modal('hide');
+        show_menu();
+      }, function(rejection) {
+        var errors = rejection.data;
+
+        $scope.formerrors = errors;
+        $scope.submit = false;
+      });
+    }
 
     $scope.add_table = function() {
       $scope.formerrors = {};
@@ -693,9 +788,9 @@
         show_order(response.data.id);
       }, function(rejection) {
         var errors = rejection.data;
-        $scope.formdata.ar_number_error = errors.ar_number;
-        $scope.formdata.amount_error = errors.amount;
-        $scope.formdata.date_payment_error = errors.date_payment;
+        $scope.formdata.ar_number = errors.ar_number;
+        $scope.formdata.amount = errors.amount;
+        $scope.formdata.date_payment = errors.date_payment;
         $scope.submit = false;
       }); 
     }
@@ -735,7 +830,7 @@
       }, function(rejection) {
          var errors = rejection.data;
          alertify.error(rejection.data.error);
-         $scope.formdata.date_payment_error = errors.date_payment;
+         $scope.formdata.date_payment = errors.date_payment;
       });
     }
 
@@ -757,7 +852,7 @@
       }, function(rejection) {
          var errors = rejection.data;
          alertify.error(rejection.data.error);
-         $scope.formdata.date_payment_error = errors.date_payment;
+         $scope.formdata.date_payment = errors.date_payment;
       });
     }
 
@@ -809,7 +904,7 @@
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
            var errors = rejection.data;
-           $scope.formdata.date_payment_error = errors.date_payment;
+           $scope.formdata.date_payment = errors.date_payment;
            $scope.submit = false;
         });
       }
