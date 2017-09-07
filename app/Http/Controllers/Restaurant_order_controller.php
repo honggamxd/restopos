@@ -4,18 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Validator;
 use App\Http\Requests;
+use App\Http\Requests\StoreOrdersRequest;
 use App\Restaurant_table_customer;
 use App\Restaurant_table;
 use App\Restaurant_menu;
 use App\Restaurant_order;
 use App\Restaurant_order_detail;
+use App\Restaurant_menu_ingredients;
 
 
 class Restaurant_order_controller extends Controller
 {
   public function store(Request $request,$id)
   {
+    $validator = Validator::make($request->all(), [
+        'table_customer_cart' => 'required',
+        // 'body' => 'required',
+    ]);
+
     $restaurant_table_customer = new Restaurant_table_customer;
     $customer_data = $restaurant_table_customer->find($id);
 
@@ -26,7 +34,7 @@ class Restaurant_order_controller extends Controller
     $restaurant_order->date_ = strtotime(date("m/d/Y"));
     $restaurant_order->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_order->pax = $customer_data->pax;
-    $restaurant_order->table_name = $table_data->name;
+    $restaurant_order->table_name = $customer_data->table_name;
     $restaurant_order->restaurant_id = $customer_data->restaurant_id;
     $restaurant_order->restaurant_table_customer_id = $id;
     $restaurant_order->server_id = $customer_data->server_id;
@@ -46,6 +54,9 @@ class Restaurant_order_controller extends Controller
       $restaurant_order_detail->restaurant_order_id = $order_data->id;
       $restaurant_order_detail->restaurant_id = $customer_data->restaurant_id;
       $restaurant_order_detail->save();
+
+      $restaurant_menu_ingredients = new Restaurant_menu_ingredients;
+      // $menu_ingredients = $restaurant_menu_ingredients->where('restaurant_inventory_id',$cart_data->id);
     }
     $cart = $request->session()->forget('restaurant.table_customer.'.$id.'.cart');
     return $order_data;

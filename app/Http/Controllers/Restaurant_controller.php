@@ -12,7 +12,9 @@ class Restaurant_controller extends Controller
     public function index(Request $request)
     {
       if($request->session()->get('users.user_data')->privilege=="admin"){
-        return view('home');
+        $app_config = DB::table('app_config')->first();
+        $data["categories"] = explode(',', $app_config->categories);
+        return view('inventory',$data);
       }else{
         $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
         $app_config = DB::table('app_config')->first();

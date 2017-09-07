@@ -82,7 +82,7 @@
 
     <div id="menu_popularity" class="tab-pane fade">
       <form class="form" method="get" action="/reports/view/menu_popularity">
-        <h1 style="text-align: center;">menu_popularity Reports</h1>
+        <h1 style="text-align: center;">Menu Popularity Reports</h1>
         <div class="form-group">
           <label>Date From</label>
           <input type="text" id="menu_popularity-date-from" name="date_from" class="form-control" placeholder="Date From" value="{{date('m/d/Y')}}" readonly>

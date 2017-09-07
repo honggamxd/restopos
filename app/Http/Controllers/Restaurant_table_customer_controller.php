@@ -24,11 +24,14 @@ class Restaurant_table_customer_controller extends Controller
         'server_id.id' => 'required',
         'pax' => 'integer|required|custom_min:0',
     ],[
-      'custom_min' => 'The number of :attribute must be greater than 0'
+      'custom_min' => 'The number of :attribute must be greater than 0.',
+      'server_id.id.required' => 'The Server field is required.'
     ]);
     $restaurant_table_customer = new Restaurant_table_customer;
     $restaurant_table_customer->restaurant_table_id = $request->table_id["id"];
     $restaurant_table_customer->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;;
+    $restaurant_table_customer->table_name = $request->table_id["name"];
+    $restaurant_table_customer->guest_name = ($request->guest_name==null?"":$request->guest_name);
     $restaurant_table_customer->pax = $request->pax;
     $restaurant_table_customer->server_id = $request->server_id["id"];
     $restaurant_table_customer->date_time = strtotime(date("m/d/Y h:i:s A"));
@@ -135,7 +138,6 @@ class Restaurant_table_customer_controller extends Controller
       $customer_data->has_order = ($customer_data->has_order==1?TRUE:FALSE);
       $customer_data->has_billed_out = ($customer_data->has_billed_out==1?TRUE:FALSE);
       $customer_data->has_bill = ($customer_data->has_bill==1?TRUE:FALSE);
-      $customer_data->table_name = $restaurant_table->where("id",$customer_data->restaurant_table_id)->value("name");
       $customer_data->server_name = DB::table('restaurant_server')->find($customer_data->server_id)->name;
       $customer_data->total = $restaurant_order
         ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
@@ -143,6 +145,7 @@ class Restaurant_table_customer_controller extends Controller
         ->where("restaurant_table_customer_id",$customer_data->id)
         ->first()
         ->total;
+      $customer_data->table_data = $restaurant_table->find($customer_data->restaurant_table_id);
     }
     return $data;
   }
@@ -236,7 +239,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_bill->server_id = $customer_data->server_id;
     $restaurant_bill->cashier = $request->session()->get('users.user_data')->id;
     $restaurant_bill->restaurant_table_customer_id = $customer_data->id;
-    $restaurant_bill->table_name = $restaurant_table->where("id",$customer_data->restaurant_table_id)->value("name");
+    $restaurant_bill->table_name = $customer_data->table_name;
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
     $restaurant_bill->save();
 
@@ -326,10 +329,15 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_table_customer = new Restaurant_table_customer;
     $restaurant_table = new Restaurant_table;
     $customer_data = $restaurant_table_customer->find($id);
-    $table_data = $restaurant_table->where("id",$customer_data->restaurant_table_id)->first();
-    $table_data->occupied = 0;
-    $table_data->save();
-    $restaurant_table_customer->where("id",$id)->delete();
+
+    $customers = $restaurant_table_customer->where('restaurant_table_id',$customer_data->restaurant_table_id);
+    // return $customers->count();
+    if($customers->count()==1){
+      $table_data = $restaurant_table->where("id",$customer_data->restaurant_table_id)->first();
+      $table_data->occupied = 0;
+      $table_data->save();
+    }
+    $restaurant_table_customer->find($id)->delete();
   }
 
   public function test(Request $request)
@@ -342,5 +350,51 @@ class Restaurant_table_customer_controller extends Controller
   {
     $request->session()->forget('restaurant');
     # code...
+  }
+
+  public function update(Request $request,$id)
+  {
+    // return $request->customer_data['table_data'];
+    // exit;
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $data["new_table"] = $request->table_id;
+    $data["old_table"] = $request->customer_data['table_data'];
+    $customer_data = $restaurant_table_customer->find($id);
+    $customer_data->pax = $request->pax;
+    $customer_data->guest_name = $request->guest_name;
+    if($data["new_table"]['id']!=$data["old_table"]['id']){
+      $customer_data->table_name .= '>'.$data["new_table"]['name'];
+      $customer_data->restaurant_table_id = $data["new_table"]['id'];
+    }
+    $customer_data->save();
+    $customer_data = $restaurant_table_customer->find($id);
+    $customers = $restaurant_table_customer->where('restaurant_table_id',$data["old_table"]['id']);
+    if($customers->count()==0){
+      $restaurant_table = new Restaurant_table;
+      $table_data = $restaurant_table->find($data["old_table"]['id']);
+      $table_data->occupied = 0;
+      $table_data->save();
+    }else{
+      $restaurant_table = new Restaurant_table;
+      $table_data = $restaurant_table->find($data["old_table"]['id']);
+      $table_data->occupied = 1;
+      $table_data->save();
+    }
+
+    $customers = $restaurant_table_customer->where('restaurant_table_id',$data["new_table"]['id']);
+    if($customers->count()==0){
+      $restaurant_table = new Restaurant_table;
+      $table_data = $restaurant_table->find($data["new_table"]['id']);
+      $table_data->occupied = 0;
+      $table_data->save();
+    }else{
+      $restaurant_table = new Restaurant_table;
+      $table_data = $restaurant_table->find($data["new_table"]['id']);
+      $table_data->occupied = 1;
+      $table_data->save();
+    }
+
+
+    return $data;
   }
 }

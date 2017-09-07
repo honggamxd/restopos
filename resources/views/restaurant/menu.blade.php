@@ -70,15 +70,18 @@
       </thead>
       <tbody ng-cloak>
         <tr ng-repeat="menu_data in menu">
-          <td class="center aligned middle aligned" ng-bind="menu_data.category" ng-cloak>Category</td>
-          <td class="center aligned middle aligned" ng-bind="menu_data.subcategory" ng-cloak>Subcategory</td>
-          <td class="center aligned middle aligned" ng-bind="menu_data.name" ng-cloak>Menu Name</td>
+          <td class="center aligned middle aligned" ng-bind="menu_data.category" ng-cloak></td>
+          <td class="center aligned middle aligned" ng-bind="menu_data.subcategory" ng-cloak></td>
+          <td class="center aligned middle aligned" ng-bind="menu_data.name" ng-cloak></td>
           <td class="center aligned middle aligned" ng-cloak>@{{menu_data.price|currency:""}}</td>
           <td class="center aligned middle aligned" style="width: 12vw">
             <div class="ui toggle checkbox">
               <input type="checkbox" name="public" ng-change="available_to_menu(this)" ng-model="menu_data.is_prepared">
               <label>Available</label>
             </div>
+          </td>
+          <td class="center aligned middle aligned" ng-cloak>
+            <a href="javascript:void(0);" ng-click="ingredients(this)">Edit</a>
           </td>
         </tr>
       </tbody>
@@ -161,27 +164,46 @@
               <option value="{{$category}}">{{$category}}</option>
             @endforeach
           </select>
-          <p class="help-block" ng-show="formdata.category_error" ng-bind="formdata.category_error[0]"></p>
+          <p class="help-block" ng-bind="formerrors.category[0]"></p>
         </div>
 
         <div class="form-group">
           <label>Subcategory</label>
           <input type="text" name="subcategory" placeholder="Subcategory" class="form-control" ng-model="formdata.subcategory">
-          <p class="help-block" ng-show="formdata.subcategory_error" ng-bind="formdata.subcategory_error[0]"></p>
+          <p class="help-block" ng-bind="formerrors.subcategory[0]"></p>
         </div>
 
         <div class="form-group">
           <label>Name</label>
           <input type="text" name="name" placeholder="Name" class="form-control" ng-model="formdata.name">
-          <p class="help-block" ng-show="formdata.name_error" ng-bind="formdata.name_error[0]"></p>
+          <p class="help-block" ng-bind="formerrors.name[0]"></p>
         </div>
 
         <div class="form-group">
           <label>Price</label>
           <input type="text" name="price" placeholder="Price" class="form-control" ng-model="formdata.price">
-          <p class="help-block" ng-show="formdata.price_error" ng-bind="formdata.price_error[0]"></p>
+          <p class="help-block" ng-bind="formerrors.price[0]"></p>
         </div>
 
+<!--         <div class="form-group">
+          <label>Ingredients</label>
+          <select multiple="" class="ui fluid dropdown" ng-model="formdata.ingredients" ng-options="item as item.item_name for item in restaurant_inventory track by item.id">
+            <option value="">Select Ingredients</option>
+          </select>
+          <p class="help-block" ng-bind="formerrors.price[0]"></p>
+        </div>
+
+        <div class="form-group" ng-repeat="item in formdata.ingredients">
+          <label>@{{item.item_name}}</label>
+          <div class="ui right labeled input fluid">
+            <input type="number" step="0.01" placeholder="Enter number of @{{item.unit}} of @{{item.item_name}} per serving of @{{formdata.name}}" ng-model="formdata.ingredients[formdata.ingredients.indexOf(item)]['ingredient_quantity']">
+            <div class="ui basic label">
+              @{{item.unit}}
+            </div>
+          </div>
+          <p class="help-block" ng-bind="formerrors.price[0]"></p>
+        </div>
+ -->
         </form>
       </div>
       <div class="modal-footer">
@@ -211,9 +233,9 @@
   });
 
   app.controller('content-controller', function($scope,$http, $sce) {
-    $scope.formdata = {
-      _token: "{{csrf_token()}}",
-    };
+    $scope.formdata = {};
+    $scope.formerrors = {};
+    $scope.formdata.ingredients = [];
     $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
     show_menu();
     function show_menu() {
@@ -226,10 +248,21 @@
         console.log(response.statusText);
       });
     }
+    show_restaurant_inventory();
+    function show_restaurant_inventory() {
+      $http({
+        method : "GET",
+        url : "/api/restaurant/inventory/items",
+      }).then(function mySuccess(response) {
+        $scope.restaurant_inventory = response.data.result;
+      }, function myError(response) {
+        console.log(response.statusText);
+      });
+    }
 
     $scope.add_menu = function() {
       $scope.submit = true;
-
+      $scope.formerrors = {};
       $http({
         method: 'POST',
         url: '/api/restaurant/menu',
@@ -239,17 +272,14 @@
       .then(function(response) {
         console.log(response.data);
         $scope.submit = false;
-        alertify.success($scope.formdata.name+" is added.");
-        $scope.formdata = {
-          _token: "{{csrf_token()}}",
-        };
-        $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+        // alertify.success($scope.formdata.name+" is added.");
+        // $scope.formdata.;
         show_menu();
       }, function(rejection) {
         var errors = rejection.data;
-        $scope.formdata.ar_number_error = errors.ar_number;
-        $scope.formdata.amount_error = errors.amount;
-        $scope.formdata.date_payment_error = errors.date_payment;
+        $scope.formerrors.ar_number = errors.ar_number;
+        $scope.formerrors.amount = errors.amount;
+        $scope.formerrors.date_payment = errors.date_payment;
         $scope.submit = false;
       });
     }

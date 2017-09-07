@@ -88,6 +88,10 @@ class AppServiceProvider extends ServiceProvider
                 return $valid;
             }
         });
+
+        Validator::extend('available_to_cook', function($attribute, $value, $parameters, $validator) {
+            return false;
+        });
     }
 
     /**

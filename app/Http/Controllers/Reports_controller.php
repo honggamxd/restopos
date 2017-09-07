@@ -39,7 +39,27 @@ class Reports_controller extends Controller
     }else{
       return view('reports.issuances',$data);
     }
-  } 
+  }
+
+  public function restaurant(Request $request)
+  {
+    $data["date_from"] = date('F d, Y');
+    $data["date_to"] = date('F d, Y');
+    $app_config = DB::table('app_config')->first();
+    $data["categories"] = explode(',', $app_config->categories);
+    $data["settlements"] = explode(',', $app_config->settlements);
+    return view('reports.all',$data);
+  }
+
+  public function restaurant_print(Request $request)
+  {
+    $app_config = DB::table('app_config')->first();
+    $data["categories"] = explode(',', $app_config->categories);
+    $data["settlements"] = explode(',', $app_config->settlements);
+    $data["date_from"] = date('F d, Y');
+    $data["date_to"] = date('F d, Y');
+    return view('reports.printable.all',$data);
+  }
 
   public function show_print(Request $request,$type)
   {
@@ -226,10 +246,16 @@ class Reports_controller extends Controller
     $display_per_page = $request->display_per_page;
     $limit = ($page*$display_per_page)-$display_per_page;
 
+    $user_data = $request->session()->get('users.user_data');
+    $data['user_data'] = $user_data;
+
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill_detail = new Restaurant_bill_detail;
     $restaurant_payment = new Restaurant_payment;
     $bills = $restaurant_bill->where('deleted',0);
+    if($user_data->privilege=='restaurant_cashier'){
+      $bills->where('cashier',$user_data->id);
+    }
     $bills->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $num_items = $bills->count();
     if($request->paging=="true"){
@@ -239,15 +265,21 @@ class Reports_controller extends Controller
       $display_per_page = $bills->count();
     }
     $bills = $bills->get();
-    $data["footer"]["pax"] = $restaurant_bill
-      ->select('*',DB::raw('SUM(pax) as total_pax'))
-      ->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)])
-      ->where('deleted',0)->value('total_pax');
-    $data["footer"]["excess"] = $restaurant_bill
-      ->select('*',DB::raw('SUM(excess) as total_excess'))
-      ->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)])
-      ->where('deleted',0)
-      ->value('total_excess');
+    $data["footer"]["pax"] = $restaurant_bill->select('*',DB::raw('SUM(pax) as total_pax'));
+    $data["footer"]["pax"]->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+    $data["footer"]["pax"]->where('deleted',0);
+    if($user_data->privilege=='restaurant_cashier'){
+      $data["footer"]["pax"]->where('cashier',$user_data->id);
+    }
+    $data["footer"]["pax"] = $data["footer"]["pax"]->value('total_pax');
+
+    $data["footer"]["excess"] = $restaurant_bill->select('*',DB::raw('SUM(excess) as total_excess'));
+    $data["footer"]["excess"]->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+    $data["footer"]["excess"]->where('deleted',0);
+    if($user_data->privilege=='restaurant_cashier'){
+      $data["footer"]["excess"]->where('cashier',$user_data->id);
+    }
+    $data["footer"]["excess"] = $data["footer"]["excess"]->value('total_excess');
 
     $data["footer"]["total"] = 0;
     foreach ($categories as $category) {
@@ -263,6 +295,9 @@ class Reports_controller extends Controller
           );
       $category_total->where('restaurant_menu.category',$category);
       $category_total->where('restaurant_bill.deleted',0);
+      if($user_data->privilege=='restaurant_cashier'){
+        $category_total->where('cashier',$user_data->id);
+      }
       $data["footer"][$category] = $category_total->value('total');
       $data["footer"]["total"] += $category_total->value('total');
     }
@@ -392,9 +427,32 @@ class Reports_controller extends Controller
     return $data;
   }
 
-  public function menu_popularity($value='')
+  public function menu_popularity(Request $request)
   {
-    # code...
+    DB::enableQueryLog();
+    $page = $request->page;
+    $display_per_page = $request->display_per_page;
+    $limit = ($page*$display_per_page)-$display_per_page;
+
+    $restaurant_bill_detail = new Restaurant_bill_detail;
+    $menu_popularity = $restaurant_bill_detail->where('restaurant_bill_detail.deleted',0);
+    $menu_popularity->select('restaurant_menu.*',DB::raw('SUM(quantity) as total_quantity'));
+    $menu_popularity->whereBetween('restaurant_bill_detail.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+    $menu_popularity->join('restaurant_menu','restaurant_menu.id','=','restaurant_menu_id');
+    $menu_popularity->groupBy('restaurant_menu_id');
+
+    $num_items = $menu_popularity->count();
+    if($request->paging=="true"){
+      $menu_popularity->skip($limit);
+      $menu_popularity->take($display_per_page);
+    }else{
+      $display_per_page = $menu_popularity->count();
+    }
+
+    $data["result"] = $menu_popularity->orderBy('total_quantity', 'DESC')->get();
+    $data["paging"] = paging($page,$num_items,$display_per_page);
+    $data["getQueryLog"] = DB::getQueryLog();
+    return $data;
   }
 
 }

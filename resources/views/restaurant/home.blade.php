@@ -57,6 +57,7 @@
       <thead>
         <tr>
           <th class="center aligned">Table</th>
+          <th class="center aligned">Guest Name</th>
           <th class="center aligned">Server</th>
           <th class="center aligned">Time</th>
           <th class="center aligned">Pax</th>
@@ -65,23 +66,39 @@
       </thead>
       <tbody>
         <tr ng-repeat="customer_data in table_customers" ng-cloak>
-          <td style="width: 30vw;" class="center aligned middle aligned" ng-bind="customer_data.table_name"></td>
+          <td style="width: 30vw;" class="center aligned middle aligned">
+          <span style="cursor: pointer;" ng-click="edit_table_customer(this)">
+            @{{customer_data.table_name}}
+          </span>
+          </td>
+          <td class="center aligned middle aligned" ng-bind="customer_data.guest_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.server_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
           <td class="center aligned middle aligned" ng-click="view_orders(this)"><a href="javascript:void(0);">@{{customer_data.total|currency:""}}</a></td>
           <td class="left aligned middle aligned" style="width: 28vw;">
             <div class="ui buttons" ng-if="!customer_data.has_order">
-              <button class="ui inverted green button" ng-click="add_order(this)"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-              <button class="ui inverted red button" ng-click="delete_table_customer(this)"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+              <button class="ui inverted green button" ng-click="add_order(this)">
+                <i class="fa fa-file-text-o" aria-hidden="true"></i> Order
+              </button>
+              <button class="ui inverted red button" ng-click="delete_table_customer(this)">
+                <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
+              </button>
             </div>
             <div class="ui buttons" ng-if="customer_data.has_order">
               <div class="ui buttons">
-                <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out"><i class="fa fa-file-text-o" aria-hidden="true"></i> Order</button>
-                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-disabled="submit"><i class="fa fa-calculator" aria-hidden="true"></i> Bill out</button>
-                <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill"><i class="fa fa-calculator" aria-hidden="true"></i> View Bills</button>
-                <!-- <button class="ui inverted red button" ng-if="!customer_data.has_billed_out"><i class="fa fa-trash-o" aria-hidden="true"></i> Cancel Orders</button> -->
-                <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+                <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out">
+                  <i class="fa fa-file-text-o" aria-hidden="true"></i> Order
+                </button>
+                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-disabled="submit">
+                  <i class="fa fa-calculator" aria-hidden="true"></i> Bill out
+                </button>
+                <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill">
+                  <i class="fa fa-calculator" aria-hidden="true"></i> View Bills
+                </button>
+                <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
+                </button>
               </div>
             </div>
           </td>
@@ -108,8 +125,9 @@
         <form id="add-table-form" ng-submit="add_table()">
         {{ csrf_field() }}
         <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
+        <label>Table:</label>
         <div class="form-group" ng-show="has_table">
-          <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id" ng-options="item as item.name for item in table track by item.id">
+          <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id" ng-options="item as item.table_name_status for item in table track by item.id">
           </select>
         </div>
         <div class="form-group" ng-hide="has_table">
@@ -117,8 +135,13 @@
         </div>
         <div class="form-group">
           <label># of Pax</label>
-          <input class="form-control" type="number" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax" required>
+          <input class="form-control" type="number" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax">
           <p class="help-block">@{{formerrors.pax[0]}}</p>
+        </div>
+        <div class="form-group">
+          <label>Guest Name</label>
+          <input class="form-control" type="text" placeholder="Enter Guest Name" name="pax" ng-model="formdata.guest_name">
+          <p class="help-block">@{{formerrors.guest_name[0]}}</p>
         </div>
 
         <div class="form-group">
@@ -132,6 +155,47 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary" form="add-table-form" ng-disabled="submit" ng-show="has_table">Save</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div id="edit-table-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Customer</h4>
+      </div>
+      <div class="modal-body">
+        <form id="edit-table-form" ng-submit="edit_table(this)">
+
+          <label>Table:</label>
+          <div class="form-group" ng-show="has_table">
+            <select class="form-control" id="select-tablenumber" name="table_id" ng-model="formdata.table_id" ng-options="item as item.table_name_status for item in table track by item.id">
+            </select>
+          </div>
+
+          <div class="form-group" ng-hide="has_table">
+            <span class="form-control">No Available Table</span>
+          </div>
+          <div class="form-group">
+            <label># of Pax</label>
+            <input class="form-control" type="number" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax">
+            <p class="help-block">@{{formerrors.pax[0]}}</p>
+          </div>
+          <div class="form-group">
+            <label>Guest Name</label>
+            <input class="form-control" type="text" placeholder="Enter Guest Name" name="pax" ng-model="formdata.guest_name">
+            <p class="help-block">@{{formerrors.guest_name[0]}}</p>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="edit-table-form" ng-disabled="submit" ng-show="has_table">Save</button>
       </div>
     </div>
 
@@ -154,29 +218,28 @@
           <div class="col-sm-6">
             <div class="field">
 
-
-              <div class="two fields">
-                <div class="field">
-                  <label>Category</label>
-                  <select class="ui dropdown fluid">
-                    <option value="food">Food</option>
-                    <option value="beverage">Beverage</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>Subcategory</label>
-                  <select class="ui dropdown fluid">
-                    <option value="food">Food</option>
-                    <option value="beverage">Beverage</option>
-                  </select>
-                </div>
+            <div class="two fields">
+              <div class="field">
+                <label>Category</label>
+                <select class="ui dropdown fluid" ng-change="category_change_menu_list(this)" ng-model="select_category" ng-init="select_category='all'">
+                  <option value="all">All Menu</option>
+                  @foreach($categories as $category)
+                  <option value="{{$category}}">{{$category}}</option>
+                  @endforeach
+                </select>
               </div>
-
+              <div class="field">
+                <label>Category</label>
+                <select class="form-control" ng-change="subcategory_change_menu_list(this)" ng-model="select_subcategory" ng-options="item for item in subcategories">
+                <option value="">All Subcategories</option>
+                </select>
+              </div>
+            </div>
               <div class="fields">
                 <div class="twelve wide field">
                   <label>Menu Search</label>
                   <div class="ui fluid icon input focus">
-                    <input type="text" placeholder="Search...">
+                    <input type="text" placeholder="Search..." id="search-menu" ng-model="search_menu">
                     <i class="search icon"></i>
                   </div>
                 </div>
@@ -188,10 +251,6 @@
                 </div>
               </div>
 
-
-              <div class="field">
-
-              </div>
             </div>
 
             <div class="table-responsive" style="height: 30vh;">
@@ -405,7 +464,7 @@
 </div>
 
 <div id="view-bill-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-sm">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -420,8 +479,8 @@
           </thead>
           <tbody>
             <tr ng-repeat="bill_data in bill">
-              <td ng-bind="bill_data.id" class="center aligned"></td>
-              <td>
+              <td ng-bind="bill_data.id" class="center aligned" style="width: 40%"></td>
+              <td style="text-align: center;">
                 <div class="btn-group">
                   <a class="btn btn-primary" href="/restaurant/bill/@{{bill_data.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
                   <button class="btn btn-success" ng-click="add_payment(this)" ng-if="bill_data.is_paid == 0"><span class="glyphicon glyphicon-shopping-cart"></span> Payments</button>
@@ -544,7 +603,7 @@
 
         <div class="form-group">
           <label>Price</label>
-          <input type="text" name="price" placeholder="Price" class="form-control" ng-model="formdata.price">
+          <input type="number" min="0" step="0.01" name="price" placeholder="Price" class="form-control" ng-model="formdata.price">
           <p class="help-block">@{{formerrors.price[0]}}</p>
         </div>
 
@@ -628,19 +687,26 @@
          $("#add-table-modal").modal("hide");
       }, function(rejection) {
          var errors = rejection.data;
+         // console.log(errors.server_id);
          $scope.formerrors.pax = errors.pax;
+         $scope.formerrors.server_id = errors['server_id.id'];
          $scope.submit = false;
       });
     }
     $scope.table = {};
     $scope.has_table = false;
-    function show_table() {
+    function show_table(table_data='') {
       $http({
           method : "GET",
           url : "/api/restaurant/table/list/serve",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
-          $scope.formdata.table_id = $scope.table[0];
+          if(table_data==''){
+            $scope.formdata.table_id = $scope.table[0];
+          }else{
+            $scope.formdata.table_id = table_data;
+          }
+          // console.log($scope.formdata.table_id);
           if( typeof Object.keys($scope.table)[0] === 'undefined' ){
             $scope.has_table = false;
           }else{
@@ -652,6 +718,8 @@
     }
 
     $scope.show_table = function() {
+      // $scope.formdata.pax = "";
+      // $scope.formdata.guest_name = "";
       $('#add-table-modal').modal('show');
       show_table();
       show_server();
@@ -687,6 +755,10 @@
     }
 
     $scope.table_name = "";
+
+    $('#add-order-modal').on('shown.bs.modal', function () {
+      $('#search-menu').focus();
+    });
 
     $scope.add_order = function(data) {
       if(!data.$parent.customer_data.has_billed_out){
@@ -758,11 +830,37 @@
       });
     }
 
+    $scope.category_change_menu_list = function() {
+      // angular.element('#select_subcategory').dropdown('clear');
+      show_menu($scope.select_category);
+      $http({
+          method : "GET",
+          url : "/api/restaurant/menu/subcategory",
+          params: {
+            category: $scope.select_category
+          },
+      }).then(function mySuccess(response) {
+          $scope.subcategories = response.data;
+          // $scope.select_subcategory = $scope.subcategories[0];
+          console.log(response.data);
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
+
+    $scope.subcategory_change_menu_list = function() {
+      show_menu($scope.select_category,$scope.select_subcategory);
+    }
+
     $scope.menu = {};
-    function show_menu() {
+    function show_menu(category='all',subcategory='all') {
       $http({
           method : "GET",
           url : "/api/restaurant/menu/list/orders",
+          params: {
+            category: category,
+            subcategory: subcategory,
+          },
       }).then(function mySuccess(response) {
           $scope.menu = response.data.result;
       }, function myError(response) {
@@ -772,6 +870,7 @@
 
     $scope.make_orders = function(data) {
       // console.log($scope.formdata);
+      $scope.formdata.table_customer_cart = $scope.table_customer_cart;
       $scope.submit = true;
       $http({
         method: 'POST',
@@ -780,7 +879,7 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        // console.log(response.data);
+        console.log(response.data);
         $scope.submit = false;
         show_table_customers();
         $("#add-order-modal").modal('hide');
@@ -813,6 +912,7 @@
       });
     }
     $scope.add_cart = function(data) {
+      console.log(data);
       // console.log(data.menu_data);
       $scope.formdata.menu_id = data.menu_data.id;
       $scope.formdata.table_customer_id = $scope.table_customer_id;
@@ -839,7 +939,7 @@
       $scope.formdata.menu_id = data.cart_data.id;
       $scope.formdata.table_customer_id = data.$parent.table_customer_id;
       $http({
-         method: 'DELETE',
+         method: 'POST',
          url: '/api/restaurant/table/order/remove',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -987,6 +1087,16 @@
       $scope.formdata.settlements_payment.send_bill = false;
       $scope.formdata.settlements_payment.free_of_charge = false;
     }
+    $("#search-menu").autocomplete({
+        source: "/api/restaurant/menu/search/name",
+        select: function(event, ui) {
+            var data = {};
+            data.menu_data = {};
+            data.menu_data.id = ui.item.id;
+            $scope.add_cart(data);
+            $scope.search_menu = '';
+        }
+    });
 
     $scope.make_payment = function(data) {
       // console.log(data.$parent.bill_id);
@@ -1022,6 +1132,35 @@
     $scope.input_payment = function() {
       $scope.formdata.excess = excess($scope);
       $scope.valid_payment = valid_payment($scope);
+    }
+
+    $scope.edit_table_customer = function(data) {
+      console.log(data.customer_data);
+      $('#edit-table-modal').modal('show');
+      $scope.formdata.customer_data = data.customer_data;
+      $scope.formdata.pax = data.customer_data.pax;
+      $scope.formdata.guest_name = data.customer_data.guest_name;
+      show_table(data.customer_data.table_data);
+      // $scope.formdata.table_id = ;
+    }
+
+    $scope.edit_table = function(data) {
+      console.log(data.formdata.customer_data.id);
+      $http({
+         method: 'PUT',
+         url: '/api/restaurant/table/customer/update/'+data.formdata.customer_data.id,
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+        show_table_customers();
+        $('#edit-table-modal').modal('hide');
+        $scope.submit = false;
+      }, function(rejection) {
+         var errors = rejection.data;
+         $scope.submit = false;
+      });
     }
 
     

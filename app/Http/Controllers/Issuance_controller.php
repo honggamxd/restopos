@@ -156,13 +156,14 @@ class Issuance_controller extends Controller
       $inventory_item_detail->reference_id = $issuance_data->id;
       $inventory_item_detail->user_id = $issuance_data->user_id;
       $inventory_item_detail->save();
-
+/*
       $restaurant_inventory = new Restaurant_inventory;
       $restaurant_inventory->inventory_item_id = $cart_item["inventory_item_id"];
       $restaurant_inventory->quantity = $cart_item["quantity"];
-      $restaurant_inventory->issuance_id = $issuance_data->id;
+      $restaurant_inventory->table = 'issuance';
+      $restaurant_inventory->ref_id = $issuance_data->id;
       $restaurant_inventory->restaurant_id = DB::table('issuance_to')->find($request->issuance_to)->ref_id;
-      $restaurant_inventory->save();
+      $restaurant_inventory->save();*/
     }
     $request->session()->forget('issuance_cart');
     return $issuance_data->id;

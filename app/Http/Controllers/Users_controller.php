@@ -10,6 +10,11 @@ use App\User;
 
 class Users_controller extends Controller
 {
+
+  public function index(Request $request)
+  {
+    return view('user');
+  }
   public function login(Request $request)
   {
     $this->validate($request, [
@@ -26,5 +31,13 @@ class Users_controller extends Controller
     }else{
       return view('login');
     }
+  }
+
+  public function show_users(Request $request)
+  {
+    $user = new User;
+    $data['result'] = $user->all();
+    return $data;
+    # code...
   }
 }

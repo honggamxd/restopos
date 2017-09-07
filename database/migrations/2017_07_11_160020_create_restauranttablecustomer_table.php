@@ -15,6 +15,8 @@ class CreateRestauranttablecustomerTable extends Migration
         Schema::create('restaurant_table_customer', function (Blueprint $table) {
           $table->increments('id');
           $table->integer('server_id')->unsigned();;
+          $table->string('table_name');
+          $table->text('guest_name');
           $table->integer('date_time');
           $table->integer('pax');
           $table->boolean('has_order');

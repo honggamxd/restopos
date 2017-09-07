@@ -17,7 +17,8 @@ class CreateRestaurantInventory extends Migration
           $table->increments('id');
           $table->integer('inventory_item_id')->unsigned();
           $table->double('quantity');
-          $table->integer('issuance_id')->unsigned();
+          $table->string('ref_table');
+          $table->integer('ref_id')->unsigned();
           $table->integer('restaurant_id')->unsigned();
           $table->boolean('deleted');
           $table->integer('deleted_by')->unsigned();

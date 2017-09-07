@@ -205,7 +205,7 @@
     $scope.delete_item = function(data) {
       $http({
          method: 'DELETE',
-         url: '/api/purchases/cart/item/delete/'+data.item.inventory_item_id,
+         url: '/api/purchase/cart/item/delete/'+data.item.inventory_item_id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -230,7 +230,7 @@
       }
       $http({
          method: 'PUT',
-         url: '/api/purchases/cart/item/update/'+data.item.inventory_item_id,
+         url: '/api/purchase/cart/item/update/'+data.item.inventory_item_id,
          data: $.param({
           'quantity':data.item.quantity,
           'cost_price':data.item.cost_price,
@@ -254,7 +254,7 @@
     $scope.add_info_cart = function(data) {
       $http({
          method: 'POST',
-         url: '/api/purchases/cart/info',
+         url: '/api/purchase/cart/info',
          data: $.param({
           'po_number':$scope.cart.info.po_number,
           'comments':$scope.cart.info.comments,
@@ -274,7 +274,7 @@
     $scope.destroy_cart = function() {
       $http({
          method: 'DELETE',
-         url: '/api/purchases/cart/delete',
+         url: '/api/purchase/cart/delete',
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
@@ -297,7 +297,7 @@
       }else{
         $http({
            method: 'POST',
-           url: '/api/purchases/make',
+           url: '/api/purchase/make',
            data: $.param({
             'items':$scope.cart.items,
             'po_number':$scope.cart.info.po_number,
@@ -307,7 +307,7 @@
         })
         .then(function(response) {
           // console.log(response.data);
-          $window.location.assign('/purchases/view/'+response.data);
+          $window.location.assign('/purchase/view/'+response.data);
         }, function(rejection) {
            var errors = rejection.data;
            console.log(errors);
@@ -335,7 +335,7 @@
     function add_items_cart(id) {
       $http({
          method: 'POST',
-         url: '/api/purchases/cart/item/add/'+id,
+         url: '/api/purchase/cart/item/add/'+id,
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -356,7 +356,7 @@
     function show_cart() {
       $http({
           method : "GET",
-          url : "/api/purchases/cart",
+          url : "/api/purchase/cart",
       }).then(function mySuccess(response) {
           // console.log(response.data.items);
           $scope.cart.items = response.data.items;

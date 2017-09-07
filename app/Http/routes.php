@@ -12,8 +12,12 @@
 */
 
 Route::get('/', 'Restaurant_controller@index')->middleware('logged');
+Route::get('/restaurant', 'Restaurant_controller@index')->middleware('logged');
+//Restaurant Menu
 Route::get('/restaurant/menu', 'Restaurant_menu_controller@index')->middleware('logged');
 Route::post('/api/restaurant/menu', 'Restaurant_menu_controller@store');
+Route::get('/api/restaurant/menu/search/{type}', 'Restaurant_menu_controller@search');
+Route::get('/api/restaurant/menu/subcategory', 'Restaurant_menu_controller@show_subcategory');
 
 Route::get('/api/restaurant/menu/list/{type}', 'Restaurant_menu_controller@get_list');
 Route::get('/api/restaurant/menu/category/{id}', 'Restaurant_menu_controller@show_category');
@@ -29,8 +33,9 @@ Route::post('/api/restaurant/table/order/cart', 'Restaurant_table_customer_contr
 Route::post('/api/restaurant/table/order/cart/update/{type}/{id}', 'Restaurant_table_customer_controller@update_cart_item');
 Route::get('/api/restaurant/table/order/cart/{table_customer_id}', 'Restaurant_table_customer_controller@show');
 Route::get('/api/restaurant/table/order/delete', 'Restaurant_table_customer_controller@delete');
-Route::delete('/api/restaurant/table/order/remove', 'Restaurant_table_customer_controller@remove_cart_item');
+Route::post('/api/restaurant/table/order/remove', 'Restaurant_table_customer_controller@remove_cart_item');
 
+Route::put('/api/restaurant/table/customer/update/{id}', 'Restaurant_table_customer_controller@update');
 Route::post('/api/restaurant/table/customer/add', 'Restaurant_table_customer_controller@store');
 Route::post('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@bill_out');
 Route::post('/api/restaurant/table/customer/bill/make/{id}', 'Restaurant_table_customer_controller@make_bill');
@@ -54,14 +59,16 @@ Route::get('/restaurant/bill/{id}', 'Restaurant_bill_controller@index')->middlew
 Route::get('/api/search/inventory/item/{type}/{option}', 'Inventory_item_controller@search_item');
 
 
-Route::get('/api/purchases/cart', 'Purchases_controller@show_cart');
-Route::get('/api/purchases/cart/show', 'Purchases_controller@cart');
+Route::get('/api/purchase/cart', 'Purchases_controller@show_cart');
+Route::get('/api/purchase/cart/show', 'Purchases_controller@cart');
 Route::get('/api/inventory/item/show', 'Inventory_item_controller@show');
 
 
 //Inventory
 Route::get('/inventory', 'Inventory_item_controller@index')->middleware('logged');
+Route::get('/inventory/item/{id}', 'Inventory_item_controller@index_item_history')->middleware('logged');
 Route::post('/api/inventory/item/add', 'Inventory_item_controller@store');
+Route::get('/api/inventory/item/history/{id}', 'Inventory_item_controller@show_item_history');
 
 //Restaurant Inventory
 Route::get('/restaurant/inventory', 'Restaurant_inventory_controller@index')->middleware('logged');
@@ -69,14 +76,14 @@ Route::get('/api/restaurant/inventory/items', 'Restaurant_inventory_controller@s
 
 
 //Purchases
-Route::get('/purchases', 'Purchases_controller@index')->middleware('logged');
-Route::get('/purchases/view/{id}', 'Purchases_controller@show')->middleware('logged');
-Route::post('/api/purchases/cart/item/add/{id}', 'Purchases_controller@store_cart');
-Route::post('/api/purchases/cart/info', 'Purchases_controller@add_info_cart');
-Route::post('/api/purchases/make', 'Purchases_controller@store_purchase');
-Route::put('/api/purchases/cart/item/update/{id}', 'Purchases_controller@update_cart_items');
-Route::delete('/api/purchases/cart/item/delete/{id}', 'Purchases_controller@delete_cart_items');
-Route::delete('/api/purchases/cart/delete', 'Purchases_controller@destroy_cart');
+Route::get('/purchase', 'Purchases_controller@index')->middleware('logged');
+Route::get('/purchase/view/{id}', 'Purchases_controller@show')->middleware('logged');
+Route::post('/api/purchase/cart/item/add/{id}', 'Purchases_controller@store_cart');
+Route::post('/api/purchase/cart/info', 'Purchases_controller@add_info_cart');
+Route::post('/api/purchase/make', 'Purchases_controller@store_purchase');
+Route::put('/api/purchase/cart/item/update/{id}', 'Purchases_controller@update_cart_items');
+Route::delete('/api/purchase/cart/item/delete/{id}', 'Purchases_controller@delete_cart_items');
+Route::delete('/api/purchase/cart/delete', 'Purchases_controller@destroy_cart');
 
 
 //Issuances
@@ -92,6 +99,10 @@ Route::delete('/api/issuance/cart/delete', 'Issuance_controller@destroy_cart');
 
 //reports
 Route::get('/reports', 'Reports_controller@index')->middleware('logged');
+Route::get('/restaurant/reports', 'Reports_controller@restaurant')->middleware('logged');
+Route::get('/restaurant/reports/print', 'Reports_controller@restaurant_print')->middleware('logged');
+
+
 Route::get('/reports/view/{type}', 'Reports_controller@show')->middleware('logged');
 Route::get('/reports/print/{type}', 'Reports_controller@show_print')->middleware('logged');
 Route::get('/api/reports/general/purchases', 'Reports_controller@purhcased_item');
@@ -101,11 +112,13 @@ Route::get('/api/reports/general/menu_popularity', 'Reports_controller@menu_popu
 // Route::get('/api/reports/general/{type}', 'Reports_controller@api');
 
 
+
 //users
 Route::get('/users', 'Users_controller@index')->middleware('logged');
 Route::get('/login', 'Restaurant_controller@login');
 Route::post('/login', 'Users_controller@login');
 Route::get('/logout', 'Restaurant_controller@logout')->middleware('logged');
+Route::get('/api/users', 'Users_controller@show_users');
 
 
 Route::get('/settings','Restaurant_controller@settings')->middleware('logged');

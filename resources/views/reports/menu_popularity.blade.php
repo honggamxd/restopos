@@ -10,7 +10,7 @@
 @section('breadcrumb')
 <a class="section hideprint" href="/reports">Reports</a>
 <i class="right angle icon divider"></i>
-<div class="active section">menu_popularity</div>
+<div class="active section">Menu Popularity Report</div>
 @endsection
 @section('content')
  
@@ -20,29 +20,21 @@
       <!-- <label><input type="checkbox" ng-model="show_paging" ng-change="toggle_paging()">Paging</label> -->
     </div>
   </div>
-  <h1 style="text-align: center;">menu_popularity Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
+  <h1 style="text-align: center;">Menu Popularity Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
   <div class="table-responsive">
   <table class="ui unstackable striped celled structured table">
     <thead>
       <tr>
-        <th class="center aligned middle aligned">Date</th>
-        <th class="center aligned middle aligned">ID</th>
-        <th class="center aligned middle aligned">Item</th>
-        <th class="center aligned middle aligned">Quantity</th>
-        <th class="center aligned middle aligned">Issuance #</th>
-        <th class="center aligned middle aligned">Issuance To</th>
-        <th class="center aligned middle aligned">Comments</th>
+        <th class="center aligned middle aligned">Category</th>
+        <th class="center aligned middle aligned">Menu</th>
+        <th class="center aligned middle aligned">Served Quantity</th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="issuance_data in issuances">
-        <td class="center aligned middle aligned">@{{issuance_data.date_}}</td>
-        <td class="center aligned middle aligned"><a href="/issuance/view/@{{issuance_data.issuance_id}}">@{{issuance_data.issuance_id}}</a></td>
-        <td class="center aligned middle aligned">@{{issuance_data.item_name}}</td>
-        <td class="center aligned middle aligned">@{{issuance_data.quantity}}</td>
-        <td class="center aligned middle aligned">@{{issuance_data.issuance_number}}</td>
-        <td class="center aligned middle aligned">@{{issuance_data.issuance_to}}</td>
-        <td class="center aligned middle aligned">@{{issuance_data.comments}}</td>
+      <tr ng-repeat="item in menu_popularity">
+        <td class="center aligned middle aligned">@{{item.category}}</td>
+        <td class="center aligned middle aligned">@{{item.name}}</td>
+        <td class="center aligned middle aligned">@{{item.total_quantity}}</td>
       </tr>
     </tbody>
     <tfoot>
@@ -73,7 +65,7 @@
     function show_reports(page=1) {
       $http({
           method : "GET",
-          url : "/api/reports/general/issuances",
+          url : "/api/reports/general/menu_popularity",
           params: {
             "date_from":"{{$date_from}}",
             "date_to":"{{$date_to}}",
@@ -82,7 +74,7 @@
             "display_per_page":50,
           }
       }).then(function mySuccess(response) {
-          $scope.issuances = response.data.result;
+          $scope.menu_popularity = response.data.result;
           $scope.footer = response.data.footer;
           $scope.paging = $sce.trustAsHtml(response.data.paging);
       }, function myError(response) {

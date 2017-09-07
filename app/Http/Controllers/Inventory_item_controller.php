@@ -63,6 +63,31 @@ class Inventory_item_controller extends Controller
     return $data;
   }
 
+  public function index_item_history(Request $request,$id)
+  {
+    return view('inventory_item_history',compact('id'));
+  }
+
+  public function show_item_history(Request $request,$id)
+  {
+    $inventory_item = new Inventory_item;
+    $inventory_item_detail = new Inventory_item_detail;
+
+    $data['item_data'] = $inventory_item->find($id);
+    $data['item_data']->begining_quantity = $inventory_item_detail->where('inventory_item_id',$id)->value('quantity');
+
+    $data['item_data']->current_quantity = $inventory_item_detail->select(DB::raw('SUM(quantity) as total'))->where('inventory_item_id',$id)->value('total');
+    $data['item_data']->current_quantity = ($data['item_data']->current_quantity==null?0:$data['item_data']->current_quantity);
+
+    $data['items'] = $inventory_item_detail->orderBy('id','DESC')->where('inventory_item_id',$id)->get();
+    foreach ($data['items'] as $inventory_item_detail_item) {
+      $inventory_item_detail_item->date_ = date('m/d/Y',$inventory_item_detail_item->date_);
+      $inventory_item_detail_item->quantity = abs($inventory_item_detail_item->quantity);
+    }
+    return $data;
+    // return view('inventory_item_history');
+  }
+
   public function search_item(Request $request,$type,$option)
   {
     if($type=="category"){

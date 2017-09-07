@@ -90,7 +90,11 @@
     </table>
   </div>
   <div ng-bind-html="paging" class="text-center" ng-show="show_paging"></div>
+  @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    <a href="/restaurant/reports/print/" target="_blank">View Printable Version</a>
+  @else
   <a href="/reports/print/all?{{$_SERVER['QUERY_STRING']}}" target="_blank">View Printable Version</a>
+  @endif
 </div>
 @endsection
 

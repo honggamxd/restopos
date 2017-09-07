@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Requests;
 use App\Restaurant_menu;
+use App\Restaurant_menu_ingredients;
 
 class Restaurant_menu_controller extends Controller
 {
@@ -22,7 +23,7 @@ class Restaurant_menu_controller extends Controller
 
   public function store(Request $request)
   {
-
+    // return $request->ingredients;
     $this->validate($request,[
         'name' => 'required',
         'category' => 'required',
@@ -38,6 +39,7 @@ class Restaurant_menu_controller extends Controller
     $restaurant_menu->is_prepared = 1;
     $restaurant_menu->save();
 
+    $restaurant_menu_data = $restaurant_menu->orderBy('id','DESC')->first();
     return $restaurant_menu->orderBy('id','DESC')->first();
   }
 
@@ -45,11 +47,16 @@ class Restaurant_menu_controller extends Controller
   {
     $restaurant_menu = new Restaurant_menu;
     if($type=="orders"){
-      $data["result"] =  $restaurant_menu
-        ->where('deleted',0)
-        ->where('is_prepared',1)
-        ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
-        ->get();
+      $data["result"] =  $restaurant_menu->where('deleted',0);
+      $data["result"]->where('is_prepared',1);
+      $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+      if($request->category!=null&&$request->category!='all'){
+        $data['result']->where('category',$request->category);
+      }
+      if($request->subcategory!=null&&$request->subcategory!='all'){
+        $data['result']->where('subcategory',$request->subcategory);
+      }
+      $data["result"] = $data["result"]->get();
     }else{
       $data["result"] =  $restaurant_menu
         ->where('category','!=','')
@@ -79,5 +86,42 @@ class Restaurant_menu_controller extends Controller
     $menu->is_prepared = ($request->is_prepared=="true"?1:0);
     $menu->save();
     return $menu->is_prepared;
+  }
+
+  public function search(Request $request,$type)
+  {
+    $data = array();
+    $restaurant_menu = new Restaurant_menu;
+
+    $search = $restaurant_menu->where('deleted',0);
+    $search->where($type, 'like', '%'.$request->term.'%');
+    $search->skip(0);
+    $search->take(5);
+    $search = $search->get();
+
+    foreach ($search as $search_data) {
+      $data[] = [
+        'label' => $search_data->name,
+        'value' => $search_data->name,
+        'id' => $search_data->id
+      ];
+    }
+    
+    return $data;
+  }
+
+
+  public function show_subcategory(Request $request)
+  {
+    DB::enableQueryLog();
+   
+    $data = array();
+    if($request->category!='all'){
+      $restaurant_menu = new Restaurant_menu;
+      $data = $restaurant_menu->where('category',$request->category)->select('subcategory')->distinct()->pluck('subcategory');
+      // $
+    }
+    // $data["getQueryLog"] = DB::getQueryLog();
+    return $data;
   }
 }

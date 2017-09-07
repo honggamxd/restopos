@@ -40,9 +40,9 @@
         <i class="food icon"></i>
         {{Session::get('users.user_data')->restaurant}}<br>Menu
     </a>
-    <a class="item" href="/restaurant/inventory">
-        <i class="browser icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>Inventory
+    <a class="item" href="/restaurant/reports">
+        <i class="bar chart icon"></i>
+        {{Session::get('users.user_data')->restaurant}}<br>Reports
     </a>
     @endif
     @if(Session::get('users.user_data')->privilege=="admin")
@@ -54,11 +54,11 @@
         <i class="browser icon"></i>
         Issuance
     </a>
-    <a class="item" href="/purchases">
+    <a class="item" href="/purchase">
         <i class="in cart icon"></i>
         Purchases
     </a>
-    <a class="item">
+    <a class="item" href="/users">
         <i class="users icon"></i>
         Users
     </a>

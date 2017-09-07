@@ -55,6 +55,7 @@
           <td class="center aligned middle aligned">@{{item_data.item_name}}</td>
           <td class="center aligned middle aligned">@{{item_data.unit}}</td>
           <td class="center aligned middle aligned">@{{item_data.quantity}}</td>
+          <td class="center aligned middle aligned"><a href="/inventory/item/@{{item_data.id}}">View History</a></td>
         </tr>
       </tbody>
     </table>
