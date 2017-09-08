@@ -13,6 +13,8 @@
 
 Route::get('/', 'Restaurant_controller@index')->middleware('logged');
 Route::get('/restaurant', 'Restaurant_controller@index')->middleware('logged');
+
+
 //Restaurant Menu
 Route::get('/restaurant/menu', 'Restaurant_menu_controller@index')->middleware('logged');
 Route::post('/api/restaurant/menu', 'Restaurant_menu_controller@store');
@@ -27,6 +29,7 @@ Route::post('/api/restaurant/table/add', 'Restaurant_table_controller@store');
 Route::post('/api/restaurant/table/order/make/{id}', 'Restaurant_order_controller@store');
 Route::post('/api/restaurant/server/add', 'Restaurant_controller@add_server');
 Route::get('/api/restaurant/server/list', 'Restaurant_controller@show_server');
+Route::post('/api/restaurant/name', 'Restaurant_controller@update');
 
 Route::get('/api/restaurant/table/order/view/{id}', 'Restaurant_order_controller@show');
 Route::post('/api/restaurant/table/order/cart', 'Restaurant_table_customer_controller@order_cart');
@@ -119,8 +122,9 @@ Route::get('/login', 'Restaurant_controller@login');
 Route::post('/login', 'Users_controller@login');
 Route::get('/logout', 'Restaurant_controller@logout')->middleware('logged');
 Route::get('/api/users', 'Users_controller@show_users');
+Route::post('/api/users/add', 'Users_controller@add');
 
 
-Route::get('/settings','Restaurant_controller@settings')->middleware('logged');
+Route::get('/restaurant/settings','Restaurant_controller@settings')->middleware('logged');
 
 

@@ -8,9 +8,15 @@
 </style>
 @endsection
 @section('breadcrumb')
-<a class="section hideprint" href="/reports">Reports</a>
-<i class="right angle icon divider"></i>
-<div class="active section">F&B Revenue</div>
+
+
+@if(Session::get('users.user_data')->privilege=="admin")
+  <a class="section hideprint" href="/reports">Reports</a>
+  <i class="right angle icon divider"></i>
+  <div class="active section">F&B Revenue</div>
+@else
+  <div class="active section">F&B Revenue</div>
+@endif
 @endsection
 @section('content')
  

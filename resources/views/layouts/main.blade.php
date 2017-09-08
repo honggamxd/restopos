@@ -66,11 +66,9 @@
         <i class="bar chart icon"></i>
         Reports
     </a>
-    @endif
-    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
-    <a class="item" href="/settings">
+    <a class="item" href="/restaurant/settings">
         <i class="settings icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>
+        Restaurant<br>
         Settings
     </a>
     @endif
@@ -112,6 +110,7 @@
       <div class="row">
         @yield('content')
       </div>
+        @yield('two_row_content')
     </div>
 </div>
 

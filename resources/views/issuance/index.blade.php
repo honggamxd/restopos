@@ -82,7 +82,7 @@
       </div>
       <div class="form-group">
         <label>Controls</label>
-        <button type="submit" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
+        <button type="submit" class="btn btn-primary btn-block" ng-disabled="submit"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
         <button type="button" class="btn btn-danger btn-block" ng-click="destroy_cart()"><span class="glyphicon glyphicon-trash"></span> Cancel</button>
       </div>
     </form>
@@ -179,6 +179,7 @@
       if(isEmpty($scope.cart.items)){
         alertify.error("Cart is empty. Please add items in the cart.");
       }else{
+      $scope.submit = true;
         $http({
            method: 'POST',
            url: '/api/issuance/make',
@@ -191,6 +192,7 @@
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(function(response) {
+          $scope.submit = false;
           // console.log(response.data);
           $window.location.assign('/issuance/view/'+response.data);
         }, function(rejection) {
@@ -201,6 +203,7 @@
              alertify.error($scope.formerrors.items[0]);
             
            }
+          $scope.submit = false;
         });
       }
     }

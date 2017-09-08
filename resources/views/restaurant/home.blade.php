@@ -1167,6 +1167,9 @@
     function show_server() {
       $http({
           method : "GET",
+          params: {
+            restaurant_id: "{{Session::get('users.user_data')->restaurant_id}}"
+          },
           url : "/api/restaurant/server/list",
       }).then(function mySuccess(response) {
           $scope.server = response.data.result;
