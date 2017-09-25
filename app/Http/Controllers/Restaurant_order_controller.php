@@ -30,11 +30,16 @@ class Restaurant_order_controller extends Controller
     $restaurant_table = new Restaurant_table;
     $table_data = $restaurant_table->find($customer_data->restaurant_table_id);
 
+
+
     $restaurant_order = new Restaurant_order;
+    $que_number = $restaurant_order->where('restaurant_id',$customer_data->restaurant_id)->orderBy('id','DESC')->value('que_number');
+
     $restaurant_order->date_ = strtotime(date("m/d/Y"));
     $restaurant_order->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_order->pax = $customer_data->pax;
     $restaurant_order->table_name = $customer_data->table_name;
+    $restaurant_order->que_number = ($que_number==null?1:++$que_number);
     $restaurant_order->restaurant_id = $customer_data->restaurant_id;
     $restaurant_order->restaurant_table_customer_id = $id;
     $restaurant_order->server_id = $customer_data->server_id;

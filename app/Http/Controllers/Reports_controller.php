@@ -314,7 +314,11 @@ class Reports_controller extends Controller
           );
       $settlement_total->where('restaurant_payment.settlement',$settlement);
       $settlement_total->where('restaurant_bill.deleted',0);
-      $data["footer"][$settlement] = $settlement_total->value('total');
+      if($settlement=="cash"){
+        $data["footer"][$settlement] = $settlement_total->value('total')-$settlement_total->value('excess');
+      }else{
+        $data["footer"][$settlement] = $settlement_total->value('total');
+      }
     }
 
     $data["paging"] = paging($page,$num_items,$display_per_page);

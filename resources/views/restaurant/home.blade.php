@@ -96,7 +96,7 @@
                 <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill">
                   <i class="fa fa-calculator" aria-hidden="true"></i> View Bills
                 </button>
-                <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1">
+                <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==2)">
                   <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
                 </button>
               </div>
@@ -361,6 +361,7 @@
     </div>
   </div>
 </div>
+
 <div id="view-order-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -385,7 +386,7 @@
           </tr>
         </tbody>
         </table>
-        <h1 style="text-align: center;">H1</h1>
+        <h1 style="text-align: center;">H@{{order.que_number}}</h1>
         <table class="order-table">
         <tbody>
           <thead>
@@ -408,8 +409,43 @@
         <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-danger" ng-click="canellation_orders(this)">Cancellation</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <a class="btn btn-primary" href="/restaurant/order/@{{order.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="cancellation-order-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Order</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ui unstackable sortable compact table">
+          <thead>
+            <tr>
+              <th>Menu</th>
+              <th>Qty of orders</th>
+              <th>Qty of cancellation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in order_detail">
+              <td>@{{item.menu}}</td>
+              <td>@{{item.quantity}}</td>
+              <td><input type="number" ng-model="item.quantity_to_cancel"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" ng-click="cancel_orders(this)">Request for Cancellation</button>
       </div>
     </div>
   </div>
@@ -770,6 +806,17 @@
       }else{
         alertify.error("The customer has already billed out");
       }
+    }
+
+    $scope.canellation_orders = function(data) {
+      console.log(data.order);
+      console.log($scope.order_detail);
+      $('#view-list-order-modal').modal('hide');
+      $('#view-order-modal').modal('hide');
+      $('#cancellation-order-modal').modal('show');
+    }
+    $scope.cancel_orders = function(data) {
+      console.log(data);
     }
     function show_cart(table_customer_id) {
       $scope.table_customer_cart = {};

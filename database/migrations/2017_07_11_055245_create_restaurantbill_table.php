@@ -31,7 +31,10 @@ class CreateRestaurantbillTable extends Migration
           $table->integer('deleted_date');
           $table->text('guest_name');
           $table->text('room_number');
+
         });
+
+
     }
 
     /**

@@ -47,7 +47,7 @@
           @endforeach
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Ammount</th>
           <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+3 }}">Mode of Payments / Settlements</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_settlements">Excess</th>
+          <!-- <th rowspan="2" class="center aligned middle aligned" ng-show="show_settlements">Excess</th> -->
         </tr>
         <tr>
           @foreach ($settlements as $settlement)
@@ -68,12 +68,16 @@
           @endforeach
           <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.total |currency:""}}</td>
           @foreach ($settlements as $settlement)
-            <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?> |currency:""}}</td>
+            @if($settlement=="cash")
+              <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?>-bill_data.excess |currency:""}}</td>
+            @else
+              <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?> |currency:""}}</td>
+            @endif
           @endforeach
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
-          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.excess |currency:""}}</td>
+          <!-- <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.excess |currency:""}}</td> -->
         </tr>
       </tbody>
       <tfoot ng-cloak>
@@ -90,7 +94,7 @@
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
-          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.excess|currency:""}}</th>
+          <!-- <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.excess|currency:""}}</th> -->
         </tr>
       </tfoot>
     </table>

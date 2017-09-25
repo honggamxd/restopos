@@ -27,8 +27,14 @@ class CreateRestauranttablecustomerTable extends Migration
           $table->integer('restaurant_table_id')->unsigned();
           $table->integer('restaurant_temp_bill_id')->unsigned();
           $table->boolean('has_bill');
+          $table->boolean('has_order_cancelled');
+          $table->integer('cancellation_order_status');
         });
     }
+    // cancellation_order_status
+    //0 = did not cancelled any orders
+    //1 = has cancelled orders
+    //2 = cancelled orders have been settled
 
     /**
      * Reverse the migrations.

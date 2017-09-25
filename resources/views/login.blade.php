@@ -124,3 +124,26 @@
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jacob</title>
+</head>
+<body>
+  <div id="content" style="width: 700px;height: 800px;padding-top: 20px;padding-left: 20px;margin-left: 40px;">
+    <div style="width: 100px;height: 50px;background-color: blue;float: right;border-radius:20px;">
+      About Us
+    </div>
+    <div style="height: 50px;background-color: blue;float: right;width: 100px;border-radius:20px;">
+      Products
+    </div>
+
+
+    <ul>
+      <li>Coffee</li>
+      <li>Milk</li>
+      <li>Cheese</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -55,7 +55,7 @@
   </tr>
 </tbody>
 </table>
-<h1 style="text-align: center;">@{{order.id}}</h1>
+<h1 style="text-align: center;">H@{{order.que_number}}</h1>
 <table class="order-table">
 <tbody>
   <thead>
