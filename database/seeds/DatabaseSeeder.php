@@ -66,5 +66,17 @@ class DatabaseSeeder extends Seeder
           ['name' => 'Roberto’s Garden Restaurant','ref_id'=>3,'ref_table'=>'restaurant']
         ]
       );
+
+      DB::table('restaurant_menu')->insert(
+        [
+          [
+            'category' => 'SUNDRY',
+            'subcategory' => 'CHEESE',
+            'name' => 'PINEAPPLE SUBLIME',
+            'price' => '225',
+            'restaurant_id' => 1
+          ],
+        ]
+      );
     }
 }
