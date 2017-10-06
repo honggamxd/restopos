@@ -19,13 +19,15 @@ class CreateRestaurantorderdetailsTable extends Migration
           $table->string('restaurant_menu_name');
           $table->string('table_name');
           $table->integer('quantity');
-          $table->double('price');
+          $table->double('price',19,2);
           $table->integer('restaurant_order_id')->unsigned();
           $table->integer('restaurant_id')->unsigned();
           $table->boolean('deleted');
           $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

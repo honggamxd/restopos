@@ -27,6 +27,8 @@ class CreateRestaurantorderTable extends Migration
           $table->integer('deleted_date');
           $table->integer('restaurant_table_customer_id')->unsigned();
           $table->boolean('has_cancelled');
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

@@ -251,7 +251,7 @@ class Reports_controller extends Controller
     $limit = ($page*$display_per_page)-$display_per_page;
 
     $user_data = $request->session()->get('users.user_data');
-    $data['user_data'] = $user_data;
+    // $data['user_data'] = $user_data;
 
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill_detail = new Restaurant_bill_detail;
@@ -305,7 +305,7 @@ class Reports_controller extends Controller
       $data["footer"][$category] = $category_total->value('total');
       $data["footer"]["total"] += $category_total->value('total');
     }
-
+    $data['footer']['total_settlements'] = 0;
     foreach ($settlements as $settlement) {
       $settlement_total = $restaurant_bill->join('restaurant_payment','restaurant_bill.id','=','restaurant_payment.restaurant_bill_id');
       $settlement_total->where('restaurant_bill.deleted',0);
@@ -319,10 +319,11 @@ class Reports_controller extends Controller
       $settlement_total->where('restaurant_payment.settlement',$settlement);
       $settlement_total->where('restaurant_bill.deleted',0);
       if($settlement=="cash"){
-        $data["footer"][$settlement] = $settlement_total->value('total')-$settlement_total->value('excess');
+        $data["footer"][$settlement] = $settlement_total->value('total')-$data["footer"]["excess"];
       }else{
         $data["footer"][$settlement] = $settlement_total->value('total');
       }
+      $data['footer']['total_settlements'] += $data["footer"][$settlement];
     }
 
     $data["paging"] = paging($page,$num_items,$display_per_page);
@@ -331,6 +332,7 @@ class Reports_controller extends Controller
       $bill_data->date_time = date("h:i:s A",$bill_data->date_time);
       $bill_data->date_ = date("j-M",$bill_data->date_);
       $bill_data->total = 0;
+
       foreach ($categories as $category) {
          $bill_data->$category = $restaurant_bill_detail
            ->join('restaurant_bill','restaurant_bill_detail.restaurant_bill_id','=','restaurant_bill.id')
@@ -341,10 +343,12 @@ class Reports_controller extends Controller
            ->first()->total;
         $bill_data->total += $bill_data->$category;
       }
-
+     $bill_data->total_settlements = 0;
       foreach ($settlements as $settlement) {
         $bill_data->$settlement = $restaurant_payment->where(['restaurant_bill_id'=>$bill_data->id,'settlement'=>$settlement])->value('payment');
+        $bill_data->total_settlements += $bill_data->$settlement;
       }
+      $bill_data->total_settlements -= $bill_data->excess;
 
     }
     $data["result"] = $bills;

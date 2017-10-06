@@ -20,6 +20,8 @@ class CreateIssuanceTableDetail extends Migration
           $table->boolean('deleted');
           $table->integer('issuance_id')->unsigned();
           $table->integer('user_id')->unsigned();
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

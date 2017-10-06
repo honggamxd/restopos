@@ -15,8 +15,8 @@ class CreateInventoryItemDetailTable extends Migration
         Schema::create('inventory_item_detail', function (Blueprint $table) {
           $table->increments('id');
           $table->integer('inventory_item_id')->unsigned();
-          $table->double('quantity');
-          $table->double('cost_price');
+          $table->double('quantity',19,2);
+          $table->double('cost_price',19,2);
           $table->integer('date_');
           $table->integer('date_time');
           $table->string('remarks');
@@ -24,6 +24,8 @@ class CreateInventoryItemDetailTable extends Migration
           $table->integer('reference_id')->unsigned();
           $table->integer('user_id')->unsigned();
           $table->boolean('deleted');
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

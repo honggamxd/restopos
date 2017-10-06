@@ -39,13 +39,6 @@
 <div class="active section hideprint">Bill</div>
 @endsection
 @section('content')
-<img src="/assets/images/logo.png" style="margin-right: auto;margin-left: auto; width: 150px;display: block;">
-<center>
-Brgy. Malagos, Baguio District
-<br>
-Davao City, 8000
-</center>
-<br>
 <table class="bill-table">
 <tbody>
   <tr>

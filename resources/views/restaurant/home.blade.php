@@ -61,6 +61,7 @@
           <th class="center aligned">Server</th>
           <th class="center aligned">Time</th>
           <th class="center aligned">Pax</th>
+          <th class="center aligned">SC/PWD</th>
           <th class="center aligned">Total</th>
         </tr>
       </thead>
@@ -75,6 +76,7 @@
           <td class="center aligned middle aligned" ng-bind="customer_data.server_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
+          <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.sc_pwd}}</td>
           <td class="center aligned middle aligned" ng-click="view_orders(this)"><a href="javascript:void(0);">@{{customer_data.total|currency:""}}</a></td>
           <td class="left aligned middle aligned" style="width: 28vw;">
             <div class="ui buttons" ng-if="!customer_data.has_order">
@@ -134,9 +136,14 @@
           <span class="form-control">No Available Table</span>
         </div>
         <div class="form-group">
-          <label># of Pax</label>
-          <input class="form-control" type="number" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax">
+          <label>Number of Pax</label>
+          <input class="form-control" min="1" type="number" placeholder="Enter Number of Pax" name="pax" ng-model="formdata.pax" ng-blur="pax_changed(this)">
           <p class="help-block">@{{formerrors.pax[0]}}</p>
+        </div>
+        <div class="form-group">
+          <label>Number of SC/PWD:</label>
+          <input class="form-control" min="0" max="@{{formdata.pax}}" type="number" placeholder="Enter Number of SC/PWD" name="sc_pwd" ng-model="formdata.sc_pwd">
+          <p class="help-block">@{{formerrors.sc_pwd[0]}}</p>
         </div>
         <div class="form-group">
           <label>Guest Name</label>
@@ -182,9 +189,14 @@
             <span class="form-control">No Available Table</span>
           </div>
           <div class="form-group">
-            <label># of Pax</label>
-            <input class="form-control" type="number" placeholder="Enter # of Pax" name="pax" ng-model="formdata.pax">
+            <label>Number of Pax</label>
+            <input class="form-control" min="1" type="number" placeholder="Enter Number of Pax" name="pax" ng-model="formdata.pax" ng-blur="pax_changed(this)">
             <p class="help-block">@{{formerrors.pax[0]}}</p>
+          </div>
+          <div class="form-group">
+            <label>Number of SC/PWD:</label>
+            <input class="form-control" min="0" max="@{{formdata.pax}}" type="number" placeholder="Enter Number of SC/PWD" name="sc_pwd" ng-model="formdata.sc_pwd">
+            <p class="help-block">@{{formerrors.sc_pwd[0]}}</p>
           </div>
           <div class="form-group">
             <label>Guest Name</label>
@@ -382,7 +394,7 @@
           </tr>
           <tr>
             <td>Table #: <span ng-cloak>@{{order.table_name}}</span></td>
-            <td># of Pax: <span ng-cloak>@{{order.pax}}</span></td>
+            <td>Number of Pax: <span ng-cloak>@{{order.pax}}</span></td>
           </tr>
         </tbody>
         </table>
@@ -462,6 +474,38 @@
         <h4 class="modal-title">Bill Summary</h4>
       </div>
       <div class="modal-body">
+        <form class="ui form" id="make-bill-form">
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label>Number of Pax:</label>
+                <input type="number" ng-model="bill_preview.customer_data.pax" readonly>
+              </div> 
+              <div class="field">
+                <label>Number of SC/PWD:</label>
+                <input type="number" min="0" max="@{{bill_preview.customer_data.pax}}" ng-model="bill_preview.customer_data.sc_pwd" placeholder="Number of SC/PWD" ng-change="compute_net_total()">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label>Percentage of Discount:</label>
+                <div class="ui right labeled input">
+                  <input type="number" min="0" max="100" placeholder="Percentage of Discount" ng-model="bill_preview.discount.percent_disount" ng-change="compute_net_total()">
+                  <div class="ui label">
+                    %
+                  </div>
+                </div>
+              </div> 
+              <div class="field">
+                <label>Amount of Discount:</label>
+                <input type="number" step="0.01" min="0" max="@{{bill_preview.total}}" placeholder="Amount of Discount" ng-model="bill_preview.discount.amount_disount" ng-change="compute_net_total()">
+              </div>
+            </div>
+          </div>
+        </form>
+        
         <table class="ui compact table unstackable">
           <thead>
             <tr>
@@ -473,7 +517,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="bill_preview_data in bill_preview">
+            <tr ng-repeat="bill_preview_data in bill_preview.items">
               <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != ''"><br>(@{{bill_preview_data.special_instruction}})</span></td>
               <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
               <td class="center aligned middle aligned">
@@ -485,15 +529,31 @@
           </tbody>
           <tfoot>
             <tr>
-              <th colspan="4" class="right aligned">Total</th>
-              <th class="right aligned">@{{bill_preview.total|currency:""}}</th>
+              <th colspan="4" class="right aligned">DISCOUNT:</th>
+              <th class="right aligned">@{{bill_preview.discount.total|currency:""}}</th>
+            </tr>
+            <tr>
+              <th colspan="4" class="right aligned">Gross Total:</th>
+              <th class="right aligned">@{{bill_preview.gross_total|currency:""}}</th>
+            </tr>
+            <tr>
+              <th colspan="4" class="right aligned">SC/PWD Discount:</th>
+              <th class="right aligned">@{{bill_preview.discount.sc_pwd_discount|currency:""}}</th>
+            </tr>
+            <tr>
+              <th colspan="4" class="right aligned">SC/PWD VAT Exemption:</th>
+              <th class="right aligned">@{{bill_preview.discount.sc_pwd_vat_exemption|currency:""}}</th>
+            </tr>
+            <tr>
+              <th colspan="4" class="right aligned">NET Total:</th>
+              <th class="right aligned">@{{bill_preview.net_total|currency:""}}</th>
             </tr>
           </tfoot>
         </table>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit">Proceed</button>
+        <button type="submit" class="btn btn-primary" form="make-bill-form" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit">Proceed</button>
       </div>
     </div>
   </div>
@@ -673,6 +733,7 @@
     });
 
     $scope.formdata = {};
+    $scope.formdata.settlement = {};
     $scope.table = {};
     $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
 
@@ -729,6 +790,11 @@
          $scope.submit = false;
       });
     }
+
+    $scope.pax_changed = function(data) {
+      $scope.formdata.sc_pwd = 0;
+    }
+
     $scope.table = {};
     $scope.has_table = false;
     function show_table(table_data='') {
@@ -1026,8 +1092,13 @@
           url : "/api/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
         }).then(function mySuccess(response) {
           console.log(response.data);
-          $scope.bill_preview = response.data.result;
+          $scope.bill_preview = {};
+          $scope.bill_preview.items = response.data.result;
           $scope.bill_preview.total = response.data.total;
+          $scope.bill_preview.customer_data = response.data.customer_data;
+          $scope.bill_preview.discount = response.data.discount;
+          $scope.bill_preview.gross_total = response.data.gross_total;
+          $scope.bill_preview.net_total = response.data.net_total;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#bill-preview-modal').modal('show');
         }, function myError(response) {
@@ -1044,10 +1115,15 @@
         .then(function(response) {
           console.log(response.data);
           $scope.submit = false;
-          $scope.bill_preview = response.data.result;
-          $scope.bill_preview.total = data.$parent.customer_data.total;
-          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           show_table_customers();
+          $scope.bill_preview = {};
+          $scope.bill_preview.items = response.data.result;
+          $scope.bill_preview.total = response.data.total;
+          $scope.bill_preview.customer_data = response.data.customer_data;
+          $scope.bill_preview.discount = response.data.discount;
+          $scope.bill_preview.gross_total = response.data.gross_total;
+          $scope.bill_preview.net_total = response.data.net_total;
+          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
            var errors = rejection.data;
@@ -1056,12 +1132,20 @@
         });
       }
     }
+    $scope.compute_net_total = function() {
+      $scope.bill_preview.discount.total = ($scope.bill_preview.discount.amount_disount+($scope.bill_preview.total*$scope.bill_preview.discount.percent_disount*0.01));
+      $scope.bill_preview.gross_total = $scope.bill_preview.total - $scope.bill_preview.discount.total;
+      $scope.bill_preview.discount.sc_pwd_discount = $scope.bill_preview.gross_total*$scope.bill_preview.customer_data.sc_pwd/$scope.bill_preview.customer_data.pax/1.12*.2;
+      $scope.bill_preview.discount.sc_pwd_vat_exemption = $scope.bill_preview.gross_total*$scope.bill_preview.customer_data.sc_pwd/$scope.bill_preview.customer_data.pax/1.12*.12;
+      $scope.bill_preview.net_total = $scope.bill_preview.gross_total-$scope.bill_preview.discount.sc_pwd_discount-$scope.bill_preview.discount.sc_pwd_vat_exemption;
+      console.log($scope.bill_preview);
+    }
 
     $scope.make_bill = function(data) {
-      // console.log(data);
+      console.log(data.bill_preview);
       // console.log(data.bill_preview.table_customer_id);
       $scope.submit = true;
-      $scope.formdata.items = data.bill_preview;
+      $scope.formdata = data.bill_preview;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/customer/bill/make/'+data.bill_preview.table_customer_id,
@@ -1086,9 +1170,10 @@
     $scope.bill_preview_total = function(data) {
       // console.log(data.$parent.bill_preview);
       data.$parent.bill_preview.total = 0;
-      angular.forEach(data.$parent.bill_preview, function(value, key) {
+      angular.forEach(data.$parent.bill_preview.items, function(value, key) {
         data.$parent.bill_preview.total = data.$parent.bill_preview.total + (Math.abs(value.quantity_to_bill)*value.price);
       });
+      $scope.compute_net_total();
     }
 
     $scope.view_bills = function(data) {
@@ -1125,7 +1210,7 @@
       $scope.formdata.settlement = {} ;
       $scope.formdata.excess = excess($scope);
       $scope.valid_payment = valid_payment($scope);
-
+      $scope.formdata.settlements_payment = {};
       $scope.formdata.settlements_payment.cash = false;
       $scope.formdata.settlements_payment.credit = false;
       $scope.formdata.settlements_payment.debit = false;
@@ -1159,6 +1244,7 @@
         $scope.submit = false;
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
+        $scope.formdata.settlement = {};
         $("#payment-modal").modal("hide");
         console.log(response.data)
       }, function(rejection) {
@@ -1186,6 +1272,7 @@
       $('#edit-table-modal').modal('show');
       $scope.formdata.customer_data = data.customer_data;
       $scope.formdata.pax = data.customer_data.pax;
+      $scope.formdata.sc_pwd = data.customer_data.sc_pwd;
       $scope.formdata.guest_name = data.customer_data.guest_name;
       show_table(data.customer_data.table_data);
       // $scope.formdata.table_id = ;
@@ -1252,6 +1339,7 @@
       return (total_payment>=$scope.formdata.total?true:false);
     }
     $scope.settlements_payment = function(data) {
+      $scope.formdata.settlements_payment = {};
       if($scope.formdata.settlement.includes('cash')){
         $scope.formdata.settlements_payment.cash = true;
       }else{

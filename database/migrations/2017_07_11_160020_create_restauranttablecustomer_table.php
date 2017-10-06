@@ -19,6 +19,7 @@ class CreateRestauranttablecustomerTable extends Migration
           $table->text('guest_name');
           $table->integer('date_time');
           $table->integer('pax');
+          $table->integer('sc_pwd');
           $table->boolean('has_order');
           $table->boolean('has_paid');
           $table->boolean('has_billed_out');
@@ -29,6 +30,7 @@ class CreateRestauranttablecustomerTable extends Migration
           $table->boolean('has_bill');
           $table->boolean('has_order_cancelled');
           $table->integer('cancellation_order_status');
+          $table->timestamps();
         });
     }
     // cancellation_order_status

@@ -28,11 +28,13 @@ class Restaurant_menu_controller extends Controller
   {
     // return $request->ingredients;
     $this->validate($request,[
-        'name' => 'required',
+        'name' => 'required|unique_menu:'.$request->category.','.$request->subcategory.','.$request->name.','.$request->session()->get('users.user_data')->restaurant_id,
         'category' => 'required',
         'subcategory' => 'required',
         'price' => 'required',
-      ]);
+    ],[
+      'unique_menu' => 'Menu is already in the list.'
+    ]);
     $restaurant_menu = new Restaurant_menu;
     $restaurant_menu->name = $request->name;
     $restaurant_menu->category = $request->category;
@@ -46,12 +48,36 @@ class Restaurant_menu_controller extends Controller
     return $restaurant_menu->orderBy('id','DESC')->first();
   }
 
+  public function update(Request $request)
+  {
+    // return $request->all();
+    $this->validate($request,[
+        'name' => 'required|unique_menu:'.$request->category.','.$request->subcategory.','.$request->name.','.$request->session()->get('users.user_data')->restaurant_id.','.$request->id,
+        'category' => 'required',
+        'subcategory' => 'required',
+        'price' => 'required',
+    ],[
+      'unique_menu' => 'Menu is already in the list.'
+    ]);
+    $restaurant_menu = new Restaurant_menu;
+    $restaurant_menu_data = $restaurant_menu->find($request->id);
+    $restaurant_menu_data->name = $request->name;
+    $restaurant_menu_data->category = $request->category;
+    $restaurant_menu_data->subcategory = $request->subcategory;
+    $restaurant_menu_data->price = $request->price;
+    $restaurant_menu_data->save();
+
+    $restaurant_menu_data = $restaurant_menu->orderBy('id','DESC')->first();
+    return $restaurant_menu->orderBy('id','DESC')->first();
+  }
+
   public function get_list(Request $request,$type)
   {
     $restaurant_menu = new Restaurant_menu;
     if($type=="orders"){
       $data["result"] =  $restaurant_menu->where('deleted',0);
       $data["result"]->where('is_prepared',1);
+      $data["result"]->orderBy('name');
       $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
       if($request->category!=null&&$request->category!='all'){
         $data['result']->where('category',$request->category);
@@ -65,6 +91,7 @@ class Restaurant_menu_controller extends Controller
         ->where('category','!=','')
         ->where('subcategory','!=','')
         ->where('deleted',0)
+        ->orderBy('name')
         ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
         ->get();
     }

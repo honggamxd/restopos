@@ -17,13 +17,15 @@ class CreateInventoryItemTable extends Migration
           $table->string('category');
           $table->string('unit');
           $table->string('item_name');
-          $table->double('cost_price');
+          $table->double('cost_price',19,2);
           $table->boolean('deleted');
           $table->string('type');
           $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
           $table->integer('user_id')->unsigned();
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

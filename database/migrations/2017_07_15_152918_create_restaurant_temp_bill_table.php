@@ -15,6 +15,8 @@ class CreateRestaurantTempBillTable extends Migration
         Schema::create('restaurant_temp_bill', function (Blueprint $table) {
           $table->increments('id');
           $table->integer('restaurant_table_customer_id')->unsigned();
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

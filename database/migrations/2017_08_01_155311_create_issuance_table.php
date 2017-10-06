@@ -24,6 +24,8 @@ class CreateIssuanceTable extends Migration
           $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

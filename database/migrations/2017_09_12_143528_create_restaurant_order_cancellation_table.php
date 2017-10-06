@@ -23,6 +23,8 @@ class CreateRestaurantOrderCancellationTable extends Migration
             $table->integer('approved_by')->unsigned();
             $table->boolean('approved');
             $table->text('reason_cancelled');
+            $table->softDeletes();
+            $table->timestamps();
         });
               
         

@@ -16,10 +16,12 @@ class CreateRestaurantTempBillDetailTable extends Migration
         $table->increments('id');
         $table->integer('restaurant_menu_id')->unsigned();
         $table->integer('quantity');
-        $table->double('price');
+        $table->double('price',19,2);
         $table->string('restaurant_menu_name');
         $table->string('special_instruction');
         $table->integer('restaurant_temp_bill_id')->unsigned();
+        $table->softDeletes();
+        $table->timestamps();
       });
     }
 

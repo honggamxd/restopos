@@ -17,8 +17,10 @@ class CreateRestaurantAcceptedOrderCancellationTable extends Migration
             $table->increments('id');
             $table->integer('restaurant_menu_id')->unsigned();
             $table->integer('restaurant_table_customer_id')->unsigned();
-            $table->double('quantity');
-            $table->double('price');
+            $table->double('quantity',19,2);
+            $table->double('price',19,2);
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

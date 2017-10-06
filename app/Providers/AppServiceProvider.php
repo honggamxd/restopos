@@ -16,11 +16,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Validator::extend('custom_min', function($attribute, $value, $parameters, $validator) {
-            if($value>$parameters[0]){
-                return true;
-            }else{
-                return false;
-            }
+            return $value>$parameters[0];
         });
 
         Validator::extend('custom_unique', function($attribute, $value, $parameters, $validator) {
@@ -91,6 +87,18 @@ class AppServiceProvider extends ServiceProvider
 
         Validator::extend('available_to_cook', function($attribute, $value, $parameters, $validator) {
             return false;
+        });
+
+        Validator::extend('unique_menu', function($attribute, $value, $parameters, $validator) {
+            $restaurant_menu = DB::table('restaurant_menu')->where('deleted',0);
+            $restaurant_menu->where('category',$parameters[0]);
+            $restaurant_menu->where('subcategory',$parameters[1]);
+            $restaurant_menu->where('name',$parameters[2]);
+            $restaurant_menu->where('restaurant_id',$parameters[3]);
+            if(isset($parameters[4])){
+                $restaurant_menu->where('id','<>',$parameters[4]);
+            }
+            return $restaurant_menu->first()===null;
         });
     }
 

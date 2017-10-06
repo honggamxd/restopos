@@ -14,7 +14,7 @@ class CreateRestaurantPaymentTable extends Migration
     {
         Schema::create('restaurant_payment', function (Blueprint $table) {
           $table->increments('id');
-          $table->double('payment');
+          $table->double('payment',19,2);
           $table->string('settlement');
           $table->integer('restaurant_id')->unsigned();
           $table->integer('date_');
@@ -25,6 +25,8 @@ class CreateRestaurantPaymentTable extends Migration
           $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

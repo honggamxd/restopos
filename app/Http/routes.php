@@ -18,6 +18,7 @@ Route::get('/restaurant', 'Restaurant_controller@index');
 //Restaurant Menu
 Route::get('/restaurant/menu', 'Restaurant_menu_controller@index');
 Route::post('/api/restaurant/menu', 'Restaurant_menu_controller@store');
+Route::put('/api/restaurant/menu', 'Restaurant_menu_controller@update');
 Route::get('/api/restaurant/menu/search/{type}', 'Restaurant_menu_controller@search');
 Route::get('/api/restaurant/menu/subcategory', 'Restaurant_menu_controller@show_subcategory');
 
@@ -40,8 +41,8 @@ Route::post('/api/restaurant/table/order/remove', 'Restaurant_table_customer_con
 
 Route::put('/api/restaurant/table/customer/update/{id}', 'Restaurant_table_customer_controller@update');
 Route::post('/api/restaurant/table/customer/add', 'Restaurant_table_customer_controller@store');
-Route::post('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@bill_out');
 Route::post('/api/restaurant/table/customer/bill/make/{id}', 'Restaurant_table_customer_controller@make_bill');
+Route::post('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@bill_out');
 Route::get('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@show_temp_bill');
 Route::get('/api/restaurant/table/customer/bill/view/{id}', 'Restaurant_table_customer_controller@show_bill');
 Route::get('/api/restaurant/table/customer/bill/list/{id}', 'Restaurant_table_customer_controller@list_bill');

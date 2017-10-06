@@ -45,8 +45,8 @@
           @foreach ($categories as $category)
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Ammount</th>
-          <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+3 }}">Mode of Payments / Settlements</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Amount</th>
+          <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+4 }}">Mode of Payments / Settlements</th>
           <!-- <th rowspan="2" class="center aligned middle aligned" ng-show="show_settlements">Excess</th> -->
         </tr>
         <tr>
@@ -56,6 +56,7 @@
           <th class="center aligned middle aligned" ng-show="show_settlements">Cancelled / Void</th>
           <th class="center aligned middle aligned" ng-show="show_settlements">BOD Charge</th>
           <th class="center aligned middle aligned" ng-show="show_settlements">Staff Charge</th>
+          <th class="center aligned middle aligned" ng-show="show_settlements">Total Settlements</th>
         </tr>
       </thead>
       <tbody ng-cloak>
@@ -77,6 +78,7 @@
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
+          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements|currency:""}}</td>
           <!-- <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.excess |currency:""}}</td> -->
         </tr>
       </tbody>
@@ -94,6 +96,7 @@
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
+          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|currency:""}}</th>
           <!-- <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.excess|currency:""}}</th> -->
         </tr>
       </tfoot>
@@ -121,7 +124,7 @@
   var app = angular.module('main', ['ngSanitize']);
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.show_sales = true;
-    $scope.show_paging = true;
+    $scope.show_paging = false;
     $scope.show_settlements = true;
     $scope.toggle_paging = function() {
       show_reports();

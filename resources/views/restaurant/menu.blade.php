@@ -24,7 +24,7 @@
 <div class="col-sm-12">
 <h1 style="text-align: center;">{{Session::get('users.user_data')->restaurant}} Menu</h1>
 <br><br>
-  <form action="/items" method="post" class="form-horizontal ui form" id="add-items-form">
+  <form class="form-horizontal ui form">
   {{ csrf_field() }}
     <div class="field">
       <div class="four fields">
@@ -53,7 +53,7 @@
         </div>
         <div class="field">
           <label>&nbsp;</label>
-          <button type="button" class="ui primary button fluid" onclick="$('#addmenu-modal').modal('show')">Add Menu</button>
+          <button type="button" class="ui primary button fluid" onclick="$('#add-menu-modal').modal('show')">Add Menu</button>
         </div>
       </div>
     </div>
@@ -81,7 +81,7 @@
             </div>
           </td>
           <td class="center aligned middle aligned" ng-cloak>
-            <a href="javascript:void(0);" ng-click="ingredients(this)">Edit</a>
+            <a href="javascript:void(0);" ng-click="edit_menu(this)">Edit</a>
           </td>
         </tr>
       </tbody>
@@ -92,60 +92,7 @@
 @endsection
 
 @section('modals')
-
-<div id="editmenu-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Edit Menu 1</h4>
-      </div>
-      <div class="modal-body">
-        <form action="/items" method="post" id="add-items-form">
-        {{ csrf_field() }}
-        <div class="form-group">
-          <label>Category</label>
-          <input type="text" name="" placeholder="Category" class="form-control" value="Food">
-        </div>
-
-        <div class="form-group">
-          <label>Subcategory</label>
-          <input type="text" name="" placeholder="Subcategory" class="form-control" value="Food">
-        </div>
-
-
-        <div class="form-group">
-          <label>Item</label>
-          <input type="text" name="" placeholder="Item" class="form-control" value="Menu 1">
-        </div>
-
-        <div class="form-group">
-          <label>Quantity</label>
-          <input type="text" name="" placeholder="Quantity" class="form-control" value="1">
-        </div>
-
-        <div class="form-group">
-          <label>Price</label>
-          <input type="text" name="" placeholder="Price" class="form-control" value="10.00">
-        </div>
-
-        <div class="form-group">
-          <label>Comments</label>
-          <textarea placeholder="Comments" class="form-control"></textarea>
-        </div>
-
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-items-form">Confirm</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div id="addmenu-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add_menu-controller">
+<div id="add-menu-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add_menu-controller">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -153,12 +100,12 @@
         <h4 class="modal-title">Add Menu</h4>
       </div>
       <div class="modal-body">
-        <form action="/restaurant/menu" method="post" id="add-items-form">
+        <form id="add-items-form" ng-submit="add_menu()">
         <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
         
         <div class="form-group">
           <label>Category</label>
-          <select name="category" class="form-control" ng-model="formdata.category">
+          <select name="category" class="form-control" ng-model="formdata.category" required>
             <option value="">Select Category</option>
             @foreach ($categories as $category)
               <option value="{{$category}}">{{$category}}</option>
@@ -169,56 +116,79 @@
 
         <div class="form-group">
           <label>Subcategory</label>
-          <input type="text" name="subcategory" placeholder="Subcategory" class="form-control" ng-model="formdata.subcategory">
+          <input type="text" name="subcategory" id="add-item-subcategory" placeholder="Subcategory" class="form-control" ng-model="formdata.subcategory" required>
           <p class="help-block" ng-bind="formerrors.subcategory[0]"></p>
         </div>
 
         <div class="form-group">
           <label>Name</label>
-          <input type="text" name="name" placeholder="Name" class="form-control" ng-model="formdata.name">
+          <input type="text" name="name" placeholder="Name" class="form-control" ng-model="formdata.name" required>
           <p class="help-block" ng-bind="formerrors.name[0]"></p>
         </div>
 
         <div class="form-group">
           <label>Price</label>
-          <input type="text" name="price" placeholder="Price" class="form-control" ng-model="formdata.price">
+          <input type="number" min="0" step="0.01" name="price" placeholder="Price" class="form-control" ng-model="formdata.price" required>
           <p class="help-block" ng-bind="formerrors.price[0]"></p>
         </div>
-
-<!--         <div class="form-group">
-          <label>Ingredients</label>
-          <select multiple="" class="ui fluid dropdown" ng-model="formdata.ingredients" ng-options="item as item.item_name for item in restaurant_inventory track by item.id">
-            <option value="">Select Ingredients</option>
-          </select>
-          <p class="help-block" ng-bind="formerrors.price[0]"></p>
-        </div>
-
-        <div class="form-group" ng-repeat="item in formdata.ingredients">
-          <label>@{{item.item_name}}</label>
-          <div class="ui right labeled input fluid">
-            <input type="number" step="0.01" placeholder="Enter number of @{{item.unit}} of @{{item.item_name}} per serving of @{{formdata.name}}" ng-model="formdata.ingredients[formdata.ingredients.indexOf(item)]['ingredient_quantity']">
-            <div class="ui basic label">
-              @{{item.unit}}
-            </div>
-          </div>
-          <p class="help-block" ng-bind="formerrors.price[0]"></p>
-        </div>
- -->
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="add_menu()">Save</button>
+        <button type="submit" class="btn btn-primary" ng-disabled="submit" form="add-items-form">Save</button>
       </div>
     </div>
-
   </div>
 </div>
 
+<div id="edit-menu-modal" class="modal fade" role="dialog" tabindex="-1" ng-controller="add_menu-controller">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Menu</h4>
+      </div>
+      <div class="modal-body">
+        <form id="edit-items-form" ng-submit="update_menu()">
+        <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
+        
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" class="form-control" ng-model="formdata.category" required>
+            <option value="">Select Category</option>
+            @foreach ($categories as $category)
+              <option value="{{$category}}">{{$category}}</option>
+            @endforeach
+          </select>
+          <p class="help-block" ng-bind="formerrors.category[0]"></p>
+        </div>
 
+        <div class="form-group">
+          <label>Subcategory</label>
+          <input type="text" name="subcategory" id="edit-item-subcategory" placeholder="Subcategory" class="form-control" ng-model="formdata.subcategory" required>
+          <p class="help-block" ng-bind="formerrors.subcategory[0]"></p>
+        </div>
 
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="Name" class="form-control" ng-model="formdata.name" required>
+          <p class="help-block" ng-bind="formerrors.name[0]"></p>
+        </div>
 
-
+        <div class="form-group">
+          <label>Price</label>
+          <input type="number" min="0" step="0.01" name="price" placeholder="Price" class="form-control" ng-model="formdata.price" required>
+          <p class="help-block" ng-bind="formerrors.price[0]"></p>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" ng-disabled="submit" form="edit-items-form">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 @endsection
 
@@ -235,7 +205,6 @@
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.formdata = {};
     $scope.formerrors = {};
-    $scope.formdata.ingredients = [];
     $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
     show_menu();
     function show_menu() {
@@ -244,17 +213,6 @@
         url : "/api/restaurant/menu/list/list",
       }).then(function mySuccess(response) {
         $scope.menu = response.data.result;
-      }, function myError(response) {
-        console.log(response.statusText);
-      });
-    }
-    show_restaurant_inventory();
-    function show_restaurant_inventory() {
-      $http({
-        method : "GET",
-        url : "/api/restaurant/inventory/items",
-      }).then(function mySuccess(response) {
-        $scope.restaurant_inventory = response.data.result;
       }, function myError(response) {
         console.log(response.statusText);
       });
@@ -277,11 +235,37 @@
         show_menu();
       }, function(rejection) {
         var errors = rejection.data;
-        $scope.formerrors.ar_number = errors.ar_number;
-        $scope.formerrors.amount = errors.amount;
-        $scope.formerrors.date_payment = errors.date_payment;
+        $scope.formerrors = errors;
         $scope.submit = false;
       });
+    }
+
+    $scope.update_menu = function() {
+      $scope.submit = true;
+      $scope.formerrors = {};
+      $http({
+        method: 'PUT',
+        url: '/api/restaurant/menu',
+        data: $.param($scope.formdata),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+        $scope.submit = false;
+        // alertify.success($scope.formdata.name+" is added.");
+        // $scope.formdata.;
+        show_menu();
+      }, function(rejection) {
+        var errors = rejection.data;
+        $scope.formerrors = errors;
+        $scope.submit = false;
+      });
+    }
+
+    $scope.edit_menu = function(data) {
+      console.log(data);
+      $scope.formdata = data.menu_data;
+      $('#edit-menu-modal').modal('show');
     }
 
 

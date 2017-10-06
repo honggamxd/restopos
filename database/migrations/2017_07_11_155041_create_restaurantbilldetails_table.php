@@ -18,7 +18,7 @@ class CreateRestaurantbilldetailsTable extends Migration
           $table->string('restaurant_menu_name');
           $table->text('special_instruction');
           $table->integer('quantity');
-          $table->double('price');
+          $table->double('price',19,2);
           $table->integer('date_');
           $table->integer('restaurant_bill_id')->unsigned();
           $table->integer('restaurant_id')->unsigned();
@@ -26,6 +26,8 @@ class CreateRestaurantbilldetailsTable extends Migration
           $table->integer('deleted_by')->unsigned();
           $table->text('deleted_comment');
           $table->integer('deleted_date');
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

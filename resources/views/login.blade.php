@@ -70,21 +70,21 @@
       </div>
       <div>
         <br>
-        Admin Password<br>
+        <b>Admin Password</b><br>
         Username: <b>admin</b><br>
         Password: <b>admin</b><br>
         <br>
-        Viewdeck Café User<br>
-        Username: <b>user1</b><br>
-        Password: <b>user1</b><br>
+        <b>Viewdeck Café User</b><br>
+        Restaurant Admin: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>admin1</b>/<b>admin1</b><br>
+        Restaurant Cashier: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>user1</b>/<b>user1</b><br>
         <br>
-        Koi Café<br>
-        Username: <b>user2</b><br>
-        Password: <b>user2</b><br>
+        <b>Koi Café</b><br>
+        Restaurant Admin: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>admin2</b>/<b>admin2</b><br>
+        Restaurant Cashier: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>user2</b>/<b>user2</b><br>
         <br>
-        Restaurant 3<br>
-        Username: <b>user3</b><br>
-        Password: <b>user3</b><br>
+        <b>Restaurant 3</b><br>
+        Restaurant Admin: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>admin3</b>/<b>admin3</b><br>
+        Restaurant Cashier: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>user3</b>/<b>user3</b><br>
       </div>
     </div>
   </div>

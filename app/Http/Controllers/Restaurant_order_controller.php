@@ -12,7 +12,6 @@ use App\Restaurant_table;
 use App\Restaurant_menu;
 use App\Restaurant_order;
 use App\Restaurant_order_detail;
-use App\Restaurant_menu_ingredients;
 
 
 class Restaurant_order_controller extends Controller
@@ -63,9 +62,6 @@ class Restaurant_order_controller extends Controller
       $restaurant_order_detail->restaurant_order_id = $order_data->id;
       $restaurant_order_detail->restaurant_id = $customer_data->restaurant_id;
       $restaurant_order_detail->save();
-
-      $restaurant_menu_ingredients = new Restaurant_menu_ingredients;
-      // $menu_ingredients = $restaurant_menu_ingredients->where('restaurant_inventory_id',$cart_data->id);
     }
     $cart = $request->session()->forget('restaurant.table_customer.'.$id.'.cart');
     return $order_data;

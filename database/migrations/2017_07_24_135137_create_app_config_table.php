@@ -17,6 +17,8 @@ class CreateAppConfigTable extends Migration
           $table->string('settlements');
           $table->string('categories');
           $table->string('version');
+          $table->softDeletes();
+          $table->timestamps();
         });
     }
 

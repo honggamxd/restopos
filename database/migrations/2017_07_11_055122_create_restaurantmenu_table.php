@@ -18,12 +18,14 @@ class CreateRestaurantmenuTable extends Migration
         $table->string('subcategory');
         $table->string('name');
         $table->boolean('is_prepared');
-        $table->double('price');
+        $table->double('price',19,2);
         $table->integer('restaurant_id')->unsigned();
         $table->boolean('deleted');
         $table->integer('deleted_by')->unsigned();
         $table->text('deleted_comment');
         $table->integer('deleted_date');
+        $table->softDeletes();
+        $table->timestamps();
       });
     }
 

@@ -3,9 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class Restaurant_order extends Model
 {
+  use SoftDeletes;
   protected $table = 'restaurant_order';
-  public $timestamps = false;
+  protected $dates = ['deleted_at'];
 }

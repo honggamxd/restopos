@@ -37,6 +37,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_table_customer->table_name = $request->table_id["name"];
     $restaurant_table_customer->guest_name = ($request->guest_name==null?"":$request->guest_name);
     $restaurant_table_customer->pax = $request->pax;
+    $restaurant_table_customer->sc_pwd = $request->sc_pwd;
     $restaurant_table_customer->server_id = $request->server_id["id"];
     $restaurant_table_customer->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_table_customer->save();
@@ -194,7 +195,7 @@ class Restaurant_table_customer_controller extends Controller
       ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
       ->where('restaurant_table_customer_id',$id)
       ->get();
-    return $data;
+    return $this->show_temp_bill($request,$id);
   }
 
   public function show_temp_bill(Request $request,$id)
@@ -207,10 +208,19 @@ class Restaurant_table_customer_controller extends Controller
       ->get();
     $restaurant_temp_bill_data = $restaurant_temp_bill->where('restaurant_table_customer_id',$id)->first();
     $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $data['customer_data'] = $restaurant_table_customer->find($id);
     $data["total"] = $restaurant_temp_bill_detail
       ->select(DB::raw('SUM(price*quantity) as total'))
       ->where('restaurant_temp_bill_id',$restaurant_temp_bill_data->id)
       ->value("total");
+    $data['discount']['amount_disount'] = 0;
+    $data['discount']['percent_disount'] = 0;
+    $data['discount']['total'] = 0;
+    $data['discount']['sc_pwd_discount'] = $data["total"]*$data['customer_data']->sc_pwd/$data['customer_data']->pax/1.12*0.2;
+    $data['discount']['sc_pwd_vat_exemption'] = $data["total"]*$data['customer_data']->sc_pwd/$data['customer_data']->pax/1.12*0.12;
+    $data['gross_total'] = $data["total"];
+    $data['net_total'] = round($data["total"]-$data['discount']['sc_pwd_discount']-$data['discount']['sc_pwd_vat_exemption'],2);
     return $data;
   }
 
@@ -223,6 +233,7 @@ class Restaurant_table_customer_controller extends Controller
 
   public function make_bill(Request $request,$id)
   {
+    // return $request->all();
     $this->validate($request, [
         'items' => 'valid_restaurant_billing'
       ],[
@@ -365,6 +376,7 @@ class Restaurant_table_customer_controller extends Controller
     $data["old_table"] = $request->customer_data['table_data'];
     $customer_data = $restaurant_table_customer->find($id);
     $customer_data->pax = $request->pax;
+    $customer_data->sc_pwd = $request->sc_pwd;
     $customer_data->guest_name = $request->guest_name;
     if($data["new_table"]['id']!=$data["old_table"]['id']){
       $customer_data->table_name .= '>'.$data["new_table"]['name'];
