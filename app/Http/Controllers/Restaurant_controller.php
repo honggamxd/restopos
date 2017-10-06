@@ -11,12 +11,23 @@ use App\Issuance_to;
 
 class Restaurant_controller extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('logged');
+    }
     public function index(Request $request)
     {
       if($request->session()->get('users.user_data')->privilege=="admin"){
         $app_config = DB::table('app_config')->first();
         $data["categories"] = explode(',', $app_config->categories);
         return view('inventory',$data);
+      }elseif($request->session()->get('users.user_data')->privilege=="restaurant_admin"){
+        $app_config = DB::table('app_config')->first();
+        $restaurant = DB::table('restaurant')->get();
+        $data["categories"] = explode(',', $app_config->categories);
+        $data["restaurants"] = $restaurant;
+        $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
+        return view('restaurant.menu',$data);
       }else{
         $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
         $app_config = DB::table('app_config')->first();
@@ -30,19 +41,6 @@ class Restaurant_controller extends Controller
       $restaurant = DB::table('restaurant')->get();
       $data["restaurants"] = $restaurant;
       return view('restaurant.settings',$data);
-    }
-
-    public function login($value='')
-    {
-
-      return view('login');
-      # code...
-    }
-
-    public function logout(Request $request)
-    {
-      $request->session()->flush();
-      return redirect('/login');
     }
 
     public function add_server(Request $request)

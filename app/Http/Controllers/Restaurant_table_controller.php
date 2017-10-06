@@ -9,6 +9,10 @@ use App\Restaurant_table;
 
 class Restaurant_table_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function get_list(Request $request,$type)
   {
     DB::enableQueryLog();

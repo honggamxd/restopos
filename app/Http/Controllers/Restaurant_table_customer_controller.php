@@ -17,6 +17,10 @@ use App\Restaurant_bill_detail;
 
 class Restaurant_table_customer_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function store(Request $request)
   {
     $this->validate($request, [

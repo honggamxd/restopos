@@ -11,6 +11,10 @@ use App\Inventory_item_detail;
 
 class Inventory_item_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function index(Request $request)
   {
     return view('inventory');

@@ -35,6 +35,20 @@ class Users_controller extends Controller
     }
   }
 
+  public function login_index($value='')
+  {
+    return view('login');
+    # code...
+  }
+
+  
+  public function logout(Request $request)
+  {
+    $request->session()->flush();
+    return redirect('/login');
+  }
+
+
   public function show_users(Request $request)
   {
     $user = new User;

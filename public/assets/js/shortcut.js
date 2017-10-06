@@ -221,9 +221,3 @@ shortcut = {
 		else ele['on'+type] = false;
 	}
 }
-	shortcut.add("f2",function() {
-		window.location = "sales";
-	});
-	shortcut.add("F3",function() {
-		window.location = "payroll";
-	});

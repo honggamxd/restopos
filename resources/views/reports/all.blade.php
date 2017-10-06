@@ -103,7 +103,7 @@
   @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
     <a href="/restaurant/reports/print/" target="_blank">View Printable Version</a>
   @else
-  <a href="/reports/print/all?{{$_SERVER['QUERY_STRING']}}" target="_blank">View Printable Version</a>
+  <a href="/reports/print/all?{{(isset($_SERVER['QUERY_STRING'])?$_SERVER['QUERY_STRING']:'')}}" target="_blank">View Printable Version</a>
   @endif
 </div>
 @endsection

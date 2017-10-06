@@ -245,9 +245,9 @@
                 </div>
                 <div class="four wide field">
                   <label>&nbsp;</label>
-                  <button type="button" class="ui primary button fluid" onclick="$('#add-menu-modal').modal('show')">
+<!--                   <button type="button" class="ui primary button fluid" onclick="$('#add-menu-modal').modal('show')">
                     Add Menu
-                  </button>
+                  </button> -->
                 </div>
               </div>
 

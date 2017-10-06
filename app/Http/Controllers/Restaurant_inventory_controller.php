@@ -10,6 +10,10 @@ use App\Inventory_item;
 
 class Restaurant_inventory_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function index(Request $request)
   {
     return view('restaurant.inventory');

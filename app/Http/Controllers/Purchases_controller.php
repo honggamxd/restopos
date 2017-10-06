@@ -12,6 +12,10 @@ use App\Purchase_detail;
 
 class Purchases_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function index(Request $request)
   {
     return view('purchases.index');

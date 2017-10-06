@@ -1,18 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
-
-
-
-<!DOCTYPE html>
-<html>
-<head>
 <title>@yield('title')</title>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 @yield('meta')
@@ -48,13 +36,25 @@
         <i class="food icon"></i>
         {{Session::get('users.user_data')->restaurant}}
     </a>
+    <a class="item" href="/restaurant/reports">
+        <i class="bar chart icon"></i>
+        My Reports
+    </a>
+    @endif
+    @if(Session::get('users.user_data')->privilege=="restaurant_admin")
     <a class="item" href="/restaurant/menu">
         <i class="food icon"></i>
         {{Session::get('users.user_data')->restaurant}}<br>Menu
     </a>
+    <a class="item" href="/restaurant/settings">
+        <i class="settings icon"></i>
+        {{Session::get('users.user_data')->restaurant}}<br>
+        Settings
+    </a>
     <a class="item" href="/restaurant/reports">
         <i class="bar chart icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>Reports
+        {{Session::get('users.user_data')->restaurant}}<br>
+        Reports
     </a>
     @endif
     @if(Session::get('users.user_data')->privilege=="admin")

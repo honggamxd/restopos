@@ -16,6 +16,10 @@ use DB;
 
 class Reports_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function index(Request $request)
   {
     return view('reports.index');

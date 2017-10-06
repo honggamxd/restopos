@@ -12,6 +12,10 @@ use App\Restaurant_table_customer;
 
 class Restaurant_payment_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function store(Request $request,$id)
   {
     $restaurant_bill = new Restaurant_bill;

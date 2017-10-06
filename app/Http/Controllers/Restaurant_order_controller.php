@@ -17,6 +17,10 @@ use App\Restaurant_menu_ingredients;
 
 class Restaurant_order_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function store(Request $request,$id)
   {
     $validator = Validator::make($request->all(), [

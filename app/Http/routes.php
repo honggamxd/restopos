@@ -11,12 +11,12 @@
 |
 */
 
-Route::get('/', 'Restaurant_controller@index')->middleware('logged');
-Route::get('/restaurant', 'Restaurant_controller@index')->middleware('logged');
+Route::get('/', 'Restaurant_controller@index');
+Route::get('/restaurant', 'Restaurant_controller@index');
 
 
 //Restaurant Menu
-Route::get('/restaurant/menu', 'Restaurant_menu_controller@index')->middleware('logged');
+Route::get('/restaurant/menu', 'Restaurant_menu_controller@index');
 Route::post('/api/restaurant/menu', 'Restaurant_menu_controller@store');
 Route::get('/api/restaurant/menu/search/{type}', 'Restaurant_menu_controller@search');
 Route::get('/api/restaurant/menu/subcategory', 'Restaurant_menu_controller@show_subcategory');
@@ -52,8 +52,8 @@ Route::post('/api/restaurant/table/customer/payment/make/{id}', 'Restaurant_paym
 Route::get('/api/restaurant/table/customer/payment/list/{id}', 'Restaurant_payment_controller@show');
 Route::get('/api/restaurant/table/list/{type}', 'Restaurant_table_controller@get_list');
 
-Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index')->middleware('logged');
-Route::get('/restaurant/bill/{id}', 'Restaurant_bill_controller@index')->middleware('logged');
+Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
+Route::get('/restaurant/bill/{id}', 'Restaurant_bill_controller@index');
 
 
 
@@ -68,19 +68,19 @@ Route::get('/api/inventory/item/show', 'Inventory_item_controller@show');
 
 
 //Inventory
-Route::get('/inventory', 'Inventory_item_controller@index')->middleware('logged');
-Route::get('/inventory/item/{id}', 'Inventory_item_controller@index_item_history')->middleware('logged');
+Route::get('/inventory', 'Inventory_item_controller@index');
+Route::get('/inventory/item/{id}', 'Inventory_item_controller@index_item_history');
 Route::post('/api/inventory/item/add', 'Inventory_item_controller@store');
 Route::get('/api/inventory/item/history/{id}', 'Inventory_item_controller@show_item_history');
 
 //Restaurant Inventory
-Route::get('/restaurant/inventory', 'Restaurant_inventory_controller@index')->middleware('logged');
+Route::get('/restaurant/inventory', 'Restaurant_inventory_controller@index');
 Route::get('/api/restaurant/inventory/items', 'Restaurant_inventory_controller@show_items');
 
 
 //Purchases
-Route::get('/purchase', 'Purchases_controller@index')->middleware('logged');
-Route::get('/purchase/view/{id}', 'Purchases_controller@show')->middleware('logged');
+Route::get('/purchase', 'Purchases_controller@index');
+Route::get('/purchase/view/{id}', 'Purchases_controller@show');
 Route::post('/api/purchase/cart/item/add/{id}', 'Purchases_controller@store_cart');
 Route::post('/api/purchase/cart/info', 'Purchases_controller@add_info_cart');
 Route::post('/api/purchase/make', 'Purchases_controller@store_purchase');
@@ -90,8 +90,8 @@ Route::delete('/api/purchase/cart/delete', 'Purchases_controller@destroy_cart');
 
 
 //Issuances
-Route::get('/issuance', 'Issuance_controller@index')->middleware('logged');
-Route::get('/issuance/view/{id}', 'Issuance_controller@show')->middleware('logged');
+Route::get('/issuance', 'Issuance_controller@index');
+Route::get('/issuance/view/{id}', 'Issuance_controller@show');
 Route::get('/api/issuance/cart', 'Issuance_controller@show_cart');
 Route::post('/api/issuance/cart/item/add/{id}', 'Issuance_controller@store_cart');
 Route::post('/api/issuance/cart/info', 'Issuance_controller@add_info_cart');
@@ -101,13 +101,13 @@ Route::delete('/api/issuance/cart/item/delete/{id}', 'Issuance_controller@delete
 Route::delete('/api/issuance/cart/delete', 'Issuance_controller@destroy_cart');
 
 //reports
-Route::get('/reports', 'Reports_controller@index')->middleware('logged');
-Route::get('/restaurant/reports', 'Reports_controller@restaurant')->middleware('logged');
-Route::get('/restaurant/reports/print', 'Reports_controller@restaurant_print')->middleware('logged');
+Route::get('/reports', 'Reports_controller@index');
+Route::get('/restaurant/reports', 'Reports_controller@restaurant');
+Route::get('/restaurant/reports/print', 'Reports_controller@restaurant_print');
 
 
-Route::get('/reports/view/{type}', 'Reports_controller@show')->middleware('logged');
-Route::get('/reports/print/{type}', 'Reports_controller@show_print')->middleware('logged');
+Route::get('/reports/view/{type}', 'Reports_controller@show');
+Route::get('/reports/print/{type}', 'Reports_controller@show_print');
 Route::get('/api/reports/general/purchases', 'Reports_controller@purhcased_item');
 Route::get('/api/reports/general/issuances', 'Reports_controller@issued_items');
 Route::get('/api/reports/general/f_and_b', 'Reports_controller@f_and_b');
@@ -117,14 +117,14 @@ Route::get('/api/reports/general/menu_popularity', 'Reports_controller@menu_popu
 
 
 //users
-Route::get('/users', 'Users_controller@index')->middleware('logged');
-Route::get('/login', 'Restaurant_controller@login');
+Route::get('/users', 'Users_controller@index');
+Route::get('/login', 'Users_controller@login_index');
 Route::post('/login', 'Users_controller@login');
-Route::get('/logout', 'Restaurant_controller@logout')->middleware('logged');
+Route::get('/logout', 'Users_controller@logout');
 Route::get('/api/users', 'Users_controller@show_users');
 Route::post('/api/users/add', 'Users_controller@add');
 
 
-Route::get('/restaurant/settings','Restaurant_controller@settings')->middleware('logged');
+Route::get('/restaurant/settings','Restaurant_controller@settings');
 
 

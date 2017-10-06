@@ -10,7 +10,10 @@ use App\Restaurant_menu_ingredients;
 
 class Restaurant_menu_controller extends Controller
 {
-
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function index(Request $request)
   {
     $app_config = DB::table('app_config')->first();

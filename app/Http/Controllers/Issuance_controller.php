@@ -13,6 +13,10 @@ use App\Restaurant_inventory;
 
 class Issuance_controller extends Controller
 {
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
   public function index(Request $request)
   {
     $data["issuance_to"] = DB::table('issuance_to')->where('deleted',0)->get();
