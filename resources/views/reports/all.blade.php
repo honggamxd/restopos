@@ -30,6 +30,12 @@
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_settlements">Show Settlements</label>
     </div>
+    @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
+      <div class="checkbox">
+        <label><input type="checkbox" ng-model="show_accounting">Show Accounting</label>
+      </div>
+    @endif
+    
 <!--     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_paging" ng-change="toggle_paging()">Paging</label>
     </div> -->
@@ -47,6 +53,16 @@
           @endforeach
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Amount</th>
           <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+4 }}">Mode of Payments / Settlements</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Total Discount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Sales NET of VAT & Service Charge</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Service Charge</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">VATable Sales</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Output VAT</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Sales Inclusive of VAT</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD Discount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD VAT Exemption</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">NET Billing</th>
           <!-- <th rowspan="2" class="center aligned middle aligned" ng-show="show_settlements">Excess</th> -->
         </tr>
         <tr>
@@ -67,7 +83,7 @@
           @foreach ($categories as $category)
             <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |currency:""}}</td>
           @endforeach
-          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.total |currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.total_item_amount |currency:""}}</td>
           @foreach ($settlements as $settlement)
             @if($settlement=="cash")
               <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?>-bill_data.excess |currency:""}}</td>
@@ -79,6 +95,16 @@
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
           <td class="right aligned middle aligned" ng-show="show_settlements"></td>
           <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.total_discount|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_net_of_vat_and_service_charge|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.service_charge|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.vatable_sales|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.output_vat|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_inclusive_of_vat|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_discount|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_vat_exemption|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.net_billing|currency:""}}</td>
           <!-- <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.excess |currency:""}}</td> -->
         </tr>
       </tbody>
@@ -89,7 +115,7 @@
           @foreach ($categories as $category)
             <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |currency:""}}</th>
           @endforeach
-          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.total|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.total_item_amount|currency:""}}</th>
           @foreach ($settlements as $settlement)
             <th class="right aligned middle aligned" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |currency:""}}</th>
           @endforeach
@@ -97,17 +123,22 @@
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
           <th class="right aligned middle aligned" ng-show="show_settlements"></th>
           <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.total_discount|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_net_of_vat_and_service_charge|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.service_charge|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.vatable_sales|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.output_vat|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_inclusive_of_vat|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_discount|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_vat_exemption|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.net_billing|currency:""}}</th>
           <!-- <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.excess|currency:""}}</th> -->
         </tr>
       </tfoot>
     </table>
   </div>
   <div ng-bind-html="paging" class="text-center" ng-show="show_paging"></div>
-  @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
-    <a href="/restaurant/reports/print/" target="_blank">View Printable Version</a>
-  @else
-  <a href="/reports/print/all?{{(isset($_SERVER['QUERY_STRING'])?$_SERVER['QUERY_STRING']:'')}}" target="_blank">View Printable Version</a>
-  @endif
 </div>
 @endsection
 
@@ -126,6 +157,12 @@
     $scope.show_sales = true;
     $scope.show_paging = false;
     $scope.show_settlements = true;
+    @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
+      $scope.show_accounting = true;
+    @else
+      $scope.show_accounting = false;
+    @endif
+    
     $scope.toggle_paging = function() {
       show_reports();
     }

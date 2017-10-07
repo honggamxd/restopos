@@ -19,13 +19,14 @@ class CreateRestaurantbillTable extends Migration
           $table->double('gross_billing',19,2);
           $table->double('sc_pwd_discount',19,2);
           $table->double('sc_pwd_vat_exemption',19,2);
+          $table->double('total_discount',19,2);
           $table->double('net_billing',19,2);
           $table->double('sales_net_of_vat_and_service_charge',19,2);
           $table->double('service_charge',19,2);
           $table->double('vatable_sales',19,2);
           $table->double('output_vat',19,2);
           $table->double('sales_inclusive_of_vat',19,2);
-          $table->double('sales_inclusive_of_vat',19,2);
+          $table->double('total_item_amount',19,2);
           $table->integer('check_number');
           $table->boolean('is_paid');
           $table->integer('date_');

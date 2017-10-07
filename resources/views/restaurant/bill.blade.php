@@ -78,23 +78,28 @@
     <td>&nbsp;</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">Sub-Total:</td>
-    <td style="text-align: right;">@{{footer.sub_total|currency:""}}</td>
+    <td colspan="2" style="text-align: right;">Gross Billing:</td>
+    <td style="text-align: right;">@{{bill.total_item_amount|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">10% SC:</td>
-    <td style="text-align: right;">@{{footer.sc|currency:""}}</td>
+    <td colspan="2" style="text-align: right;">Discount:</td>
+    <td style="text-align: right;">@{{bill.total_discount|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">12% VAT:</td>
-    <td style="text-align: right;">@{{footer.vat|currency:""}}</td>
+    <td colspan="2" style="text-align: right;">Discounted Gross Billing:</td>
+    <td style="text-align: right;">@{{bill.gross_billing|currency:""}}</td>
   </tr>
   <tr>
-    <td>&nbsp;</td>
+    <td colspan="2" style="text-align: right;">SC/PWD Discount:</td>
+    <td style="text-align: right;">@{{bill.sc_pwd_discount|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">TOTAL:</td>
-    <td style="text-align: right;font-weight: bold;">@{{footer.total|currency:""}}</td>
+    <td colspan="2" style="text-align: right;">SC/PWD VAT Exemption:</td>
+    <td style="text-align: right;">@{{bill.sc_pwd_vat_exemption|currency:""}}</td>
+  </tr>
+  <tr>
+    <td colspan="2" style="text-align: right;">NET Billing:</td>
+    <td style="text-align: right;font-weight: bold;">@{{bill.net_billing|currency:""}}</td>
   </tr>
   <tr>
     <td>&nbsp;</td>

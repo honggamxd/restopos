@@ -219,8 +219,8 @@ class Restaurant_table_customer_controller extends Controller
     $data['discount']['total'] = 0;
     $data['discount']['sc_pwd_discount'] = $data["total"]*$data['customer_data']->sc_pwd/$data['customer_data']->pax/1.12*0.2;
     $data['discount']['sc_pwd_vat_exemption'] = $data["total"]*$data['customer_data']->sc_pwd/$data['customer_data']->pax/1.12*0.12;
-    $data['gross_total'] = $data["total"];
-    $data['net_total'] = round($data["total"]-$data['discount']['sc_pwd_discount']-$data['discount']['sc_pwd_vat_exemption'],2);
+    $data['gross_billing'] = $data["total"];
+    $data['net_billing'] = round($data["total"]-$data['discount']['sc_pwd_discount']-$data['discount']['sc_pwd_vat_exemption'],2);
     return $data;
   }
 
@@ -233,6 +233,15 @@ class Restaurant_table_customer_controller extends Controller
 
   public function make_bill(Request $request,$id)
   {
+    $sales_net_of_vat_and_service_charge = $request->gross_billing/1.12*.9;
+    $service_charge = $request->gross_billing/1.12*.1;
+    $vatable_sales = $sales_net_of_vat_and_service_charge+$service_charge;
+    $output_vat = $vatable_sales*.12;
+    $sales_inclusive_of_vat = $vatable_sales+$output_vat;
+    $sc_pwd_discount = (float)$request->discount['sc_pwd_discount'];
+    $sc_pwd_vat_exemption = (float)$request->discount['sc_pwd_vat_exemption'];
+    // $net_billing = $sales_inclusive_of_vat-$sc_pwd_discount-$sc_pwd_vat_exemption;
+    // return $data;
     // return $request->all();
     $this->validate($request, [
         'items' => 'valid_restaurant_billing'
@@ -251,6 +260,17 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_bill->date_ = strtotime(date("m/d/Y"));
     $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_bill->pax = $customer_data->pax;
+    $restaurant_bill->sales_net_of_vat_and_service_charge = $sales_net_of_vat_and_service_charge;
+    $restaurant_bill->service_charge = $service_charge;
+    $restaurant_bill->vatable_sales = $vatable_sales;
+    $restaurant_bill->output_vat = $output_vat;
+    $restaurant_bill->sales_inclusive_of_vat = $sales_inclusive_of_vat;
+    $restaurant_bill->sc_pwd_discount = $sc_pwd_discount;
+    $restaurant_bill->sc_pwd_vat_exemption = $sc_pwd_vat_exemption;
+    $restaurant_bill->total_discount = $request->discount['total'];
+    $restaurant_bill->gross_billing = $request->gross_billing;
+    $restaurant_bill->net_billing = $request->net_billing;
+    $restaurant_bill->total_item_amount = $request->total;
     $restaurant_bill->server_id = $customer_data->server_id;
     $restaurant_bill->cashier = $request->session()->get('users.user_data')->id;
     $restaurant_bill->restaurant_table_customer_id = $customer_data->id;
@@ -312,14 +332,6 @@ class Restaurant_table_customer_controller extends Controller
     $data["bill"]->cashier_name = DB::table('user')->find($data["bill"]->cashier)->name;
     $data["bill"]->server_name = DB::table('restaurant_server')->find($data["bill"]->server_id)->name;
     $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
-    $data["total"] = 0;
-    foreach ($data["bill_detail"] as $bill_detail_data) {
-      $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
-      $data["total"] += $bill_detail_data->price*$bill_detail_data->quantity;
-    }
-    $data["vat"] = $data["total"]*0.12;
-    $data["sc"] = $data["total"]*0.1;
-    $data["sub_total"] = $data["total"]-$data["vat"]-$data["sc"];
     return $data;
   }
   public function list_bill(Request $request,$id)

@@ -534,7 +534,7 @@
             </tr>
             <tr>
               <th colspan="4" class="right aligned">Gross Total:</th>
-              <th class="right aligned">@{{bill_preview.gross_total|currency:""}}</th>
+              <th class="right aligned">@{{bill_preview.gross_billing|currency:""}}</th>
             </tr>
             <tr>
               <th colspan="4" class="right aligned">SC/PWD Discount:</th>
@@ -546,7 +546,7 @@
             </tr>
             <tr>
               <th colspan="4" class="right aligned">NET Total:</th>
-              <th class="right aligned">@{{bill_preview.net_total|currency:""}}</th>
+              <th class="right aligned">@{{bill_preview.net_billing|currency:""}}</th>
             </tr>
           </tfoot>
         </table>
@@ -603,7 +603,7 @@
       <div class="modal-body" style="min-height: 50vh;">
         <div class="form-group">
           <label>Total:</label>
-          <span class="form-control">@{{formdata.total|currency:""}}</span>
+          <span class="form-control">@{{formdata.net_billing|currency:""}}</span>
         </div>
         <form class="form" id="make-payment-form">
           <div class="form-group">
@@ -1097,8 +1097,8 @@
           $scope.bill_preview.total = response.data.total;
           $scope.bill_preview.customer_data = response.data.customer_data;
           $scope.bill_preview.discount = response.data.discount;
-          $scope.bill_preview.gross_total = response.data.gross_total;
-          $scope.bill_preview.net_total = response.data.net_total;
+          $scope.bill_preview.gross_billing = response.data.gross_billing;
+          $scope.bill_preview.net_billing = response.data.net_billing;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#bill-preview-modal').modal('show');
         }, function myError(response) {
@@ -1121,8 +1121,8 @@
           $scope.bill_preview.total = response.data.total;
           $scope.bill_preview.customer_data = response.data.customer_data;
           $scope.bill_preview.discount = response.data.discount;
-          $scope.bill_preview.gross_total = response.data.gross_total;
-          $scope.bill_preview.net_total = response.data.net_total;
+          $scope.bill_preview.gross_billing = response.data.gross_billing;
+          $scope.bill_preview.net_billing = response.data.net_billing;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
@@ -1134,10 +1134,11 @@
     }
     $scope.compute_net_total = function() {
       $scope.bill_preview.discount.total = ($scope.bill_preview.discount.amount_disount+($scope.bill_preview.total*$scope.bill_preview.discount.percent_disount*0.01));
-      $scope.bill_preview.gross_total = $scope.bill_preview.total - $scope.bill_preview.discount.total;
-      $scope.bill_preview.discount.sc_pwd_discount = $scope.bill_preview.gross_total*$scope.bill_preview.customer_data.sc_pwd/$scope.bill_preview.customer_data.pax/1.12*.2;
-      $scope.bill_preview.discount.sc_pwd_vat_exemption = $scope.bill_preview.gross_total*$scope.bill_preview.customer_data.sc_pwd/$scope.bill_preview.customer_data.pax/1.12*.12;
-      $scope.bill_preview.net_total = $scope.bill_preview.gross_total-$scope.bill_preview.discount.sc_pwd_discount-$scope.bill_preview.discount.sc_pwd_vat_exemption;
+      $scope.bill_preview.gross_billing = $scope.bill_preview.total - $scope.bill_preview.discount.total;
+      $scope.bill_preview.discount.sc_pwd_discount = $scope.bill_preview.gross_billing*$scope.bill_preview.customer_data.sc_pwd/$scope.bill_preview.customer_data.pax/1.12*.2;
+      $scope.bill_preview.discount.sc_pwd_vat_exemption = $scope.bill_preview.gross_billing*$scope.bill_preview.customer_data.sc_pwd/$scope.bill_preview.customer_data.pax/1.12*.12;
+      $scope.bill_preview.net_billing = $scope.bill_preview.gross_billing-$scope.bill_preview.discount.sc_pwd_discount-$scope.bill_preview.discount.sc_pwd_vat_exemption;
+      $scope.bill_preview.net_billing = $scope.bill_preview.gross_billing-$scope.bill_preview.discount.sc_pwd_discount-$scope.bill_preview.discount.sc_pwd_vat_exemption;
       console.log($scope.bill_preview);
     }
 
@@ -1203,7 +1204,7 @@
         send_bill: 0,
         free_of_charge: 0
       };
-      $scope.formdata.total = data.bill_data.total;
+      $scope.formdata.net_billing  = data.bill_data.net_billing  ;
       $scope.bill_id = data.bill_data.id;
       $("#payment-modal").modal("show");
       $('#settlement').dropdown('clear');
@@ -1322,7 +1323,7 @@
       + $scope.formdata.settlements_amount.guest_ledger
       + $scope.formdata.settlements_amount.send_bill
       + $scope.formdata.settlements_amount.free_of_charge
-      ) - $scope.formdata.total;
+      ) - $scope.formdata.net_billing;
       return (excess>=0?excess:0);
     }
 
@@ -1336,7 +1337,7 @@
       + $scope.formdata.settlements_amount.send_bill
       + $scope.formdata.settlements_amount.free_of_charge
       );
-      return (total_payment>=$scope.formdata.total?true:false);
+      return (total_payment>=$scope.formdata.net_billing?true:false);
     }
     $scope.settlements_payment = function(data) {
       $scope.formdata.settlements_payment = {};

@@ -230,7 +230,11 @@
       .then(function(response) {
         console.log(response.data);
         $scope.submit = false;
-        // alertify.success($scope.formdata.name+" is added.");
+        alertify.success($scope.formdata.name+" is added.");
+        $scope.formdata.category = "";
+        $scope.formdata.subcategory = "";
+        $scope.formdata.name = "";
+        $scope.formdata.price = "";
         // $scope.formdata.;
         show_menu();
       }, function(rejection) {
@@ -252,8 +256,12 @@
       .then(function(response) {
         console.log(response.data);
         $scope.submit = false;
-        // alertify.success($scope.formdata.name+" is added.");
-        // $scope.formdata.;
+        alertify.success($scope.formdata.name+" is updated.");
+        $scope.formdata.category = "";
+        $scope.formdata.subcategory = "";
+        $scope.formdata.name = "";
+        $scope.formdata.price = "";
+        $('#edit-menu-modal').modal('hide');
         show_menu();
       }, function(rejection) {
         var errors = rejection.data;
