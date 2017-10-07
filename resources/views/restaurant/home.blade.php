@@ -478,8 +478,8 @@
           <div class="field">
             <div class="two fields">
               <div class="field">
-                <label>Number of Pax:</label>
-                <input type="number" ng-model="bill_preview.customer_data.pax" readonly>
+                <label>Number of Pax: @{{bill_preview.customer_data.pax}}</label>
+                <input type="number" ng-model="bill_preview.customer_data.pax">
               </div> 
               <div class="field">
                 <label>Number of SC/PWD:</label>
