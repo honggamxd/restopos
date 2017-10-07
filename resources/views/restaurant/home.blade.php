@@ -483,7 +483,7 @@
               </div> 
               <div class="field">
                 <label>Number of SC/PWD:</label>
-                <input type="number" min="0" max="@{{bill_preview.customer_data.pax}}" ng-model="bill_preview.customer_data.sc_pwd" value="bill_preview.customer_data.sc_pwd" placeholder="Number of SC/PWD" ng-change="compute_net_total()">
+                <input type="number" min="0" max="@{{bill_preview.customer_data.pax}}" ng-model="bill_preview.customer_data.sc_pwd" value="@{{bill_preview.customer_data.sc_pwd}}" placeholder="Number of SC/PWD" ng-change="compute_net_total()">
               </div>
             </div>
           </div>
