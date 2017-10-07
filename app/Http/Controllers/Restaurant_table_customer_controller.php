@@ -332,6 +332,9 @@ class Restaurant_table_customer_controller extends Controller
     $data["bill"]->cashier_name = DB::table('user')->find($data["bill"]->cashier)->name;
     $data["bill"]->server_name = DB::table('restaurant_server')->find($data["bill"]->server_id)->name;
     $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
+    foreach ($data["bill_detail"] as $bill_detail_data) {
+      $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+    }
     return $data;
   }
   public function list_bill(Request $request,$id)

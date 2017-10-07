@@ -1093,6 +1093,7 @@
         }).then(function mySuccess(response) {
           console.log(response.data);
           $scope.bill_preview = {};
+          $scope.bill_preview.customer_data = {};
           $scope.bill_preview.items = response.data.result;
           $scope.bill_preview.total = response.data.total;
           $scope.bill_preview.customer_data = response.data.customer_data;
@@ -1117,6 +1118,7 @@
           $scope.submit = false;
           show_table_customers();
           $scope.bill_preview = {};
+          $scope.bill_preview.customer_data = {};
           $scope.bill_preview.items = response.data.result;
           $scope.bill_preview.total = response.data.total;
           $scope.bill_preview.customer_data = response.data.customer_data;
