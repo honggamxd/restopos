@@ -23,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
             $db = DB::table($parameters[0])->where('deleted',0);
             $db->where($parameters[1],$value);
             $db->where($parameters[2],$parameters[3]);
+            if(isset($parameters[4])){
+                $db->where('id','<>',$parameters[4]);
+            }
             return ($db->count()===0);
         });
 

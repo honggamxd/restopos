@@ -56,7 +56,7 @@
 </div>
 <div class="row">
   <div class="col-sm-6">
-   <button type="button" class="ui icon secondary button" onclick="$('#add-list-table-modal').modal('show')" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i> Add tables</button>
+   <button type="button" class="ui icon secondary button" ng-click="add_table()" data-tooltip="Add Table" data-position="right center"><i class="add icon"></i> Add tables</button>
    <div class="table-responsive">
      <table class="ui unstackable table">
        <thead>
@@ -70,6 +70,7 @@
              <td>@{{table_data.name}}</td>
              <!-- <td>@{{table_data.restaurant_name}}</td> -->
              <td>@{{(table_data.occupied==0?"Available":"Occupied")}}</td>
+             <td><a href="javascript:void(0)" ng-click="edit_table(this)">Edit</a></td>
            </tr>
          </tbody>
        </thead>
@@ -77,7 +78,7 @@
    </div>
   </div>
   <div class="col-sm-6">
-   <button type="button" class="ui icon secondary button" onclick="$('#add-list-server-modal').modal('show')" data-tooltip="Add Waiter/Waitress" data-position="right center"><i class="add icon"></i> Add Waiter/Waitress</button>
+   <button type="button" class="ui icon secondary button" ng-click="add_server()" data-tooltip="Add Waiter/Waitress" data-position="right center"><i class="add icon"></i> Add Waiter/Waitress</button>
    <div class="table-responsive">
      <table class="ui unstackable table">
        <thead>
@@ -89,6 +90,7 @@
          <tbody>
            <tr ng-repeat="server_data in server" ng-cloak>
              <td>@{{server_data.name}}</td>
+             <td><a href="javascript:void(0)" ng-click="edit_server(this)">Edit</a></td>
              <!-- <td>@{{server_data.restaurant_name}}</td> -->
            </tr>
          </tbody>
@@ -109,9 +111,7 @@
         <h4 class="modal-title">Add Table</h4>
       </div>
       <div class="modal-body">
-        <form>
-
-          
+        <form id="add-table-form" ng-submit="add_list_table()">
           <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
 
           <div class="form-group">
@@ -125,7 +125,35 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="add_list_table()">Save</button>
+        <button type="submit" class="btn btn-primary" form="add-table-form">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="edit-list-table-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Table</h4>
+      </div>
+      <div class="modal-body">
+        <form id="edit-table-form" ng-submit="edit_list_table()">
+          <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
+
+          <div class="form-group">
+            <label>Table Name:</label>
+            <input type="text" ng-model="formdata.name" placeholder="Table Name" class="form-control">
+            <p class="help-block">@{{formerror.name[0]}}</p>
+          </div>
+
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="edit-table-form">Save</button>
       </div>
     </div>
   </div>
@@ -140,7 +168,7 @@
         <h4 class="modal-title">Add Waiter/Waitress</h4>
       </div>
       <div class="modal-body">
-        <form>
+        <form id="add-server-form" ng-submit="add_list_server()">
 
 
           
@@ -156,12 +184,40 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="add_list_server()">Save</button>
+        <button type="submit" class="btn btn-primary" form="add-server-form">Save</button>
       </div>
     </div>
   </div>
 </div>
+<div id="edit-list-server-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Waiter/Waitress</h4>
+      </div>
+      <div class="modal-body">
+        <form id="edit-server-form" ng-submit="edit_list_server()">
 
+
+          
+          <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
+
+          <div class="form-group">
+            <label>Waiter/Waitress Name:</label>
+            <input type="text" ng-model="formdata.name" placeholder="Waiter/Waitress Name" class="form-control">
+            <p class="help-block">@{{formerror.name[0]}}</p>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="edit-server-form">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 @endsection
 
@@ -170,9 +226,7 @@
   
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
-    $scope.formdata = {
-     _token: "{{csrf_token()}}",
-    };
+    $scope.formdata = {};
 
     $scope.restaurants = {!! json_encode($restaurants) !!};
     @if(Session::get('users.user_data')->privilege=="restaurant_admin")
@@ -216,12 +270,33 @@
       
 
     }
+
+    $scope.edit_server = function(data) {
+      $('#edit-list-server-modal').modal('show');
+      $scope.formdata = data.server_data;
+    }
+
+    $scope.add_table = function() {
+      $('#add-list-table-modal').modal('show');
+      $scope.formdata.name = "";
+    }
+    $scope.edit_table = function(data) {
+      $('#edit-list-table-modal').modal('show');
+      $scope.formdata = data.table_data;
+    }
+
+
+    $scope.add_server = function() {
+      $('#add-list-server-modal').modal('show');
+      $scope.formdata.name = "";
+    }
+
     $scope.add_list_table = function() {
       $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
       $scope.formerror = {};
       $http({
          method: 'POST',
-         url: '/api/restaurant/table/add',
+         url: '/api/restaurant/table',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -235,12 +310,34 @@
          $scope.formerror = errors;
       });
     }
+
+    $scope.edit_list_table = function() {
+      $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
+      $scope.formerror = {};
+      $http({
+         method: 'PUT',
+         url: '/api/restaurant/table',
+         data: $.param($scope.formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        // console.log(response.data);
+        alertify.success("Table " + response.data+" has been updated.");
+        $('#edit-list-table-modal').modal('hide');
+        $scope.formdata.name = "";
+            show_table();
+      }, function(rejection) {
+         var errors = rejection.data;
+         $scope.formerror = errors;
+      });
+    }
+
     $scope.add_list_server = function() {
       $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
       $scope.formerror = {};
       $http({
          method: 'POST',
-         url: '/api/restaurant/server/add',
+         url: '/api/restaurant/server',
          data: $.param($scope.formdata),
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
@@ -255,6 +352,34 @@
       });
     }
 
+    $scope.edit_list_server = function() {
+
+      alertify.confirm(
+        'Rename Waiter/Waitress',
+        'Renaming the Waiter/Waitress updates the information to all order slips/bills.',
+        function(){
+          $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
+          $scope.formerror = {};
+          $http({
+             method: 'PUT',
+             url: '/api/restaurant/server',
+             data: $.param($scope.formdata),
+             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          })
+          .then(function(response) {
+            // console.log(response.data);
+            $('#edit-list-server-modal').modal('hide');
+            alertify.success("Waiter/Waitress " + response.data+" has been updated.");
+            $scope.formdata.name = "";
+            show_server();
+          }, function(rejection) {
+             var errors = rejection.data;
+             $scope.formerror = errors;
+          });
+        },
+        function(){}
+        );
+    }
     $scope.change_restaurant = function(data) {
       console.log(data);
       show_server();

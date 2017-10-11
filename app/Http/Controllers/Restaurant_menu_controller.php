@@ -105,7 +105,7 @@ class Restaurant_menu_controller extends Controller
   public function show_category(Request $request,$restaurant_id)
   {
     $restaurant_menu = new Restaurant_menu;
-    $data["result"] = $restaurant_menu->select('category')->distinct()->pluck('category');
+    $data["result"] = $restaurant_menu->orderBy('category')->select('category')->distinct()->pluck('category');
     return $data;
   }
 
@@ -148,7 +148,7 @@ class Restaurant_menu_controller extends Controller
     $data = array();
     if($request->category!='all'){
       $restaurant_menu = new Restaurant_menu;
-      $data = $restaurant_menu->where('category',$request->category)->select('subcategory')->distinct()->pluck('subcategory');
+      $data = $restaurant_menu->orderBy('subcategory')->where('category',$request->category)->select('subcategory')->distinct()->pluck('subcategory');
       // $
     }
     // $data["getQueryLog"] = DB::getQueryLog();

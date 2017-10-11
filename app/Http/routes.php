@@ -1,3 +1,4 @@
+
 <?php
 
 /*
@@ -26,9 +27,11 @@ Route::get('/api/restaurant/menu/list/{type}', 'Restaurant_menu_controller@get_l
 Route::get('/api/restaurant/menu/category/{id}', 'Restaurant_menu_controller@show_category');
 Route::put('/api/restaurant/menu/list/{id}', 'Restaurant_menu_controller@available_to_menu');
 
-Route::post('/api/restaurant/table/add', 'Restaurant_table_controller@store');
+Route::post('/api/restaurant/table', 'Restaurant_table_controller@add_table');
+Route::put('/api/restaurant/table', 'Restaurant_table_controller@edit_table');
 Route::post('/api/restaurant/table/order/make/{id}', 'Restaurant_order_controller@store');
-Route::post('/api/restaurant/server/add', 'Restaurant_controller@add_server');
+Route::post('/api/restaurant/server', 'Restaurant_controller@add_server');
+Route::put('/api/restaurant/server', 'Restaurant_controller@edit_server');
 Route::get('/api/restaurant/server/list', 'Restaurant_controller@show_server');
 Route::post('/api/restaurant/name', 'Restaurant_controller@update');
 

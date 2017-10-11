@@ -42,7 +42,7 @@ class Restaurant_table_controller extends Controller
       return $data;
   }
 
-  public function store(Request $request)
+  public function add_table(Request $request)
   {
     $this->validate($request, [
       'name' => 'required|custom_unique:restaurant_table,name,restaurant_id,'.$request->restaurant_id.'|max:255',
@@ -53,6 +53,21 @@ class Restaurant_table_controller extends Controller
     $restaurant_table->name = $request->name;
     $restaurant_table->restaurant_id = $request->restaurant_id;
     $restaurant_table->save();
+    return $request->name;
+  }
+
+  public function edit_table(Request $request)
+  {
+    $this->validate($request, [
+      'name' => 'required|custom_unique:restaurant_table,name,restaurant_id,'.$request->restaurant_id.','.$request->id.'|max:255',
+    ],[
+      'custom_unique' => 'This table name is already added in this outlet.'
+    ]);
+    $restaurant_table = new Restaurant_table;
+    $restaurant_table_data = $restaurant_table->find($request->id);
+    $restaurant_table_data->name = $request->name;
+    $restaurant_table_data->restaurant_id = $request->restaurant_id;
+    $restaurant_table_data->save();
     return $request->name;
   }
 }

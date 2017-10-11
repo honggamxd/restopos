@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Restaurant_menu;
 use App\Restaurant;
 use App\Issuance_to;
+use App\Restaurant_server;
 
 class Restaurant_controller extends Controller
 {
@@ -50,18 +51,32 @@ class Restaurant_controller extends Controller
       ],[
         'custom_unique' => 'This server is already added in this outlet.'
       ]);
-      DB::table('restaurant_server')->insert([
-          [
-            'name' => $request->name,
-            'restaurant_id' => $request->restaurant_id
-          ]
-        ]);
+      $restaurant_server = new Restaurant_server;
+      $restaurant_server->name = $request->name;
+      $restaurant_server->restaurant_id = $request->restaurant_id;
+      $restaurant_server->save();
       return $request->name;
     }
 
+    public function edit_server(Request $request)
+    {
+      $this->validate($request, [
+        'name' => 'required|custom_unique:restaurant_server,name,restaurant_id,'.$request->restaurant_id.','.$request->id.'|max:255',
+      ],[
+        'custom_unique' => 'This server is already added in this outlet.'
+      ]);
+      $restaurant_server = new Restaurant_server;
+      $restaurant_server_data = $restaurant_server->find($request->id);
+      $restaurant_server_data->name = $request->name;
+      $restaurant_server_data->restaurant_id = $request->restaurant_id;
+      $restaurant_server_data->save();
+      return $request->name;
+    }
+
+
     public function show_server(Request $request)
     {
-      $data["result"] = DB::table('restaurant_server')->where(['deleted'=>0,'restaurant_id'=>$request->restaurant_id])->get();
+      $data["result"] = DB::table('restaurant_server')->orderBY('name')->where(['deleted'=>0,'restaurant_id'=>$request->restaurant_id])->get();
       return $data;
     }
 
