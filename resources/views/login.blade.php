@@ -38,7 +38,9 @@
   <div class="row">
     <div class="col-sm-8 col-md-4 col-lg-4 col-sm-push-2 col-md-push-4 col-lg-push-4">
       <div id="login-container" style="background-color: white;">
-      <h1 style="text-align: center;">LOGIN</h1>
+      <div style="padding: 10px">
+        <img class="img-responsive" src="/assets/images/logo.png">
+      </div>
         <form action="/login" method="post" class="form-horizontal">
           {{csrf_field()}}
           <div class="form-group">

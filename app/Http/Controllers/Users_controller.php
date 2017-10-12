@@ -54,7 +54,25 @@ class Users_controller extends Controller
     $user = new User;
     $data['result'] = $user->all();
     foreach ($data['result'] as $user_data) {
-      $user_data->privilege = ($user_data->privilege=="admin"?"Admin":"Restaurant Cashier");
+      switch ($user_data->privilege) {
+        case 'admin':
+          # code...
+          $user_data->privilege = "Admin";
+          break;
+        case 'restaurant_admin':
+          # code...
+          $user_data->privilege = "Restaurant Admin";
+          break;
+        case 'restaurant_cashier':
+          # code...
+          $user_data->privilege = "Restaurant Cashier";
+          break;
+        
+        default:
+          # code...
+          break;
+      }
+      
       if($user_data->restaurant_id!=0){
         $user_data->restaurant_name = DB::table('restaurant')->find($user_data->restaurant_id)->name;
       }

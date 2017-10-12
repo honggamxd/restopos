@@ -102,7 +102,7 @@
     <li><a href="javascript:void(0);" id="time-display"></a></li>
     <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-      <i class="fa fa-user" aria-hidden="true"></i>
+      {{Session::get('users.user_data')->name}}
       <span class="caret"></span></a>
       <ul class="dropdown-menu">
         <li><a href="javascript:void(0);">Change Password</a></li>

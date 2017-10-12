@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Restaurant POS')
+@section('title', 'Order Slip')
 
 @section('css')
 <style type="text/css">
@@ -42,16 +42,20 @@
 <table class="bill-table">
 <tbody>
   <tr>
-    <td style="width: 50%">Outlet: <span ng-cloak>@{{bill.restaurant_name}}</span></td>
-    <td>Date: <span ng-cloak>@{{bill.date_}}</span></td>
+    <td style="width: 50%">Outlet: <b ng-cloak>@{{bill.restaurant_name}}</b></td>
+    <td></td>
   </tr>
   <tr>
-    <td>Check #: <span ng-cloak>@{{bill.id}}</td>
-    <td>Time: <span ng-cloak>@{{bill.date_time}}</span></td>
+    <td>Check #: <b ng-cloak>@{{bill.id}}</b></td>
+    <td>Date: <b ng-cloak>@{{bill.date_}}</b></td>
   </tr>
   <tr>
-    <td>Table #: <span ng-cloak>@{{bill.table_name}}</span></td>
-    <td># of Pax: <span ng-cloak>@{{bill.pax}}</span></td>
+    <td>Table #: <b ng-cloak>@{{bill.table_name}}</b></td>
+    <td>Time: <b ng-cloak>@{{bill.date_time}}</b></td>
+  </tr>
+  <tr>
+    <td># of Pax: <b ng-cloak>@{{bill.pax}}</b></td>
+    <td># of SC/PWD: <b ng-cloak>@{{bill.sc_pwd}}</b></td>
   </tr>
 </tbody>
 </table>
@@ -67,7 +71,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td>@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
+      <td>@{{items.menu}}<b ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</b></td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
       <td style="text-align: right;">@{{(items.price*items.quantity)|currency:""}}</td>
     </tr>
@@ -117,8 +121,8 @@
 <br>
 <table style="width: 100%">
   <tr>
-    <td style="width: 50%;border-bottom: 1px solid black;">Server: <span ng-cloak>@{{bill.server_name}}</span></td>
-    <td style="width: 50%;border-bottom: 1px solid black;">Cashier: <span ng-cloak>@{{bill.cashier_name}}</span></td>
+    <td style="width: 50%;border-bottom: 1px solid black;">Server: <b ng-cloak>@{{bill.server_name}}</b></td>
+    <td style="width: 50%;border-bottom: 1px solid black;">Cashier: <b ng-cloak>@{{bill.cashier_name}}</b></td>
   </tr>
   <tr>
     <td style="border-bottom: 1px solid black;" colspan="2">Guest Name:</td>
@@ -127,7 +131,7 @@
     <td style="border-bottom: 1px solid black;" colspan="2">Room Number:</td>
   </tr>
   <tr>
-    <td style="border-bottom: 1px solid black;" colspan="2">Signature</td>
+    <td style="border-bottom: 1px solid black;padding-top: 20px;" colspan="2">Signature</td>
   </tr>
 </table>
 <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>

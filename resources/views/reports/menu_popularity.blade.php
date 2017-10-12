@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Restaurant POS')
+@section('title', 'Menu Popularity Report')
 
 @section('css')
 <style type="text/css">

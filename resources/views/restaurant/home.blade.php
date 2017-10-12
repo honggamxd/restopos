@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', '')
+@section('title', Session::get('users.user_data')->restaurant)
 
 @section('css')
 <style type="text/css">

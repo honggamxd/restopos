@@ -273,7 +273,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_bill->net_billing = $request->net_billing;
     $restaurant_bill->total_item_amount = $request->total;
     $restaurant_bill->server_id = $customer_data->server_id;
-    $restaurant_bill->cashier = $request->session()->get('users.user_data')->id;
+    $restaurant_bill->cashier_id = $request->session()->get('users.user_data')->id;
     $restaurant_bill->restaurant_table_customer_id = $customer_data->id;
     $restaurant_bill->table_name = $customer_data->table_name;
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
@@ -330,7 +330,7 @@ class Restaurant_table_customer_controller extends Controller
     $data["bill"]->date_ = date("F d, Y",$data["bill"]->date_);
     $data["bill"]->date_time = date("h:i:s A",$data["bill"]->date_time);
     $data["bill"]->restaurant_name = DB::table('restaurant')->find($data["bill"]->restaurant_id)->name;
-    $data["bill"]->cashier_name = DB::table('user')->find($data["bill"]->cashier)->name;
+    $data["bill"]->cashier_name = DB::table('user')->find($data["bill"]->cashier_id)->name;
     $data["bill"]->server_name = DB::table('restaurant_server')->find($data["bill"]->server_id)->name;
     $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
     foreach ($data["bill_detail"] as $bill_detail_data) {

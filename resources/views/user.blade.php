@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', '')
+@section('title', 'Users')
 
 @section('css')
 <style type="text/css">
@@ -65,6 +65,7 @@
           <label>Privilege:</label>
           <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.privilege" ng-init="formdata.privilege='restaurant_cashier'">
             <option value="restaurant_cashier">Restaurant Cashier</option>
+            <option value="restaurant_admin">Restaurant Admin</option>
             <option value="admin">Admin</option>
           </select>
           <p class="help-block">@{{formerrors.privilege[0]}}</p>

@@ -15,6 +15,7 @@ use App\Issuance_detail;
 use DB;
 use App\Restaurant_server;
 use App\User;
+use App\Restaurant;
 
 class Reports_controller extends Controller
 {
@@ -38,6 +39,9 @@ class Reports_controller extends Controller
       $user_data = $request->session()->get('users.user_data');
       if($user_data->privilege=='restaurant_cashier'){
 
+      }elseif($user_data->privilege=='restaurant_admin'){
+        $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
+        $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
       }else{
         $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
         $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
@@ -113,13 +117,16 @@ class Reports_controller extends Controller
     $restaurant_payment = new Restaurant_payment;
     $bills = $restaurant_bill->where('deleted',0);
     if($user_data->privilege=='restaurant_cashier'){
-      $bills->where('cashier',$user_data->id);
+      $bills->where('cashier_id',$user_data->id);
     }
     if($request->server_id!=null){
       $bills->where('server_id',$request->server_id);
     }
     if($request->cashier_id!=null){
-      $bills->where('cashier',$request->cashier_id);
+      $bills->where('cashier_id',$request->cashier_id);
+    }
+    if($user_data->privilege!='admin'){
+      $bills->where('restaurant_id',$user_data->restaurant_id);
     }
     $bills->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $num_items = $bills->count();
@@ -151,15 +158,19 @@ class Reports_controller extends Controller
     $footer_data->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $footer_data->where('deleted',0);
     if($user_data->privilege=='restaurant_cashier'){
-      $footer_data->where('cashier',$user_data->id);
+      $footer_data->where('cashier_id',$user_data->id);
     }
 
     if($request->server_id!=null){
       $footer_data->where('server_id',$request->server_id);
     }
     if($request->cashier_id!=null){
-      $footer_data->where('cashier',$request->cashier_id);
+      $footer_data->where('cashier_id',$request->cashier_id);
     }
+    if($user_data->privilege!='admin'){
+      $footer_data->where('restaurant_id',$user_data->restaurant_id);
+    }
+
     $footer_data = $footer_data->first();
     $data['footer']['pax'] = $footer_data->total_pax;
     $data['footer']['excess'] = $footer_data->total_excess;
@@ -191,14 +202,18 @@ class Reports_controller extends Controller
       $category_total->where('restaurant_menu.category',$category);
       $category_total->where('restaurant_bill.deleted',0);
       if($user_data->privilege=='restaurant_cashier'){
-        $category_total->where('cashier',$user_data->id);
+        $category_total->where('cashier_id',$user_data->id);
       }
       if($request->server_id!=null){
         $category_total->where('server_id',$request->server_id);
       }
       if($request->cashier_id!=null){
-        $category_total->where('cashier',$request->cashier_id);
+        $category_total->where('cashier_id',$request->cashier_id);
       }
+      if($user_data->privilege!='admin'){
+        $category_total->where('restaurant_bill.restaurant_id',$user_data->restaurant_id);
+      }
+
       $data["footer"][$category] = $category_total->value('total');
       $data["footer"]["total_item_amount"] += $category_total->value('total');
     }
@@ -217,14 +232,18 @@ class Reports_controller extends Controller
       $settlement_total->where('restaurant_bill.deleted',0);
 
       if($user_data->privilege=='restaurant_cashier'){
-        $settlement_total->where('restaurant_bill.cashier',$user_data->id);
+        $settlement_total->where('restaurant_bill.cashier_id',$user_data->id);
       }
       if($request->server_id!=null){
         $settlement_total->where('restaurant_bill.server_id',$request->server_id);
       }
       if($request->cashier_id!=null){
-        $settlement_total->where('restaurant_bill.cashier',$request->cashier_id);
+        $settlement_total->where('restaurant_bill.cashier_id',$request->cashier_id);
       }
+      if($user_data->privilege!='admin'){
+        $settlement_total->where('restaurant_bill.restaurant_id',$user_data->restaurant_id);
+      }
+
 
       if($settlement=="cash"){
         $data["footer"][$settlement] = $settlement_total->value('total')-$data["footer"]["excess"];
@@ -244,7 +263,10 @@ class Reports_controller extends Controller
       $bill_data->server_name = $restaurant_server->withTrashed()->find($bill_data->server_id)->name;
 
       $user = new User;
-      $bill_data->cashier_name = $user->withTrashed()->find($bill_data->cashier)->name; 
+      $bill_data->cashier_name = $user->withTrashed()->find($bill_data->cashier_id)->name;
+
+      $restaurant = new Restaurant;
+      $bill_data->restaurant_name = $restaurant->find($bill_data->restaurant_id)->name;
       foreach ($categories as $category) {
          $bill_data->$category = $restaurant_bill_detail
            ->join('restaurant_bill','restaurant_bill_detail.restaurant_bill_id','=','restaurant_bill.id')

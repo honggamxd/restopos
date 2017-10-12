@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Restaurant POS')
+@section('title', 'Food and Beverages Revenue Report')
 
 @section('css')
 <style type="text/css">
@@ -25,10 +25,10 @@
   <h1 style="text-align: center;">Food and Beverage Revenue Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
   <div>
     <div class="checkbox">
-      <label><input type="checkbox" ng-model="show_sales">Show Sales</label>
+      <label><input type="checkbox" ng-model="show_sales_information">Show Sales Information</label>
     </div>
     <div class="checkbox">
-      <label><input type="checkbox" ng-model="show_other_information">Show Other Information</label>
+      <label><input type="checkbox" ng-model="show_sales">Show Sales</label>
     </div>
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_settlements">Show Settlements</label>
@@ -47,17 +47,29 @@
     @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
     @else
     <label>Filter By:</label>
-    <div class="form-group">
-      <label>Server:</label>
-      <select class="form-contol input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server">
-        <option value="">All Waiter/Waitress</option>
-      </select>
+    <form class="form-inline" style="margin-bottom: 20px;">
+      <div class="form-group">
+        <label>Server:</label>
+        <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server">
+          <option value="">All Waiter/Waitress</option>
+        </select>
+      </div>
+      <div class="form-group">
       <label>Cashier:</label>
-      <select class="form-contol input-sm" ng-options="item as item.name for item in restaurant_cashiers track by item.id" ng-model="cashier">
+      <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_cashiers track by item.id" ng-model="cashier">
         <option value="">All Cashiers</option>
       </select>
+      </div>
+      <div class="form-group">
+      <label>Date From:</label>
+      <input type="text" class="form-control input-sm" id="date_from" ng-model="date_from" readonly>
+      </div>
+      <div class="form-group">
+      <label>Date To:</label>
+      <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" readonly>
       <button class="btn btn-primary" ng-click="filter_result()">Filter Results</button>
-    </div>
+      </div>
+    </form>
     @endif
   </div>
   
@@ -67,10 +79,11 @@
         <tr>
           <th rowspan="2" class="center aligned middle aligned">Date</th>
           <th rowspan="2" class="center aligned middle aligned">Check #</th>
-          <th rowspan="2" class="center aligned middle aligned"># of Pax</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_other_information">Server</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_other_information">Cashier</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_other_information"># of SC/PWD</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Outlet</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of Pax</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Server</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Cashier</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of SC/PWD</th>
           @foreach ($categories as $category)
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
@@ -102,10 +115,11 @@
         <tr ng-repeat="bill_data in bills">
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
           <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><p>@{{bill_data.id}}</p></a></td>
-          <td class="center aligned middle aligned">@{{bill_data.pax}}</td>
-          <td class="center aligned middle aligned" ng-show="show_other_information">@{{bill_data.server_name}}</td>
-          <td class="center aligned middle aligned" ng-show="show_other_information">@{{bill_data.cashier_name}}</td>
-          <td class="center aligned middle aligned" ng-show="show_other_information">@{{bill_data.sc_pwd}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.pax}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.server_name}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.cashier_name}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.sc_pwd}}</td>
           @foreach ($categories as $category)
             <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |currency:""}}</td>
           @endforeach
@@ -137,10 +151,11 @@
       <tfoot ng-cloak>
         <tr ng-cloak>
           <th class="right aligned middle aligned" colspan="2">Total>>></th>
-          <th class="center aligned middle aligned">@{{footer.pax}}</th>
-          <th class="center aligned middle aligned" ng-show="show_other_information"></th>
-          <th class="center aligned middle aligned" ng-show="show_other_information"></th>
-          <th class="center aligned middle aligned" ng-show="show_other_information">@{{footer.sc_pwd}}</th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.pax}}</th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.sc_pwd}}</th>
           @foreach ($categories as $category)
             <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |currency:""}}</th>
           @endforeach
@@ -184,9 +199,13 @@
   var app = angular.module('main', ['ngSanitize']);
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.show_sales = true;
-    $scope.show_other_information = true;
+    $scope.show_sales_information = true;
     $scope.show_paging = false;
     $scope.show_settlements = true;
+    $scope.date_from = "{{date('m/d/Y',strtotime($date_from))}}";
+    $scope.date_to = "{{date('m/d/Y',strtotime($date_to))}}";
+
+    $('#date_from,#date_to').datepicker();
 
 
     @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
@@ -219,8 +238,8 @@
           method : "GET",
           url : "/api/reports/general/f_and_b",
           params: {
-            "date_from":"{{$date_from}}",
-            "date_to":"{{$date_to}}",
+            "date_from":$scope.date_from,
+            "date_to":$scope.date_to,
             "paging":$scope.show_paging,
             "page":page,
             "display_per_page":50,
