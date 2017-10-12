@@ -260,6 +260,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_bill->date_ = strtotime(date("m/d/Y"));
     $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
     $restaurant_bill->pax = $customer_data->pax;
+    $restaurant_bill->sc_pwd = $customer_data->sc_pwd;
     $restaurant_bill->sales_net_of_vat_and_service_charge = $sales_net_of_vat_and_service_charge;
     $restaurant_bill->service_charge = $service_charge;
     $restaurant_bill->vatable_sales = $vatable_sales;

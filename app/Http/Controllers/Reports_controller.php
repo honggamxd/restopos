@@ -13,6 +13,8 @@ use App\Purchase_detail;
 use App\Issuance;
 use App\Issuance_detail;
 use DB;
+use App\Restaurant_server;
+use App\User;
 
 class Reports_controller extends Controller
 {
@@ -33,6 +35,15 @@ class Reports_controller extends Controller
       $app_config = DB::table('app_config')->first();
       $data["categories"] = explode(',', $app_config->categories);
       $data["settlements"] = explode(',', $app_config->settlements);
+      $user_data = $request->session()->get('users.user_data');
+      if($user_data->privilege=='restaurant_cashier'){
+
+      }else{
+        $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
+        $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
+      }
+
+      // return $data;
       return view('reports.all',$data);
     }elseif ($type=="purchases") {
       # code...
@@ -52,6 +63,8 @@ class Reports_controller extends Controller
     $app_config = DB::table('app_config')->first();
     $data["categories"] = explode(',', $app_config->categories);
     $data["settlements"] = explode(',', $app_config->settlements);
+    $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
+    $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
     return view('reports.all',$data);
   }
 
@@ -102,6 +115,12 @@ class Reports_controller extends Controller
     if($user_data->privilege=='restaurant_cashier'){
       $bills->where('cashier',$user_data->id);
     }
+    if($request->server_id!=null){
+      $bills->where('server_id',$request->server_id);
+    }
+    if($request->cashier_id!=null){
+      $bills->where('cashier',$request->cashier_id);
+    }
     $bills->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $num_items = $bills->count();
     if($request->paging=="true"){
@@ -119,6 +138,7 @@ class Reports_controller extends Controller
       DB::raw('SUM(discounts) as total_discounts'),
       DB::raw('SUM(gross_billing) as total_gross_billing'),
       DB::raw('SUM(sc_pwd_discount) as total_sc_pwd_discount'),
+      DB::raw('SUM(sc_pwd) as total_sc_pwd'),
       DB::raw('SUM(sc_pwd_vat_exemption) as total_sc_pwd_vat_exemption'),
       DB::raw('SUM(total_discount) as total_total_discount'),
       DB::raw('SUM(net_billing) as total_net_billing'),
@@ -132,6 +152,13 @@ class Reports_controller extends Controller
     $footer_data->where('deleted',0);
     if($user_data->privilege=='restaurant_cashier'){
       $footer_data->where('cashier',$user_data->id);
+    }
+
+    if($request->server_id!=null){
+      $footer_data->where('server_id',$request->server_id);
+    }
+    if($request->cashier_id!=null){
+      $footer_data->where('cashier',$request->cashier_id);
     }
     $footer_data = $footer_data->first();
     $data['footer']['pax'] = $footer_data->total_pax;
@@ -147,6 +174,7 @@ class Reports_controller extends Controller
     $data['footer']['vatable_sales'] = $footer_data->total_vatable_sales;
     $data['footer']['output_vat'] = $footer_data->total_output_vat;
     $data['footer']['sales_inclusive_of_vat'] = $footer_data->total_sales_inclusive_of_vat;
+    $data['footer']['sc_pwd'] = $footer_data->total_sc_pwd;
 
     $data["footer"]["total_item_amount"] = 0;
     foreach ($categories as $category) {
@@ -165,6 +193,12 @@ class Reports_controller extends Controller
       if($user_data->privilege=='restaurant_cashier'){
         $category_total->where('cashier',$user_data->id);
       }
+      if($request->server_id!=null){
+        $category_total->where('server_id',$request->server_id);
+      }
+      if($request->cashier_id!=null){
+        $category_total->where('cashier',$request->cashier_id);
+      }
       $data["footer"][$category] = $category_total->value('total');
       $data["footer"]["total_item_amount"] += $category_total->value('total');
     }
@@ -181,6 +215,17 @@ class Reports_controller extends Controller
           );
       $settlement_total->where('restaurant_payment.settlement',$settlement);
       $settlement_total->where('restaurant_bill.deleted',0);
+
+      if($user_data->privilege=='restaurant_cashier'){
+        $settlement_total->where('restaurant_bill.cashier',$user_data->id);
+      }
+      if($request->server_id!=null){
+        $settlement_total->where('restaurant_bill.server_id',$request->server_id);
+      }
+      if($request->cashier_id!=null){
+        $settlement_total->where('restaurant_bill.cashier',$request->cashier_id);
+      }
+
       if($settlement=="cash"){
         $data["footer"][$settlement] = $settlement_total->value('total')-$data["footer"]["excess"];
       }else{
@@ -195,6 +240,11 @@ class Reports_controller extends Controller
       $bill_data->date_time = date("h:i:s A",$bill_data->date_time);
       $bill_data->date_ = date("j-M",$bill_data->date_);
       $bill_data->total_settlements = 0;
+      $restaurant_server = new Restaurant_server;
+      $bill_data->server_name = $restaurant_server->withTrashed()->find($bill_data->server_id)->name;
+
+      $user = new User;
+      $bill_data->cashier_name = $user->withTrashed()->find($bill_data->cashier)->name; 
       foreach ($categories as $category) {
          $bill_data->$category = $restaurant_bill_detail
            ->join('restaurant_bill','restaurant_bill_detail.restaurant_bill_id','=','restaurant_bill.id')

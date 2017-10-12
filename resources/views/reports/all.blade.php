@@ -28,6 +28,9 @@
       <label><input type="checkbox" ng-model="show_sales">Show Sales</label>
     </div>
     <div class="checkbox">
+      <label><input type="checkbox" ng-model="show_other_information">Show Other Information</label>
+    </div>
+    <div class="checkbox">
       <label><input type="checkbox" ng-model="show_settlements">Show Settlements</label>
     </div>
     @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
@@ -40,6 +43,23 @@
       <label><input type="checkbox" ng-model="show_paging" ng-change="toggle_paging()">Paging</label>
     </div> -->
   </div>
+  <div>
+    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    @else
+    <label>Filter By:</label>
+    <div class="form-group">
+      <label>Server:</label>
+      <select class="form-contol input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server">
+        <option value="">All Waiter/Waitress</option>
+      </select>
+      <label>Cashier:</label>
+      <select class="form-contol input-sm" ng-options="item as item.name for item in restaurant_cashiers track by item.id" ng-model="cashier">
+        <option value="">All Cashiers</option>
+      </select>
+      <button class="btn btn-primary" ng-click="filter_result()">Filter Results</button>
+    </div>
+    @endif
+  </div>
   
   <div class="table-responsive">
     <table class="ui unstackable striped celled structured table">
@@ -48,6 +68,9 @@
           <th rowspan="2" class="center aligned middle aligned">Date</th>
           <th rowspan="2" class="center aligned middle aligned">Check #</th>
           <th rowspan="2" class="center aligned middle aligned"># of Pax</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_other_information">Server</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_other_information">Cashier</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_other_information"># of SC/PWD</th>
           @foreach ($categories as $category)
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
@@ -80,6 +103,9 @@
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
           <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><p>@{{bill_data.id}}</p></a></td>
           <td class="center aligned middle aligned">@{{bill_data.pax}}</td>
+          <td class="center aligned middle aligned" ng-show="show_other_information">@{{bill_data.server_name}}</td>
+          <td class="center aligned middle aligned" ng-show="show_other_information">@{{bill_data.cashier_name}}</td>
+          <td class="center aligned middle aligned" ng-show="show_other_information">@{{bill_data.sc_pwd}}</td>
           @foreach ($categories as $category)
             <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |currency:""}}</td>
           @endforeach
@@ -112,6 +138,9 @@
         <tr ng-cloak>
           <th class="right aligned middle aligned" colspan="2">Total>>></th>
           <th class="center aligned middle aligned">@{{footer.pax}}</th>
+          <th class="center aligned middle aligned" ng-show="show_other_information"></th>
+          <th class="center aligned middle aligned" ng-show="show_other_information"></th>
+          <th class="center aligned middle aligned" ng-show="show_other_information">@{{footer.sc_pwd}}</th>
           @foreach ($categories as $category)
             <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |currency:""}}</th>
           @endforeach
@@ -155,8 +184,11 @@
   var app = angular.module('main', ['ngSanitize']);
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.show_sales = true;
+    $scope.show_other_information = true;
     $scope.show_paging = false;
     $scope.show_settlements = true;
+
+
     @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
       $scope.show_accounting = true;
     @else
@@ -168,9 +200,21 @@
     }
     show_reports();
     $(document).on("click",".paging",function(e) {
-      show_reports(e.target.id);
+      show_reports($scopee.target.id);
     });
+    $scope.filter_result = function(){
+      show_reports();
+    }
+
+    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+
+    @else
+      $scope.restaurant_cashiers = {!! $restaurant_cashiers !!};
+      $scope.restaurant_servers = {!! $restaurant_servers !!};
+    @endif
     function show_reports(page=1) {
+      var server = ($scope.server==undefined?"":$scope.server['id']);
+      var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
       $http({
           method : "GET",
           url : "/api/reports/general/f_and_b",
@@ -180,6 +224,8 @@
             "paging":$scope.show_paging,
             "page":page,
             "display_per_page":50,
+            "server_id": server,
+            "cashier_id": cashier,
           }
       }).then(function mySuccess(response) {
           $scope.bills = response.data.result;
