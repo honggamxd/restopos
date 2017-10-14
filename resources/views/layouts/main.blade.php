@@ -46,6 +46,11 @@
         <i class="food icon"></i>
         {{Session::get('users.user_data')->restaurant}}<br>Menu
     </a>
+    <a class="item" href="/restaurant/orders/cancellations">
+        <i class="settings icon"></i>
+        Cancellation of<br>
+        Orders
+    </a>
     <a class="item" href="/restaurant/settings">
         <i class="settings icon"></i>
         {{Session::get('users.user_data')->restaurant}}<br>

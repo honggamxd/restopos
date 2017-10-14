@@ -421,7 +421,7 @@
         <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" ng-click="canellation_orders(this)">Cancellation</button>
+        <button type="button" class="btn btn-danger" ng-hide="order.has_cancellation_request==1" ng-click="canellation_orders(this)">Cancellation</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <a class="btn btn-primary" href="/restaurant/order/@{{order.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
       </div>
@@ -882,7 +882,25 @@
       $('#cancellation-order-modal').modal('show');
     }
     $scope.cancel_orders = function(data) {
-      console.log(data);
+      // console.log(data);
+      var formdata = {
+        restaurant_table_customer_id: data.table_customer_id,
+        restaurant_order_id: data.order.id,
+        items: data.order_detail
+      };
+      // console.log(formdata);
+      $http({
+         method: 'POST',
+         url: '/api/restaurant/table/order/cancel/request',
+         data: $.param(formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+      }, function(rejection) {
+         var errors = rejection.data;
+      });
+
     }
     function show_cart(table_customer_id) {
       $scope.table_customer_cart = {};
@@ -1078,6 +1096,7 @@
           $('#view-list-order-modal').modal('show');
           $scope.orders = response.data.result;
           $scope.table_name = data.customer_data.table_name;
+          $scope.table_customer_id = data.customer_data.id;
       }, function myError(response) {
           console.log(response.statusText);
       });
