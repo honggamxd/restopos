@@ -41,6 +41,9 @@
 @section('content')
 <table class="order-table">
 <tbody>
+  <tr ng-show="order.has_cancelled">
+    <td colspan="2"><span style="color: red">This order number has a cancelled orders, this is the new quantity of orders.</span></td>
+  </tr>
   <tr>
     <td style="width: 50%">Outlet: <span ng-cloak>@{{order.restaurant_name}}</span></td>
     <td>Date: <span ng-cloak>@{{order.date_}}</span></td>

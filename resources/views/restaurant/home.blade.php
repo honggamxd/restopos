@@ -101,6 +101,9 @@
                 <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==2)">
                   <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
                 </button>
+                <button class="ui inverted red button" ng-click="settlement_cancelled_orders(this)" ng-if="customer_data.cancellation_order_status==1">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i> Settle Cancelled Orders
+                </button>
               </div>
             </div>
           </td>
@@ -662,6 +665,50 @@
   </div>
 </div>
 
+<div id="settlement-cancelled-order-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Settle Cancelled Orders</h4>
+      </div>
+      <div class="modal-body" style="min-height: 50vh;">
+        <form class="form" id="settlement-cancelled-order-form">
+          <table class="ui unstackable sortable celled table">
+            <thead>
+              <tr>
+                <th class="center aligned middle aligned">Menu</th>
+                <th class="center aligned middle aligned">Quantity of Cancelled</th>
+                <th class="center aligned middle aligned">Amount</th>
+                <th class="center aligned middle aligned">Settlement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="item in cancelled_orders">
+                <td class="center aligned middle aligned" ng-bind="item.menu_name"></td>
+                <td class="center aligned middle aligned" ng-bind="item.quantity"></td>
+                <td class="right aligned middle aligned">@{{item.price*item.quantity|currency:""}}</td>
+                <td class="center aligned middle aligned">
+                  <select class="form-control" ng-model="item.settlement" required>
+                    <option value="">Select Settlement</option>
+                    <option value="cancelled">Cancelled / Void</option>
+                    <option value="bad_order">BOD Charge</option>
+                    <option value="staff_charge">Staff Charge</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div class="modal-footer" ng-model="bill_id">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" form="settlement-cancelled-order-form" class="btn btn-primary" ng-disabled="submit" ng-click="settle_cancelled_orders(this)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <div id="add-menu-modal" class="modal fade" role="dialog" tabindex="-1">
@@ -1152,6 +1199,43 @@
            $scope.submit = false;
         });
       }
+    }
+
+    $scope.settlement_cancelled_orders = function(data) {
+      console.log(data.$parent.customer_data);
+      $http({
+          method : "GET",
+          url : "/api/restaurant/orders/cancellations/accept/"+data.$parent.customer_data.id,
+      }).then(function mySuccess(response) {
+          console.log(response.data);
+          $scope.cancelled_orders = response.data.cancelled_orders;
+          $scope.table_customer_id = response.data.table_customer_id;
+          $("#settlement-cancelled-order-modal").modal("show");
+      }, function myError(response) {
+          console.log(response.statusText);
+      });
+    }
+
+    $scope.settle_cancelled_orders = function(data) {
+      console.log(data);
+      $scope.submit = true;
+      var formdata = {
+        items: data.cancelled_orders
+      };
+      $http({
+         method: 'POST',
+         url: '/api/restaurant/orders/cancellations/settle/'+data.table_customer_id,
+         data: $.param(formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data)
+        $scope.submit = false;
+      }, function(rejection) {
+         var errors = rejection.data;
+         alertify.error(errors.items[0]);
+         $scope.submit = false;
+      });
     }
     $scope.compute_net_total = function() {
       $scope.bill_preview.discount.total = ($scope.bill_preview.discount.amount_disount+($scope.bill_preview.total*$scope.bill_preview.discount.percent_disount*0.01));
