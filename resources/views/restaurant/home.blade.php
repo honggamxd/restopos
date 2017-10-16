@@ -101,7 +101,7 @@
                 <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==2)">
                   <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
                 </button>
-                <button class="ui inverted red button" ng-click="settlement_cancelled_orders(this)" ng-if="customer_data.cancellation_order_status==1">
+                <button class="ui inverted red button" ng-click="settlement_cancelled_orders(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==1)">
                   <i class="fa fa-trash-o" aria-hidden="true"></i> Settle Cancelled Orders
                 </button>
               </div>

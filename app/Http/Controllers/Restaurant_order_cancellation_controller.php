@@ -45,16 +45,19 @@ class Restaurant_order_cancellation_controller extends Controller
     foreach ($cancellation_request_data->detail as $cancelled_order_item) {
       $restaurant_order_detail = new Restaurant_order_detail;
       $restaurant_order_detail_data = $restaurant_order_detail->where(['restaurant_menu_id'=>$cancelled_order_item->restaurant_menu_id,'restaurant_order_id'=>$cancellation_request_data->restaurant_order_id])->first();
-      $restaurant_order_detail_data->quantity -= $cancelled_order_item->quantity;
-      $restaurant_order_detail_data->save();
-
-      $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
-      $restaurant_accepted_order_cancellation->restaurant_menu_id = $restaurant_order_detail_data->restaurant_menu_id;
-      $restaurant_accepted_order_cancellation->restaurant_table_customer_id = $cancellation_request_data->restaurant_table_customer_id;
-      $restaurant_accepted_order_cancellation->quantity = $cancelled_order_item->quantity;
-      $restaurant_accepted_order_cancellation->price = $restaurant_order_detail_data->price;
-      $restaurant_accepted_order_cancellation->restaurant_order_cancellation_id = $cancellation_request_data->id;
-      $restaurant_accepted_order_cancellation->save();
+      if($cancelled_order_item->quantity>0){
+        $restaurant_order_detail_data->quantity -= $cancelled_order_item->quantity;
+        $restaurant_order_detail_data->save();
+        for ($i=0; $i < $cancelled_order_item->quantity; $i++) { 
+          $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
+          $restaurant_accepted_order_cancellation->restaurant_menu_id = $restaurant_order_detail_data->restaurant_menu_id;
+          $restaurant_accepted_order_cancellation->restaurant_table_customer_id = $cancellation_request_data->restaurant_table_customer_id;
+          $restaurant_accepted_order_cancellation->quantity = 1;
+          $restaurant_accepted_order_cancellation->price = $restaurant_order_detail_data->price;
+          $restaurant_accepted_order_cancellation->restaurant_order_cancellation_id = $cancellation_request_data->id;
+          $restaurant_accepted_order_cancellation->save();
+        }
+      }
     }
     $cancellation_request_data->approved_by = $request->session()->get('users.user_data')->id;
     $cancellation_request_data->save();
