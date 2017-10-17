@@ -116,6 +116,15 @@
       case 'free_of_charge':
         return 'FOC';
         break;
+      case 'cancelled':
+        return 'Cancelled / Void';
+        break;
+      case 'bad_order':
+        return 'BOD Charge';
+        break;
+      case 'staff_charge':
+        return 'Staff Charge';
+        break;
       default:
         return '';
         break;

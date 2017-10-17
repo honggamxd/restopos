@@ -1220,7 +1220,8 @@
       console.log(data);
       $scope.submit = true;
       var formdata = {
-        items: data.cancelled_orders
+        items: data.cancelled_orders,
+        table_customer_id: data.table_customer_id
       };
       $http({
          method: 'POST',

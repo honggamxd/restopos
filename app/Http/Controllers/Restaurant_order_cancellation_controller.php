@@ -13,6 +13,9 @@ use App\Restaurant_accepted_order_cancellation;
 use App\Restaurant_table_customer;
 use App\Restaurant_menu;
 use DB;
+use App\Restaurant_bill;
+use App\Restaurant_bill_detail;
+use App\Restaurant_payment;
 
 class Restaurant_order_cancellation_controller extends Controller
 {
@@ -92,9 +95,61 @@ class Restaurant_order_cancellation_controller extends Controller
 
   public function settlement(Request $request,$id)
   {
-    return $request->all();
-    foreach ($request->items as $key => $value) {
-      # code...
+    // return $request->all();
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $restaurant_table_customer_data = $restaurant_table_customer->find($request->table_customer_id);
+    $restaurant_table_customer_data->cancellation_order_status = 2;
+    $restaurant_table_customer_data->save();
+    $restaurant_bill = new Restaurant_bill;
+    $restaurant_bill->date_ = strtotime(date("m/d/Y"));
+    $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
+    $restaurant_bill->server_id = $restaurant_table_customer_data->server_id;
+    $restaurant_bill->cashier_id = $request->session()->get('users.user_data')->id;
+    $restaurant_bill->restaurant_table_customer_id = $restaurant_table_customer_data->id;
+    $restaurant_bill->table_name = $restaurant_table_customer_data->table_name;
+    $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+    $restaurant_bill->type = "bad_order";
+    $restaurant_bill->save();
+    // Restaurant_bill_detail
+    $restaurant_bill = new Restaurant_bill;
+    $bill_data = $restaurant_bill->orderBy('id','DESC')->first();
+    $total_item_amount = 0;
+    foreach ($request->items as $cancelled_order_item) {
+      $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
+      $restaurant_accepted_order_cancellation_data = $restaurant_accepted_order_cancellation->find($cancelled_order_item['id']);
+      $restaurant_accepted_order_cancellation_data->settlement = $cancelled_order_item['settlement'];
+      $restaurant_accepted_order_cancellation_data->has_settled = 1;
+      $restaurant_accepted_order_cancellation_data->restaurant_bill_id = $bill_data->id;
+      $restaurant_accepted_order_cancellation_data->save();
+
+      $restaurant_bill_detail = new Restaurant_bill_detail;
+      $restaurant_bill_detail->restaurant_menu_id = $cancelled_order_item['restaurant_menu_id'];
+      $restaurant_bill_detail->restaurant_menu_name = $cancelled_order_item['menu_name'];
+      $restaurant_bill_detail->quantity = 1;
+      $restaurant_bill_detail->price = $cancelled_order_item['price'];
+      $restaurant_bill_detail->date_ = $bill_data->date_;
+      $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
+      $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
+      $restaurant_bill_detail->restaurant_id = $bill_data->restaurant_id;
+      $restaurant_bill_detail->save();
+
+      $total_item_amount += $cancelled_order_item['price'];
+    }
+    $bill_data->gross_billing = $total_item_amount;
+    $bill_data->net_billing = $total_item_amount;
+    $bill_data->total_item_amount = $total_item_amount;
+    $bill_data->save();
+    $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
+    $cancelled_orders_settlements = $restaurant_accepted_order_cancellation->select('settlement',DB::raw('SUM(price) as total'))->groupBy('settlement')->where('restaurant_bill_id',$bill_data->id)->get();
+    foreach ($cancelled_orders_settlements as $cancelled_orders_settlements_data) {
+      $restaurant_payment = new Restaurant_payment;
+      $restaurant_payment->payment = $cancelled_orders_settlements_data->total;
+      $restaurant_payment->settlement = $cancelled_orders_settlements_data->settlement;
+      $restaurant_payment->restaurant_id = $bill_data->restaurant_id;
+      $restaurant_payment->date_ = $bill_data->date_;
+      $restaurant_payment->date_time = $bill_data->date_time;
+      $restaurant_payment->restaurant_bill_id = $bill_data->id;
+      $restaurant_payment->save();
     }
   }
   public function before_bill_out_cancellation_request(Request $request)

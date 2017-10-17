@@ -57,21 +57,7 @@ class Restaurant_payment_controller extends Controller
     $restaurant_bill = new Restaurant_bill;
     $data["result"] = $restaurant_payment->where("restaurant_bill_id",$id)->get();
     foreach ($data["result"] as $payment_data) {
-      if($payment_data->settlement=="cash"){
-        $payment_data->settlement = "Cash";
-      }elseif($payment_data->settlement=="credit"){
-        $payment_data->settlement = "Credit Card";
-      }elseif($payment_data->settlement=="debit"){
-        $payment_data->settlement = "Debit Card";
-      }elseif($payment_data->settlement=="cheque"){
-        $payment_data->settlement = "Cheque";
-      }elseif($payment_data->settlement=="guest_ledger"){
-        $payment_data->settlement = "Guest Ledger";
-      }elseif($payment_data->settlement=="send_bill"){
-        $payment_data->settlement = "Send Bill";
-      }elseif($payment_data->settlement=="free_of_charge"){
-        $payment_data->settlement = "FOC";
-      }
+      $payment_data->settlement = settlements($payment_data->settlement);
     }
     $data["excess"] = $restaurant_bill->find($id)->excess;
     return $data;

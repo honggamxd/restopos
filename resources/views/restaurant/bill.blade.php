@@ -54,8 +54,8 @@
     <td>Time: <b ng-cloak>@{{bill.date_time}}</b></td>
   </tr>
   <tr>
-    <td># of Pax: <b ng-cloak>@{{bill.pax}}</b></td>
-    <td># of SC/PWD: <b ng-cloak>@{{bill.sc_pwd}}</b></td>
+    <td ng-show="bill.type=='good_order'"># of Pax: <b ng-cloak>@{{bill.pax}}</b></td>
+    <td ng-show="bill.type=='good_order'"># of SC/PWD: <b ng-cloak>@{{bill.sc_pwd}}</b></td>
   </tr>
 </tbody>
 </table>
@@ -66,13 +66,15 @@
     <tr>
       <th style="text-align: center;">ITEM</th>
       <th style="text-align: center;">QTY</th>
+      <th style="text-align: center;" ng-show="bill.type=='bad_order'">SETTLEMENT</th>
       <th style="text-align: right;">TOTAL</th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td>@{{items.menu}}<b ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</b></td>
+      <td>@{{items.menu}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
+      <td style="text-align: center;" ng-show="bill.type=='bad_order'" ng-bind="items.settlement"></td>
       <td style="text-align: right;">@{{(items.price*items.quantity)|currency:""}}</td>
     </tr>
   </tbody>
@@ -82,37 +84,39 @@
     <td>&nbsp;</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">Gross Billing:</td>
-    <td style="text-align: right;">@{{bill.total_item_amount|currency:""}}</td>
+    <td ng-show="bill.type=='good_order'" colspan="2" style="text-align: right;">Gross Billing:</td>
+    <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.total_item_amount|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">Discount:</td>
-    <td style="text-align: right;">@{{bill.total_discount|currency:""}}</td>
+    <td ng-show="bill.type=='good_order'" colspan="2" style="text-align: right;">Discount:</td>
+    <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.total_discount|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">Discounted Gross Billing:</td>
-    <td style="text-align: right;">@{{bill.gross_billing|currency:""}}</td>
+    <td ng-show="bill.type=='good_order'" colspan="2" style="text-align: right;">Discounted Gross Billing:</td>
+    <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.gross_billing|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">SC/PWD Discount:</td>
-    <td style="text-align: right;">@{{bill.sc_pwd_discount|currency:""}}</td>
+    <td ng-show="bill.type=='good_order'" colspan="2" style="text-align: right;">SC/PWD Discount:</td>
+    <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.sc_pwd_discount|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">SC/PWD VAT Exemption:</td>
-    <td style="text-align: right;">@{{bill.sc_pwd_vat_exemption|currency:""}}</td>
+    <td ng-show="bill.type=='good_order'" colspan="2" style="text-align: right;">SC/PWD VAT Exemption:</td>
+    <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.sc_pwd_vat_exemption|currency:""}}</td>
   </tr>
   <tr>
-    <td colspan="2" style="text-align: right;">NET Billing:</td>
-    <td style="text-align: right;font-weight: bold;">@{{bill.net_billing|currency:""}}</td>
+    <td ng-show="bill.type=='good_order'" colspan="2" style="text-align: right;">NET Billing:</td>
+    <td ng-show="bill.type=='good_order'" style="text-align: right;font-weight: bold;">@{{bill.net_billing|currency:""}}</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
   </tr>
   <tr ng-repeat="payment_data in payments" ng-show="has_payment">
+    <td ng-show="bill.type=='bad_order'" style="text-align: right;"></td>
     <td colspan="2" style="text-align: right;">@{{payment_data.settlement}}:</td>
     <td style="text-align: right;font-weight: bold;">@{{payment_data.payment|currency:""}}</td>
   </tr>
   <tr ng-show="has_payment">
+    <td ng-show="bill.type=='bad_order'" style="text-align: right;"></td>
     <td colspan="2" style="text-align: right;">Change:</td>
     <td style="text-align: right;font-weight: bold;">@{{excess|currency:""}}</td>
   </tr>
@@ -125,13 +129,13 @@
     <td style="width: 50%;border-bottom: 1px solid black;">Cashier: <b ng-cloak>@{{bill.cashier_name}}</b></td>
   </tr>
   <tr>
-    <td style="border-bottom: 1px solid black;" colspan="2">Guest Name:</td>
+    <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;" colspan="2">Guest Name:</td>
   </tr>
   <tr>
-    <td style="border-bottom: 1px solid black;" colspan="2">Room Number:</td>
+    <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;" colspan="2">Room Number:</td>
   </tr>
   <tr>
-    <td style="border-bottom: 1px solid black;padding-top: 20px;" colspan="2">Signature</td>
+    <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;padding-top: 20px;" colspan="2">Signature</td>
   </tr>
 </table>
 <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>

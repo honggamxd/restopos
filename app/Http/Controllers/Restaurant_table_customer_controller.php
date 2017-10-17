@@ -14,6 +14,7 @@ use App\Restaurant_temp_bill;
 use App\Restaurant_temp_bill_detail;
 use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
+use App\Restaurant_accepted_order_cancellation;
 
 class Restaurant_table_customer_controller extends Controller
 {
@@ -277,6 +278,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_bill->restaurant_table_customer_id = $customer_data->id;
     $restaurant_bill->table_name = $customer_data->table_name;
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+    $restaurant_bill->type = "good_order";
     $restaurant_bill->save();
 
 
@@ -326,15 +328,24 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_bill = new Restaurant_bill;
     $restaurant_menu = new Restaurant_menu;
     $restaurant_bill_detail = new Restaurant_bill_detail;
+    $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
     $data["bill"] = $restaurant_bill->find($id);
     $data["bill"]->date_ = date("F d, Y",$data["bill"]->date_);
     $data["bill"]->date_time = date("h:i:s A",$data["bill"]->date_time);
     $data["bill"]->restaurant_name = DB::table('restaurant')->find($data["bill"]->restaurant_id)->name;
     $data["bill"]->cashier_name = DB::table('user')->find($data["bill"]->cashier_id)->name;
     $data["bill"]->server_name = DB::table('restaurant_server')->find($data["bill"]->server_id)->name;
-    $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
-    foreach ($data["bill_detail"] as $bill_detail_data) {
-      $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+    if($data["bill"]->type=="bad_order"){
+      $data["bill_detail"] = $restaurant_accepted_order_cancellation->where("restaurant_bill_id",$id)->get();
+      foreach ($data["bill_detail"] as $bill_detail_data) {
+        $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+        $bill_detail_data->settlement = settlements($bill_detail_data->settlement);
+      }
+    }else{
+      $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
+      foreach ($data["bill_detail"] as $bill_detail_data) {
+        $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+      }
     }
     return $data;
   }
