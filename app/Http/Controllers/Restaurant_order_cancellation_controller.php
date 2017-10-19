@@ -108,6 +108,7 @@ class Restaurant_order_cancellation_controller extends Controller
     $restaurant_bill->restaurant_table_customer_id = $restaurant_table_customer_data->id;
     $restaurant_bill->table_name = $restaurant_table_customer_data->table_name;
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+    $restaurant_bill->is_paid = 1;
     $restaurant_bill->type = "bad_order";
     $restaurant_bill->save();
     // Restaurant_bill_detail
