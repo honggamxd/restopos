@@ -229,6 +229,8 @@ class Restaurant_table_customer_controller extends Controller
   {
     $restaurant_order = new Restaurant_order;
     $data["result"] = $restaurant_order->where('restaurant_table_customer_id',$id)->get();
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $data['customer_data'] = $restaurant_table_customer->find($id);
     return $data;
   }
 
@@ -247,7 +249,7 @@ class Restaurant_table_customer_controller extends Controller
     $this->validate($request, [
         'items' => 'valid_restaurant_billing'
       ],[
-        'valid_restaurant_billing' => 'The quantity for billing of the item is not valid.'
+        'valid_restaurant_billing' => 'The quantity for billing of the items are not valid.'
       ]);
     // return $request->items;
     // exit;

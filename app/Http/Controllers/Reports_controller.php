@@ -102,7 +102,7 @@ class Reports_controller extends Controller
     $categories = $app_config->categories;
     $categories = explode(',', $categories);
 
-    $settlements = $app_config->settlements;
+    $settlements = $app_config->settlements.',cancelled,bad_order,staff_charge';
     $settlements = explode(',', $settlements);
 
     $page = $request->page;

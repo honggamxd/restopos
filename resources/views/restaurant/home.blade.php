@@ -50,6 +50,7 @@
           <i class="search icon"></i>
         </button> -->
         <button type="button" class="ui icon primary button" ng-click="show_table()" data-balloon="Keyboard Shortcut: Ctrl + Shift + A" data-balloon-pos="down" data-balloon-length="fit"><i class="add icon"></i> Add Customer</button>
+        <button type="button" class="ui icon secondary button" ng-click="refresh_table_customers()"><i class="undo icon"></i> Refresh Customer List</button>
       </div>
   </div>
   <div class="table-responsive">
@@ -371,6 +372,7 @@
         </table>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-danger" ng-if="(customer_data.has_billed_out==1&&customer_data.has_paid == 0) && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==2) && customer_data.has_cancellation_request==0" ng-click="cancellation_orders('after',this)">Cancellation</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -424,7 +426,7 @@
         <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" ng-hide="order.has_cancellation_request==1" ng-click="canellation_orders(this)">Cancellation</button>
+        <button type="button" class="btn btn-danger" ng-hide="order.has_cancellation_request==1||customer_data.has_paid==1||customer_data.has_billed_out==1" ng-click="cancellation_orders('before',this)">Cancellation</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <a class="btn btn-primary" href="/restaurant/order/@{{order.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
       </div>
@@ -433,7 +435,7 @@
 </div>
 
 
-<div id="cancellation-order-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="before-bill-out-cancellation-order-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -460,13 +462,51 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" ng-click="cancel_orders(this)">Request for Cancellation</button>
+        <button type="button" class="btn btn-success" ng-click="cancel_orders('before',this)">Request for Cancellation</button>
       </div>
     </div>
   </div>
 </div>
 
 
+<div id="after-bill-out-cancellation-order-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cancellation of Orders</h4>
+      </div>
+      <div class="modal-body">
+        <form id="after-bill-out-cancellation-order-form">
+          <table class="ui compact table unstackable">
+            <thead>
+              <tr>
+                <th class="center aligned" style="width: 100%">Item</th>
+                <th class="center aligned">Qty</th>
+                <th class="center aligned">Qty to cancel</th>
+                <th class="right aligned">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="bill_preview_data in bill_preview.items">
+                <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != ''"><br>(@{{bill_preview_data.special_instruction}})</span></td>
+                <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
+                <td class="center aligned middle aligned">
+                  <input style="width: 100px" type="number" min="0" ng-init="bill_preview_data.quantity_to_cancel=0" ng-model="bill_preview_data.quantity_to_cancel" value="@{{bill_preview_data.quantity_to_cancel}}">
+                </td>
+                <td class="right aligned middle aligned">@{{bill_preview_data.price|currency:""}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success" ng-click="cancel_orders('after',this)" form="after-bill-out-cancellation-order-form">Request for Cancellation</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <div id="bill-preview-modal" class="modal fade" role="dialog" tabindex="-1">
@@ -876,6 +916,9 @@
 
     $scope.table_customers = {};
     show_table_customers();
+    $scope.refresh_table_customers = function() {
+      show_table_customers();
+    }
     function show_table_customers() {
       $http({
           method : "GET",
@@ -921,32 +964,68 @@
       }
     }
 
-    $scope.canellation_orders = function(data) {
-      console.log(data.order);
-      console.log($scope.order_detail);
-      $('#view-list-order-modal').modal('hide');
-      $('#view-order-modal').modal('hide');
-      $('#cancellation-order-modal').modal('show');
+    $scope.cancellation_orders = function(type,data) {
+      if(type=='before'){
+        console.log(data.order);
+        console.log($scope.order_detail);
+        $('#view-list-order-modal').modal('hide');
+        $('#view-order-modal').modal('hide');
+        $('#before-bill-out-cancellation-order-modal').modal('show');
+      }else if(type=='after'){
+        console.log(data.$parent.customer_data);
+        $http({
+          method : "GET",
+          url : "/api/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
+        }).then(function mySuccess(response) {
+          console.log(response.data);
+          $scope.bill_preview = {};
+          $scope.bill_preview.customer_data = {};
+          $scope.bill_preview.items = response.data.result;
+          $scope.bill_preview.total = response.data.total;
+          $scope.bill_preview.customer_data = response.data.customer_data;
+          $scope.bill_preview.discount = response.data.discount;
+          $scope.bill_preview.gross_billing = response.data.gross_billing;
+          $scope.bill_preview.net_billing = response.data.net_billing;
+          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
+          $('#after-bill-out-cancellation-order-modal').modal('show');
+        }, function myError(response) {
+          console.log(response.statusText);
+        });
+      }
     }
-    $scope.cancel_orders = function(data) {
-      // console.log(data);
-      var formdata = {
-        restaurant_table_customer_id: data.table_customer_id,
-        restaurant_order_id: data.order.id,
-        items: data.order_detail
-      };
-      // console.log(formdata);
-      $http({
-         method: 'POST',
-         url: '/api/restaurant/table/order/cancel/request',
-         data: $.param(formdata),
-         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-      .then(function(response) {
-        console.log(response.data);
-      }, function(rejection) {
-         var errors = rejection.data;
-      });
+    $scope.cancel_orders = function(type,data) {
+      if(type=='before'){
+        // console.log(data);
+        var formdata = {
+          restaurant_table_customer_id: data.table_customer_id,
+          restaurant_order_id: data.order.id,
+          items: data.order_detail
+        };
+        // console.log(formdata);
+        $http({
+           method: 'POST',
+           url: '/api/restaurant/table/order/cancel/request/before',
+           data: $.param(formdata),
+           headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(response) {
+          console.log(response.data);
+        }, function(rejection) {
+           var errors = rejection.data;
+        });
+      }else if(type=='after'){
+        $http({
+           method: 'POST',
+           url: '/api/restaurant/table/order/cancel/request/after',
+           data: $.param(data.bill_preview),
+           headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(response) {
+          console.log(response.data);
+        }, function(rejection) {
+           var errors = rejection.data;
+        });
+      }
 
     }
     function show_cart(table_customer_id) {
@@ -1085,6 +1164,7 @@
         // console.log(response.data);
         $scope.order = response.data.order;
         $scope.order_detail = response.data.order_detail;
+        $scope.customer_data = response.data.customer_data;
       }, function myError(response) {
         console.log(response.statusText);
       });
@@ -1140,10 +1220,12 @@
           method : "GET",
           url : "/api/restaurant/table/customer/orders/"+data.customer_data.id,
       }).then(function mySuccess(response) {
+          console.log(response);
           $('#view-list-order-modal').modal('show');
           $scope.orders = response.data.result;
           $scope.table_name = data.customer_data.table_name;
           $scope.table_customer_id = data.customer_data.id;
+          $scope.customer_data = data.customer_data;
       }, function myError(response) {
           console.log(response.statusText);
       });

@@ -21,6 +21,7 @@ class ModifyTables extends Migration
         });
         Schema::table('restaurant_order_cancellation', function ($table) {
             $table->boolean('finised_transaction')->after('approved');
+            $table->string('type')->after('finised_transaction');
             $table->renameColumn('resturant_order_id','restaurant_order_id');
         });
         Schema::table('restaurant_accepted_order_cancellation', function ($table) {
@@ -28,6 +29,10 @@ class ModifyTables extends Migration
             $table->boolean('has_settled')->after('settlement');
             $table->boolean('restaurant_order_cancellation_id')->after('has_settled');
             $table->boolean('restaurant_bill_id')->after('restaurant_table_customer_id');
+        });
+
+        Schema::table('restaurant_table_customer', function ($table) {
+            $table->string('has_cancellation_request')->after('has_order_cancelled');
         });
     }
 
@@ -48,6 +53,7 @@ class ModifyTables extends Migration
 
         Schema::table('restaurant_order_cancellation', function ($table) {
             $table->dropColumn('finised_transaction');
+            $table->dropColumn('type');
             $table->renameColumn('restaurant_order_id','resturant_order_id');
         });
         Schema::table('restaurant_accepted_order_cancellation', function ($table) {
@@ -55,6 +61,9 @@ class ModifyTables extends Migration
             $table->dropColumn('has_settled');
             $table->dropColumn('restaurant_order_cancellation_id');
             $table->dropColumn('restaurant_bill_id');
+        });
+        Schema::table('restaurant_table_customer', function ($table) {
+            $table->dropColumn('has_cancellation_request');
         });
     }
 }

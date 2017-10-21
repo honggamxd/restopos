@@ -33,10 +33,11 @@
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_settlements">Show Settlements</label>
     </div>
+    <div class="checkbox">
+      <label><input type="checkbox" ng-model="show_accounting">Show Accounting</label>
+    </div>
     @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
-      <div class="checkbox">
-        <label><input type="checkbox" ng-model="show_accounting">Show Accounting</label>
-      </div>
+
     @endif
     
 <!--     <div class="checkbox">
@@ -131,9 +132,9 @@
               <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?> |currency:""}}</td>
             @endif
           @endforeach
-          <td class="right aligned middle aligned" ng-show="show_settlements"></td>
-          <td class="right aligned middle aligned" ng-show="show_settlements"></td>
-          <td class="right aligned middle aligned" ng-show="show_settlements"></td>
+          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.cancelled |currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.bad_order |currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.staff_charge |currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.total_discount|currency:""}}</td>
@@ -163,9 +164,9 @@
           @foreach ($settlements as $settlement)
             <th class="right aligned middle aligned" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |currency:""}}</th>
           @endforeach
-          <th class="right aligned middle aligned" ng-show="show_settlements"></th>
-          <th class="right aligned middle aligned" ng-show="show_settlements"></th>
-          <th class="right aligned middle aligned" ng-show="show_settlements"></th>
+          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.cancelled|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.bad_order|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.staff_charge|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.total_discount|currency:""}}</th>
@@ -213,6 +214,7 @@
     @else
       $scope.show_accounting = false;
     @endif
+      $scope.show_accounting = true;
     
     $scope.toggle_paging = function() {
       show_reports();

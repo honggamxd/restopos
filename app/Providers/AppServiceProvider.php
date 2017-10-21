@@ -122,6 +122,29 @@ class AppServiceProvider extends ServiceProvider
                     }
                 }
                 return true;
+            }elseif($parameters[0]=="after_bill_out"){
+                $valid = true;
+                $count_zero_quantity = 0;
+                foreach ($value as $bill_preview) {
+                    $item_data = DB::table('restaurant_temp_bill_detail')
+                    ->where('restaurant_menu_id',$bill_preview["id"])
+                    ->where('restaurant_temp_bill_id',$bill_preview["restaurant_temp_bill_id"])
+                    ->first();
+                    $quantity_to_cancel = abs($bill_preview["quantity_to_cancel"]);
+                    $quantity = $item_data->quantity;
+                    if($quantity_to_cancel>$quantity){
+                        $valid = false;
+                    }
+                    if($quantity_to_cancel==0){
+                        $count_zero_quantity++;
+                    }
+                }
+                if(count($value)==$count_zero_quantity){
+                    return false;
+                }else{
+                    return $valid;
+                }
+                return true;
             }
         });
     }

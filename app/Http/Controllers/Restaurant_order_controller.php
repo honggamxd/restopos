@@ -81,6 +81,9 @@ class Restaurant_order_controller extends Controller
     $data["order"]->date_time = date("h:i:s A",$data["order"]->date_time);
     $data["order"]->restaurant_name = DB::table('restaurant')->find($data["order"]->restaurant_id)->name;
     $data["order"]->server_name = DB::table('restaurant_server')->find($data["order"]->server_id)->name;
+
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $data['customer_data'] = $restaurant_table_customer->find($data['order']->restaurant_table_customer_id);
     return $data;
   }
 

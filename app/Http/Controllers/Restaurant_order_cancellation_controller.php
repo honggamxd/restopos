@@ -16,6 +16,8 @@ use DB;
 use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
 use App\Restaurant_payment;
+use App\Restaurant_temp_bill;
+use App\Restaurant_temp_bill_detail;
 
 class Restaurant_order_cancellation_controller extends Controller
 {
@@ -45,37 +47,43 @@ class Restaurant_order_cancellation_controller extends Controller
   {
     $restaurant_order_cancellation = new Restaurant_order_cancellation;
     $cancellation_request_data = $restaurant_order_cancellation->find($id);
-    foreach ($cancellation_request_data->detail as $cancelled_order_item) {
-      $restaurant_order_detail = new Restaurant_order_detail;
-      $restaurant_order_detail_data = $restaurant_order_detail->where(['restaurant_menu_id'=>$cancelled_order_item->restaurant_menu_id,'restaurant_order_id'=>$cancellation_request_data->restaurant_order_id])->first();
-      if($cancelled_order_item->quantity>0){
-        $restaurant_order_detail_data->quantity -= $cancelled_order_item->quantity;
-        $restaurant_order_detail_data->save();
-        for ($i=0; $i < $cancelled_order_item->quantity; $i++) { 
-          $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
-          $restaurant_accepted_order_cancellation->restaurant_menu_id = $restaurant_order_detail_data->restaurant_menu_id;
-          $restaurant_accepted_order_cancellation->restaurant_table_customer_id = $cancellation_request_data->restaurant_table_customer_id;
-          $restaurant_accepted_order_cancellation->quantity = 1;
-          $restaurant_accepted_order_cancellation->price = $restaurant_order_detail_data->price;
-          $restaurant_accepted_order_cancellation->restaurant_order_cancellation_id = $cancellation_request_data->id;
-          $restaurant_accepted_order_cancellation->save();
+    if($cancellation_request_data->type=="before_bill_out"){
+      foreach ($cancellation_request_data->detail as $cancelled_order_item) {
+        $restaurant_order_detail = new Restaurant_order_detail;
+        $restaurant_order_detail_data = $restaurant_order_detail->where(['restaurant_menu_id'=>$cancelled_order_item->restaurant_menu_id,'restaurant_order_id'=>$cancellation_request_data->restaurant_order_id])->first();
+        if($cancelled_order_item->quantity>0){
+          $restaurant_order_detail_data->quantity -= $cancelled_order_item->quantity;
+          $restaurant_order_detail_data->save();
+          for ($i=0; $i < $cancelled_order_item->quantity; $i++) { 
+            $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
+            $restaurant_accepted_order_cancellation->restaurant_menu_id = $restaurant_order_detail_data->restaurant_menu_id;
+            $restaurant_accepted_order_cancellation->restaurant_table_customer_id = $cancellation_request_data->restaurant_table_customer_id;
+            $restaurant_accepted_order_cancellation->quantity = 1;
+            $restaurant_accepted_order_cancellation->price = $restaurant_order_detail_data->price;
+            $restaurant_accepted_order_cancellation->restaurant_order_cancellation_id = $cancellation_request_data->id;
+            $restaurant_accepted_order_cancellation->save();
+          }
         }
       }
+      $cancellation_request_data->approved_by = $request->session()->get('users.user_data')->id;
+      $cancellation_request_data->save();
+
+      $restaurant_table_customer = new Restaurant_table_customer;
+      $restaurant_table_customer_data = $restaurant_table_customer->find($cancellation_request_data->restaurant_table_customer_id);
+      $restaurant_table_customer_data->cancellation_order_status = 1;
+      $restaurant_table_customer_data->save();
+
+      $restaurant_order = new Restaurant_order;
+      $order_data = $restaurant_order->find($cancellation_request_data->restaurant_order_id);
+      $order_data->has_cancelled = 1;
+      $order_data->has_cancellation_request = 0;
+      $order_data->save();
+      return $cancellation_request_data;
+    }elseif ($cancellation_request_data->type=="after_bill_out") {
+      $restaurant_temp_bill = new Restaurant_temp_bill;
+      $restaurant_temp_bill_data = $restaurant_temp_bill->where('restaurant_table_customer_id',$id)->first();
+      return $restaurant_temp_bill_data->detail;
     }
-    $cancellation_request_data->approved_by = $request->session()->get('users.user_data')->id;
-    $cancellation_request_data->save();
-
-    $restaurant_table_customer = new Restaurant_table_customer;
-    $restaurant_table_customer_data = $restaurant_table_customer->find($cancellation_request_data->restaurant_table_customer_id);
-    $restaurant_table_customer_data->cancellation_order_status = 1;
-    $restaurant_table_customer_data->save();
-
-    $restaurant_order = new Restaurant_order;
-    $order_data = $restaurant_order->find($cancellation_request_data->restaurant_order_id);
-    $order_data->has_cancelled = 1;
-    $order_data->has_cancellation_request = 0;
-    $order_data->save();
-    return $cancellation_request_data;
   }
   public function accepted_request(Request $request,$id)
   {
@@ -153,38 +161,70 @@ class Restaurant_order_cancellation_controller extends Controller
       $restaurant_payment->save();
     }
   }
-  public function before_bill_out_cancellation_request(Request $request)
+  public function before_bill_out_cancellation_request($type,Request $request)
   {
-    $this->validate($request, [
-        'restaurant_order_id' => 'has_cancellation_request:before_bill_out',
-        'items' => 'cancellation_request_items:before_bill_out',
-      ],[
-        'has_cancellation_request' => 'This order has an existing request for cancellation.',
-        'cancellation_request_items' => 'Quantity of cancellation must not exceed to the quantity of orders.',
-      ]);
-    // return $request->all();
-    // $user_data = $request->session()->get();
-    $restaurant_order_cancellation = new Restaurant_order_cancellation;
-    $restaurant_order_cancellation->restaurant_order_id = $request->restaurant_order_id;
-    $restaurant_order_cancellation->restaurant_table_customer_id = $request->restaurant_table_customer_id;
-    $restaurant_order_cancellation->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
-    $restaurant_order_cancellation->cancelled_by = $request->session()->get('users.user_data')->id;
-    // $restaurant_order_cancellation->reason_cancelled = $request->reason_cancelled;
-    $restaurant_order_cancellation->save();
-    $restaurant_order_cancellation = new Restaurant_order_cancellation;
-    $restaurant_order_cancellation_data = $restaurant_order_cancellation->orderBy('id','DESC')->first();
-    foreach ($request->items as $order_items) {
-      $restaurant_order_cancellation_detail = new Restaurant_order_cancellation_detail;
-      $restaurant_order_cancellation_detail->restaurant_order_cancellation_id = $restaurant_order_cancellation_data->id; 
-      $restaurant_order_cancellation_detail->restaurant_menu_id = $order_items['restaurant_menu_id']; 
-      $restaurant_order_cancellation_detail->quantity = (isset($order_items['quantity_to_cancel'])?$order_items['quantity_to_cancel']:0); 
-      $restaurant_order_cancellation_detail->price = $order_items['price']; 
-      $restaurant_order_cancellation_detail->save(); 
+    if($type=='before'){
+      $this->validate($request, [
+          'restaurant_order_id' => 'has_cancellation_request:before_bill_out',
+          'items' => 'cancellation_request_items:before_bill_out',
+        ],[
+          'has_cancellation_request' => 'This order has an existing request for cancellation.',
+          'cancellation_request_items' => 'Quantity of cancellation must not exceed to the quantity of orders.',
+        ]);
+      // return $request->all();
+      // $user_data = $request->session()->get();
+      $restaurant_order_cancellation = new Restaurant_order_cancellation;
+      $restaurant_order_cancellation->restaurant_order_id = $request->restaurant_order_id;
+      $restaurant_order_cancellation->restaurant_table_customer_id = $request->restaurant_table_customer_id;
+      $restaurant_order_cancellation->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+      $restaurant_order_cancellation->cancelled_by = $request->session()->get('users.user_data')->id;
+      $restaurant_order_cancellation->type = 'before_bill_out';
+      // $restaurant_order_cancellation->reason_cancelled = $request->reason_cancelled;
+      $restaurant_order_cancellation->save();
+      $restaurant_order_cancellation = new Restaurant_order_cancellation;
+      $restaurant_order_cancellation_data = $restaurant_order_cancellation->orderBy('id','DESC')->first();
+      foreach ($request->items as $order_items) {
+        $restaurant_order_cancellation_detail = new Restaurant_order_cancellation_detail;
+        $restaurant_order_cancellation_detail->restaurant_order_cancellation_id = $restaurant_order_cancellation_data->id; 
+        $restaurant_order_cancellation_detail->restaurant_menu_id = $order_items['restaurant_menu_id']; 
+        $restaurant_order_cancellation_detail->quantity = (isset($order_items['quantity_to_cancel'])?$order_items['quantity_to_cancel']:0); 
+        $restaurant_order_cancellation_detail->price = $order_items['price']; 
+        $restaurant_order_cancellation_detail->save(); 
+      }
+      $restaurant_order = new Restaurant_order; 
+      $order_data = $restaurant_order->find($request->restaurant_order_id);
+      $order_data->has_cancellation_request = 1;
+      $order_data->save();
+      return $request->all();
+    }elseif ($type=='after') {
+      # code...
+        $this->validate($request, [
+          'items' => 'cancellation_request_items:after_bill_out',
+        ],[
+          'cancellation_request_items' => 'The quantity to cancel of the items are not valid.',
+        ]);
+        $restaurant_order_cancellation = new Restaurant_order_cancellation;
+        $restaurant_order_cancellation->restaurant_table_customer_id = $request->customer_data['id'];
+        $restaurant_order_cancellation->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+        $restaurant_order_cancellation->cancelled_by = $request->session()->get('users.user_data')->id;
+        $restaurant_order_cancellation->type = 'after_bill_out';
+        // $restaurant_order_cancellation->reason_cancelled = $request->reason_cancelled;
+        $restaurant_order_cancellation->save();
+        $restaurant_order_cancellation = new Restaurant_order_cancellation;
+        $restaurant_order_cancellation_data = $restaurant_order_cancellation->orderBy('id','DESC')->first();
+        foreach ($request->items as $order_items) {
+          $restaurant_order_cancellation_detail = new Restaurant_order_cancellation_detail;
+          $restaurant_order_cancellation_detail->restaurant_order_cancellation_id = $restaurant_order_cancellation_data->id; 
+          $restaurant_order_cancellation_detail->restaurant_menu_id = $order_items['restaurant_menu_id']; 
+          $restaurant_order_cancellation_detail->quantity = (isset($order_items['quantity_to_cancel'])?$order_items['quantity_to_cancel']:0); 
+          $restaurant_order_cancellation_detail->price = $order_items['price']; 
+          $restaurant_order_cancellation_detail->save(); 
+        }
+        $restaurant_table_customer = new Restaurant_table_customer;
+        $customer_data = $restaurant_table_customer->find($request->customer_data['id']);
+        $customer_data->has_cancellation_request = 1;
+        $customer_data->save();
+      return $request->all();
     }
-    $restaurant_order = new Restaurant_order; 
-    $order_data = $restaurant_order->find($request->restaurant_order_id);
-    $order_data->has_cancellation_request = 1;
-    $order_data->save();
-    return $request->all();
   }
 }
