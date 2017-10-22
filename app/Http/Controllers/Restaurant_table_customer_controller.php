@@ -206,9 +206,8 @@ class Restaurant_table_customer_controller extends Controller
 
     $restaurant_table_customer = new Restaurant_table_customer;
     $customer_data = $restaurant_table_customer->find($id);
-    $customer_data->has_cancellation_request = 0;
-    $customer_data->cancellation_order_status = 1;
     if($temp_bill_remaining_quantity==0){
+      $customer_data->cancellation_order_status = 1;
       $customer_data->has_billed_completely = 1;
       $customer_data->has_paid = 1;
     }
@@ -216,9 +215,9 @@ class Restaurant_table_customer_controller extends Controller
 
 
     $restaurant_order_cancellation = new Restaurant_order_cancellation;
-    $restaurant_order_cancellation_data = $restaurant_order_cancellation->where('restaurant_table_customer_id',$id);
+    $restaurant_order_cancellation_data = $restaurant_order_cancellation->where('approved',0)->where('restaurant_table_customer_id',$id);
     if($restaurant_order_cancellation_data->get()!=array()){
-      $customer_data->cancellation_order_status = 0;
+      $customer_data->has_cancellation_request = 0;
       $customer_data->save();
       $restaurant_order_cancellation_data->delete();
     }

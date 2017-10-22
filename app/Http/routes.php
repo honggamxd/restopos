@@ -66,6 +66,7 @@ Route::post('/api/restaurant/orders/cancellations/accept/{id?}', 'Restaurant_ord
 Route::post('/api/restaurant/orders/cancellations/delete/{id?}', 'Restaurant_order_cancellation_controller@delete_request');
 Route::get('/api/restaurant/orders/cancellations/accept/{id}', 'Restaurant_order_cancellation_controller@accepted_request');
 Route::post('/api/restaurant/orders/cancellations/settle/{id}', 'Restaurant_order_cancellation_controller@settlement');
+Route::post('/api/restaurant/orders/user-cancellations/delete/{id}', 'Restaurant_order_cancellation_controller@user_delete_request');
 
 
 

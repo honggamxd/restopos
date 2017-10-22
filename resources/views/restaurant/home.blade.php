@@ -66,11 +66,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="customer_data in table_customers" ng-cloak>
+        <tr ng-repeat="customer_data in table_customers" ng-class="{'warning':customer_data.has_cancellation_request==1}" ng-cloak>
           <td style="width: 30vw;" class="center aligned middle aligned">
-          <span style="cursor: pointer;" ng-click="edit_table_customer(this)">
+          <p style="cursor: pointer;" ng-click="edit_table_customer(this)" data-balloon="Click to edit customer information." data-balloon-pos="up">
             @{{customer_data.table_name}}
-          </span>
+          </p>
           </td>
           <td class="center aligned middle aligned" ng-bind="customer_data.guest_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.server_name"></td>
@@ -96,21 +96,21 @@
                   <i class="fa fa-calculator" aria-hidden="true"></i> Bill out
                 </button>
                 <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill">
-                  <i class="fa fa-calculator" aria-hidden="true"></i> View Bills
+                  <i class="fa fa-list-alt" aria-hidden="true"></i> View Bills
                 </button>
                 <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==2)">
                   <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
                 </button>
-                <button class="ui inverted red button" ng-click="settlement_cancelled_orders(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==1)">
-                  <i class="fa fa-trash-o" aria-hidden="true"></i> Settle Cancelled Orders
+                <button class="ui inverted green button" ng-click="settlement_cancelled_orders(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==1)">
+                  <i class="fa fa-window-close" aria-hidden="true"></i> Settle Cancelled Orders
                 </button>
               </div>
             </div>
           </td>
         </tr>
-       
       </tbody>
     </table>
+    <small>* The highlighed row has a pending cancellation of orders request.</small>
   </div>  
 </div>
 @endsection
@@ -372,6 +372,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" ng-if="(customer_data.has_billed_out==1&&customer_data.has_paid == 0) && customer_data.has_cancellation_request==0" ng-click="cancellation_orders('after',this)">Cancellation</button>
+        <button type="button" class="btn btn-info" ng-if="customer_data.has_cancellation_request==1" ng-click="delete_cancellation_request(this)">Delete Request</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -722,7 +723,7 @@
         <h4 class="modal-title">Settle Cancelled Orders</h4>
       </div>
       <div class="modal-body" style="min-height: 50vh;">
-        <form class="form" id="settlement-cancelled-order-form">
+        <form class="form" id="settlement-cancelled-order-form"  ng-submit="settle_cancelled_orders(this)">
           <table class="ui unstackable sortable celled table">
             <thead>
               <tr>
@@ -752,7 +753,7 @@
       </div>
       <div class="modal-footer" ng-model="bill_id">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" form="settlement-cancelled-order-form" class="btn btn-primary" ng-disabled="submit" ng-click="settle_cancelled_orders(this)">Save</button>
+        <button type="submit" form="settlement-cancelled-order-form" class="btn btn-primary" ng-disabled="submit">Save</button>
       </div>
     </div>
   </div>
@@ -1002,6 +1003,33 @@
           }
         });
       }
+    }
+
+    $scope.delete_cancellation_request = function(data) {
+      console.log(data.$parent.customer_data.id);
+      var formdata = {
+        id : data.$parent.customer_data.id
+      };
+      $http({
+         method: 'POST',
+         url: '/api/restaurant/orders/user-cancellations/delete/'+data.$parent.customer_data.id,
+         data: $.param(formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data);
+        alertify.success('Your request for cancellation of orders has been deleted.');
+        $scope.customer_data.has_cancellation_request=0;
+      }, function(rejection) {
+        if(rejection.status == 500){
+          error_505('Server Error, Try Refreshing the Page.');
+        }else if(rejection.status == 422){
+          var errors = rejection.data; 
+          angular.forEach(errors, function(value, key) {
+              alertify.error(value[0]);
+          });
+        }
+      });
     }
     $scope.cancel_orders = function(type,data) {
       if(type=='before'){
@@ -1402,7 +1430,9 @@
           error_505('Server Error, Try Refreshing the Page.');
         }else if(rejection.status == 422){
          var errors = rejection.data;
-         alertify.error(errors.items[0]);
+         angular.forEach(errors, function(value, key) {
+             alertify.error(value[0]);
+         });
          $scope.submit = false; 
         }
       });

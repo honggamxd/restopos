@@ -85,9 +85,11 @@
         if(rejection.status == 500){
           error_505('Server Error, Try Refreshing the Page.');
         }else if(rejection.status == 422){
-          
+          var errors = rejection.data;
+          angular.forEach(errors, function(value, key) {
+              alertify.error(value[0]);
+          });
         }
-        var errors = rejection.data;
         $scope.submit = false;
       });
     }
@@ -109,6 +111,9 @@
           error_505('Server Error, Try Refreshing the Page.');
         }else if(rejection.status == 422){
           var errors = rejection.data;
+          angular.forEach(errors, function(value, key) {
+              alertify.error(value[0]);
+          });
         }
         $scope.submit = false;
       });

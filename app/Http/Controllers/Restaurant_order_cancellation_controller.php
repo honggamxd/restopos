@@ -77,11 +77,13 @@ class Restaurant_order_cancellation_controller extends Controller
         }
       }
       $cancellation_request_data->approved_by = $request->session()->get('users.user_data')->id;
+      $cancellation_request_data->approved = 1;
       $cancellation_request_data->save();
 
       $restaurant_table_customer = new Restaurant_table_customer;
       $restaurant_table_customer_data = $restaurant_table_customer->find($cancellation_request_data->restaurant_table_customer_id);
       $restaurant_table_customer_data->cancellation_order_status = 1;
+      $restaurant_table_customer_data->has_cancellation_request = 0;
       $restaurant_table_customer_data->save();
 
       $restaurant_order = new Restaurant_order;
@@ -89,6 +91,7 @@ class Restaurant_order_cancellation_controller extends Controller
       $order_data->has_cancelled = 1;
       $order_data->has_cancellation_request = 0;
       $order_data->save();
+
       return $cancellation_request_data;
     }elseif ($cancellation_request_data->type=="after_bill_out") {
       // return $cancellation_request_data->detail;
@@ -170,6 +173,14 @@ class Restaurant_order_cancellation_controller extends Controller
       $restaurant_order_data = $restaurant_order->find($cancellation_request_data->restaurant_order_id);
       $restaurant_order_data->has_cancellation_request = 0;
       $restaurant_order_data->save();
+
+      $restaurant_table_customer = new Restaurant_table_customer;
+      $restaurant_table_customer_data = $restaurant_table_customer->find($cancellation_request_data->restaurant_table_customer_id);
+      $restaurant_table_customer_data->cancellation_order_status = 1;
+      $restaurant_table_customer_data->has_cancellation_request = 0;
+      $restaurant_table_customer_data->save();
+
+
     }elseif ($cancellation_request_data->type=="after_bill_out") {
       $restaurant_table_customer = new Restaurant_table_customer;
       $customer_data = $restaurant_table_customer->find($cancellation_request_data->restaurant_table_customer_id);
@@ -178,6 +189,29 @@ class Restaurant_order_cancellation_controller extends Controller
     }
     $cancellation_request_data->delete();
   }
+
+  public function user_delete_request(Request $request,$id)
+  {
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $restaurant_table_customer_data = $restaurant_table_customer->find($id);
+    $restaurant_table_customer_data->cancellation_order_status = 1;
+    $restaurant_table_customer_data->has_cancellation_request = 0;
+    $restaurant_table_customer_data->save();
+    $restaurant_order_cancellation = new Restaurant_order_cancellation;
+    $restaurant_order_cancellation_data = $restaurant_order_cancellation->where('approved',0)->where('restaurant_table_customer_id',$id);
+    $restaurant_order_cancellation_data = $restaurant_order_cancellation_data->first();
+
+    if($restaurant_order_cancellation_data->type=="before_bill_out"){
+      $restaurant_order = new Restaurant_order;
+      $restaurant_order_data = $restaurant_order->find($restaurant_order_cancellation_data->restaurant_order_id);
+      $restaurant_order_data->has_cancellation_request = 0;
+      $restaurant_order_data->save();
+    }
+
+    $restaurant_order_cancellation->where('restaurant_table_customer_id',$id)->delete();
+
+  }
+
   public function accepted_request(Request $request,$id)
   {
     $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
@@ -255,7 +289,6 @@ class Restaurant_order_cancellation_controller extends Controller
     if($type=='before'){
       // return $request->all();
       $this->validate($request, [
-          'restaurant_order_id' => 'exists:restaurant_order_cancellation,restaurant_order_id,deleted_at,NOT_NULL',
           'items' => 'cancellation_request_items:before_bill_out',
           'reason_cancelled' => 'required',
         ],[
@@ -287,6 +320,12 @@ class Restaurant_order_cancellation_controller extends Controller
       $order_data = $restaurant_order->find($request->restaurant_order_id);
       $order_data->has_cancellation_request = 1;
       $order_data->save();
+
+      $restaurant_table_customer = new Restaurant_table_customer;
+      $customer_data = $restaurant_table_customer->find($request->restaurant_table_customer_id);
+      $customer_data->has_cancellation_request = 1;
+      $customer_data->save();
+
       return $request->all();
     }elseif ($type=='after') {
       # code...
