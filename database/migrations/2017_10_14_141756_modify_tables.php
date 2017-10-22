@@ -28,11 +28,11 @@ class ModifyTables extends Migration
             $table->string('settlement')->after('price');
             $table->boolean('has_settled')->after('settlement');
             $table->boolean('restaurant_order_cancellation_id')->after('has_settled');
-            $table->boolean('restaurant_bill_id')->after('restaurant_table_customer_id');
+            $table->integer('restaurant_bill_id')->after('restaurant_table_customer_id')->unsigned();
         });
 
         Schema::table('restaurant_table_customer', function ($table) {
-            $table->string('has_cancellation_request')->after('has_order_cancelled');
+            $table->boolean('has_cancellation_request')->after('has_order_cancelled');
         });
     }
 

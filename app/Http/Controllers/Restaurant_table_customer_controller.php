@@ -15,6 +15,7 @@ use App\Restaurant_temp_bill_detail;
 use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
 use App\Restaurant_accepted_order_cancellation;
+use App\restaurant_order_cancellation;
 
 class Restaurant_table_customer_controller extends Controller
 {
@@ -196,6 +197,31 @@ class Restaurant_table_customer_controller extends Controller
       ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
       ->where('restaurant_table_customer_id',$id)
       ->get();
+
+    $temp_bill_remaining_quantity = $restaurant_temp_bill_detail
+    ->join('restaurant_temp_bill','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
+    ->select('restaurant_temp_bill.*',DB::raw('SUM(restaurant_temp_bill_detail.quantity) as total'))
+    ->where('restaurant_temp_bill.restaurant_table_customer_id',$id)
+    ->value('total');
+
+    $restaurant_table_customer = new Restaurant_table_customer;
+    $customer_data = $restaurant_table_customer->find($id);
+    $customer_data->has_cancellation_request = 0;
+    $customer_data->cancellation_order_status = 1;
+    if($temp_bill_remaining_quantity==0){
+      $customer_data->has_billed_completely = 1;
+      $customer_data->has_paid = 1;
+    }
+    $customer_data->save();
+
+
+    $restaurant_order_cancellation = new Restaurant_order_cancellation;
+    $restaurant_order_cancellation_data = $restaurant_order_cancellation->where('restaurant_table_customer_id',$id);
+    if($restaurant_order_cancellation_data->get()!=array()){
+      $customer_data->cancellation_order_status = 0;
+      $customer_data->save();
+      $restaurant_order_cancellation_data->delete();
+    }
     return $this->show_temp_bill($request,$id);
   }
 

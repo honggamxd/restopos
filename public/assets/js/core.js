@@ -18,6 +18,10 @@ $(document).ready(function(){
   }, 500);
 });
 
+function error_505(error_message) {
+  alertify.error(error_message);
+}
+
 function isEmpty(obj) {
 
     // null and undefined are "empty"

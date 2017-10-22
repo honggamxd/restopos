@@ -41,7 +41,7 @@ Route::post('/api/restaurant/table/order/cart/update/{type}/{id}', 'Restaurant_t
 Route::get('/api/restaurant/table/order/cart/{table_customer_id}', 'Restaurant_table_customer_controller@show');
 Route::get('/api/restaurant/table/order/delete', 'Restaurant_table_customer_controller@delete');
 Route::post('/api/restaurant/table/order/remove', 'Restaurant_table_customer_controller@remove_cart_item');
-Route::post('/api/restaurant/table/order/cancel/request/{type}', 'Restaurant_order_cancellation_controller@before_bill_out_cancellation_request');
+Route::post('/api/restaurant/table/order/cancel/request/{type}', 'Restaurant_order_cancellation_controller@store_cancellation_request');
 
 
 Route::put('/api/restaurant/table/customer/update/{id}', 'Restaurant_table_customer_controller@update');

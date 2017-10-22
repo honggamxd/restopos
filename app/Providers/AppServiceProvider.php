@@ -104,22 +104,25 @@ class AppServiceProvider extends ServiceProvider
             return $restaurant_menu->first()===null;
         });
 
-        Validator::extend('has_cancellation_request', function($attribute, $value, $parameters, $validator) {
-            if($parameters[0]=="before_bill_out"){
-                $restaurant_order = DB::table('restaurant_order')->where('has_cancellation_request','1')->where('id',$value);
-                return $restaurant_order->first()===null;
-            }
-        });
-
         Validator::extend('cancellation_request_items', function($attribute, $value, $parameters, $validator) {
             if($parameters[0]=="before_bill_out"){
+                $valid = true;
+                $count_zero_quantity = 0;
                 foreach ($value as $item_data) {
                     $quantity_of_orders = DB::table('restaurant_order_detail')->where('id',$item_data['id'])->value('quantity');
                     $quantity_to_cancel = (isset($item_data['quantity_to_cancel'])?$item_data['quantity_to_cancel']:0);
                     if($quantity_to_cancel>$quantity_of_orders){
-                        return false;
+                        $valid = false;
                         break;
                     }
+                    if($quantity_to_cancel==0){
+                        $count_zero_quantity++;
+                    }
+                }
+                if(count($value)==$count_zero_quantity){
+                    return false;
+                }else{
+                    return $valid;
                 }
                 return true;
             }elseif($parameters[0]=="after_bill_out"){
