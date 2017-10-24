@@ -285,11 +285,12 @@ class Restaurant_table_customer_controller extends Controller
     $customer_data = $restaurant_table_customer->find($id);
     
     $restaurant_bill = new Restaurant_bill;
-    $has_existing_bill_for_today = $restaurant_bill
+    $check_number = $restaurant_bill
       ->where('date_',strtotime(date('m/d/Y')))
       ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
       ->orderBy('id','DESC')
-      ->first();
+      ->first()
+      ->check_number;
 
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill->date_ = strtotime(date("m/d/Y"));
@@ -313,11 +314,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_bill->table_name = $customer_data->table_name;
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
     $restaurant_bill->type = "good_order";
-    if($has_existing_bill_for_today!=null){
-      $restaurant_bill->check_number += $has_existing_bill_for_today->check_number;
-    }else{
-      $restaurant_bill->check_number = 1;
-    }
+    $restaurant_bill->check_number = ($check_number==null?1:++$check_number);
     $restaurant_bill->save();
 
 

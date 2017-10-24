@@ -47,7 +47,7 @@
     <td></td>
   </tr>
   <tr>
-    <td>Check #: <b ng-cloak>@{{bill.id}}</b></td>
+    <td>Check #: <b ng-cloak>@{{bill.check_number}}</b></td>
     <td>Date: <b ng-cloak>@{{bill.date_}}</b></td>
   </tr>
   <tr>

@@ -38,7 +38,11 @@ class Restaurant_order_controller extends Controller
 
 
     $restaurant_order = new Restaurant_order;
-    $que_number = $restaurant_order->where('restaurant_id',$customer_data->restaurant_id)->orderBy('id','DESC')->value('que_number');
+    $que_number = $restaurant_order
+      ->where('date_',strtotime(date('m/d/Y')))
+      ->where('restaurant_id',$customer_data->restaurant_id)
+      ->orderBy('id','DESC')
+      ->value('que_number');
 
     $restaurant_order->date_ = strtotime(date("m/d/Y"));
     $restaurant_order->date_time = strtotime(date("m/d/Y h:i:s A"));

@@ -156,7 +156,6 @@ class Reports_controller extends Controller
       DB::raw('SUM(sales_inclusive_of_vat) as total_sales_inclusive_of_vat')
     );
     $footer_data->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
-    $footer_data->where('deleted',0);
     if($user_data->privilege=='restaurant_cashier'){
       $footer_data->where('cashier_id',$user_data->id);
     }

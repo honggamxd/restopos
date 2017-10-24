@@ -628,7 +628,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="bill_data in bill">
-              <td ng-bind="bill_data.id" class="center aligned" style="width: 40%"></td>
+              <td ng-bind="bill_data.check_number" class="center aligned" style="width: 40%"></td>
               <td style="text-align: center;">
                 <div class="btn-group">
                   <a class="btn btn-primary" href="/restaurant/bill/@{{bill_data.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>

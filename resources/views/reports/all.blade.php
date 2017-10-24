@@ -33,11 +33,10 @@
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_settlements">Show Settlements</label>
     </div>
+    @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_accounting">Show Accounting</label>
     </div>
-    @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
-
     @endif
     
 <!--     <div class="checkbox">
@@ -116,7 +115,7 @@
       <tbody ng-cloak>
         <tr ng-repeat="bill_data in bills">
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
-          <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><p>@{{bill_data.id}}</p></a></td>
+          <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><p>@{{bill_data.check_number}}</p></a></td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.pax}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.server_name}}</td>
@@ -217,7 +216,6 @@
     @else
       $scope.show_accounting = false;
     @endif
-      $scope.show_accounting = true;
     
     $scope.toggle_paging = function() {
       show_reports();
