@@ -66,7 +66,7 @@
   <thead>
     <tr>
       <th style="text-align: center;">ITEM</th>
-      <th style="text-align: center;">UNIT PRICE</th>
+      <th style="text-align: center;">PRICE</th>
       <th style="text-align: center;">QTY</th>
       <th style="text-align: center;" ng-show="bill.type=='bad_order'">SETTLEMENT</th>
       <th style="text-align: right;">TOTAL</th>
@@ -74,8 +74,8 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td>@{{items.menu}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
-      <td style="text-align: center;" ng-bind="items.price"></td>
+      <td style="width: 50%">@{{items.menu}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
+      <td style="text-align: center;">@{{items.price|currency:""}}</td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
       <td style="text-align: center;" ng-show="bill.type=='bad_order'" ng-bind="items.settlement"></td>
       <td style="text-align: right;">@{{(items.price*items.quantity)|currency:""}}</td>
