@@ -41,6 +41,7 @@
 <div class="active section hideprint">Order</div>
 @endsection
 @section('content')
+<h3 style="text-align: center;">FOOD ORDER</h3>
 <table class="order-table">
 <tbody>
   <tr>
