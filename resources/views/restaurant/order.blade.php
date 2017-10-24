@@ -28,6 +28,8 @@
 
   *{
     background-color: white !important;
+    padding-top: 0px !important;
+    margin-top: 0px !impor
   }
 }
 
@@ -41,9 +43,6 @@
 @section('content')
 <table class="order-table">
 <tbody>
-  <tr ng-show="order.has_cancelled">
-    <td colspan="2"><span style="color: red !important;">This order number has a cancelled orders, this is the new quantity of orders.</span></td>
-  </tr>
   <tr>
     <td style="width: 50%">Outlet: <span ng-cloak>@{{order.restaurant_name}}</span></td>
     <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
@@ -64,13 +63,17 @@
   <thead>
     <tr>
       <th style="text-align: center;">ITEM</th>
-      <th style="text-align: center;">QTY</th>
+      <th style="text-align: center;" ng-if="order.has_cancelled">OLD QTY</th>
+      <th style="text-align: center;" ng-if="order.has_cancelled">CANCELLED</th>
+      <th style="text-align: center;"><span ng-if="order.has_cancelled">NEW</span> QTY</th>
       <th style="text-align: right;">TOTAL</th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="items in order_detail" ng-cloak>
       <td>@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
+      <td style="text-align: center;" ng-if="order.has_cancelled">@{{items.quantity+items.cancelled_quantity}}</td>
+      <td style="text-align: center;" ng-if="order.has_cancelled">@{{items.cancelled_quantity}}</td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
       <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
     </tr>

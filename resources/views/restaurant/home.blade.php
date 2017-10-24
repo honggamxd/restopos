@@ -845,7 +845,6 @@
       })
       .then(function(response) {
         console.log(response.data)
-         show_table_customers();
          show_table();
          $scope.submit = false;
          $("#add-table-modal").modal("hide");
@@ -904,10 +903,6 @@
     }
 
     $scope.table_customers = {};
-    show_table_customers();
-    $scope.refresh_table_customers = function() {
-      show_table_customers();
-    }
     setInterval(function(){
       show_table_customers();
     }, 1000);
@@ -925,7 +920,7 @@
           }
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          // error_505('Server Error, Try Refreshing the Page.');
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -942,7 +937,6 @@
       })
       .then(function(response) {
         console.log(response.data);
-        show_table_customers();
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Refreshing the Page.');
@@ -1216,7 +1210,6 @@
       .then(function(response) {
         console.log(response.data);
         $scope.submit = false;
-        show_table_customers();
         $("#add-order-modal").modal('hide');
         $('#view-order-modal').modal('show');
         show_order(response.data.id);
@@ -1365,7 +1358,6 @@
         .then(function(response) {
           console.log(response.data);
           $scope.submit = false;
-          show_table_customers();
           $scope.bill_preview = {};
           $scope.bill_preview.customer_data = {};
           $scope.bill_preview.items = response.data.result;
@@ -1465,7 +1457,6 @@
         $scope.bill.table_name = response.data.table_name;
         $("#bill-preview-modal").modal("hide");
         $("#view-bill-modal").modal("show");
-        show_table_customers();
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Refreshing the Page.');
@@ -1606,7 +1597,6 @@
       })
       .then(function(response) {
         console.log(response.data);
-        show_table_customers();
         $('#edit-table-modal').modal('hide');
         $scope.submit = false;
       }, function(rejection) {
@@ -1723,11 +1713,6 @@
         $scope.valid_payment = valid_payment($scope);
       }
     }
-
-    $('#view-bill-modal').on('hidden.bs.modal', function () {
-      show_table_customers();
-    });
-
   });
 
   app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {

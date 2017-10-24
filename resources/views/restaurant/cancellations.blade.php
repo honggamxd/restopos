@@ -118,7 +118,9 @@
         $scope.submit = false;
       });
     }
-    show_cancellation_request();
+    setInterval(function(){
+      show_cancellation_request();
+    }, 1000);
     function show_cancellation_request() {
       $http({
           method : "GET",
@@ -129,7 +131,14 @@
           @endif
       }).then(function mySuccess(response) {
         console.log(response.data.result);
-        $scope.cancellations = response.data.result;
+
+        if(angular.equals($scope.cancellations, {})){
+          $scope.cancellations = response.data.result;
+        }else if(angular.equals($scope.cancellations, response.data.result)){
+
+        }else{
+          $scope.cancellations = response.data.result;
+        }
       }, function myError(response) {
           console.log(response.statusText);
       });
