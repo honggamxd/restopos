@@ -67,6 +67,7 @@
       <th style="text-align: center;" ng-if="order.has_cancelled">OLD QTY</th>
       <th style="text-align: center;" ng-if="order.has_cancelled">CANCELLED</th>
       <th style="text-align: center;"><span ng-if="order.has_cancelled">NEW</span> QTY</th>
+      <th style="text-align: right;">UNIT PRICE</th>
       <th style="text-align: right;">TOTAL</th>
     </tr>
   </thead>
@@ -76,6 +77,7 @@
       <td style="text-align: center;" ng-if="order.has_cancelled">@{{items.quantity+items.cancelled_quantity}}</td>
       <td style="text-align: center;" ng-if="order.has_cancelled">@{{items.cancelled_quantity}}</td>
       <td style="text-align: center;" ng-bind="items.quantity"></td>
+      <td style="text-align: right;">@{{items.price|currency:""}}</td>
       <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
     </tr>
   </tbody>
