@@ -88,7 +88,8 @@
           @foreach ($categories as $category)
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Amount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Gross Amount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Special/Trade Discount</th>
           <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+4 }}">Mode of Payments / Settlements</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Total Discount</th>
@@ -125,6 +126,7 @@
             <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |currency:""}}</td>
           @endforeach
           <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.total_item_amount |currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.special_trade_discount |currency:""}}</td>
           @foreach ($settlements as $settlement)
             @if($settlement=="cash")
               <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?>-bill_data.excess |currency:""}}</td>
@@ -161,6 +163,7 @@
             <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |currency:""}}</th>
           @endforeach
           <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.total_item_amount|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.special_trade_discount|currency:""}}</th>
           @foreach ($settlements as $settlement)
             <th class="right aligned middle aligned" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |currency:""}}</th>
           @endforeach

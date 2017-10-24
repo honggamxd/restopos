@@ -408,7 +408,7 @@
       $http({
           method : "GET",
           params: {
-            'restaurant_id': $scope.formdata.restaurant_id
+            'restaurant_id': $scope.formdata.restaurant_id,
           },
           url : "/api/restaurant/table/list/all",
       }).then(function mySuccess(response) {
