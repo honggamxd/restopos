@@ -12,6 +12,6 @@ class Restaurant_order_cancellation extends Model
 
   public function detail()
   {
-      return $this->hasMany('App\restaurant_order_cancellation_detail');
+      return $this->hasMany('App\Restaurant_order_cancellation_detail');
   }
 }

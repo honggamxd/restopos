@@ -15,7 +15,7 @@ use App\Restaurant_temp_bill_detail;
 use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
 use App\Restaurant_accepted_order_cancellation;
-use App\restaurant_order_cancellation;
+use App\Restaurant_order_cancellation;
 
 class Restaurant_table_customer_controller extends Controller
 {
