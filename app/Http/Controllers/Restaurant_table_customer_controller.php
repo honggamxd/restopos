@@ -289,8 +289,7 @@ class Restaurant_table_customer_controller extends Controller
       ->where('date_',strtotime(date('m/d/Y')))
       ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
       ->orderBy('id','DESC')
-      ->first()
-      ->check_number;
+      ->value('check_number');
 
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill->date_ = strtotime(date("m/d/Y"));
@@ -371,6 +370,7 @@ class Restaurant_table_customer_controller extends Controller
     $data["bill"]->restaurant_name = DB::table('restaurant')->find($data["bill"]->restaurant_id)->name;
     $data["bill"]->cashier_name = DB::table('user')->find($data["bill"]->cashier_id)->name;
     $data["bill"]->server_name = DB::table('restaurant_server')->find($data["bill"]->server_id)->name;
+    $data["bill"]->check_number = sprintf('%04d',$data["bill"]->check_number);
     if($data["bill"]->type=="bad_order"){
       $data["bill_detail"] = $restaurant_accepted_order_cancellation->where("restaurant_bill_id",$id)->get();
       foreach ($data["bill_detail"] as $bill_detail_data) {

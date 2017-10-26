@@ -74,11 +74,11 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td style="width: 50%">@{{items.menu}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
-      <td style="text-align: center;">@{{items.price|currency:""}}</td>
-      <td style="text-align: center;" ng-bind="items.quantity"></td>
-      <td style="text-align: center;" ng-show="bill.type=='bad_order'" ng-bind="items.settlement"></td>
-      <td style="text-align: right;">@{{(items.price*items.quantity)|currency:""}}</td>
+      <td style="width: 50%;vertical-align: top;">@{{items.menu}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
+      <td style="text-align: center;vertical-align: top;">@{{items.price|currency:""}}</td>
+      <td style="text-align: center;vertical-align: top;" ng-bind="items.quantity"></td>
+      <td style="text-align: center;vertical-align: top;" ng-show="bill.type=='bad_order'" ng-bind="items.settlement"></td>
+      <td style="text-align: right;vertical-align: top;">@{{(items.price*items.quantity)|currency:""}}</td>
     </tr>
   </tbody>
 </tbody>
@@ -128,14 +128,18 @@
 <br>
 <table style="width: 100%">
   <tr>
-    <td style="width: 50%;border-bottom: 1px solid black;">Server: <b ng-cloak>@{{bill.server_name}}</b></td>
-    <td style="width: 50%;border-bottom: 1px solid black;">Cashier: <b ng-cloak>@{{bill.cashier_name}}</b></td>
+    <td>Server:</td>
+    <td>Cashier:</td>
   </tr>
   <tr>
-    <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;" colspan="2">Guest Name:</td>
+    <td><b ng-cloak>@{{bill.server_name}}</b></td>
+    <td><b ng-cloak>@{{bill.cashier_name}}</b></td>
   </tr>
   <tr>
-    <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;" colspan="2">Room Number:</td>
+    <td ng-show="bill.type=='good_order'" colspan="2">Guest Name:</td>
+  </tr>
+  <tr>
+    <td ng-show="bill.type=='good_order'" colspan="2">Room Number:</td>
   </tr>
   <tr>
     <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;padding-top: 20px;" colspan="2">Signature</td>

@@ -403,7 +403,7 @@
           </tr>
         </tbody>
         </table>
-        <h1 style="text-align: center;">H@{{order.que_number}}</h1>
+        <h1 style="text-align: center;">@{{order.que_number}}</h1>
         <table class="order-table">
         <tbody>
           <thead>
@@ -468,7 +468,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" form="before-bill-out-cancellation-order-form" class="btn btn-success" ng-click="cancel_orders('before',this)">Request for Cancellation</button>
+        <button type="submit" form="before-bill-out-cancellation-order-form" class="btn btn-success" ng-click="cancel_orders('before',this)" ng-disabled="submit">Request for Cancellation</button>
       </div>
     </div>
   </div>
@@ -512,7 +512,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-success" ng-click="cancel_orders('after',this)" form="after-bill-out-cancellation-order-form">Request for Cancellation</button>
+        <button type="submit" class="btn btn-success" ng-click="cancel_orders('after',this)" form="after-bill-out-cancellation-order-form" ng-disabled="submit">Request for Cancellation</button>
       </div>
     </div>
   </div>
@@ -850,7 +850,7 @@
          $("#add-table-modal").modal("hide");
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){        
            var errors = rejection.data;
            // console.log(errors.server_id);
@@ -887,7 +887,7 @@
           }
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -920,7 +920,7 @@
           }
       }, function(rejection) {
         if(rejection.status == 500){
-          // error_505('Server Error, Try Refreshing the Page.');
+          // error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -939,7 +939,7 @@
         console.log(response.data);
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           var errors = rejection.data;
         }
@@ -991,7 +991,7 @@
           $('#after-bill-out-cancellation-order-modal').modal('show');
         }, function(rejection) {
           if(rejection.status == 500){
-            error_505('Server Error, Try Refreshing the Page.');
+            error_505('Server Error, Try Again.');
           }else if(rejection.status == 422){
             console.log(rejection.statusText); 
           }
@@ -1016,7 +1016,7 @@
         $scope.customer_data.has_cancellation_request=0;
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           var errors = rejection.data; 
           angular.forEach(errors, function(value, key) {
@@ -1026,6 +1026,7 @@
       });
     }
     $scope.cancel_orders = function(type,data) {
+      $scope.submit = true;
       if(type=='before'){
         // console.log(data);
         var formdata = {
@@ -1046,15 +1047,17 @@
           alertify.success('A request for cancellations has been sent.');
           $('#before-bill-out-cancellation-order-modal').modal('hide');
           $scope.formdata.reason_cancelled = "";
+          $scope.submit = false;
         }, function(rejection) {
           if(rejection.status == 500){
-            error_505('Server Error, Try Refreshing the Page.');
+            error_505('Server Error, Try Again.');
           }else if(rejection.status == 422){
             var errors = rejection.data; 
             angular.forEach(errors, function(value, key) {
                 alertify.error(value[0]);
             });
           }
+          $scope.submit = false;
         });
       }else if(type=='after'){
         data.bill_preview.reason_cancelled = $scope.formdata.reason_cancelled;
@@ -1069,15 +1072,17 @@
           alertify.success('A request for cancellations has been sent.');
           $('#after-bill-out-cancellation-order-modal').modal('hide');
           $scope.formdata.reason_cancelled = "";
+          $scope.submit = false;
         }, function(rejection) {
           if(rejection.status == 500){
-            error_505('Server Error, Try Refreshing the Page.');
+            error_505('Server Error, Try Again.');
           }else if(rejection.status == 422){
             var errors = rejection.data;
             angular.forEach(errors, function(value, key) {
                 alertify.error(value[0]);
             });
           }
+          $scope.submit = false;
         });
       }
 
@@ -1093,7 +1098,7 @@
         $scope.table_customer_total = response.data.total;
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -1123,7 +1128,7 @@
         // console.log(response.data);
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
          var errors = rejection.data; 
         }
@@ -1146,7 +1151,7 @@
         console.log(response.data);
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
            var errors = rejection.data;
         }
@@ -1166,7 +1171,7 @@
           console.log(response.data);
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1190,7 +1195,7 @@
           $scope.menu = response.data.result;
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -1215,14 +1220,14 @@
         show_order(response.data.id);
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           var errors = rejection.data;
           $scope.formdata.ar_number = errors.ar_number;
           $scope.formdata.amount = errors.amount;
           $scope.formdata.date_payment = errors.date_payment;
-          $scope.submit = false; 
         }
+        $scope.submit = false; 
       }); 
     }
     $scope.preview_order = function(data) {
@@ -1242,7 +1247,7 @@
         $scope.customer_data = response.data.customer_data;
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -1266,7 +1271,7 @@
          // alertify.success("Order has been placed.");
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
            var errors = rejection.data;
            alertify.error(rejection.data.error);
@@ -1292,7 +1297,7 @@
          // alertify.success("Order has been placed.");
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
            var errors = rejection.data;
            alertify.error(rejection.data.error);
@@ -1314,7 +1319,7 @@
           $scope.customer_data = data.customer_data;
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1342,7 +1347,7 @@
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
           if(rejection.status == 500){
-            error_505('Server Error, Try Refreshing the Page.');
+            error_505('Server Error, Try Again.');
           }else if(rejection.status == 422){
             console.log(rejection.statusText);
           }
@@ -1370,12 +1375,12 @@
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
           if(rejection.status == 500){
-            error_505('Server Error, Try Refreshing the Page.');
+            error_505('Server Error, Try Again.');
           }else if(rejection.status == 422){
            var errors = rejection.data;
            $scope.formdata.date_payment = errors.date_payment;
-           $scope.submit = false; 
           }
+           $scope.submit = false; 
         });
       }
     }
@@ -1392,7 +1397,7 @@
           $("#settlement-cancelled-order-modal").modal("show");
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1419,14 +1424,14 @@
         $scope.submit = false;
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
          var errors = rejection.data;
          angular.forEach(errors, function(value, key) {
              alertify.error(value[0]);
          });
-         $scope.submit = false; 
         }
+       $scope.submit = false; 
       });
     }
     $scope.compute_net_total = function() {
@@ -1459,12 +1464,12 @@
         $("#view-bill-modal").modal("show");
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
            var errors = rejection.data;
            alertify.error(errors.items[0]);
-           $scope.submit = false; 
         }
+         $scope.submit = false; 
       });
     }
 
@@ -1489,7 +1494,7 @@
           $("#view-bill-modal").modal("show");
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1554,11 +1559,11 @@
         console.log(response.data)
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){ 
          var errors = rejection.data;
-         $scope.submit = false;
         }
+       $scope.submit = false;
       });
     }
     $scope.formdata.settlements_payment = {};
@@ -1601,11 +1606,11 @@
         $scope.submit = false;
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){ 
          var errors = rejection.data;
-         $scope.submit = false;
         }
+         $scope.submit = false;
       });
     }
 
@@ -1622,7 +1627,7 @@
           $scope.formdata.server_id = $scope.server[0];
       }, function(rejection) {
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           console.log(rejection.statusText); 
         }

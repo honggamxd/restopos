@@ -21,6 +21,7 @@
   margin: 0;
 }
 
+
 @media print{
   .hideprint{
     display: none !important;
@@ -29,7 +30,7 @@
   *{
     background-color: white !important;
     padding-top: 0px !important;
-    margin-top: 0px !impor
+    margin-top: 0px !important;
   }
 }
 
@@ -41,7 +42,7 @@
 <div class="active section hideprint">Order</div>
 @endsection
 @section('content')
-<h3 style="text-align: center;">FOOD ORDER</h3>
+<h3 style="text-align: center;">FOOD ORDER @{{order.que_number}}</h3>
 <table class="order-table">
 <tbody>
   <tr>
@@ -49,7 +50,7 @@
     <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
   </tr>
   <tr>
-    <td>Food Order #: <span ng-cloak>@{{order.id}}</td>
+    <td>Food Order #: <span ng-cloak>@{{order.id_format}}</td>
     <td>Time: <span ng-cloak>@{{order.date_time}}</span></td>
   </tr>
   <tr>
@@ -58,27 +59,26 @@
   </tr>
 </tbody>
 </table>
-<h1 style="text-align: center;">H@{{order.que_number}}</h1>
-<table class="order-table">
+<table class="order-table"> 
 <tbody>
   <thead>
     <tr>
       <th style="text-align: center;">ITEM</th>
       <th style="text-align: center;" ng-if="order.has_cancelled==1">OLD QTY</th>
-      <th style="text-align: center;" ng-if="order.has_cancelled==1">CANCELLED</th>
-      <th style="text-align: center;"><span ng-if="order.has_cancelled==1">NEW</span> QTY</th>
-      <th style="text-align: right;">PRICE</th>
+      <th style="text-align: center;padding-left: 2px;padding-right: 2px;" ng-if="order.has_cancelled==1">CXLD</th>
+      <th style="text-align: center;padding-left: 2px;padding-right: 2px;"><span ng-if="order.has_cancelled==1">NEW</span> QTY</th>
+      <th style="text-align: right;padding-left: 2px;padding-right: 2px;">PRICE</th>
       <th style="text-align: right;">TOTAL</th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="items in order_detail" ng-cloak>
-      <td style="width: 50%">@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
-      <td style="text-align: center;" ng-if="order.has_cancelled==1">@{{items.quantity+items.cancelled_quantity}}</td>
-      <td style="text-align: center;" ng-if="order.has_cancelled==1">@{{items.cancelled_quantity}}</td>
-      <td style="text-align: center;" ng-bind="items.quantity"></td>
-      <td style="text-align: right;">@{{items.price|currency:""}}</td>
-      <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
+      <td style="width: 50%;vertical-align: top;">@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
+      <td style="text-align: center;vertical-align: top;" ng-if="order.has_cancelled==1">@{{items.quantity+items.cancelled_quantity}}</td>
+      <td style="text-align: center;vertical-align: top;padding-left: 2px;padding-right: 2px;" ng-if="order.has_cancelled==1">@{{items.cancelled_quantity}}</td>
+      <td style="text-align: center;vertical-align: top;padding-left: 2px;padding-right: 2px;" ng-bind="items.quantity"></td>
+      <td style="text-align: right;vertical-align: top;padding-left: 2px;padding-right: 2px;">@{{items.price|currency:""}}</td>
+      <td style="text-align: right;vertical-align: top;">@{{items.quantity*items.price|currency:""}}</td>
     </tr>
   </tbody>
 </tbody>

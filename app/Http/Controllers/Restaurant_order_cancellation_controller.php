@@ -52,10 +52,11 @@ class Restaurant_order_cancellation_controller extends Controller
   {
 
     $this->validate($request, [
-        'id' => 'exists:restaurant_order_cancellation,id,deleted_at,NULL'
+        'id' => 'cancellation_request'
     ],[
-      'id.exists' => 'This Cancellation of Orders Request did not exists.'
+      'id.cancellation_request' => 'This Cancellation of Orders Request does not exists.'
     ]);
+    // return $request->all();
     $restaurant_order_cancellation = new Restaurant_order_cancellation;
     $cancellation_request_data = $restaurant_order_cancellation->find($id);
     if($cancellation_request_data->type=="before_bill_out"){
@@ -162,10 +163,11 @@ class Restaurant_order_cancellation_controller extends Controller
   public function delete_request(Request $request,$id)
   {
     $this->validate($request, [
-        'id' => 'exists:restaurant_order_cancellation,id,deleted_at,NULL'
+        'id' => 'cancellation_request'
     ],[
-      'id.exists' => 'This Cancellation of Orders Request did not exists.'
+      'id.cancellation_request' => 'This Cancellation of Orders Request does not exists.'
     ]);
+    // return $request->all();
     $restaurant_order_cancellation = new Restaurant_order_cancellation;
     $cancellation_request_data = $restaurant_order_cancellation->find($id);
     if($cancellation_request_data->type=="before_bill_out"){

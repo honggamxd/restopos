@@ -104,6 +104,16 @@ class AppServiceProvider extends ServiceProvider
             return $restaurant_menu->first()===null;
         });
 
+        Validator::extend('cancellation_request', function($attribute, $value, $parameters, $validator) {
+            DB::enableQueryLog();
+            $cancellation_request = DB::table('restaurant_order_cancellation')
+            ->where('id',$value)
+            ->where('approved',0)
+            ->whereNull('deleted_at')
+            ->first();
+            return $cancellation_request!==NULL;
+        });
+
         Validator::extend('cancellation_request_items', function($attribute, $value, $parameters, $validator) {
             if($parameters[0]=="before_bill_out"){
                 $valid = true;
