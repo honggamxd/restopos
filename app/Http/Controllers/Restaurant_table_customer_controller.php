@@ -254,6 +254,9 @@ class Restaurant_table_customer_controller extends Controller
   {
     $restaurant_order = new Restaurant_order;
     $data["result"] = $restaurant_order->where('restaurant_table_customer_id',$id)->get();
+    foreach ($data["result"] as $restaurant_order_data) {
+      $restaurant_order_data->format_id = sprintf('%04d',$restaurant_order_data->id);
+    }
     $restaurant_table_customer = new Restaurant_table_customer;
     $data['customer_data'] = $restaurant_table_customer->find($id);
     return $data;
@@ -288,6 +291,7 @@ class Restaurant_table_customer_controller extends Controller
     $check_number = $restaurant_bill
       ->where('date_',strtotime(date('m/d/Y')))
       ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
+      ->where('type','good_order')
       ->orderBy('id','DESC')
       ->value('check_number');
 
@@ -397,6 +401,7 @@ class Restaurant_table_customer_controller extends Controller
       if($bill_data->is_paid == 0){
         $has_unpaid_order = true;
       }
+      $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
     }
     $data["has_paid"] = ($has_unpaid_order?0:1);
     return $data;

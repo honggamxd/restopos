@@ -362,7 +362,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="order_data in orders">
-              <td class="center aligned"><p style="cursor: pointer;" data-balloon="Click to View" data-balloon-pos="up" ng-bind="order_data.id" ng-click="preview_order(this)"></p></td>
+              <td class="center aligned"><p style="cursor: pointer;" data-balloon="Click to View" data-balloon-pos="up" ng-bind="order_data.format_id" ng-click="preview_order(this)"></p></td>
               <td>
                 <a class="btn btn-primary" href="/restaurant/order/@{{order_data.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
               </td>
@@ -606,7 +606,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="make-bill-form" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit">Proceed</button>
+        <button type="submit" class="btn btn-primary" form="make-bill-form" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit" ng-hide="bill_preview.customer_data.has_cancellation_request==1">Proceed</button>
       </div>
     </div>
   </div>
@@ -1345,6 +1345,9 @@
           $scope.bill_preview.net_billing = response.data.net_billing;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#bill-preview-modal').modal('show');
+          if($scope.bill_preview.customer_data.has_cancellation_request=='1'){
+            alertify.error('Cannot make a bill, this customer has an existing cancellation request.');
+          }
         }, function(rejection) {
           if(rejection.status == 500){
             error_505('Server Error, Try Again.');
