@@ -257,6 +257,7 @@ class Reports_controller extends Controller
     foreach ($bills as $bill_data) {
       $bill_data->date_time = date("h:i:s A",$bill_data->date_time);
       $bill_data->date_ = date("j-M",$bill_data->date_);
+      $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
       $bill_data->total_settlements = 0;
       $bill_data->special_trade_discount = $bill_data->total_item_amount-$bill_data->total_discount-$bill_data->sc_pwd_discount-$bill_data->sc_pwd_vat_exemption;
       $restaurant_server = new Restaurant_server;

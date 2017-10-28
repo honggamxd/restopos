@@ -27,6 +27,7 @@
     <table class="ui unstackable sortable celled table">
       <thead>
         <tr>
+          <th class="middle aligned center aligned">#</th>
           <th class="middle aligned center aligned">Order #</th>
           <th class="middle aligned center aligned">Outlet</th>
           <th class="middle aligned center aligned">Requested By</th>
@@ -36,14 +37,15 @@
       </thead>
       <tbody>
         <tr ng-repeat="item in cancellations">
+          <td class="middle aligned center aligned" ng-bind="item.id"></td>
           <td class="middle aligned center aligned" ng-bind="item.restaurant_order_id"></td>
           <td class="middle aligned center aligned" ng-bind="item.restaurant_name"></td>
           <td class="middle aligned center aligned" ng-bind="item.cancelled_by_name"></td>
           <td class="middle aligned center aligned" ng-bind="item.reason_cancelled"></td>
           <td class="middle aligned center aligned">
             <div class="ui buttons">
+              <button class="ui primary button" ng-click="view_request(this)">View</button>
               <button class="ui positive button" ng-click="accept_request(this)">Accept</button>
-              <div class="or"></div>
               <button class="ui negative button" ng-click="delete_request(this)">Delete</button>
             </div>
           </td>
@@ -56,6 +58,39 @@
 @endsection
 
 @section('modals')
+<div id="view-request-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cancellation Request #: @{{request_data.id}}</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ui unstackable sortable celled table">
+          <thead>
+            <tr>
+              <th class="center aligned middle aligned">Outlet</th>
+              <th class="center aligned middle aligned">Item</th>
+              <th class="center aligned middle aligned">Quantity to Cancel</th>
+              <th class="right aligned middle aligned">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in request_items">
+              <th class="center aligned middle aligned">@{{request_data.restaurant_name}}</th>
+              <th class="center aligned middle aligned">@{{item.menu_name}}</th>
+              <th class="center aligned middle aligned">@{{item.quantity}}</th>
+              <th class="right aligned middle aligned">@{{item.price|currency:""}}</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 @endsection
 
@@ -67,55 +102,87 @@
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.formdata = {};
-    $scope.accept_request = function(data) {
-      console.log(data);
-      $scope.formdata.id = data.item.id;
+    $scope.request_data = {};
+    $scope.request_items = {};
+    $scope.view_request = function(data) {
+
       $http({
-        method: 'POST',
-        url: '/api/restaurant/orders/cancellations/accept/'+data.item.id,
-        data: $.param($scope.formdata),
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-      .then(function(response) {
-        console.log(response.data);
-        alertify.success('Cancellation Request has been accepted.');
-        show_cancellation_request();
+          method : "GET",
+          url : "/api/restaurant/orders/cancellations/view/"+data.item.id,
+      }).then(function mySuccess(response) {
+        console.log(response);
+        $scope.request_data = response.data.request_data;
+        $scope.request_items = response.data.request_items;
+        $('#view-request-modal').modal('show');
       }, function(rejection) {
-        console.log(rejection);
         if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
+          error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
-          var errors = rejection.data;
-          angular.forEach(errors, function(value, key) {
-              alertify.error(value[0]);
-          });
+          console.log(rejection.statusText);
         }
-        $scope.submit = false;
+      });
+      
+    }
+
+
+    $scope.accept_request = function(data) {
+      alertify.confirm('Cancellation Request #: '+data.item.id,'Accept this cancellation requests?', function(){
+        console.log(data);
+        $scope.formdata.id = data.item.id;
+        $http({
+          method: 'POST',
+          url: '/api/restaurant/orders/cancellations/accept/'+data.item.id,
+          data: $.param($scope.formdata),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(response) {
+          console.log(response.data);
+          alertify.success('Cancellation Request has been accepted.');
+          show_cancellation_request();
+        }, function(rejection) {
+          console.log(rejection);
+          if(rejection.status == 500){
+            error_505('Server Error, Try again.');
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+            angular.forEach(errors, function(value, key) {
+                alertify.error(value[0]);
+            });
+          }
+          $scope.submit = false;
+        });
+      }, function(){
+        // alertify.error('Cancelled');
       });
     }
     $scope.delete_request = function(data) {
-      console.log(data);
-      $scope.formdata.id = data.item.id;
-      $http({
-        method: 'POST',
-        url: '/api/restaurant/orders/cancellations/delete/'+data.item.id,
-        data: $.param($scope.formdata),
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-      .then(function(response) {
-        console.log(response.data);
-        alertify.success('Cancellation Request has been deleted.');
-        show_cancellation_request();
-      }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Refreshing the Page.');
-        }else if(rejection.status == 422){
-          var errors = rejection.data;
-          angular.forEach(errors, function(value, key) {
-              alertify.error(value[0]);
-          });
-        }
-        $scope.submit = false;
+
+      alertify.confirm('Cancellation Request #: '+data.item.id,'Delete this cancellation requests?', function(){
+        console.log(data);
+        $scope.formdata.id = data.item.id;
+        $http({
+          method: 'POST',
+          url: '/api/restaurant/orders/cancellations/delete/'+data.item.id,
+          data: $.param($scope.formdata),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(response) {
+          console.log(response.data);
+          alertify.success('Cancellation Request has been deleted.');
+          show_cancellation_request();
+        }, function(rejection) {
+          if(rejection.status == 500){
+            error_505('Server Error, Try again.');
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+            angular.forEach(errors, function(value, key) {
+                alertify.error(value[0]);
+            });
+          }
+          $scope.submit = false;
+        });
+      }, function(){
+        // alertify.error('Cancelled');
       });
     }
     setInterval(function(){

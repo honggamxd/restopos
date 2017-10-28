@@ -62,6 +62,7 @@ Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
 Route::get('/restaurant/cancellations', 'Restaurant_order_cancellation_controller@index');
 Route::get('/restaurant/bill/{id}', 'Restaurant_bill_controller@index');
 Route::get('/api/restaurant/orders/cancellations/show/{id?}', 'Restaurant_order_cancellation_controller@show');
+Route::get('/api/restaurant/orders/cancellations/view/{id}', 'Restaurant_order_cancellation_controller@show_data');
 Route::post('/api/restaurant/orders/cancellations/accept/{id?}', 'Restaurant_order_cancellation_controller@accept_request');
 Route::post('/api/restaurant/orders/cancellations/delete/{id?}', 'Restaurant_order_cancellation_controller@delete_request');
 Route::get('/api/restaurant/orders/cancellations/accept/{id}', 'Restaurant_order_cancellation_controller@accepted_request');

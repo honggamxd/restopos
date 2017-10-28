@@ -18,6 +18,7 @@ use App\Restaurant_bill_detail;
 use App\Restaurant_payment;
 use App\Restaurant_temp_bill;
 use App\Restaurant_temp_bill_detail;
+use App\Restaurant;
 
 class Restaurant_order_cancellation_controller extends Controller
 {
@@ -45,6 +46,18 @@ class Restaurant_order_cancellation_controller extends Controller
       if($cancellation_request_data->type=="after_bill_out"){
         $cancellation_request_data->restaurant_order_id = "";
       }
+    }
+    return $data;
+  }
+  public function show_data(Request $request,$id)
+  {
+    $restaurant_order_cancellation = new Restaurant_order_cancellation;
+    $data['request_data'] = $restaurant_order_cancellation->find($id);
+    $data['request_data']->table_name = Restaurant_table_customer::find($data['request_data']->restaurant_table_customer_id)->table_name;
+    $data['request_data']->restaurant_name = Restaurant::find($data['request_data']->restaurant_id)->name;
+    $data['request_items'] = $restaurant_order_cancellation->find($id)->detail;
+    foreach ($data['request_items'] as $request_item) {
+      $request_item->menu_name = Restaurant_menu::find($request_item->restaurant_menu_id)->name;
     }
     return $data;
   }
@@ -311,12 +324,15 @@ class Restaurant_order_cancellation_controller extends Controller
       $restaurant_order_cancellation = new Restaurant_order_cancellation;
       $restaurant_order_cancellation_data = $restaurant_order_cancellation->orderBy('id','DESC')->first();
       foreach ($request->items as $order_items) {
+        $quantity = (isset($order_items['quantity_to_cancel'])?$order_items['quantity_to_cancel']:0);
         $restaurant_order_cancellation_detail = new Restaurant_order_cancellation_detail;
         $restaurant_order_cancellation_detail->restaurant_order_cancellation_id = $restaurant_order_cancellation_data->id; 
         $restaurant_order_cancellation_detail->restaurant_menu_id = $order_items['restaurant_menu_id']; 
-        $restaurant_order_cancellation_detail->quantity = (isset($order_items['quantity_to_cancel'])?$order_items['quantity_to_cancel']:0); 
-        $restaurant_order_cancellation_detail->price = $order_items['price']; 
-        $restaurant_order_cancellation_detail->save(); 
+        $restaurant_order_cancellation_detail->quantity = $quantity; 
+        $restaurant_order_cancellation_detail->price = $order_items['price'];
+        if($quantity>0){
+          $restaurant_order_cancellation_detail->save();
+        } 
       }
       $restaurant_order = new Restaurant_order; 
       $order_data = $restaurant_order->find($request->restaurant_order_id);
@@ -348,12 +364,15 @@ class Restaurant_order_cancellation_controller extends Controller
         $restaurant_order_cancellation = new Restaurant_order_cancellation;
         $restaurant_order_cancellation_data = $restaurant_order_cancellation->orderBy('id','DESC')->first();
         foreach ($request->items as $order_items) {
+          $quantity = (isset($order_items['quantity_to_cancel'])?$order_items['quantity_to_cancel']:0); 
           $restaurant_order_cancellation_detail = new Restaurant_order_cancellation_detail;
           $restaurant_order_cancellation_detail->restaurant_order_cancellation_id = $restaurant_order_cancellation_data->id; 
           $restaurant_order_cancellation_detail->restaurant_menu_id = $order_items['restaurant_menu_id']; 
-          $restaurant_order_cancellation_detail->quantity = (isset($order_items['quantity_to_cancel'])?$order_items['quantity_to_cancel']:0); 
+          $restaurant_order_cancellation_detail->quantity = $quantity; 
           $restaurant_order_cancellation_detail->price = $order_items['price']; 
-          $restaurant_order_cancellation_detail->save(); 
+          if($quantity>0){
+            $restaurant_order_cancellation_detail->save();
+          }
         }
         $restaurant_table_customer = new Restaurant_table_customer;
         $customer_data = $restaurant_table_customer->find($request->customer_data['id']);
