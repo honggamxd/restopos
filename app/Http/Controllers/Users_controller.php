@@ -44,7 +44,7 @@ class Users_controller extends Controller
   
   public function logout(Request $request)
   {
-    $request->session()->flush();
+    $request->session()->forget('users');
     return redirect('/login');
   }
 
