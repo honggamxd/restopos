@@ -612,7 +612,7 @@
   </div>
 </div>
 
-<div id="view-bill-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="view-bill-modal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -633,6 +633,7 @@
                 <div class="btn-group">
                   <a class="btn btn-primary" href="/restaurant/bill/@{{bill_data.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
                   <button class="btn btn-success" ng-click="add_payment(this)" ng-if="bill_data.is_paid == 0"><span class="glyphicon glyphicon-shopping-cart"></span> Payments</button>
+                  <button class="btn btn-danger" ng-click="delete_bill(this)" ng-if="bill_data.is_paid == 0" ng-disabled="submit"><span class="glyphicon glyphicon-trash"></span> Delete</button>
                 </div>
               </td>
             </tr>
@@ -832,7 +833,7 @@
     $scope.formdata = {};
     $scope.formdata.settlement = {};
     $scope.table = {};
-    $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+    $scope.formdata._token = "{{csrf_token()}}";
 
     $scope.add_table = function() {
       $scope.formerrors = {};
@@ -1531,6 +1532,50 @@
       $scope.formdata.settlements_payment.guest_ledger = false;
       $scope.formdata.settlements_payment.send_bill = false;
       $scope.formdata.settlements_payment.free_of_charge = false;
+    }
+
+    $scope.delete_bill = function function_name(data) {
+      console.log(data.bill_data);
+      alertify.prompt(
+        'Check #: '+data.$parent.bill_data.check_number,
+        'Reason to delete:',
+        '',
+        function(evt, value) {
+          if(value.trim()!=""){
+            var formdata = {};
+            formdata.deleted_comment = value;
+            formdata.bill_data = data.bill_data;
+            $scope.submit = true;
+            $http({
+               method: 'POST',
+               url: '/api/restaurant/table/customer/bill/delete/'+data.$parent.bill_data.id,
+               data: $.param(formdata),
+               headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(function(response) {
+              console.log(response.data);
+              $("#view-bill-modal").modal("hide");
+              $scope.formdata.deleted_comment = '';
+              alertify.success('Check # '+data.$parent.bill_data.check_number+' has been deleted');
+              $scope.submit = false;
+            }, function(rejection) {
+              if(rejection.status == 500){
+                error_505('Server Error, Try Again.');
+              }else if(rejection.status == 422){ 
+               var errors = rejection.data;
+               angular.forEach(errors, function(value, key) {
+                   alertify.error(value[0]);
+               });
+              }
+             $scope.submit = false;
+            });
+          }else{
+            alertify.error('Reason to delete message is required.');
+          }
+        },
+        function() {
+          
+        });
     }
     $("#search-menu").autocomplete({
         source: "/api/restaurant/menu/search/name",

@@ -73,14 +73,16 @@
               <th class="center aligned middle aligned">Item</th>
               <th class="center aligned middle aligned">Quantity to Cancel</th>
               <th class="right aligned middle aligned">Price</th>
+              <th class="right aligned middle aligned">Total</th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="item in request_items">
-              <th class="center aligned middle aligned">@{{request_data.restaurant_name}}</th>
-              <th class="center aligned middle aligned">@{{item.menu_name}}</th>
-              <th class="center aligned middle aligned">@{{item.quantity}}</th>
-              <th class="right aligned middle aligned">@{{item.price|currency:""}}</th>
+              <td class="center aligned middle aligned">@{{request_data.restaurant_name}}</td>
+              <td class="center aligned middle aligned">@{{item.menu_name}}</td>
+              <td class="center aligned middle aligned">@{{item.quantity}}</td>
+              <td class="right aligned middle aligned">@{{item.price|currency:""}}</td>
+              <td class="right aligned middle aligned">@{{item.price*item.quantity|currency:""}}</td>
             </tr>
           </tbody>
         </table>

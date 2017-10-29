@@ -83,12 +83,14 @@
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of Pax</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Server</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Cashier</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Guest Name</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of SC/PWD</th>
           @foreach ($categories as $category)
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Gross Amount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Special/Trade Discount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">NET Amount</th>
           <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+4 }}">Mode of Payments / Settlements</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Total Discount</th>
@@ -120,12 +122,14 @@
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.pax}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.server_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.cashier_name}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.guest_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.sc_pwd}}</td>
           @foreach ($categories as $category)
             <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |currency:""}}</td>
           @endforeach
           <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.total_item_amount |currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.special_trade_discount |currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.net_total_amount |currency:""}}</td>
           @foreach ($settlements as $settlement)
             @if($settlement=="cash")
               <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?>-bill_data.excess |currency:""}}</td>
@@ -157,12 +161,14 @@
           <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.pax}}</th>
           <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.sc_pwd}}</th>
           @foreach ($categories as $category)
             <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |currency:""}}</th>
           @endforeach
           <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.total_item_amount|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.special_trade_discount|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.net_total_amount|currency:""}}</th>
           @foreach ($settlements as $settlement)
             <th class="right aligned middle aligned" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |currency:""}}</th>
           @endforeach
