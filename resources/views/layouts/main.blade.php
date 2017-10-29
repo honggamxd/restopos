@@ -42,14 +42,14 @@
     </a>
     @endif
     @if(Session::get('users.user_data')->privilege=="restaurant_admin")
-    <a class="item" href="/restaurant/menu">
-        <i class="food icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>Menu
-    </a>
     <a class="item" href="/restaurant/cancellations">
         <i class="settings icon"></i>
         Cancellation<br>
         Requests
+    </a>
+    <a class="item" href="/restaurant/menu">
+        <i class="food icon"></i>
+        {{Session::get('users.user_data')->restaurant}}<br>Menu
     </a>
     <a class="item" href="/restaurant/settings">
         <i class="settings icon"></i>
