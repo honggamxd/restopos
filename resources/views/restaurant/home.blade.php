@@ -49,7 +49,7 @@
         <button class="ui icon button" type="submit">
           <i class="search icon"></i>
         </button> -->
-        <button type="button" class="ui icon primary button" ng-click="show_table()" data-balloon="Keyboard Shortcut: Ctrl + Shift + A" data-balloon-pos="down" data-balloon-length="fit"><i class="add icon"></i> Add Customer</button>
+        <button type="button" class="ui icon primary button" ng-click="show_table()" data-balloon="Keyboard Shortcut: Alt + A" data-balloon-pos="down" data-balloon-length="fit"><i class="add icon"></i> Add Customer</button>
       <!-- </div> -->
   </div>
   <div class="table-responsive">
@@ -77,7 +77,11 @@
           <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.sc_pwd}}</td>
-          <td class="center aligned middle aligned" ng-click="view_orders(this)"><a href="javascript:void(0);">@{{customer_data.total|currency:""}}</a></td>
+          <td class="center aligned middle aligned" ng-click="view_orders(this)" data-balloon="Click to View Orders or open a cancellation request." data-balloon-pos="up">
+            <p>
+              <a href="javascript:void(0);">@{{customer_data.total|currency:""}}</a>
+            </p>
+          </td>
           <td class="left aligned middle aligned" style="width: 28vw;">
             <div class="ui buttons" ng-if="!customer_data.has_order">
               <button class="ui inverted green button" ng-click="add_order(this)">
@@ -415,7 +419,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="items in order_detail" ng-cloak>
-              <td>@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
+              <td>@{{items.restaurant_menu_name}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
               <td style="text-align: center;" ng-bind="items.quantity"></td>
               <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
             </tr>
@@ -527,12 +531,12 @@
         <h4 class="modal-title">Bill Summary</h4>
       </div>
       <div class="modal-body">
-        <form class="ui form" id="make-bill-form">
+        <form class="ui form" id="make-bill-form" ng-submit="make_bill(this)">
           <div class="field">
             <div class="two fields">
               <div class="field">
                 <label>Number of Pax:</label>
-                <input type="number" ng-model="bill_preview.customer_data.pax" value="@{{bill_preview.customer_data.pax}}">
+                <input type="number" ng-model="bill_preview.customer_data.pax" value="@{{bill_preview.customer_data.pax}}" min="0" max="@{{max}}" ng-change="compute_net_total()">
               </div> 
               <div class="field">
                 <label>Number of SC/PWD:</label>
@@ -606,7 +610,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="make-bill-form" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit" ng-hide="bill_preview.customer_data.has_cancellation_request==1">Proceed</button>
+        <button type="submit" class="btn btn-primary" form="make-bill-form" ng-model="bill_preview.table_customer_id" ng-disabled="submit" ng-hide="bill_preview.customer_data.has_cancellation_request==1">Proceed</button>
       </div>
     </div>
   </div>
@@ -702,7 +706,11 @@
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
           </div>
           <div class="form-group">
-            <label>Excess:</label>
+            <label>Total Payment:</label>
+            <span class="form-control">@{{total_payment|currency:""}}</span>
+          </div>
+          <div class="form-group">
+            <label>Change:</label>
             <span class="form-control">@{{formdata.excess|currency:""}}</span>
           </div>
 
@@ -824,16 +832,21 @@
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
 
-    shortcut.add("Ctrl+Shift+A",function() {
-      show_table();
-      show_server();
-      $('#add-table-modal').modal('show');
-    });
-
     $scope.formdata = {};
     $scope.formdata.settlement = {};
     $scope.table = {};
     $scope.formdata._token = "{{csrf_token()}}";
+
+    shortcut.add("Alt+A",function() {
+      show_table();
+      $scope.formdata.pax = '';
+      $scope.formdata.pax = '';
+      $scope.formdata.sc_pwd = '';
+      $scope.formdata.guest_name = '';
+      show_server();
+      $('#add-table-modal').modal('show');
+    });
+
 
     $scope.add_table = function() {
       $scope.formerrors = {};
@@ -870,6 +883,7 @@
     $scope.table = {};
     $scope.has_table = false;
     function show_table(table_data='') {
+
       $http({
           method : "GET",
           url : "/api/restaurant/table/list/serve",
@@ -898,6 +912,11 @@
     $scope.show_table = function() {
       // $scope.formdata.pax = "";
       // $scope.formdata.guest_name = "";
+      $scope.formdata.pax = '';
+      $scope.formdata.pax = '';
+      $scope.formdata.sc_pwd = '';
+      $scope.formdata.guest_name = '';
+
       $('#add-table-modal').modal('show');
       show_table();
       show_server();
@@ -1345,6 +1364,7 @@
           $scope.bill_preview.gross_billing = response.data.gross_billing;
           $scope.bill_preview.net_billing = response.data.net_billing;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
+          $scope.max = data.$parent.customer_data.pax;
           $('#bill-preview-modal').modal('show');
           if($scope.bill_preview.customer_data.has_cancellation_request=='1'){
             alertify.error('Cannot make a bill, this customer has an existing cancellation request.');
@@ -1376,6 +1396,7 @@
           $scope.bill_preview.gross_billing = response.data.gross_billing;
           $scope.bill_preview.net_billing = response.data.net_billing;
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
+          $scope.max = data.$parent.customer_data.pax;
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
           if(rejection.status == 500){
@@ -1506,6 +1527,7 @@
     }
 
     $('#settlement').dropdown();
+    $scope.total_payment = 0;
     $scope.add_payment = function(data) {
       console.log(data);
       $scope.formdata.settlements_amount = {
@@ -1696,7 +1718,7 @@
     }
 
     function valid_payment(argument) {
-      var total_payment = (
+      $scope.total_payment = (
         $scope.formdata.settlements_amount.cash
       + $scope.formdata.settlements_amount.credit
       + $scope.formdata.settlements_amount.debit
@@ -1705,7 +1727,7 @@
       + $scope.formdata.settlements_amount.send_bill
       + $scope.formdata.settlements_amount.free_of_charge
       );
-      return (total_payment>=$scope.formdata.net_billing?true:false);
+      return ($scope.total_payment>=$scope.formdata.net_billing?true:false);
     }
     $scope.settlements_payment = function(data) {
       $scope.formdata.settlements_payment = {};

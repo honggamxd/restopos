@@ -179,13 +179,14 @@ class Restaurant_table_customer_controller extends Controller
 
     foreach ($unique_ordered_items as $order_item_data) {
       $order_joined_data = $restaurant_order
-        ->select('special_instruction','restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
+        ->select('restaurant_menu_name','special_instruction','restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
         ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
         ->where('restaurant_table_customer_id',$id)
         ->where('restaurant_menu_id',$order_item_data->restaurant_menu_id)
         ->first();
       $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
       $restaurant_temp_bill_detail->restaurant_menu_id = $order_joined_data->restaurant_menu_id;
+      $restaurant_temp_bill_detail->restaurant_menu_name = $order_joined_data->restaurant_menu_name;
       $restaurant_temp_bill_detail->price = $order_joined_data->price;
       $restaurant_temp_bill_detail->quantity = $order_joined_data->total_quantity;
       $restaurant_temp_bill_detail->special_instruction = $order_joined_data->special_instruction;
@@ -297,7 +298,8 @@ class Restaurant_table_customer_controller extends Controller
     $customer_data->sc_pwd = $request->sc_pwd;
     $customer_data->guest_name = $request->guest_name;
     if($data["new_table"]['id']!=$data["old_table"]['id']){
-      $customer_data->table_name .= '>'.$data["new_table"]['name'];
+      // $customer_data->table_name .= '>'.$data["new_table"]['name'];
+      $customer_data->table_name = $data["new_table"]['name'];
       $customer_data->restaurant_table_id = $data["new_table"]['id'];
     }
     $customer_data->save();

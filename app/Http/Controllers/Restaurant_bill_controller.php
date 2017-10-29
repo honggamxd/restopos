@@ -65,8 +65,8 @@ class Restaurant_bill_controller extends Controller
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill->date_ = strtotime(date("m/d/Y"));
     $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
-    $restaurant_bill->pax = $customer_data->pax;
-    $restaurant_bill->sc_pwd = $customer_data->sc_pwd;
+    $restaurant_bill->pax = $request->customer_data['pax'];
+    $restaurant_bill->sc_pwd = $request->customer_data['sc_pwd'];
     $restaurant_bill->sales_net_of_vat_and_service_charge = $sales_net_of_vat_and_service_charge;
     $restaurant_bill->service_charge = $service_charge;
     $restaurant_bill->vatable_sales = $vatable_sales;
@@ -95,8 +95,14 @@ class Restaurant_bill_controller extends Controller
     $bill_preview_detail = $request->items;
     foreach ($bill_preview_detail as $preview_data) {
       if(abs($preview_data["quantity_to_bill"]) != 0){
+        $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+        $restaurant_temp_bill_detail_data = $restaurant_temp_bill_detail
+          ->where('restaurant_temp_bill_id',$preview_data["restaurant_temp_bill_id"])
+          ->where('restaurant_menu_id',$preview_data["restaurant_menu_id"])
+          ->first();
         $restaurant_bill_detail = new Restaurant_bill_detail;
         $restaurant_bill_detail->restaurant_menu_id = $preview_data["restaurant_menu_id"];
+        $restaurant_bill_detail->restaurant_menu_name = $restaurant_temp_bill_detail_data->restaurant_menu_name;
         $restaurant_bill_detail->quantity = abs($preview_data["quantity_to_bill"]);
         $restaurant_bill_detail->price = $preview_data["price"];
         $restaurant_bill_detail->special_instruction = $preview_data["special_instruction"];
@@ -104,11 +110,6 @@ class Restaurant_bill_controller extends Controller
         $restaurant_bill_detail->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
         $restaurant_bill_detail->date_ = strtotime(date("m/d/Y"));
         $restaurant_bill_detail->save();
-        $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
-        $restaurant_temp_bill_detail_data = $restaurant_temp_bill_detail
-          ->where('restaurant_temp_bill_id',$preview_data["restaurant_temp_bill_id"])
-          ->where('restaurant_menu_id',$preview_data["restaurant_menu_id"])
-          ->first();
         $restaurant_temp_bill_detail_data->quantity -= abs($preview_data["quantity_to_bill"]);
         $restaurant_temp_bill_detail_data->save();
       }

@@ -62,6 +62,7 @@ class Restaurant_order_controller extends Controller
     foreach ($cart as $cart_data) {
       $restaurant_order_detail = new Restaurant_order_detail;
       $restaurant_order_detail->restaurant_menu_id = $cart_data->id;
+      $restaurant_order_detail->restaurant_menu_name = Restaurant_menu::find($cart_data->id)->name;
       $restaurant_order_detail->quantity = $cart_data->quantity;
       $restaurant_order_detail->price = $cart_data->price;
       $restaurant_order_detail->special_instruction = $cart_data->special_instruction;

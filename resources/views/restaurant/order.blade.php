@@ -73,7 +73,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in order_detail" ng-cloak>
-      <td style="width: 50%;vertical-align: top;">@{{items.menu}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
+      <td style="width: 50%;vertical-align: top;">@{{items.restaurant_menu_name}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
       <td style="text-align: center;vertical-align: top;" ng-if="order.has_cancelled==1">@{{items.quantity+items.cancelled_quantity}}</td>
       <td style="text-align: center;vertical-align: top;padding-left: 2px;padding-right: 2px;" ng-if="order.has_cancelled==1">@{{items.cancelled_quantity}}</td>
       <td style="text-align: center;vertical-align: top;padding-left: 2px;padding-right: 2px;" ng-bind="items.quantity"></td>
@@ -86,7 +86,7 @@
 <br>
 <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
 <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
-<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
+<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
 @endsection
 
 @section('scripts')

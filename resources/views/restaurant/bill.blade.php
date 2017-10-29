@@ -74,7 +74,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td style="width: 50%;vertical-align: top;">@{{items.menu}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
+      <td style="width: 50%;vertical-align: top;">@{{items.restaurant_menu_name}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
       <td style="text-align: center;vertical-align: top;">@{{items.price|currency:""}}</td>
       <td style="text-align: center;vertical-align: top;" ng-bind="items.quantity"></td>
       <td style="text-align: center;vertical-align: top;" ng-show="bill.type=='bad_order'" ng-bind="items.settlement"></td>
@@ -152,7 +152,7 @@
   </tr>
 </table>
 <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
-<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
+<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
 @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
 @else
 <a href="javascript:void(0);" class="btn btn-danger hideprint" ng-click="delete(this)" ng-if="bill.is_paid==1"><span class="glyphicon glyphicon-trash"></span> Delete</a>
