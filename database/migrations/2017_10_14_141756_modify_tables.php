@@ -65,7 +65,7 @@ class ModifyTables extends Migration
         });
         Schema::table('restaurant_table_customer', function ($table) {
             $table->dropColumn('has_cancellation_request');
-            $this->dropColumn('deleted_at');
+            $table->dropColumn('deleted_at');
         });
     }
 }
