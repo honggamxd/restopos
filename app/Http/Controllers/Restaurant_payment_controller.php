@@ -41,6 +41,7 @@ class Restaurant_payment_controller extends Controller
     foreach ($data["result"] as $bill_data) {
       $data["table_name"] = $bill_data->table_name;
       $bill_data->total = $restaurant_bill_detail->select(DB::raw('SUM(price*quantity) as total'))->where("restaurant_bill_id",$bill_data->id)->first()->total;
+      $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
       if($bill_data->is_paid==0){
         $has_unpaid_order = true;
       }
@@ -56,10 +57,12 @@ class Restaurant_payment_controller extends Controller
     $restaurant_payment = new Restaurant_payment;
     $restaurant_bill = new Restaurant_bill;
     $data["result"] = $restaurant_payment->where("restaurant_bill_id",$id)->get();
-    foreach ($data["result"] as $payment_data) {
-      $payment_data->settlement = settlements($payment_data->settlement);
+    if($restaurant_bill->find($id)!=null){
+      foreach ($data["result"] as $payment_data) {
+        $payment_data->settlement = settlements($payment_data->settlement);
+      }
+      $data["excess"] = $restaurant_bill->find($id)->excess;
+      return $data;
     }
-    $data["excess"] = $restaurant_bill->find($id)->excess;
-    return $data;
   }
 }

@@ -33,6 +33,7 @@ class ModifyTables extends Migration
 
         Schema::table('restaurant_table_customer', function ($table) {
             $table->boolean('has_cancellation_request')->after('has_order_cancelled');
+            $table->softDeletes();
         });
     }
 
@@ -64,6 +65,7 @@ class ModifyTables extends Migration
         });
         Schema::table('restaurant_table_customer', function ($table) {
             $table->dropColumn('has_cancellation_request');
+            $table->dropColumn('deleted_at');
         });
     }
 }

@@ -45,7 +45,7 @@
           <td class="middle aligned center aligned">
             <div class="ui buttons">
               <button class="ui primary button" ng-click="view_request(this)">View</button>
-              <button class="ui positive button" ng-click="accept_request(this)">Accept</button>
+              <button class="ui positive button" ng-click="accept_request(this)" ng-disabled="submit" ng-class="{'loading':submit}">Accept</button>
               <button class="ui negative button" ng-click="delete_request(this)">Delete</button>
             </div>
           </td>
@@ -73,14 +73,16 @@
               <th class="center aligned middle aligned">Item</th>
               <th class="center aligned middle aligned">Quantity to Cancel</th>
               <th class="right aligned middle aligned">Price</th>
+              <th class="right aligned middle aligned">Total</th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="item in request_items">
-              <th class="center aligned middle aligned">@{{request_data.restaurant_name}}</th>
-              <th class="center aligned middle aligned">@{{item.menu_name}}</th>
-              <th class="center aligned middle aligned">@{{item.quantity}}</th>
-              <th class="right aligned middle aligned">@{{item.price|currency:""}}</th>
+              <td class="center aligned middle aligned">@{{request_data.restaurant_name}}</td>
+              <td class="center aligned middle aligned">@{{item.menu_name}}</td>
+              <td class="center aligned middle aligned">@{{item.quantity}}</td>
+              <td class="right aligned middle aligned">@{{item.price|currency:""}}</td>
+              <td class="right aligned middle aligned">@{{item.price*item.quantity|currency:""}}</td>
             </tr>
           </tbody>
         </table>
@@ -128,6 +130,7 @@
     $scope.accept_request = function(data) {
       alertify.confirm('Cancellation Request #: '+data.item.id,'Accept this cancellation requests?', function(){
         console.log(data);
+        $scope.submit = true;
         $scope.formdata.id = data.item.id;
         $http({
           method: 'POST',
@@ -137,16 +140,18 @@
         })
         .then(function(response) {
           console.log(response.data);
-          alertify.success('Cancellation Request has been accepted.');
+          $scope.submit = false;
+          $.notify('The Cancellation Request has been accepted.');
           show_cancellation_request();
         }, function(rejection) {
+          $scope.submit = false;
           console.log(rejection);
           if(rejection.status == 500){
             error_505('Server Error, Try again.');
           }else if(rejection.status == 422){
             var errors = rejection.data;
             angular.forEach(errors, function(value, key) {
-                alertify.error(value[0]);
+                $.notify(value[0],'error');
             });
           }
           $scope.submit = false;
@@ -168,7 +173,7 @@
         })
         .then(function(response) {
           console.log(response.data);
-          alertify.success('Cancellation Request has been deleted.');
+          $.notify('The Cancellation Request has been deleted.','info');
           show_cancellation_request();
         }, function(rejection) {
           if(rejection.status == 500){
@@ -176,7 +181,7 @@
           }else if(rejection.status == 422){
             var errors = rejection.data;
             angular.forEach(errors, function(value, key) {
-                alertify.error(value[0]);
+              $.notify(value[0],'error');
             });
           }
           $scope.submit = false;

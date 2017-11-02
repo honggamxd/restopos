@@ -116,7 +116,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
         <button type="submit" class="ui primary button" form="add-user-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
@@ -159,7 +159,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
         <button type="submit" class="ui primary button" form="edit-user-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
@@ -235,7 +235,7 @@
       .then(function(response) {
         console.log(response.data)
          $("#edit-user-modal").modal("hide");
-         alertify.success('The Privileges of <b>'+$scope.formdata.username+'</b> user has been updated.');
+         $.notify('The Privileges of '+$scope.formdata.username+' has been updated.');
          $scope.formdata = {};
          $scope.formerrors = {};
          $scope.submit = false;
@@ -271,7 +271,7 @@
              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
           })
           .then(function(response) {
-             alertify.success('The user <b>'+data.user.username+'</b> has been delete.');
+             $.notify('The user '+data.user.username+' has been deleted.');
              $scope.users = response.data.result;
           }, function(rejection) {
              var errors = rejection.data;

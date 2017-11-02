@@ -251,7 +251,8 @@ class Reports_controller extends Controller
       }
       $data['footer']['total_settlements'] += $data["footer"][$settlement];
     }
-    $data["footer"]["special_trade_discount"] = $data["footer"]["total_item_amount"]-$data['footer']['total_discount']-$data['footer']['sc_pwd_discount']-$data['footer']['sc_pwd_vat_exemption'];
+    $data["footer"]["special_trade_discount"] = $data['footer']['total_discount']+$data['footer']['sc_pwd_discount']+$data['footer']['sc_pwd_vat_exemption'];
+    $data["footer"]["net_total_amount"] = $data["footer"]["total_item_amount"]-$data["footer"]["special_trade_discount"];
     $data["paging"] = paging($page,$num_items,$display_per_page);
 
     foreach ($bills as $bill_data) {
@@ -259,7 +260,8 @@ class Reports_controller extends Controller
       $bill_data->date_ = date("j-M",$bill_data->date_);
       $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
       $bill_data->total_settlements = 0;
-      $bill_data->special_trade_discount = $bill_data->total_item_amount-$bill_data->total_discount-$bill_data->sc_pwd_discount-$bill_data->sc_pwd_vat_exemption;
+      $bill_data->special_trade_discount = $bill_data->total_discount+$bill_data->sc_pwd_discount+$bill_data->sc_pwd_vat_exemption;
+      $bill_data->net_total_amount = $bill_data->total_item_amount-$bill_data->special_trade_discount;
       $restaurant_server = new Restaurant_server;
       $bill_data->server_name = $restaurant_server->withTrashed()->find($bill_data->server_id)->name;
 

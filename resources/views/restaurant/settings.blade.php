@@ -124,8 +124,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-table-form">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="ui primary button" form="add-table-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
   </div>
@@ -152,8 +152,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="edit-table-form">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="ui primary button" form="edit-table-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
   </div>
@@ -183,8 +183,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-server-form">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="add-server-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
   </div>
@@ -212,8 +212,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="edit-server-form">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="edit-server-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
   </div>
@@ -265,7 +265,8 @@
       }, function(rejection) {
          var errors = rejection.data;
          // $scope.formerror = errors;
-         alertify.error(errors.restaurant_name[0]);
+         $.notify(errors.restaurant_name[0],'error');
+
       });
       
 
@@ -292,6 +293,7 @@
     }
 
     $scope.add_list_table = function() {
+      $scope.submit = true;
       $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
       $scope.formerror = {};
       $http({
@@ -302,16 +304,19 @@
       })
       .then(function(response) {
         // console.log(response.data);
-        alertify.success("Table " + response.data+" is added.");
+        $.notify("Table " + response.data.toString() + " is added.");
         $scope.formdata.name = "";
-            show_table();
+        show_table();
+        $scope.submit = false;
       }, function(rejection) {
          var errors = rejection.data;
          $scope.formerror = errors;
+        $scope.submit = false;
       });
     }
 
     $scope.edit_list_table = function() {
+      $scope.submit = true;
       $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
       $scope.formerror = {};
       $http({
@@ -321,18 +326,21 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
+        $scope.submit = false;
         // console.log(response.data);
-        alertify.success("Table " + response.data+" has been updated.");
+        $.notify("Table " + response.data+" has been updated.");
         $('#edit-list-table-modal').modal('hide');
         $scope.formdata.name = "";
             show_table();
       }, function(rejection) {
+        $scope.submit = false;
          var errors = rejection.data;
          $scope.formerror = errors;
       });
     }
 
     $scope.add_list_server = function() {
+      $scope.submit = true;
       $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
       $scope.formerror = {};
       $http({
@@ -343,10 +351,12 @@
       })
       .then(function(response) {
         // console.log(response.data);
-        alertify.success("Waiter/Waitress " + response.data+" is added.");
+        $scope.submit = false;
+        $.notify("Waiter/Waitress " + response.data+" is added.");
         $scope.formdata.name = "";
         show_server();
       }, function(rejection) {
+        $scope.submit = false;
          var errors = rejection.data;
          $scope.formerror = errors;
       });
@@ -358,6 +368,7 @@
         'Rename Waiter/Waitress',
         'Renaming the Waiter/Waitress updates the information to all order slips/bills.',
         function(){
+          $scope.submit = true;
           $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
           $scope.formerror = {};
           $http({
@@ -367,12 +378,14 @@
              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
           })
           .then(function(response) {
+            $scope.submit = false;
             // console.log(response.data);
             $('#edit-list-server-modal').modal('hide');
-            alertify.success("Waiter/Waitress " + response.data+" has been updated.");
+            $.notify("Waiter/Waitress " + response.data+" has been updated.");
             $scope.formdata.name = "";
             show_server();
           }, function(rejection) {
+            $scope.submit = false;
              var errors = rejection.data;
              $scope.formerror = errors;
           });

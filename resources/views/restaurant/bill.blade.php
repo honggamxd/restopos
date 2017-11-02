@@ -74,7 +74,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td style="width: 50%;vertical-align: top;">@{{items.menu}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
+      <td style="width: 50%;vertical-align: top;">@{{items.restaurant_menu_name}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
       <td style="text-align: center;vertical-align: top;">@{{items.price|currency:""}}</td>
       <td style="text-align: center;vertical-align: top;" ng-bind="items.quantity"></td>
       <td style="text-align: center;vertical-align: top;" ng-show="bill.type=='bad_order'" ng-bind="items.settlement"></td>
@@ -139,14 +139,24 @@
     <td ng-show="bill.type=='good_order'" colspan="2">Guest Name:</td>
   </tr>
   <tr>
+    <th ng-show="bill.type=='good_order'" colspan="2">@{{bill.guest_name}}</th>
+  </tr>
+  <tr>
     <td ng-show="bill.type=='good_order'" colspan="2">Room Number:</td>
+  </tr>
+  <tr>
+    <td ng-show="bill.type=='good_order'" colspan="2"></td>
   </tr>
   <tr>
     <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;padding-top: 20px;" colspan="2">Signature</td>
   </tr>
 </table>
 <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
-<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span> Close</a>
+<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
+@if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+@else
+<a href="javascript:void(0);" class="btn btn-danger hideprint" ng-click="delete(this)" ng-if="bill.is_paid==1"><span class="glyphicon glyphicon-trash"></span> Delete</a>
+@endif
 @endsection
 
 @section('scripts')
@@ -167,6 +177,8 @@
     @endif
     $scope.footer = {};
     $scope.payments = {};
+    $scope.formdata = {};
+    $scope.formdata._token = "{{csrf_token()}}";
     function show_bill() {
       $http({
           method : "GET",
@@ -182,7 +194,49 @@
           console.log(response.statusText);
       });
     }
-
+    $scope.delete = function(data){
+      console.log(data.bill.id);
+      alertify.prompt(
+        'Check #: '+data.bill.check_number,
+        'Reason to delete:',
+        '',
+        function(evt, value) {
+          if(value.trim()!=""){
+            var formdata = {};
+            formdata.deleted_comment = value;
+            formdata.bill_data = data.bill;
+            $scope.submit = true;
+            $http({
+               method: 'POST',
+               url: '/api/restaurant/table/customer/bill/delete/'+data.$parent.bill.id,
+               data: $.param(formdata),
+               headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(function(response) {
+              console.log(response.data);
+              $("#view-bill-modal").modal("hide");
+              $scope.formdata.deleted_comment = '';
+              alertify.success('Check # '+data.$parent.bill.check_number+' has been deleted');
+              $scope.submit = false;
+            }, function(rejection) {
+              if(rejection.status == 500){
+                error_505('Server Error, Try Again.');
+              }else if(rejection.status == 422){ 
+               var errors = rejection.data;
+               angular.forEach(errors, function(value, key) {
+                   alertify.error(value[0]);
+               });
+              }
+             $scope.submit = false;
+            });
+          }else{
+            alertify.error('Reason to delete message is required.');
+          }
+        },
+        function() {
+          
+        });
+    }
     $scope.has_payment = false;
     show_payment();
     function show_payment() {

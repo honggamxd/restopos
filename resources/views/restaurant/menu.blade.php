@@ -135,8 +135,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" ng-disabled="submit" form="add-items-form">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="ui primary button" form="add-items-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
   </div>
@@ -184,8 +184,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" ng-disabled="submit" form="edit-items-form">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="ui primary button" form="edit-items-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
   </div>
@@ -261,7 +261,7 @@
       .then(function(response) {
         // console.log(response.data);
         $scope.submit = false;
-        alertify.success($scope.formdata.name+" is added.");
+        $.notify($scope.formdata.name+" is added.");
         $scope.formdata.category = "";
         $scope.formdata.subcategory = "";
         $scope.formdata.name = "";
@@ -290,7 +290,7 @@
       .then(function(response) {
         console.log(response.data);
         $scope.submit = false;
-        alertify.success($scope.formdata.name+" is updated.");
+        $.notify($scope.formdata.name+" is updated.");
         $scope.formdata.category = "";
         $scope.formdata.subcategory = "";
         $scope.formdata.name = "";
@@ -307,6 +307,7 @@
     $scope.edit_menu = function(data) {
       console.log(data);
       $scope.formdata = data.menu_data;
+      $scope.formdata.price = parseInt(data.menu_data.price);
       $('#edit-menu-modal').modal('show');
     }
 
@@ -321,7 +322,7 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
+        $.notify(data.menu_data.name + " is now " + ($scope.formdata.is_prepared?"available":"unavailable")+ ".",($scope.formdata.is_prepared?"success":"info"));
       }, function(rejection) {
         var errors = rejection.data;
       });
