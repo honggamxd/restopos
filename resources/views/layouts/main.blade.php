@@ -155,6 +155,7 @@
 <script type="text/javascript" src="/assets/js/tablesort.js"></script>
 <script type="text/javascript" src="/assets/js/alertify.js"></script>
 <script type="text/javascript" src="/assets/js/shortcut.js"></script>
+<script type="text/javascript" src="/assets/js/notify.min.js"></script>
 
 <script type="text/javascript" src="/assets/js/core.js"></script>
 @yield('scripts')

@@ -9,4 +9,5 @@ class User extends Model
   use SoftDeletes;
   protected $table = 'user';
   protected $dates = ['deleted_at'];
+  protected $hidden = ['password'];
 }

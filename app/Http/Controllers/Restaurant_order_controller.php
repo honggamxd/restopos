@@ -24,11 +24,11 @@ class Restaurant_order_controller extends Controller
   }
   public function store(Request $request,$id)
   {
-    $validator = Validator::make($request->all(), [
-        'table_customer_cart' => 'required',
-        // 'body' => 'required',
+    $this->validate($request, [
+        'table_customer_cart' => 'required'
+    ],[
+      'table_customer_cart.required' => 'Cannot place an empty order.'
     ]);
-
     $restaurant_table_customer = new Restaurant_table_customer;
     $customer_data = $restaurant_table_customer->find($id);
 

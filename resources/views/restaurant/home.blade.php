@@ -92,7 +92,7 @@
                 <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out">
                   <i class="fa fa-file-text-o" aria-hidden="true"></i> Order
                 </button>
-                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-disabled="submit">
+                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-disabled="bill_out_submit" ng-class="{'loading':bill_out_submit}">
                   <i class="fa fa-calculator" aria-hidden="true"></i> Bill out
                 </button>
                 <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill">
@@ -163,8 +163,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-table-form" ng-disabled="submit" ng-show="has_table">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="add-table-form" ng-disabled="submit" ng-show="has_table" ng-class="{'loading':submit}">Submit</button>
       </div>
     </div>
 
@@ -209,8 +209,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="edit-table-form" ng-disabled="submit" ng-show="has_table">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="edit-table-form" ng-disabled="submit" ng-show="has_table" ng-class="{'loading':submit}">Submit</button>
       </div>
     </div>
 
@@ -282,7 +282,7 @@
                     <td class="left aligned middle aligned">@{{menu_data.name}}</td>
                     <td class="center aligned middle aligned">@{{menu_data.price|currency:""}}</td>
                     <td class="right aligned middle aligned">
-                      <button type="button" class="btn btn-success" ng-click="add_cart(this)"><i class="fa fa-arrow-right" aria-hidden="true"></i> Place Order</button>
+                      <button type="button" class="ui positive button" ng-click="add_cart(this)" ng-disabled="add_cart_submit" ng-class="{'loading':add_cart_submit}"><i class="fa fa-arrow-right" aria-hidden="true"></i> Place Order</button>
                     </td>
                   </tr>
                 </tbody>
@@ -338,8 +338,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="make_orders(this)">Confirm</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="button" class="ui primary button" ng-disabled="submit" ng-click="make_orders(this)" ng-class="{'loading':submit}">Confirm</button>
       </div>
     </div>
 
@@ -467,8 +467,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" form="before-bill-out-cancellation-order-form" class="btn btn-success" ng-click="cancel_orders('before',this)" ng-disabled="submit">Request for Cancellation</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui positive button" form="before-bill-out-cancellation-order-form" ng-click="cancel_orders('before',this)" ng-disabled="submit" ng-class="{'loading':submit}">Request for Cancellation</button>
       </div>
     </div>
   </div>
@@ -511,8 +511,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-success" ng-click="cancel_orders('after',this)" form="after-bill-out-cancellation-order-form" ng-disabled="submit">Request for Cancellation</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui positive button" ng-click="cancel_orders('after',this)" form="after-bill-out-cancellation-order-form" ng-disabled="submit" ng-class="{'loading':submit}">Request for Cancellation</button>
       </div>
     </div>
   </div>
@@ -605,8 +605,8 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="make-bill-form" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit" ng-hide="bill_preview.customer_data.has_cancellation_request==1">Proceed</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="ui primary button" form="make-bill-form" ng-click="make_bill(this)" ng-model="bill_preview.table_customer_id" ng-disabled="submit" ng-hide="bill_preview.customer_data.has_cancellation_request==1" ng-class="{'loading':submit}">Make Order Slip</button>
       </div>
     </div>
   </div>
@@ -708,8 +708,8 @@
         </form>
       </div>
       <div class="modal-footer" ng-model="bill_id">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-disabled="submit" ng-click="make_payment(this)" ng-if="valid_payment">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
+        <button type="button" class="ui primary button" ng-disabled="submit" ng-click="make_payment(this)" ng-if="valid_payment" ng-class="{'loading':submit}">Save Payment</button>
       </div>
     </div>
   </div>
@@ -829,6 +829,8 @@
       $('#add-table-modal').modal('show');
     });
 
+
+
     $scope.formdata = {};
     $scope.formdata.settlement = {};
     $scope.table = {};
@@ -848,6 +850,7 @@
          show_table();
          $scope.submit = false;
          $("#add-table-modal").modal("hide");
+         $.notify("A Customer has been added to the list.");
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');
@@ -960,7 +963,7 @@
         show_cart(data.$parent.customer_data.id);
         show_menu();
       }else{
-        alertify.error("The customer has already billed out");
+        $.notify("The customer has already billed out",'error');
       }
     }
 
@@ -1012,7 +1015,7 @@
       })
       .then(function(response) {
         console.log(response.data);
-        alertify.success('Your request for cancellation of orders has been deleted.');
+        $.notify('Your request for cancellation of orders has been deleted.','info');
         $scope.customer_data.has_cancellation_request=0;
       }, function(rejection) {
         if(rejection.status == 500){
@@ -1020,7 +1023,7 @@
         }else if(rejection.status == 422){
           var errors = rejection.data; 
           angular.forEach(errors, function(value, key) {
-              alertify.error(value[0]);
+            $.notify(value[0],'error');
           });
         }
       });
@@ -1044,7 +1047,7 @@
         })
         .then(function(response) {
           console.log(response.data);
-          alertify.success('A request for cancellations has been sent.');
+          $.notify('A request for cancellations has been sent.');
           $('#before-bill-out-cancellation-order-modal').modal('hide');
           $scope.formdata.reason_cancelled = "";
           $scope.submit = false;
@@ -1054,7 +1057,7 @@
           }else if(rejection.status == 422){
             var errors = rejection.data; 
             angular.forEach(errors, function(value, key) {
-                alertify.error(value[0]);
+                $.notify(value[0],'error');
             });
           }
           $scope.submit = false;
@@ -1069,7 +1072,7 @@
         })
         .then(function(response) {
           console.log(response.data);
-          alertify.success('A request for cancellations has been sent.');
+          $.notify('A request for cancellations has been sent.');
           $('#after-bill-out-cancellation-order-modal').modal('hide');
           $scope.formdata.reason_cancelled = "";
           $scope.submit = false;
@@ -1079,7 +1082,7 @@
           }else if(rejection.status == 422){
             var errors = rejection.data;
             angular.forEach(errors, function(value, key) {
-                alertify.error(value[0]);
+                $.notify(value[0],'error');
             });
           }
           $scope.submit = false;
@@ -1223,9 +1226,7 @@
           error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
           var errors = rejection.data;
-          $scope.formdata.ar_number = errors.ar_number;
-          $scope.formdata.amount = errors.amount;
-          $scope.formdata.date_payment = errors.date_payment;
+          $.notify(errors.table_customer_cart[0],'error');
         }
         $scope.submit = false; 
       }); 
@@ -1254,6 +1255,8 @@
       });
     }
     $scope.add_cart = function(data) {
+      $scope.add_cart_submit = true;
+      
       console.log(data);
       // console.log(data.menu_data);
       $scope.formdata.menu_id = data.menu_data.id;
@@ -1268,16 +1271,19 @@
          // console.log(response.data);
          $scope.table_customer_cart = response.data.cart;
          $scope.table_customer_total = response.data.total;
-         // alertify.success("Order has been placed.");
+         $.notify("Order has been placed.");
+        $scope.add_cart_submit = false;
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
            var errors = rejection.data;
-           alertify.error(rejection.data.error);
+           $.notify(rejection.data.error,'error');
            $scope.formdata.date_payment = errors.date_payment; 
         }
+        $scope.add_cart_submit = false;
       });
+      
     }
 
     $scope.remove_item_cart = function(data) {
@@ -1294,13 +1300,13 @@
          // console.log(response.data);
          $scope.table_customer_cart = response.data.cart;
          $scope.table_customer_total = response.data.total;
-         // alertify.success("Order has been placed.");
+         $.notify("Order has been removed from the list.","info");
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
            var errors = rejection.data;
-           alertify.error(rejection.data.error);
+           $.notify(rejection.data.error,'error');
            $scope.formdata.date_payment = errors.date_payment;
         }
       });
@@ -1346,7 +1352,7 @@
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#bill-preview-modal').modal('show');
           if($scope.bill_preview.customer_data.has_cancellation_request=='1'){
-            alertify.error('Cannot make a bill, this customer has an existing cancellation request.');
+            $.notify('Cannot make a bill, this customer has an existing cancellation request.','error');
           }
         }, function(rejection) {
           if(rejection.status == 500){
@@ -1356,7 +1362,7 @@
           }
         });
       }else{
-        $scope.submit = true;
+        $scope.bill_out_submit = true;
         $http({
            method: 'POST',
            url: '/api/restaurant/table/customer/bill/preview/'+data.$parent.customer_data.id,
@@ -1365,7 +1371,7 @@
         })
         .then(function(response) {
           console.log(response.data);
-          $scope.submit = false;
+          $scope.bill_out_submit = false;
           $scope.bill_preview = {};
           $scope.bill_preview.customer_data = {};
           $scope.bill_preview.items = response.data.result;
@@ -1383,7 +1389,7 @@
            var errors = rejection.data;
            $scope.formdata.date_payment = errors.date_payment;
           }
-           $scope.submit = false; 
+           $scope.bill_out_submit = false; 
         });
       }
     }
@@ -1422,7 +1428,7 @@
       })
       .then(function(response) {
         console.log(response.data);
-        alertify.success('Cancelled Orders has been settled.');
+        $.notify('Cancelled Orders has been settled.');
         $('#settlement-cancelled-order-modal').modal('hide');
         $scope.submit = false;
       }, function(rejection) {
@@ -1431,7 +1437,7 @@
         }else if(rejection.status == 422){
          var errors = rejection.data;
          angular.forEach(errors, function(value, key) {
-             alertify.error(value[0]);
+             $.notify(value[0],'error');
          });
         }
        $scope.submit = false; 
@@ -1470,7 +1476,7 @@
           error_505('Server Error, Try Again.');
         }else if(rejection.status == 422){
            var errors = rejection.data;
-           alertify.error(errors.items[0]);
+           $.notify(errors.items[0],'error');
         }
          $scope.submit = false; 
       });
@@ -1553,13 +1559,13 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
+        $.notify('The Payment has been saved.');
         console.log(response.data);
         $scope.submit = false;
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
         $scope.formdata.settlement = {};
         $("#payment-modal").modal("hide");
-        console.log(response.data)
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');
@@ -1596,7 +1602,7 @@
     }
 
     $scope.edit_table = function(data) {
-      console.log(data.formdata.customer_data.id);
+      $scope.submit = true;
       $http({
          method: 'PUT',
          url: '/api/restaurant/table/customer/update/'+data.formdata.customer_data.id,
@@ -1607,6 +1613,7 @@
         console.log(response.data);
         $('#edit-table-modal').modal('hide');
         $scope.submit = false;
+        $.notify("The information of customer has been updated.");
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');

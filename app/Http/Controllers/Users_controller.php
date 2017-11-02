@@ -57,15 +57,15 @@ class Users_controller extends Controller
       switch ($user_data->privilege) {
         case 'admin':
           # code...
-          $user_data->privilege = "Admin";
+          $user_data->str_privilege = "Admin";
           break;
         case 'restaurant_admin':
           # code...
-          $user_data->privilege = "Restaurant Admin";
+          $user_data->str_privilege = "Restaurant Admin";
           break;
         case 'restaurant_cashier':
           # code...
-          $user_data->privilege = "Restaurant Cashier";
+          $user_data->str_privilege = "Restaurant Cashier";
           break;
         
         default:
@@ -88,10 +88,10 @@ class Users_controller extends Controller
         'name' => 'required',
         'username' => 'required|unique:user|min:5',
         'password' => 'required|min:5',
-        'restaurant_id' => 'required_if:privilege,restaurant_cashier',
+        'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
     ],
     [
-      'restaurant_id.required_if' => 'The outlet field is required when privilege is restaurant cashier.',
+      'restaurant_id.required_if' => 'The outlet field is required when privilege is restaurant admin or cashier.',
     ]
     );
 
@@ -103,6 +103,31 @@ class Users_controller extends Controller
     $user->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
     $user->save();
 
-    return $request;
+    return $this->show_users($request);
+  }
+
+  public function edit_privilege(Request $request,$id)
+  {
+    $this->validate($request, [
+        'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
+    ],
+    [
+      'restaurant_id.required_if' => 'The outlet field is required when privilege is restaurant admin or cashier.',
+    ]
+    );
+
+    $user = new User;
+    $user_data = $user->find($id);
+    $user_data->privilege = $request->privilege;
+    $user_data->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
+    $user_data->save();
+
+    return $this->show_users($request);
+  }
+  public function delete(Request $request,$id)
+  {
+    $user = new User;
+    $user_data = $user->find($id)->delete();
+    return $this->show_users($request);
   }
 }

@@ -7,6 +7,7 @@ use DB;
 use App\Http\Requests;
 use App\Restaurant_menu;
 use App\Restaurant_menu_ingredients;
+use App\Pagination;
 
 class Restaurant_menu_controller extends Controller
 {
@@ -87,14 +88,25 @@ class Restaurant_menu_controller extends Controller
       }
       $data["result"] = $data["result"]->get();
     }else{
-      $data["result"] =  $restaurant_menu
-        ->where('category','!=','')
-        ->where('subcategory','!=','')
-        ->where('deleted',0)
-        ->orderBy('name')
-        ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
-        ->get();
+      DB::enableQueryLog();
+      
+      $data["result"] =  $restaurant_menu->query();
+      $data["result"]->where('category','!=','');
+      $data["result"]->where('subcategory','!=','');
+      $data["result"]->where('deleted',0);
+      $data["result"]->orderBy('name');
+      $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+      if($request->category!=null&&$request->category!='all'){
+        $data['result']->where('category',$request->category);
+      }
+      if($request->subcategory!=null&&$request->subcategory!='all'){
+        $data['result']->where('subcategory',$request->subcategory);
+      }
+      $data["result"] = $data["result"]->paginate(50);
+      $data['pagination'] = (string)(new Pagination($data["result"]))->render();
+      $data["getQueryLog"] = DB::getQueryLog();
     }
+
     foreach ($data["result"] as $menu_data) {
       $menu_data->is_prepared = ($menu_data->is_prepared==1?TRUE:FALSE);
       $menu_data->name = ($menu_data->name==''?'Special Order':$menu_data->name);
@@ -102,12 +114,7 @@ class Restaurant_menu_controller extends Controller
     return $data;
   }
 
-  public function show_category(Request $request,$restaurant_id)
-  {
-    $restaurant_menu = new Restaurant_menu;
-    $data["result"] = $restaurant_menu->orderBy('category')->select('category')->distinct()->pluck('category');
-    return $data;
-  }
+
 
   public function available_to_menu(Request $request,$id)
   {
@@ -140,18 +147,34 @@ class Restaurant_menu_controller extends Controller
     return $data;
   }
 
-
+  public function show_category(Request $request,$restaurant_id)
+  {
+    $restaurant_menu = new Restaurant_menu;
+    $data["result"] = $restaurant_menu->query();
+    $data["result"]->orderBy('category');
+    $data["result"]->select('category');
+    if($request->session()->get('users.user_data')->restaurant_id!=0){
+      $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+    }
+    $data["result"]->distinct();
+    $data["result"] = $data["result"]->pluck('category');
+    return $data;
+  }
   public function show_subcategory(Request $request)
   {
-    DB::enableQueryLog();
    
     $data = array();
     if($request->category!='all'){
       $restaurant_menu = new Restaurant_menu;
-      $data = $restaurant_menu->orderBy('subcategory')->where('category',$request->category)->select('subcategory')->distinct()->pluck('subcategory');
-      // $
+      $data = $restaurant_menu->query();
+      $data->orderBy('subcategory');
+      $data->where('category',$request->category)->select('subcategory');
+      if($request->session()->get('users.user_data')->restaurant_id!=0){
+        $data->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+      }
+      $data->distinct();
+      $data = $data->pluck('subcategory');
     }
-    // $data["getQueryLog"] = DB::getQueryLog();
     return $data;
   }
 }

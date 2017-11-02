@@ -136,6 +136,8 @@ Route::post('/login', 'Users_controller@login');
 Route::get('/logout', 'Users_controller@logout');
 Route::get('/api/users', 'Users_controller@show_users');
 Route::post('/api/users/add', 'Users_controller@add');
+Route::post('/api/users/edit/{id}', 'Users_controller@edit_privilege');
+Route::post('/api/users/delete/{id}', 'Users_controller@delete');
 
 
 Route::get('/restaurant/settings','Restaurant_controller@settings');

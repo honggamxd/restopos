@@ -36,10 +36,20 @@
       </thead>
       <tbody>
         <tr ng-repeat="user in users">
-          <td class="center aligned">@{{user.name}}</td>
-          <td class="center aligned">@{{user.username}}</td>
-          <td class="center aligned">@{{user.privilege}}</td>
-          <td class="center aligned">@{{user.restaurant_name}}</td>
+          <td class="center aligned middle aligned">@{{user.name}}</td>
+          <td class="center aligned middle aligned">@{{user.username}}</td>
+          <td class="center aligned middle aligned">@{{user.str_privilege}}</td>
+          <td class="center aligned middle aligned">@{{user.restaurant_name}}</td>
+          <td class="center aligned middle aligned">
+            <div class="ui buttons">
+              <button class="ui primary button" ng-click="edit_user(this)" data-balloon="Click Edit the Privilege of the User" data-balloon-pos="down">
+                <i class="glyphicon glyphicon-edit" aria-hidden="true"></i>
+              </button>
+              <button class="ui negative button" ng-click="delete_user(this)" data-balloon="Click Delete User" data-balloon-pos="down">
+                <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+              </button>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -98,15 +108,59 @@
 
         <div class="form-group">
           <label>Password</label>
-          <input class="form-control" type="text" placeholder="Enter Password" name="pax" ng-model="formdata.password">
+          <input class="form-control" type="text" placeholder="Enter Password" name="pax" ng-model="formdata.password" ng-init="formdata.password='password123'" readonly>
+          <small>* This is the default password, the user must change his password after account creation.</small>
           <p class="help-block">@{{formerrors.password[0]}}</p>
         </div>
 
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="add-user-form" ng-disabled="submit">Save</button>
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="add-user-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="edit-user-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">edit User privileges</h4>
+      </div>
+      <div class="modal-body">
+        <form id="edit-user-form" ng-submit="update_user()">
+        {{ csrf_field() }}
+
+        <div class="form-group">
+          <label>Privilege:</label>
+          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.privilege" ng-init="formdata.privilege='restaurant_cashier'">
+            <option value="restaurant_cashier">Restaurant Cashier</option>
+            <option value="restaurant_admin">Restaurant Admin</option>
+            <option value="admin">Admin</option>
+          </select>
+          <p class="help-block">@{{formerrors.privilege[0]}}</p>
+        </div>
+
+
+        <div class="form-group" ng-hide="formdata.privilege=='admin'">
+          <label>Outlet:</label>
+          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id">
+            <option value="">Select Outlet</option>
+            @foreach($restaurants as $restaurant)
+              <option value="{{$restaurant->id}}">{{$restaurant->name}}</option>
+            @endforeach
+          </select>
+          <p class="help-block">@{{formerrors.restaurant_id[0]}}</p>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="edit-user-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>
       </div>
     </div>
 
@@ -155,6 +209,86 @@
          $scope.submit = false;
       });
       
+    }
+
+    $scope.edit_user = function(data) {
+      console.log(data);
+      $scope.formdata = data.user;
+      $scope.formdata.restaurant_id = (data.user.restaurant_id.toString()=='0'?'':data.user.restaurant_id.toString()); 
+      $('#edit-user-modal').modal('show');
+    }
+
+    $scope.update_user = function(data) {
+      var formdata = {
+        id: $scope.formdata.id,
+        privilege: $scope.formdata.privilege,
+        restaurant_id: $scope.formdata.restaurant_id,
+      };
+      $scope.formerrors = {};
+      $scope.submit = true;
+      $http({
+         method: 'POST',
+         url: '/api/users/edit/'+formdata.id,
+         data: $.param(formdata),
+         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        console.log(response.data)
+         $("#edit-user-modal").modal("hide");
+         alertify.success('The Privileges of <b>'+$scope.formdata.username+'</b> user has been updated.');
+         $scope.formdata = {};
+         $scope.formerrors = {};
+         $scope.submit = false;
+         $scope.users = response.data.result;
+      }, function(rejection) {
+         var errors = rejection.data;
+         if(rejection.status == 500){
+           error_505('Server Error, Try Again.');
+         }else if(rejection.status == 422){        
+            var errors = rejection.data;
+            $scope.formerrors = errors;
+            $scope.submit = false;
+         }
+      });
+    }
+
+    $scope.delete_user = function(data) {
+      alertify.confirm(
+        'DELETE  <b style=" text-transform: uppercase;">'+data.user.username+'</b>',
+        'Are you sure you want to delete this  <b>'+data.user.username+'</b> user?',
+        function(){
+          var formdata = {
+            id: data.user.id,
+            privilege: data.user.privilege,
+            restaurant_id: data.user.restaurant_id,
+          };
+          $scope.formerrors = {};
+          $scope.submit = true;
+          $http({
+             method: 'POST',
+             url: '/api/users/delete/'+formdata.id,
+             data: $.param(formdata),
+             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          })
+          .then(function(response) {
+             alertify.success('The user <b>'+data.user.username+'</b> has been delete.');
+             $scope.users = response.data.result;
+          }, function(rejection) {
+             var errors = rejection.data;
+             if(rejection.status == 500){
+               error_505('Server Error, Try Again.');
+             }else if(rejection.status == 422){        
+                var errors = rejection.data;
+                $scope.formerrors = errors;
+                $scope.submit = false;
+             }
+          });
+        },
+        function()
+        {
+          // alertify.error('Cancel')
+        }
+      );
     }
   });
 

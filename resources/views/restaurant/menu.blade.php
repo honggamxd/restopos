@@ -30,17 +30,17 @@
       <div class="four fields">
         <div class="field">
           <label>Category</label>
-          <select class="ui dropdown fluid">
-          @foreach ($categories as $category)
+          <select class="ui dropdown fluid" ng-change="category_change_menu_list(this)" ng-model="select_category" ng-init="select_category='all'">
+            <option value="all">All Menu</option>
+            @foreach($categories as $category)
             <option value="{{$category}}">{{$category}}</option>
-          @endforeach
+            @endforeach
           </select>
         </div>
         <div class="field">
-          <label>Subcategory</label>
-          <select class="ui dropdown fluid">
-            <option value="food">Food</option>
-            <option value="beverage">Beverage</option>
+          <label>Category</label>
+          <select class="form-control" ng-change="subcategory_change_menu_list(this)" ng-model="select_subcategory" ng-options="item for item in subcategories">
+          <option value="">All Subcategories</option>
           </select>
         </div>
 
@@ -86,6 +86,7 @@
         </tr>
       </tbody>
     </table>
+    <div ng-bind-html="pages" class="text-center"></div>
   </div>
 </div>
 
@@ -197,7 +198,7 @@
   $('table').tablesort();
 
   // $('.ui.checkbox').checkbox('enable');
-  var app = angular.module('main', []);
+  var app = angular.module('main', ['ngSanitize']);
   app.controller('add_menu-controller', function($scope,$http, $sce) {
     angular.element('.ui.checkbox').checkbox('enable');
   });
@@ -207,15 +208,45 @@
     $scope.formerrors = {};
     $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
     show_menu();
-    function show_menu() {
+    function show_menu(page=1,category='all',subcategory='all') {
       $http({
         method : "GET",
         url : "/api/restaurant/menu/list/list",
+        params: {
+          page: page,
+          category: category,
+          subcategory: subcategory,
+        },
       }).then(function mySuccess(response) {
-        $scope.menu = response.data.result;
+        $scope.menu = response.data.result.data;
+        $scope.pages = $sce.trustAsHtml(response.data.pagination);
       }, function myError(response) {
         console.log(response.statusText);
       });
+    }
+
+    $scope.category_change_menu_list = function() {
+      show_menu(1,$scope.select_category);
+      $http({
+          method : "GET",
+          url : "/api/restaurant/menu/subcategory",
+          params: {
+            category: $scope.select_category
+          },
+      }).then(function mySuccess(response) {
+          $scope.subcategories = response.data;
+          // console.log(response.data);
+      }, function(rejection) {
+        if(rejection.status == 500){
+          error_505('Server Error, Try Again.');
+        }else if(rejection.status == 422){ 
+          console.log(rejection.statusText);
+        }
+      });
+    }
+
+    $scope.subcategory_change_menu_list = function() {
+      show_menu(1,$scope.select_category,$scope.select_subcategory);
     }
 
     $scope.add_menu = function() {
@@ -228,7 +259,7 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
+        // console.log(response.data);
         $scope.submit = false;
         alertify.success($scope.formdata.name+" is added.");
         $scope.formdata.category = "";
@@ -243,6 +274,9 @@
         $scope.submit = false;
       });
     }
+    $(document).on('click','.gotopage',function(e) {
+      show_menu(e.target.innerHTML);
+    });
 
     $scope.update_menu = function() {
       $scope.submit = true;
