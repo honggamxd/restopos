@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
             return $value>$parameters[0];
         });
 
+        Validator::extend('password', function($attribute, $value, $parameters, $validator) {
+            $user_data = DB::table($parameters[0])->where('id',$parameters[1])->first();
+            return $user_data->password===md5($value);
+        });
+
         Validator::extend('custom_unique', function($attribute, $value, $parameters, $validator) {
             $db = DB::table($parameters[0])->where('deleted',0);
             $db->where($parameters[1],$value);

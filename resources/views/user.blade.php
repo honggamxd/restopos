@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="user in users">
+        <tr ng-repeat="user in users" ng-hide="user.id=={{Session::get('users.user_data')->id}}">
           <td class="center aligned middle aligned">@{{user.name}}</td>
           <td class="center aligned middle aligned">@{{user.username}}</td>
           <td class="center aligned middle aligned">@{{user.str_privilege}}</td>

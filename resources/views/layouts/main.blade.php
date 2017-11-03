@@ -110,7 +110,7 @@
       {{Session::get('users.user_data')->name}}
       <span class="caret"></span></a>
       <ul class="dropdown-menu">
-        <li><a href="javascript:void(0);">Change Password</a></li>
+        <li><a href="/account-settings">Account Settings</a></li>
         <li><a href="/logout">Logout</a></li>
       </ul>
     </li>

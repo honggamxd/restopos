@@ -132,11 +132,13 @@ Route::get('/api/reports/general/menu_popularity', 'Reports_controller@menu_popu
 
 //users
 Route::get('/users', 'Users_controller@index');
+Route::get('/account-settings', 'Users_controller@settings');
 Route::get('/login', 'Users_controller@login_index');
 Route::post('/login', 'Users_controller@login');
 Route::get('/logout', 'Users_controller@logout');
 Route::get('/api/users', 'Users_controller@show_users');
 Route::post('/api/users/add', 'Users_controller@add');
+Route::post('/api/users/settings', 'Users_controller@save_settings');
 Route::post('/api/users/edit/{id}', 'Users_controller@edit_privilege');
 Route::post('/api/users/delete/{id}', 'Users_controller@delete');
 

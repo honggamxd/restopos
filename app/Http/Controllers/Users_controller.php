@@ -41,6 +41,35 @@ class Users_controller extends Controller
     # code...
   }
 
+  public function settings(Request $request)
+  {
+    $user_data = User::find($request->session()->get('users.user_data')->id);
+    return view('account-settings',compact('user_data'));
+  }
+  public function save_settings(Request $request)
+  {
+    $this->validate($request, [
+         'name' => 'required',
+         'username' => 'required|min:5|max:12|unique:user,username,'.$request->id,
+         'old_password' => 'required|password:user,'.$request->id,
+         'password' => 'confirmed|min:5|max:12',
+     ],[
+        'old_password.required' => 'The password field is required.',
+        'old_password.password' => 'Incorrect password.'
+     ]);
+
+    $user_data = User::find($request->id);
+    if($request->password!=null){
+      $user_data->password = md5($request->password);
+    }
+    $user_data->username = $request->username;
+    $user_data->name = $request->name;
+    $user_data->username = $request->username;
+    $user_data->save();
+    $data["user_data"] = $user_data;
+    $data["user_data"]->restaurant = ($data["user_data"]->restaurant_id==0?"":DB::table('restaurant')->find($data["user_data"]->restaurant_id)->name);
+    $request->session()->put('users',$data);
+  }
   
   public function logout(Request $request)
   {
@@ -86,8 +115,8 @@ class Users_controller extends Controller
     // return $request;
     $this->validate($request, [
         'name' => 'required',
-        'username' => 'required|unique:user|min:5',
-        'password' => 'required|min:5',
+        'username' => 'required|unique:user|min:5|max:12',
+        'password' => 'required|min:5|max:12',
         'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
     ],
     [
