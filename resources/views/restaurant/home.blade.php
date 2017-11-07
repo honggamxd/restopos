@@ -391,23 +391,22 @@
         <h4 class="modal-title">Order</h4>
       </div>
       <div class="modal-body">
+        <h3 style="text-align: center;">FOOD ORDER @{{order.que_number}}</h3>
         <table class="order-table">
         <tbody>
           <tr>
-            <td style="width: 50%">Outlet:<span ng-cloak>@{{order.restaurant_name}}</span></td>
-            <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
-          </tr>
-          <tr>
-            <td>Food Order #: <span ng-cloak>@{{order.id}}</td>
-            <td>Time: <span ng-cloak>@{{order.date_time}}</span></td>
+            <td style="width: 50%" colspan="2">Outlet: <span ng-cloak>@{{order.restaurant_name}}</span></td>
           </tr>
           <tr>
             <td>Table #: <span ng-cloak>@{{order.table_name}}</span></td>
-            <td>Number of Pax: <span ng-cloak>@{{order.pax}}</span></td>
+            <td>Date: <span ng-cloak>@{{order.date_}}</span></td>
+          </tr>
+          <tr>
+            <td># of Pax: <span ng-cloak>@{{order.pax}}</span></td>
+            <td>Time: <span ng-cloak>@{{order.date_time}}</span></td>
           </tr>
         </tbody>
         </table>
-        <h1 style="text-align: center;">@{{order.que_number}}</h1>
         <table class="order-table">
         <tbody>
           <thead>

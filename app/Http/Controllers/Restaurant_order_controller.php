@@ -115,8 +115,7 @@ class Restaurant_order_controller extends Controller
         ->where('restaurant_order_cancellation.approved',1)
         ->where('restaurant_order_cancellation_detail.restaurant_menu_id',$order_detail->restaurant_menu_id)
         ->groupBy('restaurant_order_cancellation_detail.restaurant_menu_id')
-        ->first()
-        ->total;
+        ->value('total');
       }
     }
     $data["getQueryLog"] = DB::getQueryLog();
