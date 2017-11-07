@@ -257,6 +257,7 @@ class Restaurant_table_customer_controller extends Controller
     $data["result"] = $restaurant_order->where('restaurant_table_customer_id',$id)->get();
     foreach ($data["result"] as $restaurant_order_data) {
       $restaurant_order_data->format_id = sprintf('%04d',$restaurant_order_data->id);
+      $restaurant_order_data->que_number = sprintf('%04d',$restaurant_order_data->que_number);
     }
     $restaurant_table_customer = new Restaurant_table_customer;
     $data['customer_data'] = $restaurant_table_customer->find($id);

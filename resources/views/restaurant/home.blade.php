@@ -366,7 +366,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="order_data in orders">
-              <td class="center aligned"><p style="cursor: pointer;" data-balloon="Click to View" data-balloon-pos="up" ng-bind="order_data.check_number" ng-click="preview_order(this)"></p></td>
+              <td class="center aligned"><p style="cursor: pointer;" data-balloon="Click to View" data-balloon-pos="up" ng-bind="order_data.que_number" ng-click="preview_order(this)"></p></td>
               <td>
                 <a class="btn btn-primary" href="/restaurant/order/@{{order_data.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
               </td>
