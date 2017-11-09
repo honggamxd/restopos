@@ -92,16 +92,16 @@
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Discount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">NET Amount</th>
           <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+4 }}">Mode of Payments / Settlements</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Special Discount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD Discount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD VAT Exemption</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">NET Billing</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Sales NET of VAT & Service Charge</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Service Charge</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">VATable Sales</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Output VAT</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Sales Inclusive of VAT</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD Discount</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD VAT Exemption</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">NET Billing</th>
           <!-- <th rowspan="2" class="center aligned middle aligned" ng-show="show_settlements">Excess</th> -->
         </tr>
         <tr>
@@ -141,16 +141,16 @@
           <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.bad_order |currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.staff_charge |currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.total_discount|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_discount|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_vat_exemption|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.net_billing|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_net_of_vat_and_service_charge|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.service_charge|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.vatable_sales|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.output_vat|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_inclusive_of_vat|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_discount|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_vat_exemption|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.net_billing|currency:""}}</td>
           <!-- <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.excess |currency:""}}</td> -->
         </tr>
       </tbody>
@@ -176,16 +176,16 @@
           <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.bad_order|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.staff_charge|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.total_discount|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_discount|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_vat_exemption|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.net_billing|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_net_of_vat_and_service_charge|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.service_charge|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.vatable_sales|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.output_vat|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_inclusive_of_vat|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_discount|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_vat_exemption|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.net_billing|currency:""}}</th>
           <!-- <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.excess|currency:""}}</th> -->
         </tr>
       </tfoot>
