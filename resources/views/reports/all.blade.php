@@ -89,11 +89,11 @@
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Gross Amount</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Special/Trade Discount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Discount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">NET Amount</th>
           <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+4 }}">Mode of Payments / Settlements</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Total Discount</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Special Discount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Sales NET of VAT & Service Charge</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Service Charge</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">VATable Sales</th>

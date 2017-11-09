@@ -31,7 +31,8 @@ class Users_controller extends Controller
       $request->session()->put('users',$data);
       return redirect('/');
     }else{
-      return view('login');
+      $data['password'] = "Invalid Password";
+      return view('login')->withErrors($data);
     }
   }
 

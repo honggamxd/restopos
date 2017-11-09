@@ -34,64 +34,60 @@
 </style>
 </head>
 <body id="has-logo" ng-controller="content-controller">
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-8 col-md-4 col-lg-4 col-sm-push-2 col-md-push-4 col-lg-push-4">
-      <div id="login-container" style="background-color: white;">
-      <div style="padding: 10px">
-        <img class="img-responsive" src="/assets/images/logo.png">
-      </div>
-        <form action="/login" method="post" class="form-horizontal">
-          {{csrf_field()}}
-          <div class="form-group">
-            <label class="col-sm-2 col-xs-4 col-md-3" for="email">Username:</label>
-            <div class="col-sm-10 col-xs-8 col-md-9">
-              <div class="ui left icon input fluid">
-                <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username">
-                <i class="user icon"></i>
-              </div>
-              <p class="help-block" id="account_help-block">{{ $errors->first('username') }}</p>
-            </div>
+  <div class="container login" style="height:90vh; display: flex; justify-content:center; align-items:center" >
+      <div class="col-sm-8 panel panel-default" >
+          <div class="col-sm-6" style="text-align:center" >
+              <br>
+              <br>
+                <img src="/assets/images/logo.png" style="width: 100%;" />
+              <h2>
+                  <b>ORDERING SYSTEM</b>
+              </h2>
           </div>
-          <div class="form-group">
-            <label class="col-sm-2 col-xs-4 col-md-3" for="pwd">Password:</label>
-            <div class="col-sm-10 col-xs-8 col-md-9"> 
-              <div class="ui left icon input fluid">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password">
-                <i class="lock icon"></i>
-              </div>
-              <p class="help-block" id="account_password_help-block">{{ $errors->first('password') }}</p>
-            </div>
-          </div>
-          <div class="form-group"> 
-            <div class="col-sm-12">
-              <button type="submit" class="btn btn-primary btn-block">Login</button>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div>
-        <br>
-        <b>Admin Password</b><br>
-        Username: <b>admin</b><br>
-        Password: <b>admin</b><br>
-        <br>
-        <b>Viewdeck Café User</b><br>
-        Restaurant Admin: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>admin1</b>/<b>admin1</b><br>
-        Restaurant Cashier: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>user1</b>/<b>user1</b><br>
-        <br>
-        <b>Koi Café</b><br>
-        Restaurant Admin: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>admin2</b>/<b>admin2</b><br>
-        Restaurant Cashier: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>user2</b>/<b>user2</b><br>
-        <br>
-        <b>Restaurant 3</b><br>
-        Restaurant Admin: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>admin3</b>/<b>admin3</b><br>
-        Restaurant Cashier: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>user3</b>/<b>user3</b><br>
-      </div>
-    </div>
-  </div>
+          <div class="col-sm-6" >
+              <br>
+              <form class="form-horizontal panel-body " method="POST" action="/login">
+                {{csrf_field()}}
 
-</div>
+                  <div class="form-group">
+
+                      <div class="col-md-12">
+                          <label for="username" class="control-label"> Username: </label>
+                          <div class="ui left icon input fluid">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" autocomplete="new-password" required autofocus>
+                            <i class="user icon"></i>
+                          </div>
+                          <p class="help-block" id="account_help-block">{{ $errors->first('username') }}</p>
+
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="col-md-12">
+                          <label for="username" class="control-label"> Password: </label>
+                          <div class="ui left icon input fluid">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" autocomplete="new-password">
+                            <i class="lock icon"></i>
+                          </div>
+
+                          <p class="help-block" id="account_password_help-block">{{ $errors->first('password') }}</p>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="col-md-12">
+                          <br>
+                          <button type="submit" class="btn btn-primary btn-block">
+                              Login
+                          </button>
+                      </div>
+                  </div>
+
+              </form> 
+
+          </div>
+      </div>
+  </div>
 <!-- jQuery -->
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
