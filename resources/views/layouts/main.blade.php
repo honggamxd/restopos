@@ -147,9 +147,9 @@
 <script type="text/javascript" src="/assets/semantic-ui/components/checkbox.min.js"></script>
 
 <!-- Angularjs -->
-<script type="text/javascript" src="/assets/js/1.6.5/angular.min.js"></script>
-<script type="text/javascript" src="/assets/js/1.6.5/angular-route.min.js"></script>
-<script type="text/javascript" src="/assets/js/1.6.5/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="/assets/js/1.6.5/angular.js"></script>
+<script type="text/javascript" src="/assets/js/1.6.5/angular-route.js"></script>
+<script type="text/javascript" src="/assets/js/1.6.5/angular-sanitize.js"></script>
 
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 <script type="text/javascript" src="/assets/js/tablesort.js"></script>

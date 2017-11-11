@@ -125,6 +125,15 @@
       case 'staff_charge':
         return 'Staff Charge';
         break;
+      case 'manager_meals':
+        return 'Managers Meal';
+        break;
+      case 'sales_office':
+        return 'Sales Office';
+        break;
+      case 'representation':
+        return 'Representation';
+        break;
       default:
         return '';
         break;

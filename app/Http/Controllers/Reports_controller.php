@@ -35,7 +35,8 @@ class Reports_controller extends Controller
     if($type=="all"){
       $app_config = DB::table('app_config')->first();
       $data["categories"] = explode(',', $app_config->categories);
-      $data["settlements"] = explode(',', $app_config->settlements);
+      $data["settlements"] = explode(',', $app_config->settlements_arrangements);
+      $data["restaurants"] = Restaurant::all();
       $user_data = $request->session()->get('users.user_data');
       if($user_data->privilege=='restaurant_cashier'){
 
@@ -46,8 +47,6 @@ class Reports_controller extends Controller
         $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
         $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
       }
-
-      // return $data;
       return view('reports.all',$data);
     }elseif ($type=="purchases") {
       # code...
@@ -66,8 +65,9 @@ class Reports_controller extends Controller
     $data["date_to"] = date('F d, Y');
     $app_config = DB::table('app_config')->first();
     $data["categories"] = explode(',', $app_config->categories);
-    $data["settlements"] = explode(',', $app_config->settlements);
-    $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
+    $data["settlements"] = explode(',', $app_config->settlements_arrangements);
+    $data["restaurants"] = Restaurant::all();
+    $data['restaurant_servers'] = Restaurant_server::withTrashed()->where('restaurant_id')->get();
     $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
     return view('reports.all',$data);
   }
@@ -102,8 +102,8 @@ class Reports_controller extends Controller
     $categories = $app_config->categories;
     $categories = explode(',', $categories);
 
-    $settlements = $app_config->settlements.',cancelled,bad_order,staff_charge';
-    $settlements = explode(',', $settlements);
+    $settlements = $app_config->settlements.','.$app_config->badorder_settlements;
+    $settlements = explode(',', $app_config->settlements_arrangements);
 
     $page = $request->page;
     $display_per_page = $request->display_per_page;

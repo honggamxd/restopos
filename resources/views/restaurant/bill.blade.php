@@ -155,7 +155,7 @@
 <a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
 @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
 @else
-<a href="javascript:void(0);" class="btn btn-danger hideprint" ng-click="delete(this)" ng-if="bill.is_paid==1"><span class="glyphicon glyphicon-trash"></span> Delete</a>
+<a href="javascript:void(0);" class="btn btn-danger hideprint" ng-click="delete(this)" ng-if="bill.is_paid==1&&bill.deleted_at==null"><span class="glyphicon glyphicon-trash"></span> Delete</a>
 @endif
 @endsection
 
@@ -216,7 +216,8 @@
               console.log(response.data);
               $("#view-bill-modal").modal("hide");
               $scope.formdata.deleted_comment = '';
-              alertify.success('Check # '+data.$parent.bill.check_number+' has been deleted');
+              $.notify('Check # '+data.$parent.bill.check_number+' has been deleted');
+              $scope.bill.deleted_at = true;
               $scope.submit = false;
             }, function(rejection) {
               if(rejection.status == 500){
@@ -224,13 +225,13 @@
               }else if(rejection.status == 422){ 
                var errors = rejection.data;
                angular.forEach(errors, function(value, key) {
-                   alertify.error(value[0]);
+                   $.notify(value[0],'error');
                });
               }
              $scope.submit = false;
             });
           }else{
-            alertify.error('Reason to delete message is required.');
+            $.notify('Reason to delete message is required.','error');
           }
         },
         function() {

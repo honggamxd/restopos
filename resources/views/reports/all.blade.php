@@ -1,6 +1,14 @@
 @extends('layouts.main')
 
-@section('title', 'Food and Beverages Revenue Report')
+
+
+
+@if(Session::get('users.user_data')->privilege=="admin")
+  @section('title', 'Order Slip Summary Report')
+@else
+  @section('title', Session::get('users.user_data')->restaurant.' Order Slip Summary Report')
+@endif
+
 
 @section('css')
 <style type="text/css">
@@ -22,7 +30,11 @@
  
 <div class="col-sm-12">
 
-  <h1 style="text-align: center;">Food and Beverage Revenue Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
+  @if(Session::get('users.user_data')->privilege=="admin")
+    <h1 style="text-align: center;">Order Slip Summary Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
+  @else
+    <h1 style="text-align: center;"> {{Session::get('users.user_data')->restaurant}} Order Slip Summary Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
+  @endif
   <div>
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_sales_information">Show Sales Information</label>
@@ -74,7 +86,7 @@
   </div>
   
   <div class="table-responsive">
-    <table class="ui unstackable striped celled structured table">
+    <table class="ui unstackable celled structured table">
       <thead>
         <tr>
           <th rowspan="2" class="center aligned middle aligned">Date</th>
@@ -91,7 +103,7 @@
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Gross Amount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Discount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">NET Amount</th>
-          <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+4 }}">Mode of Payments / Settlements</th>
+          <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+1 }}">Mode of Payments / Settlements</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Special Discount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD Discount</th>
@@ -108,16 +120,16 @@
           @foreach ($settlements as $settlement)
             <th class="center aligned middle aligned" ng-show="show_settlements">{{ settlements($settlement) }}</th>
           @endforeach
-          <th class="center aligned middle aligned" ng-show="show_settlements">Cancelled / Void</th>
-          <th class="center aligned middle aligned" ng-show="show_settlements">BOD Charge</th>
-          <th class="center aligned middle aligned" ng-show="show_settlements">Staff Charge</th>
           <th class="center aligned middle aligned" ng-show="show_settlements">Total Settlements</th>
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="bill_data in bills">
+        <tr ng-repeat="bill_data in bills" ng-class="{'warning':bill_data.type=='bad_order'}">
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
-          <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank"><p>@{{bill_data.check_number}}</p></a></td>
+          <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank">
+            <p ng-if="bill_data.type=='good_order'">@{{bill_data.check_number}}</p>
+            <p ng-if="bill_data.type=='bad_order'">CANCELLED</p>
+          </a></td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.pax}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.server_name}}</td>
@@ -137,9 +149,6 @@
               <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?> |currency:""}}</td>
             @endif
           @endforeach
-          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.cancelled |currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.bad_order |currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.staff_charge |currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.total_discount|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing|currency:""}}</td>
@@ -172,9 +181,6 @@
           @foreach ($settlements as $settlement)
             <th class="right aligned middle aligned" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |currency:""}}</th>
           @endforeach
-          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.cancelled|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.bad_order|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.staff_charge|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.total_discount|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|currency:""}}</th>
@@ -213,6 +219,7 @@
     $scope.show_settlements = true;
     $scope.date_from = "{{date('m/d/Y',strtotime($date_from))}}";
     $scope.date_to = "{{date('m/d/Y',strtotime($date_to))}}";
+    $scope.restaurants = {!! $restaurants !!};
 
     $('#date_from,#date_to').datepicker();
 

@@ -674,6 +674,9 @@
               <option value="guest_ledger">{{settlements("guest_ledger")}}</option>
               <option value="send_bill">{{settlements("send_bill")}}</option>
               <option value="free_of_charge">{{settlements("free_of_charge")}}</option>
+              <option value="manager_meals">{{settlements("manager_meals")}}</option>
+              <option value="sales_office">{{settlements("sales_office")}}</option>
+              <option value="representation">{{settlements("representation")}}</option>
             </select>
           </div>
           <div class="form-group" ng-if="formdata.settlements_payment.cash">
@@ -703,6 +706,18 @@
           <div class="form-group" ng-if="formdata.settlements_payment.free_of_charge">
             <label>{{settlements("free_of_charge")}}:</label>
             <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.manager_meals">
+            <label>{{settlements("manager_meals")}}:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.manager_meals"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.sales_office">
+            <label>{{settlements("sales_office")}}:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.sales_office"  ng-change="input_payment()">
+          </div>
+          <div class="form-group" ng-if="formdata.settlements_payment.representation">
+            <label>{{settlements("representation")}}:</label>
+            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.representation"  ng-change="input_payment()">
           </div>
           <div class="form-group">
             <label>Total Payment:</label>
@@ -1294,7 +1309,7 @@
          // console.log(response.data);
          $scope.table_customer_cart = response.data.cart;
          $scope.table_customer_total = response.data.total;
-         $.notify("Order has been placed.");
+         $.notify(data.menu_data.name + " has been placed.");
         $scope.add_cart_submit = false;
       }, function(rejection) {
         if(rejection.status == 500){
@@ -1563,6 +1578,9 @@
       $scope.formdata.settlements_payment.guest_ledger = false;
       $scope.formdata.settlements_payment.send_bill = false;
       $scope.formdata.settlements_payment.free_of_charge = false;
+      $scope.formdata.settlements_payment.manager_meals = false;
+      $scope.formdata.settlements_payment.sales_office = false;
+      $scope.formdata.settlements_payment.representation = false;
     }
 
     $scope.delete_bill = function function_name(data) {
@@ -1723,6 +1741,9 @@
       + $scope.formdata.settlements_amount.guest_ledger
       + $scope.formdata.settlements_amount.send_bill
       + $scope.formdata.settlements_amount.free_of_charge
+      + $scope.formdata.settlements_amount.manager_meals
+      + $scope.formdata.settlements_amount.sales_office
+      + $scope.formdata.settlements_amount.representation
       ) - $scope.formdata.net_billing;
       return (excess>=0?excess:0);
     }
@@ -1736,6 +1757,9 @@
       + $scope.formdata.settlements_amount.guest_ledger
       + $scope.formdata.settlements_amount.send_bill
       + $scope.formdata.settlements_amount.free_of_charge
+      + $scope.formdata.settlements_amount.manager_meals
+      + $scope.formdata.settlements_amount.sales_office
+      + $scope.formdata.settlements_amount.representation
       );
       return ($scope.total_payment>=$scope.formdata.net_billing?true:false);
     }
@@ -1794,6 +1818,30 @@
       }else{
         $scope.formdata.settlements_payment.free_of_charge = false;
         $scope.formdata.settlements_amount.free_of_charge = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('manager_meals')){
+        $scope.formdata.settlements_payment.manager_meals = true;
+      }else{
+        $scope.formdata.settlements_payment.manager_meals = false;
+        $scope.formdata.settlements_amount.manager_meals = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('sales_office')){
+        $scope.formdata.settlements_payment.sales_office = true;
+      }else{
+        $scope.formdata.settlements_payment.sales_office = false;
+        $scope.formdata.settlements_amount.sales_office = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('representation')){
+        $scope.formdata.settlements_payment.representation = true;
+      }else{
+        $scope.formdata.settlements_payment.representation = false;
+        $scope.formdata.settlements_amount.representation = 0;
         $scope.formdata.excess = excess($scope);
         $scope.valid_payment = valid_payment($scope);
       }
