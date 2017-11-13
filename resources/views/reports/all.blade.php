@@ -31,9 +31,9 @@
 <div class="col-sm-12">
 
   @if(Session::get('users.user_data')->privilege=="admin")
-    <h1 style="text-align: center;">Order Slip Summary Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
+    <h1 style="text-align: center;">Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
   @else
-    <h1 style="text-align: center;"> {{Session::get('users.user_data')->restaurant}} Order Slip Summary Report<br><small><b>Date From:</b> {{date("F d, Y",strtotime($date_from))}} <b>Date To:</b> {{date("F d, Y",strtotime($date_to))}} </small></h1>
+    <h1 style="text-align: center;"> {{Session::get('users.user_data')->restaurant}} Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
   @endif
   <div>
     <div class="checkbox">
@@ -128,7 +128,7 @@
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
           <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank">
             <p ng-if="bill_data.type=='good_order'">@{{bill_data.check_number}}</p>
-            <p ng-if="bill_data.type=='bad_order'">CANCELLED</p>
+            <p ng-if="bill_data.type=='bad_order'" title="@{{bill_data.reason_cancelled}}">@{{bill_data.check_number}}</p>
           </a></td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.pax}}</td>
@@ -137,29 +137,31 @@
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.guest_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.sc_pwd}}</td>
           @foreach ($categories as $category)
-            <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |currency:""}}</td>
+            <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |chkNull|currency:""}}</td>
           @endforeach
-          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.total_item_amount |currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.special_trade_discount |currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.net_total_amount |currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.total_item_amount |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.special_trade_discount |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_sales"> @{{bill_data.net_total_amount |chkNull|currency:""}}</td>
           @foreach ($settlements as $settlement)
             @if($settlement=="cash")
-              <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?>-bill_data.excess |currency:""}}</td>
+              <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?>-bill_data.excess |chkNull|currency:""}}</td>
+            @elseif($settlement=="cancelled")
+              <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?> |chkNull|currency:""}}</td>
             @else
-              <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?> |currency:""}}</td>
+              <td class="right aligned middle aligned" ng-show="show_settlements"> {{bill_data.<?php echo $settlement; ?> |chkNull|currency:""}}</td>
             @endif
           @endforeach
-          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.total_discount|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_discount|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_vat_exemption|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.net_billing|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_net_of_vat_and_service_charge|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.service_charge|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.vatable_sales|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.output_vat|currency:""}}</td>
-          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_inclusive_of_vat|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.total_discount |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_discount |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_vat_exemption |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.net_billing |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_net_of_vat_and_service_charge |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.service_charge |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.vatable_sales |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.output_vat |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sales_inclusive_of_vat |chkNull|currency:""}}</td>
           <!-- <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.excess |currency:""}}</td> -->
         </tr>
       </tbody>
@@ -173,25 +175,29 @@
           <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.sc_pwd}}</th>
           @foreach ($categories as $category)
-            <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |currency:""}}</th>
+            <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |chkNull|currency:""}}</th>
           @endforeach
-          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.total_item_amount|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.special_trade_discount|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.net_total_amount|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.total_item_amount|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.special_trade_discount|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_sales">@{{footer.net_total_amount|chkNull|currency:""}}</th>
           @foreach ($settlements as $settlement)
-            <th class="right aligned middle aligned" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |currency:""}}</th>
+            @if($settlement=="cancelled")
+            <th class="right aligned middle aligned warning" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |chkNull|currency:""}}</th>
+            @else
+            <th class="right aligned middle aligned" ng-show="show_settlements"> {{footer.<?php echo $settlement; ?> |chkNull|currency:""}}</th>
+            @endif
           @endforeach
-          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.total_discount|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_discount|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_vat_exemption|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.net_billing|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_net_of_vat_and_service_charge|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.service_charge|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.vatable_sales|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.output_vat|currency:""}}</th>
-          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_inclusive_of_vat|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.total_discount|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_discount|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_vat_exemption|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.net_billing|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_net_of_vat_and_service_charge|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.service_charge|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.vatable_sales|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.output_vat|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sales_inclusive_of_vat|chkNull|currency:""}}</th>
           <!-- <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.excess|currency:""}}</th> -->
         </tr>
       </tfoot>
@@ -219,6 +225,8 @@
     $scope.show_settlements = true;
     $scope.date_from = "{{date('m/d/Y',strtotime($date_from))}}";
     $scope.date_to = "{{date('m/d/Y',strtotime($date_to))}}";
+    $scope.date_from_str = "";
+    $scope.date_to_str = "";
     $scope.restaurants = {!! $restaurants !!};
 
     $('#date_from,#date_to').datepicker();
@@ -268,7 +276,9 @@
           $scope.footer = response.data.footer;
           $scope.paging = $sce.trustAsHtml(response.data.paging);
           $scope.submit = false;
-          $.notify('Food and Beverage Revenue Report has been populated.','info');
+          $scope.date_from_str = moment($scope.date_from).format("MMMM DD, YYYY");
+          $scope.date_to_str = moment($scope.date_to).format("MMMM DD, YYYY");
+          $.notify('Order Slip Summary Report from '+$scope.date_from_str+' to '+$scope.date_to_str+' has been populated.','info');
       }, function myError(response) {
           $scope.submit = false;
           console.log(response.statusText);
@@ -276,6 +286,15 @@
     }
 
   });
+
+  app.filter('chkNull',function(){
+        return function(input){
+            if(!(angular.equals(input,null)))
+                return input;
+            else
+                return 0;
+        };
+    });
   angular.bootstrap(document, ['main']);
 </script>
 @endsection

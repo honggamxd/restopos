@@ -58,7 +58,6 @@ class Restaurant_bill_controller extends Controller
     $check_number = $restaurant_bill
       ->where('date_',strtotime(date('m/d/Y')))
       ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
-      ->where('type','good_order')
       ->orderBy('id','DESC')
       ->value('check_number');
 
@@ -85,7 +84,7 @@ class Restaurant_bill_controller extends Controller
     $restaurant_bill->guest_name = $customer_data->guest_name;
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
     $restaurant_bill->type = "good_order";
-    $restaurant_bill->check_number = ($check_number==null?1:++$check_number);
+    $restaurant_bill->check_number = ($check_number==null||$check_number==0?1:++$check_number);
     $restaurant_bill->save();
 
 
@@ -196,8 +195,8 @@ class Restaurant_bill_controller extends Controller
     if($customer_data->deleted_at==null){
       $restaurant_bill_data->is_paid = 0;
       $customer_data->has_billed_completely = 0;
-      $customer_data->has_paid = 0;
-      $customer_data->save();
+      if($restaurant_bill_data->type=="good_order"){
+        $customer_data->has_paid = 0;
         foreach ($restaurant_bill_detail_data->get() as $restaurant_bill_items) {
           $restaurant_temp_bill = new Restaurant_temp_bill;
           $temp_bill_item_data = $restaurant_temp_bill
@@ -209,7 +208,17 @@ class Restaurant_bill_controller extends Controller
           $restaurant_temp_bill_detail_data = $restaurant_temp_bill_detail->find($temp_bill_item_data->id);
           $restaurant_temp_bill_detail_data->quantity += $restaurant_bill_items->quantity;
           $restaurant_temp_bill_detail_data->save();
+        }
+      }else{
+        $customer_data->has_paid = 1;
+        $customer_data->cancellation_order_status = 1;
+        $restaurant_accepted_order_cancellation_data = Restaurant_accepted_order_cancellation::where('restaurant_bill_id',$restaurant_bill_data->id)
+        ->update([
+          'settlement' => '',
+          'has_settled' => 0
+          ]);
       }
+      $customer_data->save();
     }
     $restaurant_bill_data->save();
     $restaurant_bill_data->delete();

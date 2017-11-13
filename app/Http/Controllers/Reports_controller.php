@@ -155,6 +155,7 @@ class Reports_controller extends Controller
       DB::raw('SUM(output_vat) as total_output_vat'),
       DB::raw('SUM(sales_inclusive_of_vat) as total_sales_inclusive_of_vat')
     );
+    $footer_data->where('type','good_order');
     $footer_data->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     if($user_data->privilege=='restaurant_cashier'){
       $footer_data->where('cashier_id',$user_data->id);
@@ -200,6 +201,7 @@ class Reports_controller extends Controller
           );
       $category_total->where('restaurant_menu.category',$category);
       $category_total->where('restaurant_bill.deleted',0);
+      $category_total->where('restaurant_bill.type','good_order');
       if($user_data->privilege=='restaurant_cashier'){
         $category_total->where('cashier_id',$user_data->id);
       }
@@ -246,10 +248,14 @@ class Reports_controller extends Controller
 
       if($settlement=="cash"){
         $data["footer"][$settlement] = $settlement_total->value('total')-$data["footer"]["excess"];
+        $data['footer']['total_settlements'] += $data["footer"][$settlement];
+      }elseif($settlement=="cancelled"){
+        $data["footer"][$settlement] = $settlement_total->value('total');
+        // $data['footer']['total_settlements'] -= $data["footer"][$settlement];
       }else{
         $data["footer"][$settlement] = $settlement_total->value('total');
+        $data['footer']['total_settlements'] += $data["footer"][$settlement];
       }
-      $data['footer']['total_settlements'] += $data["footer"][$settlement];
     }
     $data["footer"]["special_trade_discount"] = $data['footer']['total_discount']+$data['footer']['sc_pwd_discount']+$data['footer']['sc_pwd_vat_exemption'];
     $data["footer"]["net_total_amount"] = $data["footer"]["total_item_amount"]-$data["footer"]["special_trade_discount"];
@@ -271,21 +277,26 @@ class Reports_controller extends Controller
       $restaurant = new Restaurant;
       $bill_data->restaurant_name = $restaurant->find($bill_data->restaurant_id)->name;
       foreach ($categories as $category) {
-         $bill_data->$category = $restaurant_bill_detail
-           ->join('restaurant_bill','restaurant_bill_detail.restaurant_bill_id','=','restaurant_bill.id')
-           ->join('restaurant_menu','restaurant_bill_detail.restaurant_menu_id','=','restaurant_menu.id')
-           ->where('restaurant_bill_id',$bill_data->id)
-           ->where('category',$category)
-           ->select('restaurant_bill_detail.*','restaurant_menu.category',DB::raw('SUM(restaurant_bill_detail.price*quantity) as total'))
-           ->first()->total;
+        $bill_data->$category = $restaurant_bill_detail->query();
+        $bill_data->$category->join('restaurant_bill','restaurant_bill_detail.restaurant_bill_id','=','restaurant_bill.id');
+        $bill_data->$category->join('restaurant_menu','restaurant_bill_detail.restaurant_menu_id','=','restaurant_menu.id');
+        $bill_data->$category->where('restaurant_bill_id',$bill_data->id);
+        $bill_data->$category->where('category',$category);
+        $bill_data->$category->where('type','good_order');
+        $bill_data->$category->select('restaurant_bill_detail.*','restaurant_bill.type','restaurant_menu.category',DB::raw('SUM(restaurant_bill_detail.price*quantity) as total'));
+        $bill_data->$category = $bill_data->$category->value('total');
         $bill_data->total += $bill_data->$category;
       }
       foreach ($settlements as $settlement) {
-        $bill_data->$settlement = $restaurant_payment->where(['restaurant_bill_id'=>$bill_data->id,'settlement'=>$settlement])->value('payment');
-        $bill_data->total_settlements += $bill_data->$settlement;
+        if($settlement!='cancelled'){
+          $bill_data->$settlement = $restaurant_payment->where(['restaurant_bill_id'=>$bill_data->id,'settlement'=>$settlement])->value('payment');
+          $bill_data->total_settlements += $bill_data->$settlement;
+        }else{
+          $bill_data->$settlement = $restaurant_payment->where(['restaurant_bill_id'=>$bill_data->id,'settlement'=>$settlement])->value('payment');
+          
+        }
       }
       $bill_data->total_settlements -= $bill_data->excess;
-
     }
     $data["result"] = $bills;
     $data["getQueryLog"] = DB::getQueryLog();

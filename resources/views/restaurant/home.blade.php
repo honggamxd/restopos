@@ -765,8 +765,8 @@
                   <select class="form-control" ng-model="item.settlement" required>
                     <option value="">Select Settlement</option>
                     <option value="cancelled">Cancelled / Void</option>
-                    <option value="bad_order">BOD Charge</option>
-                    <option value="staff_charge">Staff Charge</option>
+                    <!-- <option value="bad_order">BOD Charge</option> -->
+                    <!-- <option value="staff_charge">Staff Charge</option> -->
                   </select>
                 </td>
               </tr>
@@ -1442,6 +1442,7 @@
       }).then(function mySuccess(response) {
           console.log(response.data);
           $scope.cancelled_orders = response.data.cancelled_orders;
+          // $scope.cancelled_orders.settlement = 
           $scope.table_customer_id = response.data.table_customer_id;
           $("#settlement-cancelled-order-modal").modal("show");
       }, function(rejection) {
