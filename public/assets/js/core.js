@@ -21,14 +21,14 @@ $(document).ready(function(){
 function error_505(error_message) {
   alertify.error(error_message);
 }
-$(document).on('keydown', function(e) {
-    if(e.ctrlKey && (e.key == "p" || e.charCode == 16 || e.charCode == 112 || e.keyCode == 80) ){
-        e.cancelBubble = true;
-        e.preventDefault();
+// $(document).on('keydown', function(e) {
+//     if(e.ctrlKey && (e.key == "p" || e.charCode == 16 || e.charCode == 112 || e.keyCode == 80) ){
+//         e.cancelBubble = true;
+//         e.preventDefault();
 
-        e.stopImmediatePropagation();
-    }  
-});
+//         e.stopImmediatePropagation();
+//     }  
+// });
 function isEmpty(obj) {
 
     // null and undefined are "empty"

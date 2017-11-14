@@ -72,16 +72,6 @@ class Reports_controller extends Controller
     return view('reports.all',$data);
   }
 
-  public function restaurant_print(Request $request)
-  {
-    $app_config = DB::table('app_config')->first();
-    $data["categories"] = explode(',', $app_config->categories);
-    $data["settlements"] = explode(',', $app_config->settlements);
-    $data["date_from"] = date('F d, Y');
-    $data["date_to"] = date('F d, Y');
-    return view('reports.printable.all',$data);
-  }
-
   public function show_print(Request $request,$type)
   {
     if($type=="all"){
@@ -92,6 +82,180 @@ class Reports_controller extends Controller
       $data["date_to"] = $request->get('date_to');
       return view('reports.printable.all',$data);
     }
+  }
+
+  public function f_and_b_export(Request $request)
+  {
+    $app_config = DB::table('app_config')->first();
+    $categories = $app_config->categories;
+    $categories = explode(',', $categories);
+
+    $settlements = $app_config->settlements.','.$app_config->badorder_settlements;
+    $settlements = explode(',', $app_config->settlements_arrangements);
+    foreach ($settlements as $settlement) {
+      $settlements_headers[] = settlements($settlement);
+    }
+    $data = $this->f_and_b($request);
+    $fp = fopen('assets/reports/order_slip_summary.csv', 'w');
+
+    $headers = array ($request->session()->get('users.user_data')->restaurant.' Order Slip Summary Report');
+    fputcsv($fp, $headers);
+    $headers = array ('Date From: '.date('F d, Y',strtotime($request->date_from)).' Date To: '.date('F d, Y',strtotime($request->date_to)) );
+
+    fputcsv($fp, $headers);
+    $headers = array (
+      'Date',
+      'Check #',
+      'Outlet',
+      '# of Pax',
+      'Server',
+      'Cashier',
+      'Guest Name',
+      '# of SC/PWD'
+    );
+    $headers = array_merge($headers,$categories);
+    $initial_headers = array(
+      'Gross Amount',
+      'Total Discount',
+      'NET Amount'
+    );
+    $headers = array_merge($headers,$initial_headers);
+    $headers = array_merge($headers,$settlements_headers);
+
+    $initial_headers = array('Total Settlements');
+    $headers = array_merge($headers,$initial_headers);
+    if($request->session()->get('users.user_data')->privilege=="restaurant_cashier"){
+
+    }else{
+      $initial_headers = array(
+        'Special Discount',
+        'Gross Billing',
+        'SC/PWD Discount',
+        'SC/PWD VAT Exemption',
+        'NET Billing',
+        'Sales NET of VAT & Service Charge',
+        'Service Charge',
+        'VATable Sales',
+        'Output VAT',
+        'Sales Inclusive of VAT',
+      );
+      $headers = array_merge($headers,$initial_headers);
+    }
+
+    fputcsv($fp, $headers);
+    foreach ($data['result'] as $bill_data) {
+      $headers = array (
+        $bill_data['date_'],
+        $bill_data['check_number'],
+        $bill_data['restaurant_name'],
+        $bill_data['pax'],
+        $bill_data['server_name'],
+        $bill_data['cashier_name'],
+        $bill_data['guest_name'],
+        $bill_data['sc_pwd']
+      );
+      $categories_values = array();
+      foreach ($categories as $key) {
+        $categories_values[] = number_format($bill_data[$key],2);
+      }
+      $headers = array_merge($headers,$categories_values);
+      $initial_headers = array(
+        number_format($bill_data['total_item_amount'],2),
+        number_format($bill_data['special_trade_discount'],2),
+        number_format($bill_data['net_total_amount'],2)
+      );
+      $headers = array_merge($headers,$initial_headers);
+      $settlements_values = array();
+      foreach ($settlements as $key) {
+        if($key=="cash"){
+          $settlements_values[] = number_format($bill_data[$key]-$bill_data['excess'],2);
+        }else{
+          $settlements_values[] = number_format($bill_data[$key],2);
+        }
+      }
+      $headers = array_merge($headers,$settlements_values);
+
+      $initial_headers = array(number_format($bill_data['total_settlements'],2));
+      $headers = array_merge($headers,$initial_headers);
+      if($request->session()->get('users.user_data')->privilege=="restaurant_cashier"){
+
+      }else{
+        $initial_headers = array(
+          number_format($bill_data['total_discount'],2),
+          number_format($bill_data['gross_billing'],2),
+          number_format($bill_data['sc_pwd_discount'],2),
+          number_format($bill_data['sc_pwd_vat_exemption'],2),
+          number_format($bill_data['net_billing'],2),
+          number_format($bill_data['sales_net_of_vat_and_service_charge'],2),
+          number_format($bill_data['service_charge'],2),
+          number_format($bill_data['vatable_sales'],2),
+          number_format($bill_data['output_vat'],2),
+          number_format($bill_data['sales_inclusive_of_vat'],2),
+        );
+        $headers = array_merge($headers,$initial_headers);
+      }
+      fputcsv($fp, $headers);
+    }
+
+
+    //Footer
+
+    $headers = array (
+      "",
+      "",
+      "",
+      $data['footer']['pax'],
+      "",
+      "",
+      "",
+      $data['footer']['sc_pwd']
+    );
+    $categories_values = array();
+    foreach ($categories as $key) {
+      $categories_values[] = number_format($data['footer'][$key],2);
+    }
+    $headers = array_merge($headers,$categories_values);
+    $initial_headers = array(
+      number_format($data['footer']['total_item_amount'],2),
+      number_format($data['footer']['special_trade_discount'],2),
+      number_format($data['footer']['net_total_amount'],2)
+    );
+    $headers = array_merge($headers,$initial_headers);
+    $settlements_values = array();
+    foreach ($settlements as $key) {
+      if($key=="cash"){
+        $settlements_values[] = number_format($data['footer'][$key]-$data['footer']['excess'],2);
+      }else{
+        $settlements_values[] = number_format($data['footer'][$key],2);
+      }
+    }
+    $headers = array_merge($headers,$settlements_values);
+
+    $initial_headers = array(number_format($data['footer']['total_settlements'],2));
+    $headers = array_merge($headers,$initial_headers);
+    if($request->session()->get('users.user_data')->privilege=="restaurant_cashier"){
+
+    }else{
+      $initial_headers = array(
+        number_format($data['footer']['total_discount'],2),
+        number_format($data['footer']['gross_billing'],2),
+        number_format($data['footer']['sc_pwd_discount'],2),
+        number_format($data['footer']['sc_pwd_vat_exemption'],2),
+        number_format($data['footer']['net_billing'],2),
+        number_format($data['footer']['sales_net_of_vat_and_service_charge'],2),
+        number_format($data['footer']['service_charge'],2),
+        number_format($data['footer']['vatable_sales'],2),
+        number_format($data['footer']['output_vat'],2),
+        number_format($data['footer']['sales_inclusive_of_vat'],2),
+      );
+      $headers = array_merge($headers,$initial_headers);
+    }
+      fputcsv($fp, $headers);  
+    
+
+
+    fclose($fp);
+    return asset('assets/reports/order_slip_summary.csv');
   }
   public function f_and_b(Request $request)
   {

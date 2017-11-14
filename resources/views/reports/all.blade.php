@@ -57,6 +57,7 @@
   </div>
   <div>
     @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button>
     @else
     <label>Filter By:</label>
     <form class="form-inline" style="margin-bottom: 20px;">
@@ -79,7 +80,10 @@
       <div class="form-group">
       <label>Date To:</label>
       <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" readonly>
-      <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}">Filter Results</button>
+      <div class="ui buttons">
+        <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}">Filter Results</button>
+        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button>
+      </div>
       </div>
     </form>
     @endif
@@ -281,6 +285,32 @@
           $.notify('Order Slip Summary Report from '+$scope.date_from_str+' to '+$scope.date_to_str+' has been populated.','info');
       }, function myError(response) {
           $scope.submit = false;
+          console.log(response.statusText);
+      });
+    }
+
+    $scope.export_reports = function(page=1) {
+      $scope.export = true;
+      var server = ($scope.server==undefined?"":$scope.server['id']);
+      var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
+      $http({
+          method : "GET",
+          url : "/api/reports/general/f_and_b_export",
+          params: {
+            "date_from":$scope.date_from,
+            "date_to":$scope.date_to,
+            "paging":$scope.show_paging,
+            "page":page,
+            "display_per_page":50,
+            "server_id": server,
+            "cashier_id": cashier,
+          }
+      }).then(function mySuccess(response) {
+        $scope.export = false;
+        // console.log(response);
+        window.location = response.data;
+      }, function myError(response) {
+          $scope.export = false;
           console.log(response.statusText);
       });
     }

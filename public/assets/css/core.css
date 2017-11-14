@@ -50,9 +50,33 @@
   max-height: 70vh;
   overflow: auto;
 }
+
+.print-hide-block{
+    
+  display:block; 
+}
+.print-hide-table{
+    
+  display:table;
+}
+.print-show-block{
+    display:none; 
+}
+.print-show-table{
+     display:none; 
+}
 @media print {
-    .printhide{
-        display:none; 
+    .print-hide-block{
+        display:none !important; 
+    }
+    .print-hide-table{
+        display:none !important; 
+    }
+    .print-show-block{
+        display:block !important; 
+    }
+    .print-show-table{
+        display:table !important; 
     }
 }
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
