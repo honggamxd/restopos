@@ -78,11 +78,6 @@
     .print-show-table{
         display:table !important; 
     }
-    *{
-      font-size: 10pt !important;
-      line-height: 1 !important;
-      font-family: "Tahoma";
-    }
 }
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
     display: none !important;
