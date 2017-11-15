@@ -79,7 +79,8 @@
         display:table !important; 
     }
     *{
-      font-size: 95% !important;
+      font-size: 12pt !important;
+      line-height: 1 !important;
     }
 }
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
