@@ -32,6 +32,10 @@
     padding-top: 0px !important;
     margin-top: 0px !important;
   }
+
+  #header{
+    margin-top: 100px !important;
+  }
 }
 
 </style>
@@ -42,7 +46,7 @@
 <div class="active section hideprint">Order</div>
 @endsection
 @section('content')
-<h3 style="text-align: center;">FOOD ORDER @{{order.que_number}}</h3>
+<h3 style="text-align: center;" id="header">FOOD ORDER @{{order.que_number}}</h3>
 <table class="order-table">
 <tbody>
   <tr>
@@ -101,7 +105,7 @@
 
   @if($print==1)
   $(document).ready(function() {
-    setTimeout(function(){ window.print(); }, 500);
+    setTimeout(function(){ window.print(); }, 1500);
   });
   @endif
   var app = angular.module('main', []);

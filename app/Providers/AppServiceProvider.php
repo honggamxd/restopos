@@ -93,8 +93,20 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        Validator::extend('available_to_cook', function($attribute, $value, $parameters, $validator) {
-            return false;
+        Validator::extend('discount_except', function($attribute, $value, $parameters, $validator) {
+            if($parameters[1]==0){
+                return true;
+            }
+            foreach ($value as $bill_preview) {
+                if($bill_preview['quantity_to_bill']==0){
+                    continue;
+                }
+                if($bill_preview['category']==$parameters[0]){
+                    return false;
+                    break;
+                }
+            }
+            return true;
         });
 
         Validator::extend('unique_menu', function($attribute, $value, $parameters, $validator) {

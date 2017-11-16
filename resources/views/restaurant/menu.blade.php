@@ -47,13 +47,13 @@
         <div class="field">
           <label>Menu Search</label>
           <div class="ui icon input focus">
-            <input type="text" placeholder="Search...">
+            <input type="text" placeholder="Search..." id="search-menu" ng-keyup="search_menu()" ng-model="search_string">
             <i class="search icon"></i>
           </div>
         </div>
         <div class="field">
           <label>&nbsp;</label>
-          <button type="button" class="ui primary button fluid" onclick="$('#add-menu-modal').modal('show')">Add Menu</button>
+          <button type="button" class="ui primary button fluid" ng-click="open_add_menu_form()">Add Menu</button>
         </div>
       </div>
     </div>
@@ -203,11 +203,22 @@
     angular.element('.ui.checkbox').checkbox('enable');
   });
 
+
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.formdata = {};
     $scope.formerrors = {};
     $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+    $("#search-menu").autocomplete({
+        source: "/api/restaurant/menu/search/name",
+        select: function(event, ui) {
+            $scope.search_string = ui.item.value;
+            show_menu();
+        }
+    });
     show_menu();
+    $scope.search_menu = function(){
+      show_menu();
+    }
     function show_menu(page=1,category='all',subcategory='all') {
       $http({
         method : "GET",
@@ -216,6 +227,7 @@
           page: page,
           category: category,
           subcategory: subcategory,
+          search: $scope.search_string,
         },
       }).then(function mySuccess(response) {
         $scope.menu = response.data.result.data;
@@ -243,6 +255,14 @@
           console.log(rejection.statusText);
         }
       });
+    }
+
+    $scope.open_add_menu_form = function(){
+      $scope.formdata.category = "";
+      $scope.formdata.subcategory = "";
+      $scope.formdata.name = "";
+      $scope.formdata.price = "";
+      $('#add-menu-modal').modal('show')
     }
 
     $scope.subcategory_change_menu_list = function() {
@@ -275,7 +295,7 @@
       });
     }
     $(document).on('click','.gotopage',function(e) {
-      show_menu(e.target.innerHTML);
+      show_menu(e.target.attributes.page.nodeValue);
     });
 
     $scope.update_menu = function() {
@@ -291,12 +311,8 @@
         console.log(response.data);
         $scope.submit = false;
         $.notify($scope.formdata.name+" is updated.");
-        $scope.formdata.category = "";
-        $scope.formdata.subcategory = "";
-        $scope.formdata.name = "";
-        $scope.formdata.price = "";
         $('#edit-menu-modal').modal('hide');
-        show_menu();
+        // show_menu();
       }, function(rejection) {
         var errors = rejection.data;
         $scope.formerrors = errors;

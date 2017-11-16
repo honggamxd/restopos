@@ -78,6 +78,7 @@ class Restaurant_menu_controller extends Controller
     if($type=="orders"){
       $data["result"] =  $restaurant_menu->where('deleted',0);
       $data["result"]->where('is_prepared',1);
+      $data["result"]->where('name','like','%'.$request->search.'%');
       $data["result"]->orderBy('name');
       $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
       if($request->category!=null&&$request->category!='all'){
@@ -93,6 +94,7 @@ class Restaurant_menu_controller extends Controller
       $data["result"] =  $restaurant_menu->query();
       $data["result"]->where('category','!=','');
       $data["result"]->where('subcategory','!=','');
+      $data["result"]->where('name','like','%'.$request->search.'%');
       $data["result"]->where('deleted',0);
       $data["result"]->orderBy('name');
       $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
@@ -130,8 +132,13 @@ class Restaurant_menu_controller extends Controller
     $data = array();
     $restaurant_menu = new Restaurant_menu;
 
-    $search = $restaurant_menu->where('deleted',0);
+    $search = $restaurant_menu->query();
     $search->where($type, 'like', '%'.$request->term.'%');
+    $search->orderBy('name');
+    if($request->type=="order"){
+      $search->where('is_prepared',1);
+    }
+    $search->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
     $search->skip(0);
     $search->take(5);
     $search = $search->get();

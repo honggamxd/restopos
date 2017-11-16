@@ -172,7 +172,7 @@
     });
     @if($print==1)
     $(document).ready(function() {
-      setTimeout(function(){ window.print(); }, 500);
+      setTimeout(function(){ window.print(); }, 1500);
     });
     @endif
     $scope.footer = {};

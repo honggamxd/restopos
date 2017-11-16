@@ -118,11 +118,12 @@ Route::delete('/api/issuance/cart/delete', 'Issuance_controller@destroy_cart');
 //reports
 Route::get('/reports', 'Reports_controller@index');
 Route::get('/restaurant/reports', 'Reports_controller@restaurant');
-Route::get('/restaurant/reports/print', 'Reports_controller@restaurant_print');
+Route::get('/restaurant/orders', 'Reports_controller@orders');
 
 
 Route::get('/reports/view/{type}', 'Reports_controller@show');
 Route::get('/reports/print/{type}', 'Reports_controller@show_print');
+Route::get('/api/reports/general/orders', 'Reports_controller@get_orders_list');
 Route::get('/api/reports/general/purchases', 'Reports_controller@purhcased_item');
 Route::get('/api/reports/general/issuances', 'Reports_controller@issued_items');
 Route::get('/api/reports/general/f_and_b', 'Reports_controller@f_and_b');

@@ -29,6 +29,7 @@ class Restaurant_table_customer_controller extends Controller
         'table_id.id' => 'required',
         'server_id.id' => 'required',
         'pax' => 'integer|required|custom_min:0',
+        'sc_pwd' => 'integer|required|custom_min:0',
     ],[
       'custom_min' => 'The number of :attribute must be greater than 0.',
       'server_id.id.required' => 'The Server field is required.'

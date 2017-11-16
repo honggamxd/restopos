@@ -10,6 +10,11 @@ class Pagination extends BasePagination {
      *
      * @var string
      */
-  protected $availablePageWrapper  = '<li><a href="javascript:void(0)" url="%s" class="gotopage">%s</a></li>';
+  protected function getAvailablePageWrapper($url, $page)
+  {
+      $page_int = $url[strlen($url)-1];
+      return sprintf($this->getAvailablePageWrapperHTML(),$url,$page_int,$page);
+  }
+  protected $availablePageWrapper  = '<li><a href="javascript:void(0)" url="%s" class="gotopage" page="%s">%s</a></li>';
   
 }

@@ -161,6 +161,7 @@
         <div class="form-group">
           <label>Server</label>
           <select class="form-control" ng-model="formdata.server_id" ng-options="item as item.name for item in server track by item.id">
+            <option>Select Waiter/Waitress</option>
           </select>
           <p class="help-block">@{{formerrors.server_id[0]}}</p>
         </div>
@@ -236,29 +237,11 @@
         <div class="row">
           <div class="col-sm-6">
             <div class="field">
-
-            <div class="two fields">
-              <div class="field">
-                <label>Category</label>
-                <select class="ui dropdown fluid" ng-change="category_change_menu_list(this)" ng-model="select_category" ng-init="select_category='all'">
-                  <option value="all">All Menu</option>
-                  @foreach($categories as $category)
-                  <option value="{{$category}}">{{$category}}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="field">
-                <label>Category</label>
-                <select class="form-control" ng-change="subcategory_change_menu_list(this)" ng-model="select_subcategory" ng-options="item for item in subcategories">
-                <option value="">All Subcategories</option>
-                </select>
-              </div>
-            </div>
               <div class="fields">
                 <div class="twelve wide field">
                   <label>Menu Search</label>
                   <div class="ui fluid icon input focus">
-                    <input type="text" placeholder="Search..." id="search-menu" ng-model="search_menu">
+                    <input type="text" placeholder="Search..." id="search-menu" ng-model="search_string" ng-keyup="search_menu()">
                     <i class="search icon"></i>
                   </div>
                 </div>
@@ -269,10 +252,26 @@
                   </button> -->
                 </div>
               </div>
-
+              <div class="two fields">
+                <div class="field">
+                  <label>Category</label>
+                  <select id="select-category" class="ui dropdown fluid" ng-change="category_change_menu_list(this)" ng-model="select_category" ng-init="select_category='all'">
+                    <option value="all">All Menu</option>
+                    @foreach($categories as $category)
+                    <option value="{{$category}}">{{$category}}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Subcategory</label>
+                  <select id="select-subcategory" class="form-control" ng-change="subcategory_change_menu_list(this)" ng-model="select_subcategory" ng-options="item for item in subcategories">
+                  <option value="">All Subcategories</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <div class="table-responsive" style="height: 30vh;">
+            <div class="table-responsive" style="height: 45vh;">
               <table class="ui compact table" id="menu-table">
                 <thead>
                 <tr>
@@ -573,7 +572,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="bill_preview_data in bill_preview.items">
+            <tr ng-repeat="bill_preview_data in bill_preview.items" ng-class="{'warning':bill_preview_data.category=='Sundry'}">
               <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != ''"><br>(@{{bill_preview_data.special_instruction}})</span></td>
               <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
               <td class="center aligned middle aligned">
@@ -606,6 +605,7 @@
             </tr>
           </tfoot>
         </table>
+        <small>* The highlighed rows are not subject for discount.</small>
       </div>
       <div class="modal-footer">
         <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
@@ -846,10 +846,11 @@
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
 
+    $scope._token = "{{csrf_token()}}";
     $scope.formdata = {};
     $scope.formdata.settlement = {};
     $scope.table = {};
-    $scope.formdata._token = "{{csrf_token()}}";
+    $scope.formdata._token = $scope._token;
 
     shortcut.add("Alt+A",function() {
       show_table();
@@ -871,6 +872,7 @@
     $scope.add_table = function() {
       $scope.formerrors = {};
       $scope.submit = true;
+      $scope.formdata._token = $scope._token;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/customer/add',
@@ -889,6 +891,7 @@
         }else if(rejection.status == 422){        
            var errors = rejection.data;
            // console.log(errors.server_id);
+           $scope.formerrors.sc_pwd = errors.sc_pwd;
            $scope.formerrors.pax = errors.pax;
            $scope.formerrors.server_id = errors['server_id.id'];
         }
@@ -970,6 +973,7 @@
 
     $scope.delete_table_customer = function(data) {
       console.log(data.$parent.customer_data.id);
+      $scope.formdata._token = $scope._token;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/customer/remove/'+data.$parent.customer_data.id,
@@ -1043,7 +1047,8 @@
     $scope.delete_cancellation_request = function(data) {
       console.log(data.$parent.customer_data.id);
       var formdata = {
-        id : data.$parent.customer_data.id
+        id : data.$parent.customer_data.id,
+        _token: $scope._token
       };
       $http({
          method: 'POST',
@@ -1074,7 +1079,8 @@
           restaurant_table_customer_id: data.table_customer_id,
           restaurant_order_id: data.order.id,
           items: data.order_detail,
-          reason_cancelled: $scope.formdata.reason_cancelled
+          reason_cancelled: $scope.formdata.reason_cancelled,
+          _token: $scope._token
         };
         // console.log(formdata);
         $http({
@@ -1102,6 +1108,7 @@
         });
       }else if(type=='after'){
         data.bill_preview.reason_cancelled = $scope.formdata.reason_cancelled;
+        data.bill_preview._token = $scope._token;
         $http({
            method: 'POST',
            url: '/api/restaurant/table/order/cancel/request/after',
@@ -1224,6 +1231,9 @@
     }
 
     $scope.menu = {};
+    $scope.search_menu = function(){
+      show_menu(); 
+    }
     function show_menu(category='all',subcategory='all') {
       $http({
           method : "GET",
@@ -1231,6 +1241,7 @@
           params: {
             category: category,
             subcategory: subcategory,
+            search: $scope.search_string
           },
       }).then(function mySuccess(response) {
           $scope.menu = response.data.result;
@@ -1246,6 +1257,7 @@
     $scope.make_orders = function(data) {
       // console.log($scope.formdata);
       $scope.formdata.table_customer_cart = $scope.table_customer_cart;
+      $scope.formdata._token = $scope._token;
       $scope.submit = true;
       $http({
         method: 'POST',
@@ -1299,6 +1311,7 @@
       // console.log(data.menu_data);
       $scope.formdata.menu_id = data.menu_data.id;
       $scope.formdata.table_customer_id = $scope.table_customer_id;
+      $scope.formdata._token = $scope._token;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/order/cart',
@@ -1325,9 +1338,10 @@
     }
 
     $scope.remove_item_cart = function(data) {
-      // console.log(data);
       $scope.formdata.menu_id = data.cart_data.id;
+      $scope.formdata.menu_name = data.cart_data.name;
       $scope.formdata.table_customer_id = data.$parent.table_customer_id;
+      $scope.formdata._token = $scope._token;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/order/remove',
@@ -1338,7 +1352,8 @@
          // console.log(response.data);
          $scope.table_customer_cart = response.data.cart;
          $scope.table_customer_total = response.data.total;
-         $.notify("Order has been removed from the list.","info");
+         // console.log($scope.formdata);
+         $.notify($scope.formdata.menu_name+" has been removed from the list.","info");
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');
@@ -1402,6 +1417,7 @@
         });
       }else{
         $scope.bill_out_submit = true;
+        $scope.formdata._token = $scope._token;
         $http({
            method: 'POST',
            url: '/api/restaurant/table/customer/bill/preview/'+data.$parent.customer_data.id,
@@ -1459,7 +1475,8 @@
       $scope.submit = true;
       var formdata = {
         items: data.cancelled_orders,
-        table_customer_id: data.table_customer_id
+        table_customer_id: data.table_customer_id,
+        _token: $scope._token
       };
       $http({
          method: 'POST',
@@ -1499,6 +1516,7 @@
       // console.log(data.bill_preview.table_customer_id);
       $scope.submit = true;
       $scope.formdata = data.bill_preview;
+      $scope.formdata._token = $scope._token;
       $http({
          method: 'POST',
          url: '/api/restaurant/table/customer/bill/make/'+data.bill_preview.table_customer_id,
@@ -1595,6 +1613,7 @@
             var formdata = {};
             formdata.deleted_comment = value;
             formdata.bill_data = data.bill_data;
+            formdata._token = $scope._token;
             $scope.submit = true;
             $http({
                method: 'POST',
@@ -1628,18 +1647,20 @@
         });
     }
     $("#search-menu").autocomplete({
-        source: "/api/restaurant/menu/search/name",
+        source: "/api/restaurant/menu/search/name?type=order",
         select: function(event, ui) {
             var data = {};
             data.menu_data = {};
             data.menu_data.id = ui.item.id;
+            data.menu_data.name = ui.item.value;
             $scope.add_cart(data);
-            $scope.search_menu = '';
+            $scope.search_string = '';
         }
     });
 
     $scope.make_payment = function(data) {
       // console.log(data.$parent.bill_id);
+      $scope.formdata._token = $scope._token;
       $scope.submit = true;
       $http({
          method: 'POST',
@@ -1692,6 +1713,7 @@
 
     $scope.edit_table = function(data) {
       $scope.submit = true;
+      $scope.formdata._token = $scope._token;
       $http({
          method: 'PUT',
          url: '/api/restaurant/table/customer/update/'+data.formdata.customer_data.id,
@@ -1723,7 +1745,7 @@
           url : "/api/restaurant/server/list",
       }).then(function mySuccess(response) {
           $scope.server = response.data.result;
-          $scope.formdata.server_id = $scope.server[0];
+          $scope.formdata.server_id = "";
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');

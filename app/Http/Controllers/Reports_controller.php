@@ -16,6 +16,9 @@ use DB;
 use App\Restaurant_server;
 use App\User;
 use App\Restaurant;
+use App\Restaurant_order;
+use App\Restaurant_order_detail;
+use App\Pagination;
 
 class Reports_controller extends Controller
 {
@@ -70,6 +73,45 @@ class Reports_controller extends Controller
     $data['restaurant_servers'] = Restaurant_server::withTrashed()->where('restaurant_id')->get();
     $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
     return view('reports.all',$data);
+  }
+
+  public function orders(Request $request)
+  {
+    $data = $this->get_orders_list($request);
+    $data["date_from"] = date('F d, Y');
+    $data["date_to"] = date('F d, Y');
+    $user_data = $request->session()->get('users.user_data');
+    if($user_data->privilege=='restaurant_cashier'){
+
+    }elseif($user_data->privilege=='restaurant_admin'){
+      $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
+      $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
+    }else{
+      $data['restaurant_servers'] = Restaurant_server::withTrashed()->get();
+      $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
+    }
+    // return $data;
+    return view('reports.orders',$data);
+  }
+
+  public function get_orders_list(Request $request)
+  {
+    $orders = Restaurant_order::query();
+    $orders->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+    if($request->server_id!=null){
+      $orders->where('server_id',$request->server_id);
+    }
+    $orders->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+    $data["result"] = $orders->paginate(50);
+    foreach ($data['result'] as $order_data) {
+      $order_data->date_ = date('j-M',$order_data->date_);
+      $order_data->date_time = date('h:i:s A',$order_data->date_time);
+      $order_data->que_number = sprintf('%04d',$order_data->que_number);
+      $order_data->server_name = Restaurant_server::find($order_data->server_id)->name;
+      $order_data->total = Restaurant_order_detail::select(DB::raw('SUM(quantity*price) as total'))->where('restaurant_order_id',$order_data->id)->value('total');
+    }
+    $data['pagination'] = (string)(new Pagination($data["result"]))->render();
+    return $data;
   }
 
   public function show_print(Request $request,$type)

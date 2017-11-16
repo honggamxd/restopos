@@ -4,28 +4,28 @@
 <title>@yield('title')</title>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 @yield('meta')
-<link rel="stylesheet" type="text/css" href="/assets/jqueryui/jquery-ui.min.css">
-<link rel="stylesheet" type="text/css" href="/assets/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="/assets/css/balloon.css">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/jqueryui/jquery-ui.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/font-awesome.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/balloon.css')}}">
 
 <!-- Bootstrap -->
-<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap-theme.min.css">
-<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap-theme.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap-select.min.css')}}">
 
 <!-- Semantic ui -->
-<link rel="stylesheet" type="text/css" href="/assets/semantic-ui/semantic.css">
-<link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/dropdown.css">
-<link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/transition.css">
-<link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/sidebar.min.css">
-<link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/popup.min.css">
-<link rel="stylesheet" type="text/css" href="/assets/semantic-ui/components/checkbox.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/semantic.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/dropdown.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/transition.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/sidebar.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/popup.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/checkbox.min.css')}}">
 
 <!-- Alertify -->
-<link rel="stylesheet" type="text/css" href="/assets/css/alertify-css/alertify.css">
-<link rel="stylesheet" type="text/css" href="/assets/css/alertify-css/themes/default.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/alertify-css/alertify.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/alertify-css/themes/default.min.css')}}">
 
-<link rel="stylesheet" type="text/css" href="/assets/css/core.css">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/core.css')}}">
 
 @yield('css')
 </head>
@@ -59,7 +59,13 @@
     <a class="item" href="/restaurant/reports">
         <i class="bar chart icon"></i>
         {{Session::get('users.user_data')->restaurant}}<br>
-        Reports
+        Order Slip<br>
+        Summary
+    </a>
+    <a class="item" href="/restaurant/orders">
+        <i class="bar chart icon"></i>
+        {{Session::get('users.user_data')->restaurant}}<br>
+        Food Orders
     </a>
     @endif
     @if(Session::get('users.user_data')->privilege=="admin")
@@ -100,7 +106,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span> 
       </button>
-      <a class="navbar-brand" href="javascript:void(0);"><img src="/assets/images/logo.png"></a>
+      <a class="navbar-brand" href="javascript:void(0);"><img src="{{asset('assets/images/logo.png')}}"></a>
     </div>
     <div class="collapse navbar-collapse" id="pos-navbar">
     <ul class="nav navbar-nav navbar-right">
@@ -133,31 +139,31 @@
 
 @yield('modals')
 <!-- jQuery -->
-<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
-<script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{asset('assets/js/jquery.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/jquery-ui.min.js')}}"></script>
 
 <!-- Bootstrap -->
-<script type="text/javascript" src="/assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{asset('assets/js/bootstrap.min.js')}}"></script>
 
 <!-- Semantic ui components -->
-<script type="text/javascript" src="/assets/semantic-ui/components/dropdown.js"></script>
-<script type="text/javascript" src="/assets/semantic-ui/components/transition.js"></script>
-<script type="text/javascript" src="/assets/semantic-ui/components/sidebar.min.js"></script>
-<script type="text/javascript" src="/assets/semantic-ui/components/popup.min.js"></script>
-<script type="text/javascript" src="/assets/semantic-ui/components/checkbox.min.js"></script>
+<script type="text/javascript" src="{{asset('assets/semantic-ui/components/dropdown.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/semantic-ui/components/transition.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/semantic-ui/components/sidebar.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/semantic-ui/components/popup.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/semantic-ui/components/checkbox.min.js')}}"></script>
 
 <!-- Angularjs -->
-<script type="text/javascript" src="/assets/js/1.6.5/angular.js"></script>
-<script type="text/javascript" src="/assets/js/1.6.5/angular-route.js"></script>
-<script type="text/javascript" src="/assets/js/1.6.5/angular-sanitize.js"></script>
+<script type="text/javascript" src="{{asset('assets/js/1.6.5/angular.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/1.6.5/angular-route.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/1.6.5/angular-sanitize.js')}}"></script>
 
-<script type="text/javascript" src="/assets/js/moment.js"></script>
-<script type="text/javascript" src="/assets/js/tablesort.js"></script>
-<script type="text/javascript" src="/assets/js/alertify.js"></script>
-<script type="text/javascript" src="/assets/js/shortcut.js"></script>
-<script type="text/javascript" src="/assets/js/notify.min.js"></script>
+<script type="text/javascript" src="{{asset('assets/js/moment.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/tablesort.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/alertify.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/shortcut.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/notify.min.js')}}"></script>
 
-<script type="text/javascript" src="/assets/js/core.js"></script>
+<script type="text/javascript" src="{{asset('assets/js/core.js')}}"></script>
 @yield('scripts')
 </body>
 </html>
