@@ -16,6 +16,7 @@ use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
 use App\Restaurant_accepted_order_cancellation;
 use App\Restaurant_order_cancellation;
+use App\Restaurant_payment;
 class Restaurant_bill_controller extends Controller
 {
   public function __construct()
@@ -193,6 +194,7 @@ class Restaurant_bill_controller extends Controller
     $restaurant_table_customer = new Restaurant_table_customer;
     $customer_data = $restaurant_table_customer->withTrashed()->find($restaurant_bill_data->restaurant_table_customer_id);
     $restaurant_bill_detail_data = Restaurant_bill_detail::where('restaurant_bill_id',$id);
+    Restaurant_payment::where('restaurant_bill_id',$id)->delete();
     if($customer_data->deleted_at==null){
       $restaurant_bill_data->is_paid = 0;
       $customer_data->has_billed_completely = 0;
