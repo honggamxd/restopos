@@ -160,6 +160,7 @@
 <script type="text/javascript" src="{{asset('assets/js/moment.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/tablesort.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/alertify.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/lodash.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/shortcut.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/notify.min.js')}}"></script>
 

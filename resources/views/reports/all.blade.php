@@ -295,7 +295,7 @@
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
       $http({
           method : "GET",
-          url : "/api/reports/general/f_and_b_export",
+          url : "/api/reports/general/menu_popularity_export",
           params: {
             "date_from":$scope.date_from,
             "date_to":$scope.date_to,

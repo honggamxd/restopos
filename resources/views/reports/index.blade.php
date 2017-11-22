@@ -15,7 +15,7 @@
 <div class="col-sm-2">
   <label>Navigation:</label>
   <ul class="nav nav-pills nav-stacked">
-    <li class="active"><a data-toggle="pill" href="#all">F&B Revenue</a></li>
+    <li class="active"><a data-toggle="pill" href="#all">Order Slip Summary</a></li>
     <li><a data-toggle="pill" href="#purchases">Purchases</a></li>
     <li><a data-toggle="pill" href="#issuances">Issuances</a></li>
     <li><a data-toggle="pill" href="#menu_popularity">Menu Popularity</a></li>
@@ -25,7 +25,7 @@
   <div class="tab-content">
     <div id="all" class="tab-pane fade in active">
       <form class="form" method="get" action="/reports/view/all">
-        <h1 style="text-align: center;">F&B Revenue Reports</h1>
+        <h1 style="text-align: center;">Order Slip Summary</h1>
         <div class="form-group">
           <label>Date From</label>
           <input type="text" id="all-date-from" name="date_from" class="form-control" placeholder="Date From" value="{{date('m/d/Y')}}" readonly>

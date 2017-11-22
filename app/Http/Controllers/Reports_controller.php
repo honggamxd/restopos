@@ -56,6 +56,7 @@ class Reports_controller extends Controller
       return view('reports.purchases',$data);
     }elseif ($type=="menu_popularity") {
       # code...
+      $data["restaurants"] = Restaurant::all();
       return view('reports.menu_popularity',$data);
     }else{
       return view('reports.issuances',$data);
@@ -604,20 +605,53 @@ class Reports_controller extends Controller
     $menu_popularity->select('restaurant_menu.*',DB::raw('SUM(quantity) as total_quantity'));
     $menu_popularity->whereBetween('restaurant_bill_detail.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $menu_popularity->join('restaurant_menu','restaurant_menu.id','=','restaurant_menu_id');
+    if($request->restaurant_id!=null){
+      $menu_popularity->where('restaurant_menu.restaurant_id',$request->restaurant_id);
+    }
     $menu_popularity->groupBy('restaurant_menu_id');
-
-    $num_items = $menu_popularity->count();
-    if($request->paging=="true"){
-      $menu_popularity->skip($limit);
-      $menu_popularity->take($display_per_page);
+    $menu_popularity->orderBy('total_quantity', 'DESC');
+    if($request->export=='1'){
+      $count = count($menu_popularity->get());
+      $data["result"] = $menu_popularity->paginate($count);
     }else{
-      $display_per_page = $menu_popularity->count();
+      $data["result"] = $menu_popularity->paginate(50);
+    }
+    $data['pagination'] = (string)(new Pagination($data["result"]))->render();
+    $data["getQueryLog"] = DB::getQueryLog();
+
+    return $data;
+  }
+
+  public function menu_popularity_export(Request $request)
+  {
+    $data = $this->menu_popularity($request);
+    $data = $data['result'];
+
+    $fp = fopen('assets/reports/menu_popularity_report.csv', 'w');
+
+    $headers = array ($request->restaurant_name.' Menu Popularity Report in');
+    fputcsv($fp, $headers);
+    $headers = array ('Date From: '.date('F d, Y',strtotime($request->date_from)).' Date To: '.date('F d, Y',strtotime($request->date_to)) );
+    fputcsv($fp, $headers);
+    $headers = array(
+      'Category',
+      'Menu',
+      'Served Quantity',
+      'Total Amount'
+    );
+    fputcsv($fp, $headers);
+    // var_dump($data);
+    foreach ($data as $value) {
+      $fields = array();
+      $fields[] = $value['category'];
+      $fields[] = $value['name'];
+      $fields[] = $value['total_quantity'];
+      $fields[] = $value['total_quantity']*$value['price'];
+      fputcsv($fp, $fields);
     }
 
-    $data["result"] = $menu_popularity->orderBy('total_quantity', 'DESC')->get();
-    $data["paging"] = paging($page,$num_items,$display_per_page);
-    $data["getQueryLog"] = DB::getQueryLog();
-    return $data;
+    fclose($fp);
+    return asset('assets/reports/menu_popularity_report.csv');
   }
 
 }

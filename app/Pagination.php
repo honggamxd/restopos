@@ -12,7 +12,8 @@ class Pagination extends BasePagination {
      */
   protected function getAvailablePageWrapper($url, $page)
   {
-      $page_int = $url[strlen($url)-1];
+      $page_array = explode('=', $url);
+      $page_int = end($page_array);  
       return sprintf($this->getAvailablePageWrapperHTML(),$url,$page_int,$page);
   }
   protected $availablePageWrapper  = '<li><a href="javascript:void(0)" url="%s" class="gotopage" page="%s">%s</a></li>';

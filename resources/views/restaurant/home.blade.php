@@ -161,7 +161,7 @@
         <div class="form-group">
           <label>Server</label>
           <select class="form-control" ng-model="formdata.server_id" ng-options="item as item.name for item in server track by item.id">
-            <option>Select Waiter/Waitress</option>
+            <option value="">Select Waiter/Waitress</option>
           </select>
           <p class="help-block">@{{formerrors.server_id[0]}}</p>
         </div>
@@ -971,7 +971,7 @@
       });
     }
 
-    $scope.delete_table_customer = function(data) {
+    $scope.delete_table_customer = _.debounce(function(data) {
       console.log(data.$parent.customer_data.id);
       $scope.formdata._token = $scope._token;
       $http({
@@ -989,7 +989,7 @@
           var errors = rejection.data;
         }
       });
-    }
+    },100);
 
     $scope.table_name = "";
 
@@ -1231,9 +1231,9 @@
     }
 
     $scope.menu = {};
-    $scope.search_menu = function(){
-      show_menu(); 
-    }
+    $scope.search_menu =  _.debounce(function() {
+      show_menu();
+    }, 200)
     function show_menu(category='all',subcategory='all') {
       $http({
           method : "GET",
@@ -1304,7 +1304,7 @@
         }
       });
     }
-    $scope.add_cart = function(data) {
+    $scope.add_cart = _.debounce(function(data) {
       $scope.add_cart_submit = true;
       
       console.log(data);
@@ -1335,9 +1335,9 @@
         $scope.add_cart_submit = false;
       });
       
-    }
+    },100);
 
-    $scope.remove_item_cart = function(data) {
+    $scope.remove_item_cart = _.debounce(function(data) {
       $scope.formdata.menu_id = data.cart_data.id;
       $scope.formdata.menu_name = data.cart_data.name;
       $scope.formdata.table_customer_id = data.$parent.table_customer_id;
@@ -1363,7 +1363,7 @@
            $scope.formdata.date_payment = errors.date_payment;
         }
       });
-    }
+    },100);
 
     $scope.orders = {};
     $scope.view_orders = function(data) {
@@ -1737,6 +1737,7 @@
 
     
     function show_server() {
+      $scope.formdata.server_id = null;
       $http({
           method : "GET",
           params: {
@@ -1745,7 +1746,6 @@
           url : "/api/restaurant/server/list",
       }).then(function mySuccess(response) {
           $scope.server = response.data.result;
-          $scope.formdata.server_id = "";
       }, function(rejection) {
         if(rejection.status == 500){
           error_505('Server Error, Try Again.');
