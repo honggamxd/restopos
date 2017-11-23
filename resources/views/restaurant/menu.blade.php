@@ -232,8 +232,12 @@
       }).then(function mySuccess(response) {
         $scope.menu = response.data.result.data;
         $scope.pages = $sce.trustAsHtml(response.data.pagination);
-      }, function myError(response) {
-        console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
 
@@ -249,8 +253,8 @@
           $scope.subcategories = response.data;
           // console.log(response.data);
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }

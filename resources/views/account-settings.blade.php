@@ -95,8 +95,8 @@
          $scope.formdata.password_confirmation = "";
          $.notify("Your settings have been saved.");
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){        
            var errors = rejection.data;
            $scope.formerrors = errors;

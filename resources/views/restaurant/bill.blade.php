@@ -190,8 +190,15 @@
           $scope.footer.sc =  response.data.sc;
           $scope.footer.vat =  response.data.vat;
           $scope.footer.total =  response.data.total;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+            angular.forEach(errors, function(value, key) {
+              $.notify(value[0],'error');
+            });
+          }
       });
     }
     $scope.delete = function(data){
@@ -220,8 +227,8 @@
               $scope.bill.deleted_at = true;
               $scope.submit = false;
             }, function(rejection) {
-              if(rejection.status == 500){
-                error_505('Server Error, Try Again.');
+              if(rejection.status != 422){
+                request_error(rejection.status);
               }else if(rejection.status == 422){ 
                var errors = rejection.data;
                angular.forEach(errors, function(value, key) {
@@ -253,8 +260,12 @@
             $scope.has_payment = true;
           }
           $scope.excess = response.data.excess;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
 

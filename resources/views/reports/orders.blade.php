@@ -142,10 +142,14 @@
             $.notify('Food Orders from '+$scope.date_from_str+' to '+$scope.date_to_str+' has been populated.','info');
           }
           $scope.submit = false;
-      }, function myError(response) {
-          $scope.submit = false;
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
+          $scope.submit = false;
     }
   });
 

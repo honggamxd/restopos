@@ -117,8 +117,8 @@
         $scope.request_items = response.data.request_items;
         $('#view-request-modal').modal('show');
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -146,8 +146,8 @@
         }, function(rejection) {
           $scope.submit = false;
           console.log(rejection);
-          if(rejection.status == 500){
-            error_505('Server Error, Try again.');
+          if(rejection.status != 422){
+            request_error(rejection.status);
           }else if(rejection.status == 422){
             var errors = rejection.data;
             angular.forEach(errors, function(value, key) {
@@ -176,8 +176,8 @@
           $.notify('The Cancellation Request has been deleted.','info');
           show_cancellation_request();
         }, function(rejection) {
-          if(rejection.status == 500){
-            error_505('Server Error, Try again.');
+          if(rejection.status != 422){
+            request_error(rejection.status);
           }else if(rejection.status == 422){
             var errors = rejection.data;
             angular.forEach(errors, function(value, key) {
@@ -190,7 +190,7 @@
         // alertify.error('Cancelled');
       });
     }
-    setInterval(function(){
+    var refreshIntervalId = setInterval(function(){
       show_cancellation_request();
     }, 1000);
     function show_cancellation_request() {
@@ -211,8 +211,13 @@
         }else{
           $scope.cancellations = response.data.result;
         }
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+            clearInterval(refreshIntervalId);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
   });

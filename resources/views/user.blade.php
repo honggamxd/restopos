@@ -181,8 +181,12 @@
           url : "/api/users",
       }).then(function mySuccess(response) {
           $scope.users = response.data.result;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
 
@@ -242,8 +246,8 @@
          $scope.users = response.data.result;
       }, function(rejection) {
          var errors = rejection.data;
-         if(rejection.status == 500){
-           error_505('Server Error, Try Again.');
+         if(rejection.status != 422){
+           request_error(rejection.status);
          }else if(rejection.status == 422){        
             var errors = rejection.data;
             $scope.formerrors = errors;
@@ -275,8 +279,8 @@
              $scope.users = response.data.result;
           }, function(rejection) {
              var errors = rejection.data;
-             if(rejection.status == 500){
-               error_505('Server Error, Try Again.');
+             if(rejection.status != 422){
+               request_error(rejection.status);
              }else if(rejection.status == 422){        
                 var errors = rejection.data;
                 $scope.formerrors = errors;

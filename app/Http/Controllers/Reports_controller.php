@@ -56,6 +56,8 @@ class Reports_controller extends Controller
       return view('reports.purchases',$data);
     }elseif ($type=="menu_popularity") {
       # code...
+      $app_config = DB::table('app_config')->first();
+      $data["categories"] = explode(',', $app_config->categories);
       $data["restaurants"] = Restaurant::all();
       return view('reports.menu_popularity',$data);
     }else{
@@ -596,9 +598,6 @@ class Reports_controller extends Controller
   public function menu_popularity(Request $request)
   {
     DB::enableQueryLog();
-    $page = $request->page;
-    $display_per_page = $request->display_per_page;
-    $limit = ($page*$display_per_page)-$display_per_page;
 
     $restaurant_bill_detail = new Restaurant_bill_detail;
     $menu_popularity = $restaurant_bill_detail->where('restaurant_bill_detail.deleted',0);

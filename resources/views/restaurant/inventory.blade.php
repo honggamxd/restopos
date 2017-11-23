@@ -47,8 +47,12 @@
           url : "/api/restaurant/inventory/items",
       }).then(function mySuccess(response) {
           $scope.items = response.data.result;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
   });

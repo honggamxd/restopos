@@ -29,6 +29,13 @@
       </select>
     </div>
   </div>
+  <label>Category</label>
+  <select class="ui dropdown" ng-model="category" ng-init="category='all'" ng-change="filter_report()">
+    <option value="all">All Menu</option>
+    @foreach($categories as $category)
+    <option value="{{$category}}">{{$category}}</option>
+    @endforeach
+  </select>
   <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button>
 
   <div class="table-responsive">
@@ -36,6 +43,7 @@
     <thead>
       <tr>
         <th class="center aligned middle aligned">Category</th>
+        <th class="center aligned middle aligned">Subcategory</th>
         <th class="center aligned middle aligned">Menu</th>
         <th class="center aligned middle aligned">Served Quantity</th>
         <th class="center aligned middle aligned">Total Amount</th>
@@ -44,6 +52,7 @@
     <tbody>
       <tr ng-repeat="item in menu_popularity">
         <td class="center aligned middle aligned">@{{item.category}}</td>
+        <td class="center aligned middle aligned">@{{item.subcategory}}</td>
         <td class="center aligned middle aligned">@{{item.name}}</td>
         <td class="center aligned middle aligned">@{{item.total_quantity}}</td>
         <td class="center aligned middle aligned">@{{item.price*item.total_quantity|currency:""}}</td>
@@ -93,12 +102,19 @@
         $scope.export = false;
         // console.log(response);
         window.location = response.data;
-      }, function myError(response) {
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
           $scope.export = false;
-          console.log(response.statusText);
       });
     }
     $scope.change_outlet = function() {
+      show_reports();
+    }
+    $scope.filter_report = function() {
       show_reports();
     }
     show_reports();
@@ -112,6 +128,7 @@
             "date_to":"{{$date_to}}",
             "page":page,
             "restaurant_id":restaurant_id,
+            "category": $scope.category
           }
       }).then(function mySuccess(response) {
           $scope.menu_popularity = response.data.result.data;
@@ -119,8 +136,12 @@
           $scope.pagination = $sce.trustAsHtml(response.data.pagination);
           var restaurant_name = ($scope.restaurant_id==undefined?"":$scope.restaurant_id['name']);
           $scope.outlet = restaurant_name;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
   });

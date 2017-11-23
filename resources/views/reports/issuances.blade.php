@@ -85,8 +85,12 @@
           $scope.issuances = response.data.result;
           $scope.footer = response.data.footer;
           $scope.paging = $sce.trustAsHtml(response.data.paging);
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
   });

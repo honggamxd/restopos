@@ -231,8 +231,12 @@
       }).then(function mySuccess(response) {
           // console.log(response.data.items);
           $scope.items = response.data.items;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
   });

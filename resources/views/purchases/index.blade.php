@@ -365,8 +365,12 @@
           $scope.cart.items = response.data.items;
           $scope.cart.total = response.data.total;
           $scope.cart.info = response.data.info;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
 

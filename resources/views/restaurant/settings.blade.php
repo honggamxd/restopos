@@ -410,8 +410,12 @@
           url : "/api/restaurant/server/list",
       }).then(function mySuccess(response) {
           $scope.server = response.data.result;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
 
@@ -426,8 +430,12 @@
           url : "/api/restaurant/table/list/all",
       }).then(function mySuccess(response) {
           $scope.table = response.data.result;
-      }, function myError(response) {
-          console.log(response.statusText);
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
       });
     }
 

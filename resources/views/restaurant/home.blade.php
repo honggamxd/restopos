@@ -651,88 +651,111 @@
 </div>
 
 <div id="payment-modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-sm">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Payment of Check #</h4>
+        <h4 class="modal-title">Payment of Check # @{{check_number}}</h4>
       </div>
       <div class="modal-body" style="min-height: 50vh;">
-        <div class="form-group">
-          <label>Total:</label>
-          <span class="form-control">@{{formdata.net_billing|currency:""}}</span>
-        </div>
         <form class="form" id="make-payment-form">
-          <div class="form-group">
-            <label>Settlement:</label>
-            <select name="settlement" id="settlement" multiple="" class="ui fluid dropdown" ng-model="formdata.settlement" ng-change="settlements_payment()">
-              <option value="">Select Settlement</option>
-              <option value="cash">{{settlements("cash")}}</option>
-              <option value="credit">{{settlements("credit")}}</option>
-              <option value="debit">{{settlements("debit")}}</option>
-              <option value="cheque">{{settlements("cheque")}}</option>
-              <option value="guest_ledger">{{settlements("guest_ledger")}}</option>
-              <option value="send_bill">{{settlements("send_bill")}}</option>
-              <option value="free_of_charge">{{settlements("free_of_charge")}}</option>
-              <option value="manager_meals">{{settlements("manager_meals")}}</option>
-              <option value="sales_office">{{settlements("sales_office")}}</option>
-              <option value="representation">{{settlements("representation")}}</option>
-            </select>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label>Settlement:</label>
+                <select name="settlement" id="settlement" multiple="" class="ui fluid dropdown" ng-model="formdata.settlement" ng-change="settlements_payment()">
+                  <option value="">Select Settlement</option>
+                  <option value="cash">{{settlements("cash")}}</option>
+                  <option value="credit">{{settlements("credit")}}</option>
+                  <option value="debit">{{settlements("debit")}}</option>
+                  <option value="cheque">{{settlements("cheque")}}</option>
+                  <option value="guest_ledger">{{settlements("guest_ledger")}}</option>
+                  <option value="send_bill">{{settlements("send_bill")}}</option>
+                  <option value="free_of_charge">{{settlements("free_of_charge")}}</option>
+                  <option value="manager_meals">{{settlements("manager_meals")}}</option>
+                  <option value="sales_office">{{settlements("sales_office")}}</option>
+                  <option value="representation">{{settlements("representation")}}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Invoice Number</label>
+                <input type="text" class="form-control" ng-model="formdata.invoice_number">
+                <p class="help-block">@{{formerrors.invoice_number[0]}}</p>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group" ng-if="formdata.settlements_payment.cash">
+                <label>{{settlements("cash")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cash" ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.credit">
+                <label>{{settlements("credit")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.credit"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.debit">
+                <label>{{settlements("debit")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.debit"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.cheque">
+                <label>{{settlements("cheque")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cheque"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.guest_ledger">
+                <label>{{settlements("guest_ledger")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.guest_ledger"  ng-change="input_payment()">
+              </div>
+              
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group" ng-if="formdata.settlements_payment.send_bill">
+                <label>{{settlements("send_bill")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.send_bill"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.free_of_charge">
+                <label>{{settlements("free_of_charge")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.manager_meals">
+                <label>{{settlements("manager_meals")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.manager_meals"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.sales_office">
+                <label>{{settlements("sales_office")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.sales_office"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.representation">
+                <label>{{settlements("representation")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.representation"  ng-change="input_payment()">
+              </div>
+              
+            </div>
           </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.cash">
-            <label>{{settlements("cash")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cash" ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.credit">
-            <label>{{settlements("credit")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.credit"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.debit">
-            <label>{{settlements("debit")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.debit"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.cheque">
-            <label>{{settlements("cheque")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.cheque"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.guest_ledger">
-            <label>{{settlements("guest_ledger")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.guest_ledger"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.send_bill">
-            <label>{{settlements("send_bill")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.send_bill"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.free_of_charge">
-            <label>{{settlements("free_of_charge")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.manager_meals">
-            <label>{{settlements("manager_meals")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.manager_meals"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.sales_office">
-            <label>{{settlements("sales_office")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.sales_office"  ng-change="input_payment()">
-          </div>
-          <div class="form-group" ng-if="formdata.settlements_payment.representation">
-            <label>{{settlements("representation")}}:</label>
-            <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.representation"  ng-change="input_payment()">
-          </div>
-          <div class="form-group">
-            <label>Total Payment:</label>
-            <span class="form-control">@{{total_payment|currency:""}}</span>
-          </div>
-          <div class="form-group">
-            <label>Change:</label>
-            <span class="form-control">@{{formdata.excess|currency:""}}</span>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label>Total:</label>
+                <span class="form-control">@{{formdata.net_billing|currency:""}}</span>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label>Total Payment:</label>
+                <span class="form-control">@{{total_payment|currency:""}}</span>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label>Change:</label>
+                <span class="form-control">@{{formdata.excess|currency:""}}</span>
+              </div>
+            </div>
           </div>
 
         </form>
       </div>
       <div class="modal-footer" ng-model="bill_id">
         <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
-        <button type="button" class="ui primary button" ng-disabled="submit" ng-click="make_payment(this)" ng-if="valid_payment" ng-class="{'loading':submit}">Save Payment</button>
+        <button type="submit" class="ui primary button" ng-disabled="submit" form="make-payment-form" ng-click="make_payment(this)" ng-if="valid_payment" ng-class="{'loading':submit}">Save Payment</button>
       </div>
     </div>
   </div>
@@ -886,8 +909,8 @@
          $("#add-table-modal").modal("hide");
          $.notify("A Customer has been added to the list.");
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){        
            var errors = rejection.data;
            // console.log(errors.server_id);
@@ -925,8 +948,8 @@
             $scope.has_table = true;
           }
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -947,7 +970,7 @@
     }
 
     $scope.table_customers = {};
-    setInterval(function(){
+    var refreshIntervalId = setInterval(function(){
       show_table_customers();
     }, 1000);
     function show_table_customers() {
@@ -963,8 +986,9 @@
             $scope.table_customers = response.data.result;
           }
       }, function(rejection) {
-        if(rejection.status == 500){
-          // error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
+          clearInterval(refreshIntervalId);
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -983,8 +1007,8 @@
       .then(function(response) {
         $.notify('A Customer has been removed from the list.','info');
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           var errors = rejection.data;
         }
@@ -1023,7 +1047,6 @@
           method : "GET",
           url : "/api/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
         }).then(function mySuccess(response) {
-          console.log(response.data);
           $scope.bill_preview = {};
           $scope.bill_preview.customer_data = {};
           $scope.bill_preview.items = response.data.result;
@@ -1035,8 +1058,8 @@
           $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
           $('#after-bill-out-cancellation-order-modal').modal('show');
         }, function(rejection) {
-          if(rejection.status == 500){
-            error_505('Server Error, Try Again.');
+          if(rejection.status != 422){
+            request_error(rejection.status);
           }else if(rejection.status == 422){
             console.log(rejection.statusText); 
           }
@@ -1057,12 +1080,11 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
         $.notify('Your request for cancellation of orders has been deleted.','info');
         $scope.customer_data.has_cancellation_request=0;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           var errors = rejection.data; 
           angular.forEach(errors, function(value, key) {
@@ -1090,14 +1112,13 @@
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(function(response) {
-          console.log(response.data);
           $.notify('A request for cancellations has been sent.');
           $('#before-bill-out-cancellation-order-modal').modal('hide');
           $scope.formdata.reason_cancelled = "";
           $scope.submit = false;
         }, function(rejection) {
-          if(rejection.status == 500){
-            error_505('Server Error, Try Again.');
+          if(rejection.status != 422){
+            request_error(rejection.status);
           }else if(rejection.status == 422){
             var errors = rejection.data; 
             angular.forEach(errors, function(value, key) {
@@ -1116,14 +1137,13 @@
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(function(response) {
-          console.log(response.data);
           $.notify('A request for cancellations has been sent.');
           $('#after-bill-out-cancellation-order-modal').modal('hide');
           $scope.formdata.reason_cancelled = "";
           $scope.submit = false;
         }, function(rejection) {
-          if(rejection.status == 500){
-            error_505('Server Error, Try Again.');
+          if(rejection.status != 422){
+            request_error(rejection.status);
           }else if(rejection.status == 422){
             var errors = rejection.data;
             angular.forEach(errors, function(value, key) {
@@ -1145,8 +1165,8 @@
         $scope.table_customer_cart = response.data.cart;
         $scope.table_customer_total = response.data.total;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -1173,10 +1193,10 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        // console.log(response.data);
+
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
          var errors = rejection.data; 
         }
@@ -1196,10 +1216,9 @@
         // show_cart(data.$parent.table_customer_id);
         $scope.table_customer_cart = response.data.cart;
         $scope.table_customer_total = response.data.total;
-        console.log(response.data);
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
            var errors = rejection.data;
         }
@@ -1216,10 +1235,9 @@
           },
       }).then(function mySuccess(response) {
           $scope.subcategories = response.data;
-          console.log(response.data);
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1246,8 +1264,8 @@
       }).then(function mySuccess(response) {
           $scope.menu = response.data.result;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -1266,14 +1284,13 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
         $scope.submit = false;
         $("#add-order-modal").modal('hide');
         $('#view-order-modal').modal('show');
         show_order(response.data.id);
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           var errors = rejection.data;
           $.notify(errors.table_customer_cart[0],'error');
@@ -1292,13 +1309,13 @@
         method : "GET",
         url : "/api/restaurant/table/order/view/"+id,
       }).then(function mySuccess(response) {
-        // console.log(response.data);
+
         $scope.order = response.data.order;
         $scope.order_detail = response.data.order_detail;
         $scope.customer_data = response.data.customer_data;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           console.log(rejection.statusText);
         }
@@ -1319,14 +1336,14 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-         // console.log(response.data);
+
          $scope.table_customer_cart = response.data.cart;
          $scope.table_customer_total = response.data.total;
          $.notify(data.menu_data.name + " has been placed.");
         $scope.add_cart_submit = false;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
            var errors = rejection.data;
            $.notify(rejection.data.error,'error');
@@ -1349,14 +1366,14 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-         // console.log(response.data);
+
          $scope.table_customer_cart = response.data.cart;
          $scope.table_customer_total = response.data.total;
          // console.log($scope.formdata);
          $.notify($scope.formdata.menu_name+" has been removed from the list.","info");
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
            var errors = rejection.data;
            $.notify(rejection.data.error,'error');
@@ -1377,8 +1394,8 @@
           $scope.table_customer_id = data.customer_data.id;
           $scope.customer_data = data.customer_data;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1393,7 +1410,6 @@
           method : "GET",
           url : "/api/restaurant/table/customer/bill/preview/"+data.$parent.customer_data.id,
         }).then(function mySuccess(response) {
-          console.log(response.data);
           $scope.bill_preview = {};
           $scope.bill_preview.customer_data = {};
           $scope.bill_preview.items = response.data.result;
@@ -1409,8 +1425,8 @@
             $.notify('Cannot make a bill, this customer has an existing cancellation request.','error');
           }
         }, function(rejection) {
-          if(rejection.status == 500){
-            error_505('Server Error, Try Again.');
+          if(rejection.status != 422){
+            request_error(rejection.status);
           }else if(rejection.status == 422){
             console.log(rejection.statusText);
           }
@@ -1425,7 +1441,6 @@
            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(function(response) {
-          console.log(response.data);
           $scope.bill_out_submit = false;
           $scope.bill_preview = {};
           $scope.bill_preview.customer_data = {};
@@ -1439,8 +1454,8 @@
           $scope.max = data.$parent.customer_data.pax;
           $('#bill-preview-modal').modal('show');
         }, function(rejection) {
-          if(rejection.status == 500){
-            error_505('Server Error, Try Again.');
+          if(rejection.status != 422){
+            request_error(rejection.status);
           }else if(rejection.status == 422){
            var errors = rejection.data;
            $scope.formdata.date_payment = errors.date_payment;
@@ -1456,14 +1471,13 @@
           method : "GET",
           url : "/api/restaurant/orders/cancellations/accept/"+data.$parent.customer_data.id,
       }).then(function mySuccess(response) {
-          console.log(response.data);
           $scope.cancelled_orders = response.data.cancelled_orders;
           // $scope.cancelled_orders.settlement = 
           $scope.table_customer_id = response.data.table_customer_id;
           $("#settlement-cancelled-order-modal").modal("show");
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1485,13 +1499,12 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
         $.notify('Cancelled Orders has been settled.');
         $('#settlement-cancelled-order-modal').modal('hide');
         $scope.submit = false;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
          var errors = rejection.data;
          angular.forEach(errors, function(value, key) {
@@ -1531,8 +1544,8 @@
         $("#bill-preview-modal").modal("hide");
         $("#view-bill-modal").modal("show");
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
            var errors = rejection.data;
            $.notify(errors.items[0],'error');
@@ -1556,13 +1569,12 @@
           method : "GET",
           url : "/api/restaurant/table/customer/bill/list/"+id,
       }).then(function mySuccess(response) {
-          console.log(response.data);
           $scope.bill = response.data.result;
           $scope.bill.table_name = response.data.table_name;
           $("#view-bill-modal").modal("show");
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){ 
           console.log(rejection.statusText);
         }
@@ -1584,6 +1596,7 @@
       };
       $scope.formdata.net_billing  = data.bill_data.net_billing  ;
       $scope.bill_id = data.bill_data.id;
+      $scope.check_number = data.bill_data.check_number;
       $("#payment-modal").modal("show");
       $('#settlement').dropdown('clear');
       $scope.formdata.settlement = {} ;
@@ -1622,14 +1635,13 @@
                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             })
             .then(function(response) {
-              console.log(response.data);
               $("#view-bill-modal").modal("hide");
               $scope.formdata.deleted_comment = '';
               $.notify('Check # '+data.$parent.bill_data.check_number+' has been deleted');
               $scope.submit = false;
             }, function(rejection) {
-              if(rejection.status == 500){
-                error_505('Server Error, Try Again.');
+              if(rejection.status != 422){
+                request_error(rejection.status);
               }else if(rejection.status == 422){ 
                var errors = rejection.data;
                angular.forEach(errors, function(value, key) {
@@ -1659,6 +1671,7 @@
     });
 
     $scope.make_payment = function(data) {
+      $scope.formerrors = {};
       // console.log(data.$parent.bill_id);
       $scope.formdata._token = $scope._token;
       $scope.submit = true;
@@ -1670,17 +1683,18 @@
       })
       .then(function(response) {
         $.notify('The Payment has been saved.');
-        console.log(response.data);
         $scope.submit = false;
         $scope.bill = response.data.result;
         $scope.bill.table_name = response.data.table_name;
         $scope.formdata.settlement = {};
         $("#payment-modal").modal("hide");
+        $scope.formerrors = {};
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){ 
          var errors = rejection.data;
+         $scope.formerrors = errors;
         }
        $scope.submit = false;
       });
@@ -1721,13 +1735,12 @@
          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
         $('#edit-table-modal').modal('hide');
         $scope.submit = false;
         $.notify("The information of customer has been updated.");
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){ 
          var errors = rejection.data;
         }
@@ -1747,8 +1760,8 @@
       }).then(function mySuccess(response) {
           $scope.server = response.data.result;
       }, function(rejection) {
-        if(rejection.status == 500){
-          error_505('Server Error, Try Again.');
+        if(rejection.status != 422){
+          request_error(rejection.status);
         }else if(rejection.status == 422){
           console.log(rejection.statusText); 
         }

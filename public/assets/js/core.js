@@ -18,8 +18,15 @@ $(document).ready(function(){
   }, 500);
 });
 
-function error_505(error_message) {
-  alertify.error(error_message);
+function request_error(error_code) {
+    if(error_code==401){
+        alertify.alert('Error','Session has expired. Please login again.');
+        setTimeout(function(){
+            location.reload();
+        }, 3000);
+    }else if(error_code>=500){
+        $.notify("Server Error Try Again.");
+    }
 }
 // $(document).on('keydown', function(e) {
 //     if(e.ctrlKey && (e.key == "p" || e.charCode == 16 || e.charCode == 112 || e.keyCode == 80) ){

@@ -18,6 +18,9 @@ class Restaurant_payment_controller extends Controller
   }
   public function store(Request $request,$id)
   {
+    $this->validate($request, [
+        'invoice_number' => 'required'
+      ]);
     $restaurant_bill = new Restaurant_bill;
     $restaurant_bill_detail = new Restaurant_bill_detail;
     $restaurant_table_customer = new Restaurant_table_customer;
@@ -34,6 +37,7 @@ class Restaurant_payment_controller extends Controller
     }
     $bill_data->is_paid = 1;
     $bill_data->excess = $request->excess;
+    $bill_data->invoice_number = $request->invoice_number;
     $bill_data->save();
     $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$bill_data->restaurant_table_customer_id)->get();
     $has_unpaid_order = false;

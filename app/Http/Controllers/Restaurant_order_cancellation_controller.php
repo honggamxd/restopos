@@ -23,6 +23,10 @@ use App\Restaurant;
 class Restaurant_order_cancellation_controller extends Controller
 {
     //
+  public function __construct()
+  {
+      $this->middleware('logged');
+  }
 
   public function index(Request $request)
   {

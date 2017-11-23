@@ -283,9 +283,13 @@
           $scope.date_from_str = moment($scope.date_from).format("MMMM DD, YYYY");
           $scope.date_to_str = moment($scope.date_to).format("MMMM DD, YYYY");
           $.notify('Order Slip Summary Report from '+$scope.date_from_str+' to '+$scope.date_to_str+' has been populated.','info');
-      }, function myError(response) {
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
           $scope.submit = false;
-          console.log(response.statusText);
       });
     }
 
@@ -309,9 +313,13 @@
         $scope.export = false;
         // console.log(response);
         window.location = response.data;
-      }, function myError(response) {
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
           $scope.export = false;
-          console.log(response.statusText);
       });
     }
 
