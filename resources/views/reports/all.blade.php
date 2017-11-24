@@ -101,6 +101,7 @@
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Cashier</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Guest Name</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of SC/PWD</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Invoice #</th>
           @foreach ($categories as $category)
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
@@ -140,6 +141,7 @@
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.cashier_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.guest_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.sc_pwd}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.invoice_number}}</td>
           @foreach ($categories as $category)
             <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |chkNull|currency:""}}</td>
           @endforeach
@@ -178,6 +180,7 @@
           <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.sc_pwd}}</th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           @foreach ($categories as $category)
             <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |chkNull|currency:""}}</th>
           @endforeach

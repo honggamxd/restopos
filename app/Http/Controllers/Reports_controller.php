@@ -156,7 +156,8 @@ class Reports_controller extends Controller
       'Server',
       'Cashier',
       'Guest Name',
-      '# of SC/PWD'
+      '# of SC/PWD',
+      'Invoice #'
     );
     $headers = array_merge($headers,$categories);
     $initial_headers = array(
@@ -197,7 +198,8 @@ class Reports_controller extends Controller
         $bill_data['server_name'],
         $bill_data['cashier_name'],
         $bill_data['guest_name'],
-        $bill_data['sc_pwd']
+        $bill_data['sc_pwd'],
+        $bill_data['invoice_number']
       );
       $categories_values = array();
       foreach ($categories as $key) {
@@ -253,7 +255,8 @@ class Reports_controller extends Controller
       "",
       "",
       "",
-      $data['footer']['sc_pwd']
+      $data['footer']['sc_pwd'],
+      ""
     );
     $categories_values = array();
     foreach ($categories as $key) {
@@ -607,6 +610,9 @@ class Reports_controller extends Controller
     if($request->restaurant_id!=null){
       $menu_popularity->where('restaurant_menu.restaurant_id',$request->restaurant_id);
     }
+    if($request->category!=null&&$request->category!='all'){
+      $menu_popularity->where('restaurant_menu.category',$request->category);
+    }
     $menu_popularity->groupBy('restaurant_menu_id');
     $menu_popularity->orderBy('total_quantity', 'DESC');
     if($request->export=='1'){
@@ -634,6 +640,7 @@ class Reports_controller extends Controller
     fputcsv($fp, $headers);
     $headers = array(
       'Category',
+      'Subcategory',
       'Menu',
       'Served Quantity',
       'Total Amount'
@@ -643,6 +650,7 @@ class Reports_controller extends Controller
     foreach ($data as $value) {
       $fields = array();
       $fields[] = $value['category'];
+      $fields[] = $value['subcategory'];
       $fields[] = $value['name'];
       $fields[] = $value['total_quantity'];
       $fields[] = $value['total_quantity']*$value['price'];

@@ -96,6 +96,7 @@
             "page":page,
             'export': '1',
             "restaurant_id":restaurant_id,
+            "category": $scope.category,
             "restaurant_name":$scope.outlet,
           }
       }).then(function mySuccess(response) {
