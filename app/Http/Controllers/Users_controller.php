@@ -45,6 +45,9 @@ class Users_controller extends Controller
   public function settings(Request $request)
   {
     $user_data = User::find($request->session()->get('users.user_data')->id);
+    if($user_data->allow_edit_info==0){
+      abort(403);
+    }
     return view('account-settings',compact('user_data'));
   }
   public function save_settings(Request $request)
@@ -130,6 +133,7 @@ class Users_controller extends Controller
     $user->username = $request->username;
     $user->password = md5($request->password);
     $user->privilege = $request->privilege;
+    $user->allow_edit_info = ($request->allow_edit_info!=null?1:0);
     $user->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
     $user->save();
 
@@ -149,6 +153,8 @@ class Users_controller extends Controller
     $user = new User;
     $user_data = $user->find($id);
     $user_data->privilege = $request->privilege;
+    $user_data->password = md5($request->password);
+    $user_data->allow_edit_info = ($request->allow_edit_info=='true'?1:0);
     $user_data->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
     $user_data->save();
 

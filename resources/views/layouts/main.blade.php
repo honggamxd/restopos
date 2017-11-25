@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="{{asset('assets/jqueryui/jquery-ui.min.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/font-awesome.min.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/balloon.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/jquery-ui-timepicker-addon.css')}}">
 
 <!-- Bootstrap -->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap.min.css')}}">
@@ -141,6 +142,7 @@
 <!-- jQuery -->
 <script type="text/javascript" src="{{asset('assets/js/jquery.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/jquery-ui.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/jquery-ui-timepicker-addon.js')}}"></script>
 
 <!-- Bootstrap -->
 <script type="text/javascript" src="{{asset('assets/js/bootstrap.min.js')}}"></script>

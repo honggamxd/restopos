@@ -19,6 +19,7 @@ use App\Restaurant;
 use App\Restaurant_order;
 use App\Restaurant_order_detail;
 use App\Pagination;
+use Carbon\Carbon;
 
 class Reports_controller extends Controller
 {
@@ -307,7 +308,6 @@ class Reports_controller extends Controller
   }
   public function f_and_b(Request $request)
   {
-    
     DB::enableQueryLog();
     
     $app_config = DB::table('app_config')->first();
@@ -340,7 +340,7 @@ class Reports_controller extends Controller
     if($user_data->privilege!='admin'){
       $bills->where('restaurant_id',$user_data->restaurant_id);
     }
-    $bills->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+    $bills->whereBetween('created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
     $num_items = $bills->count();
     if($request->paging=="true"){
       $bills->skip($limit);
@@ -612,6 +612,9 @@ class Reports_controller extends Controller
     }
     if($request->category!=null&&$request->category!='all'){
       $menu_popularity->where('restaurant_menu.category',$request->category);
+    }
+    if($request->subcategory!=null&&$request->subcategory!='all'){
+      $menu_popularity->where('restaurant_menu.subcategory',$request->subcategory);
     }
     $menu_popularity->groupBy('restaurant_menu_id');
     $menu_popularity->orderBy('total_quantity', 'DESC');

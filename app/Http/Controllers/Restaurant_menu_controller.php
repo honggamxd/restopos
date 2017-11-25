@@ -163,6 +163,9 @@ class Restaurant_menu_controller extends Controller
     if($request->session()->get('users.user_data')->restaurant_id!=0){
       $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
     }
+    if($request->restaurant_id!=0){
+      $data["result"]->where('restaurant_id',$request->restaurant_id);
+    }
     $data["result"]->distinct();
     $data["result"] = $data["result"]->pluck('category');
     return $data;
@@ -178,6 +181,9 @@ class Restaurant_menu_controller extends Controller
       $data->where('category',$request->category)->select('subcategory');
       if($request->session()->get('users.user_data')->restaurant_id!=0){
         $data->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+      }
+      if($request->restaurant_id!=0){
+        $data->where('restaurant_id',$request->restaurant_id);
       }
       $data->distinct();
       $data = $data->pluck('subcategory');

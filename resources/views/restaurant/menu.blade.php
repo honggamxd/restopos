@@ -38,7 +38,7 @@
           </select>
         </div>
         <div class="field">
-          <label>Category</label>
+          <label>Subcategory</label>
           <select class="form-control" ng-change="subcategory_change_menu_list(this)" ng-model="select_subcategory" ng-options="item for item in subcategories">
           <option value="">All Subcategories</option>
           </select>

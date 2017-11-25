@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', '')
+@section('title', 'Account Settings')
 
 @section('css')
 <style type="text/css">

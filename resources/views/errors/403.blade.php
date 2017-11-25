@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Login</title>
+<title>403</title>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="/assets/jqueryui/jquery-ui.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/font-awesome.min.css">
@@ -25,69 +25,20 @@
 <link rel="stylesheet" type="text/css" href="/assets/css/alertify-css/themes/default.min.css">
 
 <link rel="stylesheet" type="text/css" href="/assets/css/core.css">
-<style>
-#login-container{
-  margin-top: 20vh;
-  border: 1px solid grey;
-  padding: 1rem 1rem 1rem 1rem;
-}
-</style>
+
+
 </head>
-<body id="has-logo" ng-controller="content-controller">
-  <div class="container login" style="height:90vh; display: flex; justify-content:center; align-items:center" >
-      <div class="col-sm-8 panel panel-default" >
-          <div class="col-sm-6" style="text-align:center" >
-              <br>
-              <br>
-                <img src="/assets/images/logo.png" style="width: 100%;" />
-              <h2>
-                  <b>ORDERING SYSTEM</b>
-              </h2>
-          </div>
-          <div class="col-sm-6" >
-              <br>
-              <form class="form-horizontal panel-body " method="POST" action="/login">
-                {{csrf_field()}}
+<body>
 
-                  <div class="form-group">
-
-                      <div class="col-md-12">
-                          <label for="username" class="control-label"> Username: </label>
-                          <div class="ui left icon input fluid">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" autocomplete="new-password" required autofocus>
-                            <i class="user icon"></i>
-                          </div>
-                          <p class="help-block" id="account_help-block">{{ $errors->first('username') }}</p>
-
-                      </div>
-                  </div>
-
-                  <div class="form-group">
-                      <div class="col-md-12">
-                          <label for="username" class="control-label"> Password: </label>
-                          <div class="ui left icon input fluid">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" autocomplete="new-password">
-                            <i class="lock icon"></i>
-                          </div>
-
-                          <p class="help-block" id="account_password_help-block">{{ $errors->first('password') }}</p>
-                      </div>
-                  </div>
-
-                  <div class="form-group">
-                      <div class="col-md-12">
-                          <br>
-                          <button type="submit" class="btn btn-primary btn-block">
-                              Login
-                          </button>
-                      </div>
-                  </div>
-
-              </form> 
-
-          </div>
-      </div>
+<div class="col-sm-12">
+  <div style="position: relative;top: 20vh;">
+    <p style="text-align: center;font-size: 500%;margin-bottom: 0;">403</p>
+    <p style="text-align: center;font-size: 500%;margin-bottom: 0;">FORBIDDEN</p>
+    <p style="text-align: center;font-size: 300%;margin-bottom: 0;">You do not have the permission to access this page.</p>
+    <p style="text-align: center;font-size: 500%;margin-bottom: 0;"><a href="javascript:history.back()" style="font-size: 5vh;">GO BACK</a</p>
   </div>
+</div>
+
 <!-- jQuery -->
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/assets/js/jquery-ui.min.js"></script>
@@ -111,14 +62,8 @@
 <script type="text/javascript" src="/assets/js/tablesort.js"></script>
 <script type="text/javascript" src="/assets/js/alertify.js"></script>
 <script type="text/javascript" src="/assets/js/shortcut.js"></script>
-<script type="text/javascript" src="/assets/js/notify.min.js"></script>
 
 <script type="text/javascript" src="/assets/js/core.js"></script>
-<script type="text/javascript">
-  var app = angular.module('main', ['ngSanitize']);
-  app.controller('content-controller', function($scope,$http, $sce) {
 
-  });
-  angular.bootstrap(document, ['main']);
-</script>
 </body>
+</html>

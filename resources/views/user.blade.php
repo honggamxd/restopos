@@ -108,9 +108,15 @@
 
         <div class="form-group">
           <label>Password</label>
-          <input class="form-control" type="text" placeholder="Enter Password" name="pax" ng-model="formdata.password" ng-init="formdata.password='password123'" readonly>
-          <small>* This is the default password, the user must change his password after account creation.</small>
+          <input class="form-control" type="text" placeholder="Enter Password" name="pax" ng-model="formdata.password" ng-init="formdata.password='password123'">
+          <!-- <small>* This is the default password, the user must change his password after account creation.</small> -->
           <p class="help-block">@{{formerrors.password[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox">
+            <label><input type="checkbox" ng-model="formdata.allow_edit_info">Allow User to Edit Information</label>
+          </div>
         </div>
 
         </form>
@@ -155,6 +161,19 @@
             @endforeach
           </select>
           <p class="help-block">@{{formerrors.restaurant_id[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Replace Password</label>
+          <input class="form-control" type="text" placeholder="Enter Password" name="pax" ng-model="formdata.password">
+          <!-- <small>* This is the default password, the user must change his password after account creation.</small> -->
+          <p class="help-block">@{{formerrors.password[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox">
+            <label><input type="checkbox" ng-model="formdata.allow_edit_info" ng-checked="formdata.allow_edit_info==1">Allow User to Edit Information</label>
+          </div>
         </div>
         </form>
       </div>
@@ -227,6 +246,8 @@
         id: $scope.formdata.id,
         privilege: $scope.formdata.privilege,
         restaurant_id: $scope.formdata.restaurant_id,
+        allow_edit_info: $scope.formdata.allow_edit_info,
+        password: $scope.formdata.password
       };
       $scope.formerrors = {};
       $scope.submit = true;

@@ -236,7 +236,9 @@
     $scope.date_to_str = "";
     $scope.restaurants = {!! $restaurants !!};
 
-    $('#date_from,#date_to').datepicker();
+    $('#date_from,#date_to').datetimepicker({
+      timeFormat: "hh:mm tt"
+    });
 
 
     @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
