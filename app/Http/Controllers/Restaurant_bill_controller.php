@@ -17,6 +17,8 @@ use App\Restaurant_bill_detail;
 use App\Restaurant_accepted_order_cancellation;
 use App\Restaurant_order_cancellation;
 use App\Restaurant_payment;
+use App\Restaurant_meal_types;
+
 class Restaurant_bill_controller extends Controller
 {
   public function __construct()
@@ -48,6 +50,21 @@ class Restaurant_bill_controller extends Controller
         'discount_except' => 'The number of SC/PWD Must be 0 if the items to bill are Sundries',
         'valid_restaurant_billing' => 'The quantity for billing of the items are not valid.'
       ]);
+
+
+    $meal_types = Restaurant_meal_types::where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)->get();
+    $time_str = date('H:i:s');
+    $time_now = strtotime($time_str);
+    if(strtotime($meal_types[0]->schedule)<=$time_now&&strtotime($meal_types[1]->schedule)>$time_now){
+      $meal_type = $meal_types[0]->type;
+    }elseif(strtotime($meal_types[1]->schedule)<=$time_now&&strtotime($meal_types[2]->schedule)>$time_now){
+      $meal_type = $meal_types[1]->type;
+    }elseif(strtotime($meal_types[2]->schedule)<=$time_now&&strtotime($meal_types[3]->schedule)>$time_now){
+      $meal_type = $meal_types[2]->type;
+    }else{
+      $meal_type = $meal_types[3]->type;
+    }
+
     // return $request->items;
     // exit;
     $restaurant_table_customer = new Restaurant_table_customer;
@@ -86,6 +103,7 @@ class Restaurant_bill_controller extends Controller
     $restaurant_bill->guest_name = $customer_data->guest_name;
     $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
     $restaurant_bill->type = "good_order";
+    $restaurant_bill->meal_type = $meal_type;
     $restaurant_bill->check_number = ($check_number==null||$check_number==0?1:++$check_number);
     $restaurant_bill->save();
 

@@ -34,8 +34,8 @@ class Reports_controller extends Controller
 
   public function show(Request $request,$type)
   {
-    $data["date_from"] = $request->get('date_from');
-    $data["date_to"] = $request->get('date_to');
+    $data["date_from"] = Carbon::parse($request->date_from);
+    $data["date_to"] = Carbon::parse($request->date_to)->addDay()->subSecond();
     if($type=="all"){
       $app_config = DB::table('app_config')->first();
       $data["categories"] = explode(',', $app_config->categories);
@@ -68,8 +68,8 @@ class Reports_controller extends Controller
 
   public function restaurant(Request $request)
   {
-    $data["date_from"] = date('F d, Y');
-    $data["date_to"] = date('F d, Y');
+    $data["date_from"] = Carbon::createFromFormat('Y-m-d h:i:s',date('Y-m-d '.'00:00:00'));
+    $data["date_to"] = Carbon::createFromFormat('Y-m-d h:i:s',date('Y-m-d '.'00:00:00'))->addDay()->subSecond();
     $app_config = DB::table('app_config')->first();
     $data["categories"] = explode(',', $app_config->categories);
     $data["settlements"] = explode(',', $app_config->settlements_arrangements);
@@ -151,14 +151,14 @@ class Reports_controller extends Controller
     fputcsv($fp, $headers);
     $headers = array (
       'Date',
-      'Check #',
       'Outlet',
-      '# of Pax',
-      'Server',
-      'Cashier',
+      'Check #',
+      'Invoice #',
       'Guest Name',
+      '# of Pax',
       '# of SC/PWD',
-      'Invoice #'
+      'Server',
+      'Cashier'
     );
     $headers = array_merge($headers,$categories);
     $initial_headers = array(
@@ -193,14 +193,14 @@ class Reports_controller extends Controller
     foreach ($data['result'] as $bill_data) {
       $headers = array (
         $bill_data['date_'],
-        $bill_data['check_number'],
         $bill_data['restaurant_name'],
-        $bill_data['pax'],
-        $bill_data['server_name'],
-        $bill_data['cashier_name'],
+        $bill_data['check_number'],
+        $bill_data['invoice_number'],
         $bill_data['guest_name'],
+        $bill_data['pax'],
         $bill_data['sc_pwd'],
-        $bill_data['invoice_number']
+        $bill_data['server_name'],
+        $bill_data['cashier_name']
       );
       $categories_values = array();
       foreach ($categories as $key) {
@@ -252,11 +252,11 @@ class Reports_controller extends Controller
       "",
       "",
       "",
+      "",
+      "",
       $data['footer']['pax'],
-      "",
-      "",
-      "",
       $data['footer']['sc_pwd'],
+      "",
       ""
     );
     $categories_values = array();
@@ -341,13 +341,6 @@ class Reports_controller extends Controller
       $bills->where('restaurant_id',$user_data->restaurant_id);
     }
     $bills->whereBetween('created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
-    $num_items = $bills->count();
-    if($request->paging=="true"){
-      $bills->skip($limit);
-      $bills->take($display_per_page);
-    }else{
-      $display_per_page = $bills->count();
-    }
     $bills = $bills->get();
 
     $footer_data = $restaurant_bill->select(
@@ -471,7 +464,6 @@ class Reports_controller extends Controller
     }
     $data["footer"]["special_trade_discount"] = $data['footer']['total_discount']+$data['footer']['sc_pwd_discount']+$data['footer']['sc_pwd_vat_exemption'];
     $data["footer"]["net_total_amount"] = $data["footer"]["total_item_amount"]-$data["footer"]["special_trade_discount"];
-    $data["paging"] = paging($page,$num_items,$display_per_page);
 
     foreach ($bills as $bill_data) {
       $bill_data->date_time = date("h:i:s A",$bill_data->date_time);

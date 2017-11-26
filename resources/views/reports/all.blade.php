@@ -45,7 +45,7 @@
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_settlements">Show Settlements</label>
     </div>
-    @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
+    @if(Session::get('users.user_data')->privilege=="admin")
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_accounting">Show Accounting</label>
     </div>
@@ -94,14 +94,14 @@
       <thead>
         <tr>
           <th rowspan="2" class="center aligned middle aligned">Date</th>
-          <th rowspan="2" class="center aligned middle aligned">Check #</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Outlet</th>
+          <th rowspan="2" class="center aligned middle aligned">Check #</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Invoice #</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Guest Name</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of Pax</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of SC/PWD</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Server</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Cashier</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Guest Name</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information"># of SC/PWD</th>
-          <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales_information">Invoice #</th>
           @foreach ($categories as $category)
             <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">{{$category}}</th>
           @endforeach
@@ -131,17 +131,17 @@
       <tbody ng-cloak>
         <tr ng-repeat="bill_data in bills" ng-class="{'warning':bill_data.type=='bad_order'}">
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
           <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank">
             <p ng-if="bill_data.type=='good_order'">@{{bill_data.check_number}}</p>
             <p ng-if="bill_data.type=='bad_order'" title="@{{bill_data.reason_cancelled}}">@{{bill_data.check_number}}</p>
           </a></td>
-          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.invoice_number}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.guest_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.pax}}</td>
+          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.sc_pwd}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.server_name}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.cashier_name}}</td>
-          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.guest_name}}</td>
-          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.sc_pwd}}</td>
-          <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.invoice_number}}</td>
           @foreach ($categories as $category)
             <td class="right aligned middle aligned" ng-show="show_sales"> {{bill_data.<?php echo $category; ?> |chkNull|currency:""}}</td>
           @endforeach
@@ -174,12 +174,12 @@
       <tfoot ng-cloak>
         <tr ng-cloak>
           <th class="right aligned middle aligned" colspan="2">Total>>></th>
-          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
+          <th class="center aligned middle aligned"></th>
+          <th class="center aligned middle aligned"></th>
+          <th class="center aligned middle aligned"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.pax}}</th>
-          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
-          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
-          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information">@{{footer.sc_pwd}}</th>
+          <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           <th class="center aligned middle aligned" ng-show="show_sales_information"></th>
           @foreach ($categories as $category)
             <th class="right aligned middle aligned" ng-show="show_sales"> {{footer.<?php echo $category; ?> |chkNull|currency:""}}</th>
@@ -230,21 +230,21 @@
     $scope.show_sales_information = true;
     $scope.show_paging = false;
     $scope.show_settlements = true;
-    $scope.date_from = "{{date('m/d/Y',strtotime($date_from))}}";
-    $scope.date_to = "{{date('m/d/Y',strtotime($date_to))}}";
+    $scope.date_from = "{{date('m/d/Y h:i:s A',strtotime($date_from))}}";
+    $scope.date_to = "{{date('m/d/Y h:i:s A',strtotime($date_to))}}";
     $scope.date_from_str = "";
     $scope.date_to_str = "";
     $scope.restaurants = {!! $restaurants !!};
 
     $('#date_from,#date_to').datetimepicker({
-      timeFormat: "hh:mm tt"
+      timeFormat: "hh:mm:ss tt"
     });
 
 
-    @if(Session::get('users.user_data')->privilege!="restaurant_cashier")
-      $scope.show_accounting = true;
-    @else
+    @if(Session::get('users.user_data')->privilege!="admin")
       $scope.show_accounting = false;
+    @else
+      $scope.show_accounting = true;
     @endif
     
     $scope.toggle_paging = function() {

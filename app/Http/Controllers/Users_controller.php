@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Requests;
 use App\User;
-
+use App\Restaurant_meal_types;
+use Carbon\Carbon;
 
 class Users_controller extends Controller
 {
