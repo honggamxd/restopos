@@ -337,6 +337,9 @@ class Reports_controller extends Controller
     if($request->cashier_id!=null){
       $bills->where('cashier_id',$request->cashier_id);
     }
+    if($request->meal_type!=null||$request->meal_type!=""){
+      $bills->where('meal_type',$request->meal_type);
+    }
     if($user_data->privilege!='admin'){
       $bills->where('restaurant_id',$user_data->restaurant_id);
     }
@@ -371,6 +374,9 @@ class Reports_controller extends Controller
     }
     if($request->cashier_id!=null){
       $footer_data->where('cashier_id',$request->cashier_id);
+    }
+    if($request->meal_type!=null||$request->meal_type!=""){
+      $footer_data->where('meal_type',$request->meal_type);
     }
     if($user_data->privilege!='admin'){
       $footer_data->where('restaurant_id',$user_data->restaurant_id);
@@ -416,6 +422,9 @@ class Reports_controller extends Controller
       if($request->cashier_id!=null){
         $category_total->where('cashier_id',$request->cashier_id);
       }
+      if($request->meal_type!=null||$request->meal_type!=""){
+        $category_total->where('restaurant_bill.meal_type',$request->meal_type);
+      }
       if($user_data->privilege!='admin'){
         $category_total->where('restaurant_bill.restaurant_id',$user_data->restaurant_id);
       }
@@ -445,6 +454,9 @@ class Reports_controller extends Controller
       }
       if($request->cashier_id!=null){
         $settlement_total->where('restaurant_bill.cashier_id',$request->cashier_id);
+      }
+      if($request->meal_type!=null||$request->meal_type!=""){
+        $settlement_total->where('restaurant_bill.meal_type',$request->meal_type);
       }
       if($user_data->privilege!='admin'){
         $settlement_total->where('restaurant_bill.restaurant_id',$user_data->restaurant_id);

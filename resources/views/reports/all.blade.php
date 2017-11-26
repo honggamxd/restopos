@@ -62,6 +62,16 @@
     <label>Filter By:</label>
     <form class="form-inline" style="margin-bottom: 20px;">
       <div class="form-group">
+        <label>Meal Type:</label>
+        <select class="form-control input-sm" ng-model="meal_type">
+          <option value="">All</option>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch">Lunch</option>
+          <option value="PM Snacks">PM Snacks</option>
+          <option value="Dinner">Dinner</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Server:</label>
         <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server">
           <option value="">All Waiter/Waitress</option>
@@ -275,8 +285,7 @@
             "date_from":$scope.date_from,
             "date_to":$scope.date_to,
             "paging":$scope.show_paging,
-            "page":page,
-            "display_per_page":50,
+            "meal_type": $scope.meal_type,
             "server_id": server,
             "cashier_id": cashier,
           }
@@ -308,9 +317,7 @@
           params: {
             "date_from":$scope.date_from,
             "date_to":$scope.date_to,
-            "paging":$scope.show_paging,
-            "page":page,
-            "display_per_page":50,
+            "meal_type": $scope.meal_type,
             "server_id": server,
             "cashier_id": cashier,
           }
