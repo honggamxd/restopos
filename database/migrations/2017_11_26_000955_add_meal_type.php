@@ -12,7 +12,7 @@ class AddMealType extends Migration
      */
     public function up()
     {
-        Schema::table('Restaurant_bill', function (Blueprint $table) {
+        Schema::table('restaurant_bill', function (Blueprint $table) {
             //
             $table->string('meal_type')->after('invoice_number');
         });
@@ -25,7 +25,7 @@ class AddMealType extends Migration
      */
     public function down()
     {
-        Schema::table('Restaurant_bill', function (Blueprint $table) {
+        Schema::table('restaurant_bill', function (Blueprint $table) {
             //
             $table->dropColumn('meal_type');
         });
