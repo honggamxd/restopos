@@ -108,14 +108,14 @@ class Restaurant_order_controller extends Controller
       
       $order_detail->menu = $restaurant_menu->find($order_detail->restaurant_menu_id)->name;
       if($data["order"]->has_cancelled==1){
-        $order_detail->cancelled_quantity = DB::table('restaurant_order_cancellation_detail')
-        ->select('restaurant_order_cancellation_detail.*',DB::raw('SUM(restaurant_order_cancellation_detail.quantity) as total'))
-        ->join('restaurant_order_cancellation','restaurant_order_cancellation.id','=','restaurant_order_cancellation_detail.restaurant_order_cancellation_id')
-        ->where('restaurant_order_cancellation.restaurant_order_id',$id)
-        ->where('restaurant_order_cancellation.approved',1)
-        ->where('restaurant_order_cancellation_detail.restaurant_menu_id',$order_detail->restaurant_menu_id)
-        ->groupBy('restaurant_order_cancellation_detail.restaurant_menu_id')
+        $order_detail->cancelled_quantity = DB::table('restaurant_accepted_order_cancellation')
+        ->select(DB::raw('SUM(quantity) as total'))
+        ->where('restaurant_menu_id',$order_detail->restaurant_menu_id)
+        ->where('restaurant_table_customer_id',$data["order"]->restaurant_table_customer_id)
         ->value('total');
+      }
+      if($order_detail->cancelled_quantity==null){
+        $order_detail->cancelled_quantity = 0;
       }
     }
     $data["getQueryLog"] = DB::getQueryLog();

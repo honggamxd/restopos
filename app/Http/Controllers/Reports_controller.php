@@ -171,7 +171,7 @@ class Reports_controller extends Controller
 
     $initial_headers = array('Total Settlements');
     $headers = array_merge($headers,$initial_headers);
-    if($request->session()->get('users.user_data')->privilege=="restaurant_cashier"){
+    if($request->session()->get('users.user_data')->privilege!="admin"){
 
     }else{
       $initial_headers = array(
@@ -225,7 +225,7 @@ class Reports_controller extends Controller
 
       $initial_headers = array(number_format($bill_data['total_settlements'],2));
       $headers = array_merge($headers,$initial_headers);
-      if($request->session()->get('users.user_data')->privilege=="restaurant_cashier"){
+      if($request->session()->get('users.user_data')->privilege!="admin"){
 
       }else{
         $initial_headers = array(
@@ -282,7 +282,7 @@ class Reports_controller extends Controller
 
     $initial_headers = array(number_format($data['footer']['total_settlements'],2));
     $headers = array_merge($headers,$initial_headers);
-    if($request->session()->get('users.user_data')->privilege=="restaurant_cashier"){
+    if($request->session()->get('users.user_data')->privilege!="admin"){
 
     }else{
       $initial_headers = array(
@@ -364,7 +364,7 @@ class Reports_controller extends Controller
       DB::raw('SUM(sales_inclusive_of_vat) as total_sales_inclusive_of_vat')
     );
     $footer_data->where('type','good_order');
-    $footer_data->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+    $footer_data->whereBetween('created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
     if($user_data->privilege=='restaurant_cashier'){
       $footer_data->where('cashier_id',$user_data->id);
     }
@@ -403,7 +403,7 @@ class Reports_controller extends Controller
       $category_total = $restaurant_bill_detail->join('restaurant_bill','restaurant_bill.id','=','restaurant_bill_detail.restaurant_bill_id');
       $category_total->join('restaurant_menu','restaurant_bill_detail.restaurant_menu_id','=','restaurant_menu.id');
       $category_total->where('restaurant_bill.deleted',0);
-      $category_total->whereBetween('restaurant_bill.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+      $category_total->whereBetween('restaurant_bill.created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
       $category_total->select(
           'restaurant_bill.*',
           'restaurant_bill_detail.*',
@@ -436,7 +436,7 @@ class Reports_controller extends Controller
     foreach ($settlements as $settlement) {
       $settlement_total = $restaurant_bill->join('restaurant_payment','restaurant_bill.id','=','restaurant_payment.restaurant_bill_id');
       $settlement_total->where('restaurant_bill.deleted',0);
-      $settlement_total->whereBetween('restaurant_payment.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
+      $settlement_total->whereBetween('restaurant_bill.created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
       $settlement_total->select(
           'restaurant_bill.*',
           'restaurant_payment.payment',
