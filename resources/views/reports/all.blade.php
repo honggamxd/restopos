@@ -50,10 +50,6 @@
       <label><input type="checkbox" ng-model="show_accounting">Show Accounting</label>
     </div>
     @endif
-    
-<!--     <div class="checkbox">
-      <label><input type="checkbox" ng-model="show_paging" ng-change="toggle_paging()">Paging</label>
-    </div> -->
   </div>
   <div>
     @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
@@ -61,6 +57,14 @@
     @else
     <label>Filter By:</label>
     <form class="form-inline" style="margin-bottom: 20px;">
+      @if(Session::get('users.user_data')->privilege=="admin")
+      <div class="form-group">
+      <label>Outlet:</label>
+      <select class="form-control input-sm" ng-options="item as item.name for item in restaurants track by item.id" ng-model="restaurant">
+        <option value="">All Outlets</option>
+      </select>
+      </div>
+      @endif
       <div class="form-group">
         <label>Meal Type:</label>
         <select class="form-control input-sm" ng-model="meal_type">
@@ -278,6 +282,7 @@
     function show_reports(page=1) {
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
+      var restaurant = ($scope.restaurant==undefined?"":$scope.restaurant['id']);
       $http({
           method : "GET",
           url : "/api/reports/general/f_and_b",
@@ -288,6 +293,7 @@
             "meal_type": $scope.meal_type,
             "server_id": server,
             "cashier_id": cashier,
+            "restaurant_id": restaurant,
           }
       }).then(function mySuccess(response) {
           $scope.bills = response.data.result;
@@ -311,6 +317,7 @@
       $scope.export = true;
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
+      var restaurant = ($scope.restaurant==undefined?"":$scope.restaurant['id']);
       $http({
           method : "GET",
           url : "/api/reports/general/f_and_b_export",
@@ -320,6 +327,8 @@
             "meal_type": $scope.meal_type,
             "server_id": server,
             "cashier_id": cashier,
+            "restaurant_id": restaurant,
+
           }
       }).then(function mySuccess(response) {
         $scope.export = false;

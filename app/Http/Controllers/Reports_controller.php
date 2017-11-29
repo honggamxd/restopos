@@ -342,6 +342,8 @@ class Reports_controller extends Controller
     }
     if($user_data->privilege!='admin'){
       $bills->where('restaurant_id',$user_data->restaurant_id);
+    }elseif($request->restaurant_id!=null){
+      $bills->where('restaurant_id',$request->restaurant_id);
     }
     $bills->whereBetween('created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
     $bills = $bills->get();
@@ -368,7 +370,6 @@ class Reports_controller extends Controller
     if($user_data->privilege=='restaurant_cashier'){
       $footer_data->where('cashier_id',$user_data->id);
     }
-
     if($request->server_id!=null){
       $footer_data->where('server_id',$request->server_id);
     }
@@ -380,6 +381,8 @@ class Reports_controller extends Controller
     }
     if($user_data->privilege!='admin'){
       $footer_data->where('restaurant_id',$user_data->restaurant_id);
+    }elseif($request->restaurant_id!=null){
+      $footer_data->where('restaurant_id',$request->restaurant_id);
     }
 
     $footer_data = $footer_data->first();
@@ -427,6 +430,8 @@ class Reports_controller extends Controller
       }
       if($user_data->privilege!='admin'){
         $category_total->where('restaurant_bill.restaurant_id',$user_data->restaurant_id);
+      }elseif($request->restaurant_id!=null){
+        $category_total->where('restaurant_bill.restaurant_id',$request->restaurant_id);
       }
 
       $data["footer"][$category] = $category_total->value('total');
@@ -436,7 +441,7 @@ class Reports_controller extends Controller
     foreach ($settlements as $settlement) {
       $settlement_total = $restaurant_bill->join('restaurant_payment','restaurant_bill.id','=','restaurant_payment.restaurant_bill_id');
       $settlement_total->where('restaurant_bill.deleted',0);
-      $settlement_total->whereBetween('restaurant_bill.created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
+      $settlement_total->whereBetween('restaurant_payment.created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
       $settlement_total->select(
           'restaurant_bill.*',
           'restaurant_payment.payment',
@@ -460,6 +465,8 @@ class Reports_controller extends Controller
       }
       if($user_data->privilege!='admin'){
         $settlement_total->where('restaurant_bill.restaurant_id',$user_data->restaurant_id);
+      }elseif($request->restaurant_id!=null){
+        $settlement_total->where('restaurant_bill.restaurant_id',$request->restaurant_id);
       }
 
 
