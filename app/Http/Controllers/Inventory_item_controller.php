@@ -35,20 +35,25 @@ class Inventory_item_controller extends Controller
     ],[
       'custom_unique' => 'The :attribute has been already added.'
     ]);
-    $inventory_item = new Inventory_item;
-    $inventory_item->category = $request->category;
-    $inventory_item->unit = $request->unit;
-    // $inventory_item->type = $request->type;
-    // $inventory_item->subcategory = $request->subcategory;
-    $inventory_item->item_name = $request->item_name;
-    $inventory_item->cost_price = round($request->cost_price,2);
-    $inventory_item->save();
+    DB::beginTransaction();
+    try{
+        $inventory_item = new Inventory_item;
+        $inventory_item->category = $request->category;
+        $inventory_item->unit = $request->unit;
+        // $inventory_item->type = $request->type;
+        // $inventory_item->subcategory = $request->subcategory;
+        $inventory_item->item_name = $request->item_name;
+        $inventory_item->cost_price = round($request->cost_price,2);
+        $inventory_item->save();
 
-    $item_data = $inventory_item->orderBy("id","DESC")->first();
+        $item_data = $inventory_item->orderBy("id","DESC")->first();
 
-    $data["item_name"] = $request->item_name;
-    app('App\Http\Controllers\Purchases_controller')->store_cart($request,$item_data->id);
-    $data["cart"] = $request->session()->get("inventory"); 
+        $data["item_name"] = $request->item_name;
+        app('App\Http\Controllers\Purchases_controller')->store_cart($request,$item_data->id);
+        $data["cart"] = $request->session()->get("inventory"); 
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $data;
     // $inventory_item->date_ = $request->cost_price;
   }

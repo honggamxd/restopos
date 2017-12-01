@@ -51,11 +51,16 @@ class Restaurant_controller extends Controller
       ],[
         'custom_unique' => 'This server is already added in this outlet.'
       ]);
-      $restaurant_server = new Restaurant_server;
-      $restaurant_server->name = $request->name;
-      $restaurant_server->restaurant_id = $request->restaurant_id;
-      $restaurant_server->save();
-      return $request->name;
+      DB::beginTransaction();
+      try{
+          $restaurant_server = new Restaurant_server;
+          $restaurant_server->name = $request->name;
+          $restaurant_server->restaurant_id = $request->restaurant_id;
+          $restaurant_server->save();
+          return $request->name;
+          DB::commit();
+      }
+      catch(\Exception $e){DB::rollback();throw $e;}
     }
 
     public function edit_server(Request $request)
@@ -65,11 +70,16 @@ class Restaurant_controller extends Controller
       ],[
         'custom_unique' => 'This server is already added in this outlet.'
       ]);
-      $restaurant_server = new Restaurant_server;
-      $restaurant_server_data = $restaurant_server->find($request->id);
-      $restaurant_server_data->name = $request->name;
-      $restaurant_server_data->restaurant_id = $request->restaurant_id;
-      $restaurant_server_data->save();
+      DB::beginTransaction();
+      try{
+          $restaurant_server = new Restaurant_server;
+          $restaurant_server_data = $restaurant_server->find($request->id);
+          $restaurant_server_data->name = $request->name;
+          $restaurant_server_data->restaurant_id = $request->restaurant_id;
+          $restaurant_server_data->save();
+          DB::commit();
+      }
+      catch(\Exception $e){DB::rollback();throw $e;}
       return $request->name;
     }
 
@@ -85,16 +95,21 @@ class Restaurant_controller extends Controller
       $this->validate($request, [
         'restaurant_name' => 'required|unique:restaurant,name,'.$request->restaurant_id.'|max:255',
       ]);
+      DB::beginTransaction();
+      try{
 
-      $restaurant = new Restaurant;
-      $restaurant_data = $restaurant->find($request->restaurant_id);
-      $restaurant_data->name = $request->restaurant_name;
-      $restaurant_data->save();
+          $restaurant = new Restaurant;
+          $restaurant_data = $restaurant->find($request->restaurant_id);
+          $restaurant_data->name = $request->restaurant_name;
+          $restaurant_data->save();
 
-      $issuance_to = new Issuance_to;
-      $issuance_data = $issuance_to->where('ref_table','restaurant')->where('ref_id',$request->restaurant_id)->first();
-      $issuance_data->name = $request->restaurant_name;
-      $issuance_data->save();
+          $issuance_to = new Issuance_to;
+          $issuance_data = $issuance_to->where('ref_table','restaurant')->where('ref_id',$request->restaurant_id)->first();
+          $issuance_data->name = $request->restaurant_name;
+          $issuance_data->save();
+          DB::commit();
+      }
+      catch(\Exception $e){DB::rollback();throw $e;}
       return DB::table('restaurant')->get();
     }
 }

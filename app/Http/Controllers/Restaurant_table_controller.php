@@ -49,10 +49,15 @@ class Restaurant_table_controller extends Controller
     ],[
       'custom_unique' => 'This table name is already added in this outlet.'
     ]);
-    $restaurant_table = new Restaurant_table;
-    $restaurant_table->name = $request->name;
-    $restaurant_table->restaurant_id = $request->restaurant_id;
-    $restaurant_table->save();
+    DB::beginTransaction();
+    try{
+        $restaurant_table = new Restaurant_table;
+        $restaurant_table->name = $request->name;
+        $restaurant_table->restaurant_id = $request->restaurant_id;
+        $restaurant_table->save();
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $request->name;
   }
 
@@ -63,11 +68,16 @@ class Restaurant_table_controller extends Controller
     ],[
       'custom_unique' => 'This table name is already added in this outlet.'
     ]);
-    $restaurant_table = new Restaurant_table;
-    $restaurant_table_data = $restaurant_table->find($request->id);
-    $restaurant_table_data->name = $request->name;
-    $restaurant_table_data->restaurant_id = $request->restaurant_id;
-    $restaurant_table_data->save();
+    DB::beginTransaction();
+    try{
+        $restaurant_table = new Restaurant_table;
+        $restaurant_table_data = $restaurant_table->find($request->id);
+        $restaurant_table_data->name = $request->name;
+        $restaurant_table_data->restaurant_id = $request->restaurant_id;
+        $restaurant_table_data->save();
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $request->name;
   }
 }

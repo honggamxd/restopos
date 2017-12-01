@@ -21,39 +21,45 @@ class Restaurant_payment_controller extends Controller
     $this->validate($request, [
         'invoice_number' => 'required'
       ]);
-    $restaurant_bill = new Restaurant_bill;
-    $restaurant_bill_detail = new Restaurant_bill_detail;
-    $restaurant_table_customer = new Restaurant_table_customer;
-    $bill_data = $restaurant_bill->find($id);
-    foreach ($request->settlement as $settlement) {
-      $restaurant_payment = new Restaurant_payment;
-      $restaurant_payment->settlement = $settlement;
-      $restaurant_payment->payment = $request->settlements_amount[$settlement];
-      $restaurant_payment->restaurant_id = $bill_data->restaurant_id;
-      $restaurant_payment->date_ = strtotime(date("m/d/Y"));
-      $restaurant_payment->date_time = strtotime(date("m/d/Y h:i:s A"));
-      $restaurant_payment->restaurant_bill_id = $id;
-      $restaurant_payment->save();
+    DB::beginTransaction();
+    try{
+        
+        $restaurant_bill = new Restaurant_bill;
+        $restaurant_bill_detail = new Restaurant_bill_detail;
+        $restaurant_table_customer = new Restaurant_table_customer;
+        $bill_data = $restaurant_bill->find($id);
+        foreach ($request->settlement as $settlement) {
+          $restaurant_payment = new Restaurant_payment;
+          $restaurant_payment->settlement = $settlement;
+          $restaurant_payment->payment = $request->settlements_amount[$settlement];
+          $restaurant_payment->restaurant_id = $bill_data->restaurant_id;
+          $restaurant_payment->date_ = strtotime(date("m/d/Y"));
+          $restaurant_payment->date_time = strtotime(date("m/d/Y h:i:s A"));
+          $restaurant_payment->restaurant_bill_id = $id;
+          $restaurant_payment->save();
+        }
+        $bill_data->is_paid = 1;
+        $bill_data->excess = $request->excess;
+        $bill_data->invoice_number = $request->invoice_number;
+        $bill_data->save();
+        $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$bill_data->restaurant_table_customer_id)->get();
+        $has_unpaid_order = false;
+        $customer_data = $restaurant_table_customer->where("id",$bill_data->restaurant_table_customer_id)->first();
+        foreach ($data["result"] as $bill_data) {
+          $data["table_name"] = $bill_data->table_name;
+          $bill_data->total = $restaurant_bill_detail->select(DB::raw('SUM(price*quantity) as total'))->where("restaurant_bill_id",$bill_data->id)->first()->total;
+          $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
+          if($bill_data->is_paid==0){
+            $has_unpaid_order = true;
+          }
+        }
+        if($customer_data->has_billed_completely==1){
+          $customer_data->has_paid = ($has_unpaid_order?0:1);
+        }
+        $customer_data->save();
+        DB::commit();
     }
-    $bill_data->is_paid = 1;
-    $bill_data->excess = $request->excess;
-    $bill_data->invoice_number = $request->invoice_number;
-    $bill_data->save();
-    $data["result"] = $restaurant_bill->where("restaurant_table_customer_id",$bill_data->restaurant_table_customer_id)->get();
-    $has_unpaid_order = false;
-    $customer_data = $restaurant_table_customer->where("id",$bill_data->restaurant_table_customer_id)->first();
-    foreach ($data["result"] as $bill_data) {
-      $data["table_name"] = $bill_data->table_name;
-      $bill_data->total = $restaurant_bill_detail->select(DB::raw('SUM(price*quantity) as total'))->where("restaurant_bill_id",$bill_data->id)->first()->total;
-      $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
-      if($bill_data->is_paid==0){
-        $has_unpaid_order = true;
-      }
-    }
-    if($customer_data->has_billed_completely==1){
-      $customer_data->has_paid = ($has_unpaid_order?0:1);
-    }
-    $customer_data->save();
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $data;
   }
   public function show(Request $request,$id)

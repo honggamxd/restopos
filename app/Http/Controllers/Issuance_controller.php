@@ -128,48 +128,53 @@ class Issuance_controller extends Controller
       'not_zero_quantity' => 'The quantity of items to be issued must not be less than 1.',
       'valid_inventory_control' => 'The number of quantity did not match to your remaining stocks.'
     ]);
-    $inventory_item = new Inventory_item;
-    $issuance = new Issuance;
-    $issuance->issuance_number = $request->issuance_number;
-    $issuance->issuance_to = $request->issuance_to;
-    $issuance->comments = $request->comments;
-    $issuance->date_ = strtotime(date("m/d/Y"));
-    $issuance->date_time = strtotime(date("m/d/Y h:i:s A"));
-    $issuance->save();
-    $issuance_data = $issuance->orderBy("id","DESC")->first();
+    DB::beginTransaction();
+    try{
+        $inventory_item = new Inventory_item;
+        $issuance = new Issuance;
+        $issuance->issuance_number = $request->issuance_number;
+        $issuance->issuance_to = $request->issuance_to;
+        $issuance->comments = $request->comments;
+        $issuance->date_ = strtotime(date("m/d/Y"));
+        $issuance->date_time = strtotime(date("m/d/Y h:i:s A"));
+        $issuance->save();
+        $issuance_data = $issuance->orderBy("id","DESC")->first();
 
-    foreach ($request->items as $cart_item) {
-      $issuance_detail = new Issuance_detail;
-      $issuance_detail->inventory_item_id = $cart_item["inventory_item_id"];
-      $issuance_detail->quantity = $cart_item["quantity"];
-      $issuance_detail->date_ = $issuance_data->date_;
-      $issuance_detail->issuance_id = $issuance_data->id;
-      $issuance_detail->user_id = $issuance_data->user_id;
-      $issuance_detail->save();
+        foreach ($request->items as $cart_item) {
+          $issuance_detail = new Issuance_detail;
+          $issuance_detail->inventory_item_id = $cart_item["inventory_item_id"];
+          $issuance_detail->quantity = $cart_item["quantity"];
+          $issuance_detail->date_ = $issuance_data->date_;
+          $issuance_detail->issuance_id = $issuance_data->id;
+          $issuance_detail->user_id = $issuance_data->user_id;
+          $issuance_detail->save();
 
-      $item_data = $inventory_item->find($cart_item["inventory_item_id"]);
+          $item_data = $inventory_item->find($cart_item["inventory_item_id"]);
 
-      $inventory_item_detail = new Inventory_item_detail;
-      $inventory_item_detail->inventory_item_id = $cart_item["inventory_item_id"];
-      $inventory_item_detail->quantity = 0-$cart_item["quantity"];
-      $inventory_item_detail->cost_price = $item_data->cost_price;
-      $inventory_item_detail->date_ = $issuance_data->date_;
-      $inventory_item_detail->date_time = $issuance_data->date_time;
-      $inventory_item_detail->remarks = "Issuance";
-      $inventory_item_detail->reference_table = "issuance";
-      $inventory_item_detail->reference_id = $issuance_data->id;
-      $inventory_item_detail->user_id = $issuance_data->user_id;
-      $inventory_item_detail->save();
-/*
-      $restaurant_inventory = new Restaurant_inventory;
-      $restaurant_inventory->inventory_item_id = $cart_item["inventory_item_id"];
-      $restaurant_inventory->quantity = $cart_item["quantity"];
-      $restaurant_inventory->table = 'issuance';
-      $restaurant_inventory->ref_id = $issuance_data->id;
-      $restaurant_inventory->restaurant_id = DB::table('issuance_to')->find($request->issuance_to)->ref_id;
-      $restaurant_inventory->save();*/
+          $inventory_item_detail = new Inventory_item_detail;
+          $inventory_item_detail->inventory_item_id = $cart_item["inventory_item_id"];
+          $inventory_item_detail->quantity = 0-$cart_item["quantity"];
+          $inventory_item_detail->cost_price = $item_data->cost_price;
+          $inventory_item_detail->date_ = $issuance_data->date_;
+          $inventory_item_detail->date_time = $issuance_data->date_time;
+          $inventory_item_detail->remarks = "Issuance";
+          $inventory_item_detail->reference_table = "issuance";
+          $inventory_item_detail->reference_id = $issuance_data->id;
+          $inventory_item_detail->user_id = $issuance_data->user_id;
+          $inventory_item_detail->save();
+    /*
+          $restaurant_inventory = new Restaurant_inventory;
+          $restaurant_inventory->inventory_item_id = $cart_item["inventory_item_id"];
+          $restaurant_inventory->quantity = $cart_item["quantity"];
+          $restaurant_inventory->table = 'issuance';
+          $restaurant_inventory->ref_id = $issuance_data->id;
+          $restaurant_inventory->restaurant_id = DB::table('issuance_to')->find($request->issuance_to)->ref_id;
+          $restaurant_inventory->save();*/
+        }
+        $request->session()->forget('issuance_cart');
+        DB::commit();
     }
-    $request->session()->forget('issuance_cart');
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $issuance_data->id;
   }
 

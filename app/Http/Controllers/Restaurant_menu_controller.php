@@ -36,16 +36,21 @@ class Restaurant_menu_controller extends Controller
     ],[
       'unique_menu' => 'Menu is already in the list.'
     ]);
-    $restaurant_menu = new Restaurant_menu;
-    $restaurant_menu->name = $request->name;
-    $restaurant_menu->category = $request->category;
-    $restaurant_menu->subcategory = $request->subcategory;
-    $restaurant_menu->price = $request->price;
-    $restaurant_menu->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
-    $restaurant_menu->is_prepared = 1;
-    $restaurant_menu->save();
+    DB::beginTransaction();
+    try{
+        $restaurant_menu = new Restaurant_menu;
+        $restaurant_menu->name = $request->name;
+        $restaurant_menu->category = $request->category;
+        $restaurant_menu->subcategory = $request->subcategory;
+        $restaurant_menu->price = $request->price;
+        $restaurant_menu->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+        $restaurant_menu->is_prepared = 1;
+        $restaurant_menu->save();
 
-    $restaurant_menu_data = $restaurant_menu->orderBy('id','DESC')->first();
+        $restaurant_menu_data = $restaurant_menu->orderBy('id','DESC')->first();
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $restaurant_menu->orderBy('id','DESC')->first();
   }
 
@@ -60,15 +65,20 @@ class Restaurant_menu_controller extends Controller
     ],[
       'unique_menu' => 'Menu is already in the list.'
     ]);
-    $restaurant_menu = new Restaurant_menu;
-    $restaurant_menu_data = $restaurant_menu->find($request->id);
-    $restaurant_menu_data->name = $request->name;
-    $restaurant_menu_data->category = $request->category;
-    $restaurant_menu_data->subcategory = $request->subcategory;
-    $restaurant_menu_data->price = $request->price;
-    $restaurant_menu_data->save();
+    DB::beginTransaction();
+    try{
+        $restaurant_menu = new Restaurant_menu;
+        $restaurant_menu_data = $restaurant_menu->find($request->id);
+        $restaurant_menu_data->name = $request->name;
+        $restaurant_menu_data->category = $request->category;
+        $restaurant_menu_data->subcategory = $request->subcategory;
+        $restaurant_menu_data->price = $request->price;
+        $restaurant_menu_data->save();
 
-    $restaurant_menu_data = $restaurant_menu->orderBy('id','DESC')->first();
+        $restaurant_menu_data = $restaurant_menu->orderBy('id','DESC')->first();
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $restaurant_menu->orderBy('id','DESC')->first();
   }
 
@@ -120,10 +130,15 @@ class Restaurant_menu_controller extends Controller
 
   public function available_to_menu(Request $request,$id)
   {
-    $restaurant_menu = new Restaurant_menu;
-    $menu = $restaurant_menu->find($id);
-    $menu->is_prepared = ($request->is_prepared=="true"?1:0);
-    $menu->save();
+    DB::beginTransaction();
+    try{
+        $restaurant_menu = new Restaurant_menu;
+        $menu = $restaurant_menu->find($id);
+        $menu->is_prepared = ($request->is_prepared=="true"?1:0);
+        $menu->save();
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $menu->is_prepared;
   }
 

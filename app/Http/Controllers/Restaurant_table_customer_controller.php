@@ -34,20 +34,26 @@ class Restaurant_table_customer_controller extends Controller
       'custom_min' => 'The number of :attribute must be greater than 0.',
       'server_id.id.required' => 'The Server field is required.'
     ]);
-    $restaurant_table_customer = new Restaurant_table_customer;
-    $restaurant_table_customer->restaurant_table_id = $request->table_id["id"];
-    $restaurant_table_customer->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;;
-    $restaurant_table_customer->table_name = $request->table_id["name"];
-    $restaurant_table_customer->guest_name = ($request->guest_name==null?"":$request->guest_name);
-    $restaurant_table_customer->pax = $request->pax;
-    $restaurant_table_customer->sc_pwd = $request->sc_pwd;
-    $restaurant_table_customer->server_id = $request->server_id["id"];
-    $restaurant_table_customer->date_time = strtotime(date("m/d/Y h:i:s A"));
-    $restaurant_table_customer->save();
-    $restaurant_table = new Restaurant_table;
-    $table_occupied = $restaurant_table->find($request->table_id["id"]);
-    $table_occupied->occupied = 1;
-    $table_occupied->save();
+    DB::beginTransaction();
+    try{
+        
+        $restaurant_table_customer = new Restaurant_table_customer;
+        $restaurant_table_customer->restaurant_table_id = $request->table_id["id"];
+        $restaurant_table_customer->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;;
+        $restaurant_table_customer->table_name = $request->table_id["name"];
+        $restaurant_table_customer->guest_name = ($request->guest_name==null?"":$request->guest_name);
+        $restaurant_table_customer->pax = $request->pax;
+        $restaurant_table_customer->sc_pwd = $request->sc_pwd;
+        $restaurant_table_customer->server_id = $request->server_id["id"];
+        $restaurant_table_customer->date_time = strtotime(date("m/d/Y h:i:s A"));
+        $restaurant_table_customer->save();
+        $restaurant_table = new Restaurant_table;
+        $table_occupied = $restaurant_table->find($request->table_id["id"]);
+        $table_occupied->occupied = 1;
+        $table_occupied->save();
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
   }
 
   public function order_cart(Request $request)
@@ -160,69 +166,74 @@ class Restaurant_table_customer_controller extends Controller
 
   public function bill_out(Request $request,$id)
   {
-    $restaurant_temp_bill = new Restaurant_temp_bill;
-    $restaurant_order = new Restaurant_order;
-    $unique_ordered_items = $restaurant_order
-      ->select('restaurant_menu_id')
-      ->distinct()
-      ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
-      ->where('restaurant_table_customer_id',$id)
-      ->get();
-    $restaurant_temp_bill->restaurant_table_customer_id = $id;
-    $restaurant_temp_bill->save();
-    $temp_bill_data = $restaurant_temp_bill->orderBy('id','DESC')->first();
+    DB::beginTransaction();
+    try{
+        $restaurant_temp_bill = new Restaurant_temp_bill;
+        $restaurant_order = new Restaurant_order;
+        $unique_ordered_items = $restaurant_order
+          ->select('restaurant_menu_id')
+          ->distinct()
+          ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
+          ->where('restaurant_table_customer_id',$id)
+          ->get();
+        $restaurant_temp_bill->restaurant_table_customer_id = $id;
+        $restaurant_temp_bill->save();
+        $temp_bill_data = $restaurant_temp_bill->orderBy('id','DESC')->first();
 
-    $restaurant_table_customer = new Restaurant_table_customer;
-    $customer_data = $restaurant_table_customer->find($id);
-    $customer_data->has_billed_out = 1;
-    $customer_data->restaurant_temp_bill_id = $temp_bill_data->id;
-    $customer_data->save();
+        $restaurant_table_customer = new Restaurant_table_customer;
+        $customer_data = $restaurant_table_customer->find($id);
+        $customer_data->has_billed_out = 1;
+        $customer_data->restaurant_temp_bill_id = $temp_bill_data->id;
+        $customer_data->save();
 
-    foreach ($unique_ordered_items as $order_item_data) {
-      $order_joined_data = $restaurant_order
-        ->select('restaurant_menu_name','special_instruction','restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
-        ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
-        ->where('restaurant_table_customer_id',$id)
-        ->where('restaurant_menu_id',$order_item_data->restaurant_menu_id)
-        ->first();
-      $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
-      $restaurant_temp_bill_detail->restaurant_menu_id = $order_joined_data->restaurant_menu_id;
-      $restaurant_temp_bill_detail->restaurant_menu_name = $order_joined_data->restaurant_menu_name;
-      $restaurant_temp_bill_detail->price = $order_joined_data->price;
-      $restaurant_temp_bill_detail->quantity = $order_joined_data->total_quantity;
-      $restaurant_temp_bill_detail->special_instruction = $order_joined_data->special_instruction;
-      $restaurant_temp_bill_detail->restaurant_temp_bill_id = $temp_bill_data->id;
-      $restaurant_temp_bill_detail->save();
+        foreach ($unique_ordered_items as $order_item_data) {
+          $order_joined_data = $restaurant_order
+            ->select('restaurant_menu_name','special_instruction','restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
+            ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
+            ->where('restaurant_table_customer_id',$id)
+            ->where('restaurant_menu_id',$order_item_data->restaurant_menu_id)
+            ->first();
+          $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
+          $restaurant_temp_bill_detail->restaurant_menu_id = $order_joined_data->restaurant_menu_id;
+          $restaurant_temp_bill_detail->restaurant_menu_name = $order_joined_data->restaurant_menu_name;
+          $restaurant_temp_bill_detail->price = $order_joined_data->price;
+          $restaurant_temp_bill_detail->quantity = $order_joined_data->total_quantity;
+          $restaurant_temp_bill_detail->special_instruction = $order_joined_data->special_instruction;
+          $restaurant_temp_bill_detail->restaurant_temp_bill_id = $temp_bill_data->id;
+          $restaurant_temp_bill_detail->save();
+        }
+        $data["result"] = $restaurant_temp_bill
+          ->join('restaurant_temp_bill_detail','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
+          ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
+          ->where('restaurant_table_customer_id',$id)
+          ->get();
+
+        $temp_bill_remaining_quantity = $restaurant_temp_bill_detail
+        ->join('restaurant_temp_bill','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
+        ->select('restaurant_temp_bill.*',DB::raw('SUM(restaurant_temp_bill_detail.quantity) as total'))
+        ->where('restaurant_temp_bill.restaurant_table_customer_id',$id)
+        ->value('total');
+
+        $restaurant_table_customer = new Restaurant_table_customer;
+        $customer_data = $restaurant_table_customer->find($id);
+        if($temp_bill_remaining_quantity==0){
+          $customer_data->cancellation_order_status = 1;
+          $customer_data->has_billed_completely = 1;
+          $customer_data->has_paid = 1;
+        }
+        $customer_data->save();
+
+
+        $restaurant_order_cancellation = new Restaurant_order_cancellation;
+        $restaurant_order_cancellation_data = $restaurant_order_cancellation->where('approved',0)->where('restaurant_table_customer_id',$id);
+        if($restaurant_order_cancellation_data->get()!=array()){
+          $customer_data->has_cancellation_request = 0;
+          $customer_data->save();
+          $restaurant_order_cancellation_data->delete();
+        }
+        DB::commit();
     }
-    $data["result"] = $restaurant_temp_bill
-      ->join('restaurant_temp_bill_detail','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
-      ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
-      ->where('restaurant_table_customer_id',$id)
-      ->get();
-
-    $temp_bill_remaining_quantity = $restaurant_temp_bill_detail
-    ->join('restaurant_temp_bill','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
-    ->select('restaurant_temp_bill.*',DB::raw('SUM(restaurant_temp_bill_detail.quantity) as total'))
-    ->where('restaurant_temp_bill.restaurant_table_customer_id',$id)
-    ->value('total');
-
-    $restaurant_table_customer = new Restaurant_table_customer;
-    $customer_data = $restaurant_table_customer->find($id);
-    if($temp_bill_remaining_quantity==0){
-      $customer_data->cancellation_order_status = 1;
-      $customer_data->has_billed_completely = 1;
-      $customer_data->has_paid = 1;
-    }
-    $customer_data->save();
-
-
-    $restaurant_order_cancellation = new Restaurant_order_cancellation;
-    $restaurant_order_cancellation_data = $restaurant_order_cancellation->where('approved',0)->where('restaurant_table_customer_id',$id);
-    if($restaurant_order_cancellation_data->get()!=array()){
-      $customer_data->has_cancellation_request = 0;
-      $customer_data->save();
-      $restaurant_order_cancellation_data->delete();
-    }
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $this->show_temp_bill($request,$id);
   }
 
@@ -274,9 +285,14 @@ class Restaurant_table_customer_controller extends Controller
     $customers = $restaurant_table_customer->where('restaurant_table_id',$customer_data->restaurant_table_id);
     // return $customers->count();
     if($customers->count()==1){
-      $table_data = $restaurant_table->where("id",$customer_data->restaurant_table_id)->first();
-      $table_data->occupied = 0;
-      $table_data->save();
+      DB::beginTransaction();
+      try{  
+          $table_data = $restaurant_table->where("id",$customer_data->restaurant_table_id)->first();
+          $table_data->occupied = 0;
+          $table_data->save();
+          DB::commit();
+      }
+      catch(\Exception $e){DB::rollback();throw $e;}
     }
     $restaurant_table_customer->find($id)->delete();
   }
@@ -292,47 +308,50 @@ class Restaurant_table_customer_controller extends Controller
   {
     // return $request->customer_data['table_data'];
     // exit;
-    $restaurant_table_customer = new Restaurant_table_customer;
-    $data["new_table"] = $request->table_id;
-    $data["old_table"] = $request->customer_data['table_data'];
-    $customer_data = $restaurant_table_customer->find($id);
-    $customer_data->pax = $request->pax;
-    $customer_data->sc_pwd = $request->sc_pwd;
-    $customer_data->guest_name = $request->guest_name;
-    if($data["new_table"]['id']!=$data["old_table"]['id']){
-      // $customer_data->table_name .= '>'.$data["new_table"]['name'];
-      $customer_data->table_name = $data["new_table"]['name'];
-      $customer_data->restaurant_table_id = $data["new_table"]['id'];
-    }
-    $customer_data->save();
-    $customer_data = $restaurant_table_customer->find($id);
-    $customers = $restaurant_table_customer->where('restaurant_table_id',$data["old_table"]['id']);
-    if($customers->count()==0){
-      $restaurant_table = new Restaurant_table;
-      $table_data = $restaurant_table->find($data["old_table"]['id']);
-      $table_data->occupied = 0;
-      $table_data->save();
-    }else{
-      $restaurant_table = new Restaurant_table;
-      $table_data = $restaurant_table->find($data["old_table"]['id']);
-      $table_data->occupied = 1;
-      $table_data->save();
-    }
+    DB::beginTransaction();
+    try{
+        $restaurant_table_customer = new Restaurant_table_customer;
+        $data["new_table"] = $request->table_id;
+        $data["old_table"] = $request->customer_data['table_data'];
+        $customer_data = $restaurant_table_customer->find($id);
+        $customer_data->pax = $request->pax;
+        $customer_data->sc_pwd = $request->sc_pwd;
+        $customer_data->guest_name = $request->guest_name;
+        if($data["new_table"]['id']!=$data["old_table"]['id']){
+          // $customer_data->table_name .= '>'.$data["new_table"]['name'];
+          $customer_data->table_name = $data["new_table"]['name'];
+          $customer_data->restaurant_table_id = $data["new_table"]['id'];
+        }
+        $customer_data->save();
+        $customer_data = $restaurant_table_customer->find($id);
+        $customers = $restaurant_table_customer->where('restaurant_table_id',$data["old_table"]['id']);
+        if($customers->count()==0){
+          $restaurant_table = new Restaurant_table;
+          $table_data = $restaurant_table->find($data["old_table"]['id']);
+          $table_data->occupied = 0;
+          $table_data->save();
+        }else{
+          $restaurant_table = new Restaurant_table;
+          $table_data = $restaurant_table->find($data["old_table"]['id']);
+          $table_data->occupied = 1;
+          $table_data->save();
+        }
 
-    $customers = $restaurant_table_customer->where('restaurant_table_id',$data["new_table"]['id']);
-    if($customers->count()==0){
-      $restaurant_table = new Restaurant_table;
-      $table_data = $restaurant_table->find($data["new_table"]['id']);
-      $table_data->occupied = 0;
-      $table_data->save();
-    }else{
-      $restaurant_table = new Restaurant_table;
-      $table_data = $restaurant_table->find($data["new_table"]['id']);
-      $table_data->occupied = 1;
-      $table_data->save();
+        $customers = $restaurant_table_customer->where('restaurant_table_id',$data["new_table"]['id']);
+        if($customers->count()==0){
+          $restaurant_table = new Restaurant_table;
+          $table_data = $restaurant_table->find($data["new_table"]['id']);
+          $table_data->occupied = 0;
+          $table_data->save();
+        }else{
+          $restaurant_table = new Restaurant_table;
+          $table_data = $restaurant_table->find($data["new_table"]['id']);
+          $table_data->occupied = 1;
+          $table_data->save();
+        }
+        DB::commit();
     }
-
-
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $data;
   }
 }

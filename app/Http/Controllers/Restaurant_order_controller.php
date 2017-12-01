@@ -29,48 +29,54 @@ class Restaurant_order_controller extends Controller
     ],[
       'table_customer_cart.required' => 'Cannot place an empty order.'
     ]);
-    $restaurant_table_customer = new Restaurant_table_customer;
-    $customer_data = $restaurant_table_customer->find($id);
+    DB::beginTransaction();
+    try{
+        
+        $restaurant_table_customer = new Restaurant_table_customer;
+        $customer_data = $restaurant_table_customer->find($id);
 
-    $restaurant_table = new Restaurant_table;
-    $table_data = $restaurant_table->find($customer_data->restaurant_table_id);
+        $restaurant_table = new Restaurant_table;
+        $table_data = $restaurant_table->find($customer_data->restaurant_table_id);
 
 
 
-    $restaurant_order = new Restaurant_order;
-    $que_number = $restaurant_order
-      ->where('date_',strtotime(date('m/d/Y')))
-      ->where('restaurant_id',$customer_data->restaurant_id)
-      ->orderBy('id','DESC')
-      ->value('que_number');
+        $restaurant_order = new Restaurant_order;
+        $que_number = $restaurant_order
+          ->where('date_',strtotime(date('m/d/Y')))
+          ->where('restaurant_id',$customer_data->restaurant_id)
+          ->orderBy('id','DESC')
+          ->value('que_number');
 
-    $restaurant_order->date_ = strtotime(date("m/d/Y"));
-    $restaurant_order->date_time = strtotime(date("m/d/Y h:i:s A"));
-    $restaurant_order->pax = $customer_data->pax;
-    $restaurant_order->table_name = $customer_data->table_name;
-    $restaurant_order->que_number = ($que_number==null?1:++$que_number);
-    $restaurant_order->restaurant_id = $customer_data->restaurant_id;
-    $restaurant_order->restaurant_table_customer_id = $id;
-    $restaurant_order->server_id = $customer_data->server_id;
-    $restaurant_order->save();
+        $restaurant_order->date_ = strtotime(date("m/d/Y"));
+        $restaurant_order->date_time = strtotime(date("m/d/Y h:i:s A"));
+        $restaurant_order->pax = $customer_data->pax;
+        $restaurant_order->table_name = $customer_data->table_name;
+        $restaurant_order->que_number = ($que_number==null?1:++$que_number);
+        $restaurant_order->restaurant_id = $customer_data->restaurant_id;
+        $restaurant_order->restaurant_table_customer_id = $id;
+        $restaurant_order->server_id = $customer_data->server_id;
+        $restaurant_order->save();
 
-    $customer_data->has_order = 1;
-    $customer_data->save();
+        $customer_data->has_order = 1;
+        $customer_data->save();
 
-    $order_data = $restaurant_order->orderBy('id','DESC')->first();
-    $cart = $request->session()->get('restaurant.table_customer.'.$id.'.cart');
-    foreach ($cart as $cart_data) {
-      $restaurant_order_detail = new Restaurant_order_detail;
-      $restaurant_order_detail->restaurant_menu_id = $cart_data->id;
-      $restaurant_order_detail->restaurant_menu_name = Restaurant_menu::find($cart_data->id)->name;
-      $restaurant_order_detail->quantity = $cart_data->quantity;
-      $restaurant_order_detail->price = $cart_data->price;
-      $restaurant_order_detail->special_instruction = $cart_data->special_instruction;
-      $restaurant_order_detail->restaurant_order_id = $order_data->id;
-      $restaurant_order_detail->restaurant_id = $customer_data->restaurant_id;
-      $restaurant_order_detail->save();
+        $order_data = $restaurant_order->orderBy('id','DESC')->first();
+        $cart = $request->session()->get('restaurant.table_customer.'.$id.'.cart');
+        foreach ($cart as $cart_data) {
+          $restaurant_order_detail = new Restaurant_order_detail;
+          $restaurant_order_detail->restaurant_menu_id = $cart_data->id;
+          $restaurant_order_detail->restaurant_menu_name = Restaurant_menu::find($cart_data->id)->name;
+          $restaurant_order_detail->quantity = $cart_data->quantity;
+          $restaurant_order_detail->price = $cart_data->price;
+          $restaurant_order_detail->special_instruction = $cart_data->special_instruction;
+          $restaurant_order_detail->restaurant_order_id = $order_data->id;
+          $restaurant_order_detail->restaurant_id = $customer_data->restaurant_id;
+          $restaurant_order_detail->save();
+        }
+        $cart = $request->session()->forget('restaurant.table_customer.'.$id.'.cart');
+        DB::commit();
     }
-    $cart = $request->session()->forget('restaurant.table_customer.'.$id.'.cart');
+    catch(\Exception $e){DB::rollback();throw $e;}
     return $order_data;
   }
 
