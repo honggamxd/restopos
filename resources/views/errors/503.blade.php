@@ -39,7 +39,7 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Server Maintenance<br>Please Try again later.</div>
+                <div class="title">Updating Order Slip<br>Please Try again later.</div>
             </div>
         </div>
     </body>
