@@ -672,6 +672,7 @@
                   <option value="guest_ledger">{{settlements("guest_ledger")}}</option>
                   <option value="send_bill">{{settlements("send_bill")}}</option>
                   <option value="free_of_charge">{{settlements("free_of_charge")}}</option>
+                  <option value="bod">{{settlements("bod")}}</option>
                   <option value="manager_meals">{{settlements("manager_meals")}}</option>
                   <option value="sales_office">{{settlements("sales_office")}}</option>
                   <option value="representation">{{settlements("representation")}}</option>
@@ -714,6 +715,10 @@
               <div class="form-group" ng-if="formdata.settlements_payment.free_of_charge">
                 <label>{{settlements("free_of_charge")}}:</label>
                 <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.bod">
+                <label>{{settlements("bod")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.bod"  ng-change="input_payment()">
               </div>
               <div class="form-group" ng-if="formdata.settlements_payment.manager_meals">
                 <label>{{settlements("manager_meals")}}:</label>
@@ -1592,7 +1597,11 @@
         cheque: 0,
         guest_ledger: 0,
         send_bill: 0,
-        free_of_charge: 0
+        free_of_charge: 0,
+        bod: 0,
+        manager_meals: 0,
+        sales_office: 0,
+        representation: 0,
       };
       $scope.formdata.net_billing  = data.bill_data.net_billing  ;
       $scope.bill_id = data.bill_data.id;
@@ -1610,6 +1619,7 @@
       $scope.formdata.settlements_payment.guest_ledger = false;
       $scope.formdata.settlements_payment.send_bill = false;
       $scope.formdata.settlements_payment.free_of_charge = false;
+      $scope.formdata.settlements_payment.bod = false;
       $scope.formdata.settlements_payment.manager_meals = false;
       $scope.formdata.settlements_payment.sales_office = false;
       $scope.formdata.settlements_payment.representation = false;
@@ -1777,6 +1787,7 @@
       + $scope.formdata.settlements_amount.guest_ledger
       + $scope.formdata.settlements_amount.send_bill
       + $scope.formdata.settlements_amount.free_of_charge
+      + $scope.formdata.settlements_amount.bod
       + $scope.formdata.settlements_amount.manager_meals
       + $scope.formdata.settlements_amount.sales_office
       + $scope.formdata.settlements_amount.representation
@@ -1793,6 +1804,7 @@
       + $scope.formdata.settlements_amount.guest_ledger
       + $scope.formdata.settlements_amount.send_bill
       + $scope.formdata.settlements_amount.free_of_charge
+      + $scope.formdata.settlements_amount.bod
       + $scope.formdata.settlements_amount.manager_meals
       + $scope.formdata.settlements_amount.sales_office
       + $scope.formdata.settlements_amount.representation
@@ -1854,6 +1866,14 @@
       }else{
         $scope.formdata.settlements_payment.free_of_charge = false;
         $scope.formdata.settlements_amount.free_of_charge = 0;
+        $scope.formdata.excess = excess($scope);
+        $scope.valid_payment = valid_payment($scope);
+      }
+      if($scope.formdata.settlement.includes('bod')){
+        $scope.formdata.settlements_payment.bod = true;
+      }else{
+        $scope.formdata.settlements_payment.bod = false;
+        $scope.formdata.settlements_amount.bod = 0;
         $scope.formdata.excess = excess($scope);
         $scope.valid_payment = valid_payment($scope);
       }

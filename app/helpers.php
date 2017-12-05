@@ -125,6 +125,9 @@
       case 'staff_charge':
         return 'Staff Charge';
         break;
+      case 'bod':
+        return 'BOD';
+        break;
       case 'manager_meals':
         return 'Managers Meal';
         break;
