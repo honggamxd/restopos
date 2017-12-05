@@ -14,7 +14,6 @@
                 margin: 0;
                 padding: 0;
                 width: 100%;
-                color: #B0BEC5;
                 display: table;
                 font-weight: 100;
                 font-family: 'Lato';
@@ -40,7 +39,7 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Be right back.</div>
+                <div class="title">Server Maintenance<br>Please Try again later.</div>
             </div>
         </div>
     </body>
