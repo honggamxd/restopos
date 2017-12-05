@@ -39,7 +39,7 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Updating Order Slip<br>Please Try again later.</div>
+                <div class="title">Updating Ordering System<br>Please Try again later.</div>
             </div>
         </div>
     </body>
