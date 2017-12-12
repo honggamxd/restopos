@@ -16,6 +16,7 @@ use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
 use App\Restaurant_accepted_order_cancellation;
 use App\Restaurant_order_cancellation;
+use Carbon\Carbon;
 
 class Restaurant_table_customer_controller extends Controller
 {
@@ -148,7 +149,8 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_order = new Restaurant_order;
     $data["result"] = $restaurant_table_customer->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)->get();
     foreach ($data["result"] as $customer_data) {
-      $customer_data->date_time = date("h:i:s A",$customer_data->date_time);
+      $customer_data->time = date("h:i:s A",strtotime($customer_data->created_at));
+      $customer_data->date = date("m/d/Y",strtotime($customer_data->created_at));
       $customer_data->has_order = ($customer_data->has_order==1?TRUE:FALSE);
       $customer_data->has_billed_out = ($customer_data->has_billed_out==1?TRUE:FALSE);
       $customer_data->has_bill = ($customer_data->has_bill==1?TRUE:FALSE);

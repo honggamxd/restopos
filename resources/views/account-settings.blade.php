@@ -33,32 +33,32 @@
 <div class="form-group">
   <label>Name</label>
   <input class="form-control" type="text" placeholder="Enter Name" name="pax" ng-model="formdata.name">
-  <p class="help-block">@{{formerrors.name[0]}}</p>
+  <p class="help-block" ng-cloak>@{{formerrors.name[0]}}</p>
 </div>
 
 
 <div class="form-group">
   <label>Username</label>
   <input class="form-control" type="text" placeholder="Enter Username" name="pax" ng-model="formdata.username">
-  <p class="help-block">@{{formerrors.username[0]}}</p>
+  <p class="help-block" ng-cloak>@{{formerrors.username[0]}}</p>
 </div>
 
 <div class="form-group">
   <label>Password</label>
   <input class="form-control" type="password" placeholder="Enter Password" name="pax" ng-model="formdata.old_password">
-  <p class="help-block">@{{formerrors.old_password[0]}}</p>
+  <p class="help-block" ng-cloak>@{{formerrors.old_password[0]}}</p>
 </div>
 
 <div class="form-group">
   <label>New Password <small style="color: red">* This is not required to fill unless you want to change your password.</small></label>
   <input class="form-control" type="password" placeholder="Enter New Password" name="pax" ng-model="formdata.password">
-  <p class="help-block">@{{formerrors.password[0]}}</p>
+  <p class="help-block" ng-cloak>@{{formerrors.password[0]}}</p>
 </div>
 
 <div class="form-group">
   <label>Confirm New Password <small style="color: red">* This is not required to fill unless you want to change your password.</small></label>
   <input class="form-control" type="password" placeholder="Enter Confirm New Password" name="pax" ng-model="formdata.password_confirmation">
-  <p class="help-block">@{{formerrors.password_confirmation[0]}}</p>
+  <p class="help-block" ng-cloak>@{{formerrors.password_confirmation[0]}}</p>
 </div>
 <button type="button" class="ui default button" data-dismiss="modal">Cancel</button>
 <button type="submit" class="ui primary button" form="account-settings-form" ng-disabled="submit" ng-class="{'loading':submit}">Save</button>

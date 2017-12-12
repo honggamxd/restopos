@@ -89,6 +89,7 @@
 </table>
 <br>
 <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
+<p ng-if="order.has_cancelled==1">Cancellation Message: <span ng-cloak>@{{order.cancellation_message}}</span></p>
 <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
 <a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
 <br>

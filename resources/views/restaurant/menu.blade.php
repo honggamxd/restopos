@@ -215,6 +215,38 @@
             show_menu();
         }
     });
+    $('#add-item-subcategory').autocomplete({
+      source: function(request, response) {
+              $.ajax({
+                  url: '/api/restaurant/menu/subcategory/list',
+                  dataType: "json",
+                  data: {
+                      term : request.term,
+                      category : $scope.formdata.category
+                  },
+                  success: function(data) {
+                      response(data);
+                  }
+              });
+          },
+          delay: 300
+    });
+    $('#edit-item-subcategory').autocomplete({
+      source: function(request, response) {
+              $.ajax({
+                  url: '/api/restaurant/menu/subcategory/list',
+                  dataType: "json",
+                  data: {
+                      term : request.term,
+                      category : $scope.formdata.category
+                  },
+                  success: function(data) {
+                      response(data);
+                  }
+              });
+          },
+          delay: 300
+    });
     show_menu();
     $scope.search_menu = function(){
       show_menu();

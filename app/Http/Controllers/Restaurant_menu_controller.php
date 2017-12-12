@@ -168,6 +168,34 @@ class Restaurant_menu_controller extends Controller
     
     return $data;
   }
+  public function list_subcategory(Request $request)
+  {
+    $data = array();
+    $restaurant_menu = new Restaurant_menu;
+
+    $search = $restaurant_menu->query();
+    $search->where('subcategory', 'like', '%'.$request->term.'%');
+    if($request->category!=null){
+      $search->where('category', 'like', $request->category);
+    }
+    $search->orderBy('subcategory');
+    $search->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+    $search->skip(0);
+    $search->take(20);
+    $search->distinct();
+    $search->select('subcategory');
+    $search = $search->get();
+
+    foreach ($search as $search_data) {
+      $data[] = [
+        'label' => $search_data->subcategory,
+        'value' => $search_data->subcategory,
+        'id' => $search_data->id
+      ];
+    }
+    
+    return $data;
+  }
 
   public function show_category(Request $request,$restaurant_id)
   {

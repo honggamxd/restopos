@@ -36,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="item in cancellations">
+        <tr ng-repeat="item in cancellations" ng-cloak>
           <td class="middle aligned center aligned" ng-bind="item.id"></td>
           <td class="middle aligned center aligned" ng-bind="item.restaurant_order_id"></td>
           <td class="middle aligned center aligned" ng-bind="item.restaurant_name"></td>

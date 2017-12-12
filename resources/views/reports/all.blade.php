@@ -143,6 +143,11 @@
         </tr>
       </thead>
       <tbody ng-cloak>
+        <tr ng-if="bills | isEmpty">
+          <th colspan="20">
+            <h1 style="text-align: center;">NO DATA</h1>
+          </th>
+        </tr>
         <tr ng-repeat="bill_data in bills" ng-class="{'warning':bill_data.type=='bad_order'}">
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
@@ -185,7 +190,7 @@
           <!-- <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.excess |currency:""}}</td> -->
         </tr>
       </tbody>
-      <tfoot ng-cloak>
+      <tfoot ng-cloak ng-hide="bills | isEmpty">
         <tr ng-cloak>
           <th class="right aligned middle aligned" colspan="2">Total>>></th>
           <th class="center aligned middle aligned"></th>
@@ -280,6 +285,7 @@
       $scope.restaurant_servers = {!! $restaurant_servers !!};
     @endif
     function show_reports(page=1) {
+      $scope.submit = true;
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
       var restaurant = ($scope.restaurant==undefined?"":$scope.restaurant['id']);
@@ -347,13 +353,24 @@
   });
 
   app.filter('chkNull',function(){
-        return function(input){
-            if(!(angular.equals(input,null)))
-                return input;
-            else
-                return 0;
-        };
-    });
+      return function(input){
+          if(!(angular.equals(input,null)))
+              return input;
+          else
+              return 0;
+      };
+  });
+  app.filter('isEmpty', function () {
+      var bar;
+      return function (obj) {
+          for (bar in obj) {
+              if (obj.hasOwnProperty(bar)) {
+                  return false;
+              }
+          }
+          return true;
+      };
+  });
   angular.bootstrap(document, ['main']);
 </script>
 @endsection

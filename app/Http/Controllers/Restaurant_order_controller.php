@@ -96,6 +96,7 @@ class Restaurant_order_controller extends Controller
     $data["order"]->server_name = DB::table('restaurant_server')->find($data["order"]->server_id)->name;
     $data["order"]->que_number = sprintf('%04d',$data['order']->que_number);
     $data["order"]->id_format = sprintf('%04d',$data['order']->id);
+    $data["order"]->cancellation_message = Restaurant_order_cancellation::where('restaurant_order_id',$data['order']->id)->orderBy('id','DESC')->value('reason_cancelled');
 
     $restaurant_table_customer = new Restaurant_table_customer;
     $data['customer_data'] = $restaurant_table_customer->find($data['order']->restaurant_table_customer_id);
@@ -131,6 +132,7 @@ class Restaurant_order_controller extends Controller
     $data["order"]->server_name = DB::table('restaurant_server')->find($data["order"]->server_id)->name;
     $data["order"]->que_number = sprintf('%04d',$data['order']->que_number);
     $data["order"]->id_format = sprintf('%04d',$data['order']->id);
+    $data["order"]->cancellation_message = Restaurant_order_cancellation::where('restaurant_order_id',$data['order']->id)->orderBy('id','DESC')->value('reason_cancelled');
     $data["id"] = $id;
     $data["print"] = $request->print;
     // return $data;

@@ -22,6 +22,7 @@ Route::post('/api/restaurant/menu', 'Restaurant_menu_controller@store');
 Route::put('/api/restaurant/menu', 'Restaurant_menu_controller@update');
 Route::get('/api/restaurant/menu/search/{type}', 'Restaurant_menu_controller@search');
 Route::get('/api/restaurant/menu/subcategory', 'Restaurant_menu_controller@show_subcategory');
+Route::get('/api/restaurant/menu/subcategory/list', 'Restaurant_menu_controller@list_subcategory');
 
 Route::get('/api/restaurant/menu/list/{type}', 'Restaurant_menu_controller@get_list');
 Route::get('/api/restaurant/menu/category/{id}', 'Restaurant_menu_controller@show_category');

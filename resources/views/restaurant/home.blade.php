@@ -59,6 +59,7 @@
           <th class="center aligned">Table</th>
           <th class="center aligned">Guest Name</th>
           <th class="center aligned">Server</th>
+          <th class="center aligned">Date</th>
           <th class="center aligned">Time</th>
           <th class="center aligned">Pax</th>
           <th class="center aligned">SC/PWD</th>
@@ -74,7 +75,8 @@
           </td>
           <td class="center aligned middle aligned" ng-bind="customer_data.guest_name"></td>
           <td class="center aligned middle aligned" ng-bind="customer_data.server_name"></td>
-          <td class="center aligned middle aligned" ng-bind="customer_data.date_time"></td>
+          <td class="center aligned middle aligned" ng-bind="customer_data.date"></td>
+          <td class="center aligned middle aligned" ng-bind="customer_data.time"></td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.pax}}</td>
           <td class="center aligned middle aligned"><i class="fa fa-users" aria-hidden="true"></i> @{{customer_data.sc_pwd}}</td>
           <td class="center aligned middle aligned" ng-click="view_orders(this)" data-balloon="Click to View Orders or open a cancellation request." data-balloon-pos="up">
@@ -426,6 +428,7 @@
         </table>
         <br>
         <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
+        <p ng-if="order.has_cancelled==1">Cancellation Message: <span ng-cloak>@{{order.cancellation_message}}</span></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" ng-hide="order.has_cancellation_request==1||customer_data.has_paid==1||customer_data.has_billed_out==1" ng-click="cancellation_orders('before',this)">Cancellation</button>
