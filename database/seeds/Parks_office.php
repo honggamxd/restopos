@@ -11,10 +11,10 @@ class Parks_office extends Seeder
      */
     public function run()
     {
-        //
-      // DB::table('restaurant')->insert([
-      //     'name' => 'Parks Office',
-      // ]);
+        
+      DB::table('restaurant')->insert([
+          'name' => 'Parks Office',
+      ]);
       DB::table('user')->insert(
         [
           [
