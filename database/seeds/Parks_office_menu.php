@@ -215,7 +215,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'SODA',
           'name' => 'COKE LIGHT CAN',
           'price' =>  80.00,
@@ -223,7 +223,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'SODA',
           'name' => 'Coke Can',
           'price' =>  80.00,
@@ -231,7 +231,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'SODA',
           'name' => 'RTO CAN',
           'price' =>  80.00,
@@ -239,7 +239,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'SODA',
           'name' => 'SPRITE CAN',
           'price' =>  80.00,
@@ -247,7 +247,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'SODA',
           'name' => 'real leaf',
           'price' =>  90.00,
@@ -255,7 +255,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'SODA',
           'name' => 'Gatorade',
           'price' =>  100.00,
@@ -263,7 +263,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'SODA',
           'name' => 'C2',
           'price' =>  55.00,
@@ -271,7 +271,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-        'category' => 'Beverage',
+        'category' => 'Beverages',
           'subcategory' => 'JUICE CANNED',
           'name' => 'DOLE 4 SEASON',
           'price' =>  80.00,
@@ -279,7 +279,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'JUICE TETRA',
           'name' => 'MINUTE MAID',
           'price' =>  15.00,
@@ -287,7 +287,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'JUICE TETRA',
           'name' => 'CHOICE JUICE',
           'price' =>  10.00,
@@ -295,7 +295,7 @@ class Parks_office_menu extends Seeder
           'is_prepared' => 1
         ],
         [
-          'category' => 'Beverage',
+          'category' => 'Beverages',
           'subcategory' => 'BOTTLED WATER',
           'name' => 'NATURE`S SPRING 500ml',
           'price' =>  40.00,
