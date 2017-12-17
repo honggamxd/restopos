@@ -57,7 +57,7 @@ class Restaurant_controller extends Controller
           $restaurant_server->name = $request->name;
           $restaurant_server->restaurant_id = $request->restaurant_id;
           $restaurant_server->save();
-          return $request->name;
+          // return $request->name;
           DB::commit();
       }
       catch(\Exception $e){DB::rollback();throw $e;}
