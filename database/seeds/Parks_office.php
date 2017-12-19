@@ -20,16 +20,16 @@ class Parks_office extends Seeder
           [
             'username' => 'admin4',
             'name' => 'admin4 name',
-            'password' => md5('admin3'),
+            'password' => md5('admin4'),
             'privilege' => 'restaurant_admin',
-            'restaurant_id' => 0
+            'restaurant_id' => 4
           ],
           [
             'username' => 'user4',
             'name' => 'user4 name',
             'password' => md5('user4'),
             'privilege' => 'restaurant_cashier',
-            'restaurant_id' => 3
+            'restaurant_id' => 4
           ],
         ]
       );
