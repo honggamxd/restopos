@@ -219,7 +219,7 @@ class Restaurant_table_customer_controller extends Controller
         $restaurant_table_customer = new Restaurant_table_customer;
         $customer_data = $restaurant_table_customer->find($id);
         if($temp_bill_remaining_quantity==0){
-          $customer_data->cancellation_order_status = 1;
+          $customer_data->cancellation_order_status = 0;
           $customer_data->has_billed_completely = 1;
           $customer_data->has_paid = 1;
         }
