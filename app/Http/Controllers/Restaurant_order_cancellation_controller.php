@@ -272,7 +272,7 @@ class Restaurant_order_cancellation_controller extends Controller
     try{
         // return $request->all();
         $restaurant_table_customer = new Restaurant_table_customer;
-        $restaurant_table_customer_data = $restaurant_table_customer->find($request->table_customer_id);
+        $restaurant_table_customer_data = $restaurant_table_customer->find($id);
         $restaurant_table_customer_data->cancellation_order_status = 2;
         $restaurant_table_customer_data->save();
         $restaurant_bill = new Restaurant_bill;
