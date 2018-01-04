@@ -29,6 +29,9 @@
   *{
     background-color: white !important;
   }
+  .spacing{
+    width: 30px;
+  }
 }
 
 </style>
@@ -53,6 +56,7 @@
   <tr>
     <td>Table #: <b ng-cloak>@{{bill.table_name}}</b></td>
     <td>Time: <b ng-cloak>@{{bill.date_time}}</b></td>
+    <td><div class="spacing">&nbsp;</div></td>
   </tr>
   <tr>
     <td ng-show="bill.type=='good_order'"># of Pax: <b ng-cloak>@{{bill.pax}}</b></td>
@@ -70,6 +74,7 @@
       <th style="text-align: center;">QTY</th>
       <th style="text-align: center;" ng-show="bill.type=='bad_order'">SETTLEMENT</th>
       <th style="text-align: right;">TOTAL</th>
+      <th style="text-align: right;"><div class="spacing">&nbsp;</div></th>
     </tr>
   </thead>
   <tbody>
@@ -130,6 +135,7 @@
   <tr>
     <td>Server:</td>
     <td>Cashier:</td>
+    <td><div class="spacing">&nbsp;</div></td>
   </tr>
   <tr>
     <td><b ng-cloak>@{{bill.server_name}}</b></td>
