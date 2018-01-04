@@ -36,6 +36,10 @@
   #header{
     margin-top: 100px !important;
   }
+
+  .spacing{
+    width: 30px;
+  }
 }
 
 </style>
@@ -59,6 +63,7 @@
   <tr>
     <td># of Pax: <span ng-cloak>@{{order.pax}}</span></td>
     <td>Time: <span ng-cloak>@{{order.date_time}}</span></td>
+    <td><div class="spacing">&nbsp;</div></td>
   </tr>
 </tbody>
 </table>
@@ -73,6 +78,7 @@
       <th style="text-align: center;padding-left: 2px;padding-right: 2px;"><span ng-if="order.has_cancelled==1">NEW</span> QTY</th>
       <th style="text-align: right;padding-left: 2px;padding-right: 2px;">PRICE</th>
       <th style="text-align: right;">TOTAL</th>
+      <th style="text-align: right;"><div class="spacing">&nbsp;</div></th>
     </tr>
   </thead>
   <tbody>
