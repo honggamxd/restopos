@@ -148,5 +148,6 @@ Route::post('/api/users/delete/{id}', 'Users_controller@delete');
 
 
 Route::get('/restaurant/settings','Restaurant_controller@settings');
+Route::get('/test','Users_controller@test');
 
 

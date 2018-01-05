@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Requests;
 use App\User;
+use App\Restaurant_bill_detail;
 use App\Restaurant_meal_types;
 use Carbon\Carbon;
 
@@ -179,5 +180,18 @@ class Users_controller extends Controller
     $user = new User;
     $user_data = $user->find($id)->delete();
     return $this->show_users($request);
+  }
+
+  public function test()
+  {
+    $test = DB::select('SELECT restaurant_menu_id,created_at FROM restaurant_bill_detail WHERE deleted_at IS NULL group by restaurant_menu_id,created_at having count(*) >= 2');
+    $results= array();
+    foreach ($test as $key => $value) {
+      $result = Restaurant_bill_detail::where(['restaurant_menu_id'=>$value->restaurant_menu_id,'created_at'=>$value->created_at])->orderBy('id','DESC')->first();
+      $result->url = url('restaurant/bill/'.$result->restaurant_bill_id);
+      $result->delete();
+      $results[] = $result;
+    }
+    return $results;
   }
 }

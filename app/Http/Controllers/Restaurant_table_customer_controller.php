@@ -29,11 +29,12 @@ class Restaurant_table_customer_controller extends Controller
     $this->validate($request, [
         'table_id.id' => 'required',
         'server_id.id' => 'required',
-        'pax' => 'integer|required|custom_min:0',
-        'sc_pwd' => 'integer|required',
+        'pax' => 'integer|required|custom_min:1',
+        'sc_pwd' => 'integer|required|custom_max:'.$request->pax,
     ],[
-      'custom_min' => 'The number of :attribute must be greater than 0.',
-      'server_id.id.required' => 'The Server field is required.'
+      'custom_min' => 'The number of :attribute must be greater than or equal to 1.',
+      'server_id.id.required' => 'The Server field is required.',
+      'sc_pwd.custom_max' => 'The number of SC/PWD must not be greater than '.$request->pax.' pax.',
     ]);
     DB::beginTransaction();
     try{
@@ -310,6 +311,13 @@ class Restaurant_table_customer_controller extends Controller
   {
     // return $request->customer_data['table_data'];
     // exit;
+    $this->validate($request, [
+        'pax' => 'integer|required|custom_min:1',
+        'sc_pwd' => 'integer|required|custom_max:'.$request->pax,
+    ],[
+      'custom_min' => 'The number of :attribute must be greater than or equal to 1.',
+      'sc_pwd.custom_max' => 'The number of SC/PWD must not be greater than '.$request->pax.' pax.',
+    ]);
     DB::beginTransaction();
     try{
         $restaurant_table_customer = new Restaurant_table_customer;

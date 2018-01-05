@@ -16,7 +16,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Validator::extend('custom_min', function($attribute, $value, $parameters, $validator) {
-            return $value>$parameters[0];
+            return $value>=$parameters[0];
+        });
+
+        Validator::extend('custom_max', function($attribute, $value, $parameters, $validator) {
+            return $value<=$parameters[0];
         });
 
         Validator::extend('password', function($attribute, $value, $parameters, $validator) {
