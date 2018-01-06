@@ -433,7 +433,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" ng-hide="order.has_cancellation_request==1||customer_data.has_paid==1||customer_data.has_billed_out==1" ng-click="cancellation_orders('before',this)">Cancellation</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary" href="/restaurant/order/@{{order.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</button>
+        <a class="btn btn-primary" href="/restaurant/order/@{{order.id}}?print=1" target="_blank"><span class="glyphicon glyphicon-print"></span> Print</a>
       </div>
     </div>
   </div>

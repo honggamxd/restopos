@@ -125,9 +125,11 @@
    $('.modal').on('show.bs.modal', function() {
      $('.button').hide();
      $('button').hide();
+     $('.btn').hide();
      setTimeout(function() {
        $('.button').show();
        $('button').show();
+       $('.btn').show();
      }, 1000);
    })
    show_table_customers();
