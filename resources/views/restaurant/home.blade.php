@@ -115,6 +115,13 @@
           </td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr ng-if="table_customers | isEmpty">
+          <td colspan="20" style="text-align: center;">
+            <h1>NO DATA</h1>
+          </td>
+        </tr>
+      </tfoot>
     </table>
     <small>* The highlighed row has a pending cancellation of orders request.</small>
   </div>  
@@ -292,7 +299,11 @@
                   </tr>
                 </tbody>
                 <tfoot>
-
+                  <tr ng-if="menu | isEmpty">
+                    <td colspan="20" style="text-align: center;">
+                      <h1>NO DATA</h1>
+                    </td>
+                  </tr>
                 </tfoot>
               </table>
             </div>
@@ -330,7 +341,12 @@
                   </tr>
                 </tbody>
                 <tfoot>
-                  <tr>
+                  <tr ng-if="table_customer_cart | isEmpty">
+                    <td colspan="20" style="text-align: center;">
+                      <h1>NO DATA</h1>
+                    </td>
+                  </tr>
+                  <tr ng-if="!table_customer_cart | isEmpty">
                     <th class="right aligned" colspan="2">Total:</th>
                     <th class="right aligned">@{{table_customer_total|currency:""}}</th>
                     <th class="right aligned"></th>
@@ -373,6 +389,13 @@
               </td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr ng-if="orders | isEmpty">
+              <td colspan="20" style="text-align: center;">
+                <h1>NO DATA</h1>
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
       <div class="modal-footer">
@@ -424,7 +447,13 @@
               <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
             </tr>
           </tbody>
-        </tbody>
+        <tfoot>
+          <tr ng-if="order_detail | isEmpty">
+            <td colspan="20" style="text-align: center;">
+              <h1>NO DATA</h1>
+            </td>
+          </tr>
+        </tfoot>
         </table>
         <br>
         <p>Server: <span ng-cloak>@{{order.server_name}}</span></p>
@@ -464,6 +493,13 @@
                 <td><input type="number" ng-model="item.quantity_to_cancel"></td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr ng-if="order_detail | isEmpty">
+                <td colspan="20" style="text-align: center;">
+                  <h1>NO DATA</h1>
+                </td>
+              </tr>
+            </tfoot>
           </table>
           <label>Message:</label>
           <div class="form-group">
@@ -508,6 +544,13 @@
                 <td class="right aligned middle aligned">@{{bill_preview_data.price|currency:""}}</td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr ng-if="bill_preview.items | isEmpty">
+                <td colspan="20" style="text-align: center;">
+                  <h1>NO DATA</h1>
+                </td>
+              </tr>
+            </tfoot>
           </table>
           <label>Message:</label>
           <div class="form-group">
@@ -586,6 +629,11 @@
             </tr>
           </tbody>
           <tfoot>
+            <tr ng-if="bill_preview.items | isEmpty">
+              <td colspan="20" style="text-align: center;">
+                <h1>NO DATA</h1>
+              </td>
+            </tr>
             <tr>
               <th colspan="4" class="right aligned">DISCOUNT:</th>
               <th class="right aligned">@{{bill_preview.discount.total|currency:""}}</th>
@@ -644,6 +692,13 @@
               </td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr ng-if="bill | isEmpty">
+              <td colspan="20" style="text-align: center;">
+                <h1>NO DATA</h1>
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
       <div class="modal-footer">
@@ -802,6 +857,13 @@
                 </td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr ng-if="cancelled_orders | isEmpty">
+                <td colspan="20" style="text-align: center;">
+                  <h1>NO DATA</h1>
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </form>
       </div>
