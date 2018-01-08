@@ -7,7 +7,6 @@ use DB;
 use App\Http\Requests;
 use App\Restaurant_menu;
 use App\Restaurant_menu_ingredients;
-use App\Pagination;
 
 class Restaurant_menu_controller extends Controller
 {
@@ -114,8 +113,8 @@ class Restaurant_menu_controller extends Controller
       if($request->subcategory!=null&&$request->subcategory!='all'){
         $data['result']->where('subcategory',$request->subcategory);
       }
+      $data["pagination"] = (string)$data["result"]->paginate(50);
       $data["result"] = $data["result"]->paginate(50);
-      $data['pagination'] = (string)(new Pagination($data["result"]))->render();
       $data["getQueryLog"] = DB::getQueryLog();
     }
 

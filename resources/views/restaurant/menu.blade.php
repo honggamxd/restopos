@@ -251,12 +251,12 @@
     $scope.search_menu = function(){
       show_menu();
     }
-    function show_menu(page=1,category='all',subcategory='all') {
+    function show_menu(myUrl,category='all',subcategory='all') {
+      myUrl = (typeof myUrl !== 'undefined') && myUrl !== "" ? myUrl : '/api/restaurant/menu/list/list';
       $http({
         method : "GET",
-        url : "/api/restaurant/menu/list/list",
+        url : myUrl,
         params: {
-          page: page,
           category: category,
           subcategory: subcategory,
           search: $scope.search_string,
@@ -274,7 +274,7 @@
     }
 
     $scope.category_change_menu_list = function() {
-      show_menu(1,$scope.select_category);
+      show_menu("",$scope.select_category);
       $http({
           method : "GET",
           url : "/api/restaurant/menu/subcategory",
@@ -302,7 +302,7 @@
     }
 
     $scope.subcategory_change_menu_list = function() {
-      show_menu(1,$scope.select_category,$scope.select_subcategory);
+      show_menu("",$scope.select_category,$scope.select_subcategory);
     }
 
     $scope.add_menu = function() {
@@ -330,8 +330,9 @@
         $scope.submit = false;
       });
     }
-    $(document).on('click','.gotopage',function(e) {
-      show_menu(e.target.attributes.page.nodeValue);
+    $(document).on('click','.pagination li a',function(e) {
+      e.preventDefault();
+      show_menu(e.target.href,$scope.select_category,$scope.select_subcategory);
     });
 
     $scope.update_menu = function() {

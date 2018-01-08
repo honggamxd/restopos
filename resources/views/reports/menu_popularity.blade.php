@@ -98,9 +98,9 @@
     $scope.show_paging = true;
     $scope.restaurants = {!! json_encode($restaurants) !!};
     $scope.outlet = "";
-    // $scope.restaurant_id = "";
-    $(document).on('click','.gotopage',function(e) {
-      show_reports(e.target.attributes.page.nodeValue);
+    $(document).on('click','.pagination li a',function(e) {
+      e.preventDefault();
+      show_reports(e.target.href);
     });
     $scope.export_reports = function(page=1) {
       $scope.export = true;
@@ -163,15 +163,15 @@
     }
 
     show_reports();
-    function show_reports(page=1) {
+    function show_reports(myUrl) {
+      myUrl = (typeof myUrl !== 'undefined') && myUrl !== "" ? myUrl : '/api/reports/general/menu_popularity';
       var restaurant_id = ($scope.restaurant_id==undefined?"":$scope.restaurant_id['id']);
       $http({
           method : "GET",
-          url : "/api/reports/general/menu_popularity",
+          url : myUrl,
           params: {
             "date_from":"{{$date_from}}",
             "date_to":"{{$date_to}}",
-            "page":page,
             "restaurant_id":restaurant_id,
             "category": $scope.select_category,
             "subcategory": $scope.select_subcategory,

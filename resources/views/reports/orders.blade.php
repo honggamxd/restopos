@@ -112,24 +112,25 @@
       $scope.restaurant_servers = {!! $restaurant_servers !!};
     @endif
     $('#date_from,#date_to').datepicker();
-    $(document).on('click','.gotopage',function(e) {
-      show_reports(e.target.attributes.page.nodeValue);
+    $(document).on('click','.pagination li a',function(e) {
+      e.preventDefault();
+      show_reports(e.target.href);
     });
     $scope.filter_result = function(){
       $scope.submit = true;
       show_reports();
     }
     show_reports();
-    function show_reports(page=1) {
+    function show_reports(myUrl) {
+      myUrl = (typeof myUrl !== 'undefined') && myUrl !== "" ? myUrl : '/api/reports/general/orders';
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
       $http({
           method : "GET",
-          url : "/api/reports/general/orders",
+          url : myUrl,
           params: {
             "date_from":$scope.date_from,
             "date_to":$scope.date_to,
-            "page":page,
             "server_id":server
           }
       }).then(function mySuccess(response) {

@@ -18,7 +18,6 @@ use App\User;
 use App\Restaurant;
 use App\Restaurant_order;
 use App\Restaurant_order_detail;
-use App\Pagination;
 use Carbon\Carbon;
 
 class Reports_controller extends Controller
@@ -114,7 +113,7 @@ class Reports_controller extends Controller
       $order_data->server_name = Restaurant_server::find($order_data->server_id)->name;
       $order_data->total = Restaurant_order_detail::select(DB::raw('SUM(quantity*price) as total'))->where('restaurant_order_id',$order_data->id)->value('total');
     }
-    $data['pagination'] = (string)(new Pagination($data["result"]))->render();
+    $data['pagination'] = (string)$data["result"];
     return $data;
   }
 
@@ -635,7 +634,7 @@ class Reports_controller extends Controller
     }else{
       $data["result"] = $menu_popularity->paginate(50);
     }
-    $data['pagination'] = (string)(new Pagination($data["result"]))->render();
+    $data['pagination'] = (string)$data["result"];
     $data["getQueryLog"] = DB::getQueryLog();
 
     return $data;
