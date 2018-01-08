@@ -95,8 +95,8 @@
       <label>Date To:</label>
       <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" readonly>
       <div class="ui buttons">
-        <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}">Filter Results</button>
-        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button>
+        <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}" ng-disabled="submit" ng-submit="export">Filter Results</button>
+        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="submit" ng-submit="export">Download</button>
       </div>
       </div>
     </form>
@@ -144,8 +144,13 @@
       </thead>
       <tbody ng-cloak>
         <tr ng-if="bills | isEmpty">
-          <th colspan="20">
-            <h1 style="text-align: center;">NO DATA</h1>
+          <th colspan="200" style="text-align: center;">
+            <h1 ng-if="submit">
+              <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+              <br>
+              LOADING
+            </h1>
+            <h1 ng-if="!submit">NO DATA</h1>
           </th>
         </tr>
         <tr ng-repeat="bill_data in bills" ng-class="{'warning':bill_data.type=='bad_order'}">
@@ -289,6 +294,9 @@
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
       var restaurant = ($scope.restaurant==undefined?"":$scope.restaurant['id']);
+      $scope.bills = {};
+      $scope.footer = {};
+      $scope.paging = "";
       $http({
           method : "GET",
           url : "/api/reports/general/f_and_b",

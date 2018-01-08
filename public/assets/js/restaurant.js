@@ -10,6 +10,7 @@
    $scope.formdata.settlement = {};
    $scope.table = {};
    $scope.formdata._token = $scope._token;
+   $scope.loading = false;
    shortcut.add("Alt+A", function() {
      show_table();
      $scope.formdata.pax = '';
@@ -95,6 +96,7 @@
    $scope.table_customers = {};
 
    function show_table_customers() {
+     $scope.loading = false;
      $http({
        method: "GET",
        url: "/api/restaurant/table/customer/list",
@@ -107,6 +109,7 @@
        if (!$('.modal').is(':visible')) {
          setTimeout(show_table_customers, 1500);
        }
+       $scope.loading = false;
      }, function(rejection) {
        if (rejection.status != 422) {
          request_error(rejection.status);
@@ -116,6 +119,7 @@
        if (!$('.modal').is(':visible')) {
          setTimeout(show_table_customers, 1500);
        }
+       $scope.loading = false;
      });
    }
    $('.modal').on('hidden.bs.modal', function() {
@@ -134,7 +138,6 @@
    })
    show_table_customers();
    $scope.delete_table_customer = function(data) {
-     console.log(data.$parent.customer_data.id);
      $scope.formdata._token = $scope._token;
      $http({
        method: 'POST',
@@ -144,6 +147,7 @@
          'Content-Type': 'application/x-www-form-urlencoded'
        }
      }).then(function(response) {
+       $scope.table_customers = {};
        $.notify('A Customer has been removed from the list.', 'info');
      }, function(rejection) {
        if (rejection.status != 422) {
@@ -172,8 +176,6 @@
    }
    $scope.cancellation_orders = function(type, data) {
      if (type == 'before') {
-       console.log(data.order);
-       console.log($scope.order_detail);
        $('#view-list-order-modal').modal('hide');
        $('#view-order-modal').modal('hide');
        $('#before-bill-out-cancellation-order-modal').modal('show');
@@ -181,7 +183,7 @@
        $scope.bill_preview = {};
        $scope.bill_preview.customer_data = {};
        $scope.bill_preview.discount = {};
-       $('#view-list-order-modal').modal('hide');
+       $scope.submit = true;
        $http({
          method: "GET",
          url: "/api/restaurant/table/customer/bill/preview/" + data.$parent.customer_data.id,
@@ -197,13 +199,16 @@
          $scope.bill_preview.gross_billing = response.data.gross_billing;
          $scope.bill_preview.net_billing = response.data.net_billing;
          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
+         $('#view-list-order-modal').modal('hide');
          $('#after-bill-out-cancellation-order-modal').modal('show');
+         $scope.submit = false;
        }, function(rejection) {
          if (rejection.status != 422) {
            request_error(rejection.status);
          } else if (rejection.status == 422) {
            console.log(rejection.statusText);
          }
+         $scope.submit = false;
        });
      }
    }
@@ -323,7 +328,7 @@
      var toggle = (data.cart_data.show_update_quantity ? false : true);
      $scope.table_customer_cart["menu_" + data.cart_data.id].show_update_quantity = toggle;
    }
-   $scope.add_special_instruction = function(data) {
+   $scope.add_special_instruction = _.debounce(function(data) {
      /*console.log(data.$parent.table_customer_id);*/
      $scope.formdata.special_instruction = data.cart_data.special_instruction;
      $scope.formdata.menu_id = data.cart_data.id;
@@ -341,9 +346,8 @@
          var errors = rejection.data;
        }
      });
-   }
+   },250);
    $scope.update_quantity = function(data) {
-     /*console.log(data.$parent.table_customer_id);*/
      $scope.formdata.quantity = data.cart_data.quantity;
      $scope.formdata.menu_id = data.cart_data.id;
      $scope.table_customer_cart = {};
@@ -395,6 +399,7 @@
 
    function show_menu(category, subcategory) {
      $scope.menu = {};
+     $scope.loading = true;
      category = (typeof category !== 'undefined') ? category : 'all';
      subcategory = (typeof subcategory !== 'undefined') ? subcategory : 'all';
      $http({
@@ -407,12 +412,14 @@
        },
      }).then(function mySuccess(response) {
        $scope.menu = response.data.result;
+       $scope.loading = false;
      }, function(rejection) {
        if (rejection.status != 422) {
          request_error(rejection.status);
        } else if (rejection.status == 422) {
          console.log(rejection.statusText);
        }
+       $scope.loading = false;
      });
    }
    $scope.make_orders = function(data) {
@@ -429,7 +436,6 @@
      }).then(function(response) {
        $scope.submit = false;
        $("#add-order-modal").modal('hide');
-       $('#view-order-modal').modal('show');
        show_order(response.data.id);
      }, function(rejection) {
        if (rejection.status != 422) {
@@ -442,7 +448,6 @@
      });
    }
    $scope.preview_order = function(data) {
-     $('#view-order-modal').modal('show');
      show_order(data.order_data.id);
    }
 
@@ -450,6 +455,7 @@
      $scope.order = {};
      $scope.order_detail = {};
      $scope.customer_data = {};
+     $scope.loading = true;
      $http({
        method: "GET",
        url: "/api/restaurant/table/order/view/" + id,
@@ -457,12 +463,15 @@
        $scope.order = response.data.order;
        $scope.order_detail = response.data.order_detail;
        $scope.customer_data = response.data.customer_data;
+       $scope.loading = false;
+       $('#view-order-modal').modal('show');
      }, function(rejection) {
        if (rejection.status != 422) {
          request_error(rejection.status);
        } else if (rejection.status == 422) {
          console.log(rejection.statusText);
        }
+       $scope.loading = false;
      });
    }
    $scope.add_cart = _.debounce(function(data) {
@@ -502,6 +511,7 @@
      $scope.formdata._token = $scope._token;
      $scope.table_customer_cart = {};
      $scope.table_customer_total = "";
+     $scope.add_cart_submit = true;
      $http({
        method: 'POST',
        url: '/api/restaurant/table/order/remove',
@@ -513,6 +523,7 @@
        $scope.table_customer_cart = response.data.cart;
        $scope.table_customer_total = response.data.total;
        $.notify($scope.formdata.menu_name + " has been removed from the list.", "info");
+       $scope.add_cart_submit = false;
      }, function(rejection) {
        if (rejection.status != 422) {
          request_error(rejection.status);
@@ -520,6 +531,7 @@
          var errors = rejection.data;
          $.notify(rejection.data.error, 'error');
          $scope.formdata.date_payment = errors.date_payment;
+         $scope.add_cart_submit = false;
        }
      });
    };
@@ -549,6 +561,7 @@
    $scope.bill_out = function(data) {
      $scope.bill_preview = {};
      $scope.bill_preview.customer_data = {};
+     $scope.bill_out_submit = true;
      $scope.max = 0;
      if (data.$parent.customer_data.has_billed_out) {
        $http({
@@ -573,12 +586,14 @@
          if ($scope.bill_preview.customer_data.has_cancellation_request == '1') {
            $.notify('Cannot make a bill, this customer has an existing cancellation request.', 'error');
          }
+         $scope.bill_out_submit = false;
        }, function(rejection) {
          if (rejection.status != 422) {
            request_error(rejection.status);
          } else if (rejection.status == 422) {
            console.log(rejection.statusText);
          }
+         $scope.bill_out_submit = false;
        });
      } else {
        $scope.bill_out_submit = true;
@@ -679,7 +694,7 @@
    }
    $scope.make_bill = function(data) {
      $scope.bill = {};
-     $scope.submit = false;
+     $scope.submit = true;
      $scope.formdata = data.bill_preview;
      $scope.formdata._token = $scope._token;
      $http({

@@ -66,7 +66,7 @@
           <th class="center aligned">Total</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody ng-cloak>
         <tr ng-repeat="customer_data in table_customers" ng-class="{'warning':customer_data.has_cancellation_request==1}" ng-cloak>
           <td style="width: 30vw;" class="center aligned middle aligned">
           <p style="cursor: pointer;" ng-click="edit_table_customer(this)" data-balloon="Click to edit customer information." data-balloon-pos="up">
@@ -118,7 +118,7 @@
       <tfoot>
         <tr ng-if="table_customers | isEmpty">
           <td colspan="20" style="text-align: center;">
-            <h1>NO DATA</h1>
+            <h1 ng-if="!loading">NO DATA</h1>
           </td>
         </tr>
       </tfoot>
@@ -301,7 +301,12 @@
                 <tfoot>
                   <tr ng-if="menu | isEmpty">
                     <td colspan="20" style="text-align: center;">
-                      <h1>NO DATA</h1>
+                      <h1 ng-if="loading">
+                        <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+                        <br>
+                        LOADING
+                      </h1>
+                      <h1 ng-if="!loading">NO DATA</h1>
                     </td>
                   </tr>
                 </tfoot>
@@ -343,7 +348,12 @@
                 <tfoot>
                   <tr ng-if="table_customer_cart | isEmpty">
                     <td colspan="20" style="text-align: center;">
-                      <h1>NO DATA</h1>
+                      <h1 ng-if="add_cart_submit">
+                        <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+                        <br>
+                        LOADING
+                      </h1>
+                      <h1 ng-if="!add_cart_submit">NO DATA</h1>
                     </td>
                   </tr>
                   <tr ng-if="!table_customer_cart | isEmpty">
@@ -399,7 +409,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" ng-if="(customer_data.has_billed_out==1&&customer_data.has_paid == 0) && customer_data.has_cancellation_request==0" ng-click="cancellation_orders('after',this)">Cancellation</button>
+        <button type="button" class="ui negative button" ng-if="(customer_data.has_billed_out==1&&customer_data.has_paid == 0) && customer_data.has_cancellation_request==0" ng-click="cancellation_orders('after',this)" ng-disabled="submit" ng-class="{'loading':submit}">Cancellation</button>
         <button type="button" class="btn btn-info" ng-if="customer_data.has_cancellation_request==1" ng-click="delete_cancellation_request(this)">Delete Request</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>

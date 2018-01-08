@@ -178,7 +178,7 @@
     });
     @if($print==1)
     $(document).ready(function() {
-      setTimeout(function(){ window.print(); }, 1500);
+      setTimeout(function(){ window.print(); }, 2000);
     });
     @endif
     $scope.footer = {};
@@ -186,6 +186,7 @@
     $scope.formdata = {};
     $scope.formdata._token = "{{csrf_token()}}";
     function show_bill() {
+      $scope.bill = {};
       $http({
           method : "GET",
           url : "/api/restaurant/table/customer/bill/view/"+{{$id}},
