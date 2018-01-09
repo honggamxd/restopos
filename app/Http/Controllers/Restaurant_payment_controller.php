@@ -67,10 +67,11 @@ class Restaurant_payment_controller extends Controller
     $restaurant_payment = new Restaurant_payment;
     $restaurant_bill = new Restaurant_bill;
     $data["result"] = $restaurant_payment->where("restaurant_bill_id",$id)->get();
-    if($restaurant_bill->find($id)!=null){
+    if($restaurant_bill->findOrFail($id)!=null){
       foreach ($data["result"] as $payment_data) {
         $payment_data->settlement = settlements($payment_data->settlement);
       }
+      $data['result'] = $data['result']->toArray();
       $data["excess"] = $restaurant_bill->find($id)->excess;
       return $data;
     }

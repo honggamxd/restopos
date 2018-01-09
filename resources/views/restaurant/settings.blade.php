@@ -74,6 +74,21 @@
            </tr>
          </tbody>
        </thead>
+     <tfoot>
+       <tr ng-if="table | isEmpty">
+         <td colspan="20" style="text-align: center;">
+           <h1 ng-if="table_loading">
+             <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+             <br>
+             LOADING
+           </h1>
+           <h1>
+             <span ng-if="!table_loading" ng-cloak>NO DATA</span>
+             <span ng-if="table_loading" ng-cloak></span>
+           </h1>
+         </td>
+       </tr>
+     </tfoot>
      </table>
    </div>
   </div>
@@ -95,6 +110,21 @@
            </tr>
          </tbody>
        </thead>
+       <tfoot>
+         <tr ng-if="server | isEmpty">
+           <td colspan="20" style="text-align: center;">
+             <h1 ng-if="server_loading">
+               <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+               <br>
+               LOADING
+             </h1>
+             <h1>
+               <span ng-if="!server_loading" ng-cloak>NO DATA</span>
+               <span ng-if="server_loading" ng-cloak></span>
+             </h1>
+           </td>
+         </tr>
+       </tfoot>
      </table>
    </div>
   </div>
@@ -227,7 +257,8 @@
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.formdata = {};
-
+    $scope.server_loading = true;
+    $scope.table_loading = true;
     $scope.restaurants = {!! json_encode($restaurants) !!};
     @if(Session::get('users.user_data')->privilege=="restaurant_admin")
       $scope.restaurant_id = {
@@ -401,6 +432,8 @@
 
     show_server();
     function show_server() {
+      $scope.server = {};
+      $scope.server_loading = true;
       $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
       $http({
           method : "GET",
@@ -409,8 +442,10 @@
           },
           url : "/api/restaurant/server/list",
       }).then(function mySuccess(response) {
+          $scope.server_loading = false;
           $scope.server = response.data.result;
       }, function myError(rejection) {
+          $scope.server_loading = false;
           if(rejection.status != 422){
             request_error(rejection.status);
           }else if(rejection.status == 422){
@@ -421,6 +456,8 @@
 
     show_table();
     function show_table() {
+      $scope.table = {};
+      $scope.table_loading = true;
       $scope.formdata.restaurant_id = $scope.restaurant_id['id'];
       $http({
           method : "GET",
@@ -429,8 +466,10 @@
           },
           url : "/api/restaurant/table/list/all",
       }).then(function mySuccess(response) {
+          $scope.table_loading = false;
           $scope.table = response.data.result;
       }, function myError(rejection) {
+          $scope.table_loading = false;
           if(rejection.status != 422){
             request_error(rejection.status);
           }else if(rejection.status == 422){
@@ -440,7 +479,17 @@
     }
 
   });
-
+  app.filter('isEmpty', function () {
+   var bar;
+   return function (obj) {
+     for (bar in obj) {
+       if (obj.hasOwnProperty(bar)) {
+         return false;
+       }
+      }
+      return true;
+    };
+  });
 
   angular.bootstrap(document, ['main']);
 </script>

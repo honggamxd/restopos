@@ -142,7 +142,7 @@
           <th class="center aligned middle aligned" ng-show="show_settlements">Total Settlements</th>
         </tr>
       </thead>
-      <tbody ng-cloak>
+      <tbody>
         <tr ng-if="bills | isEmpty">
           <th colspan="200" style="text-align: center;">
             <h1 ng-if="submit">
@@ -150,10 +150,13 @@
               <br>
               LOADING
             </h1>
-            <h1 ng-if="!submit">NO DATA</h1>
+            <h1 ng-cloak>
+              <span ng-if="!submit">NO DATA</span>
+              <span ng-if="submit"></span>
+            </h1>
           </th>
         </tr>
-        <tr ng-repeat="bill_data in bills" ng-class="{'warning':bill_data.type=='bad_order'}">
+        <tr ng-repeat="bill_data in bills" ng-class="{'warning':bill_data.type=='bad_order'}" ng-cloak>
           <td class="center aligned middle aligned">@{{bill_data.date_}}</td>
           <td class="center aligned middle aligned" ng-show="show_sales_information">@{{bill_data.restaurant_name}}</td>
           <td class="center aligned middle aligned"><a href="/restaurant/bill/@{{bill_data.id}}" target="_blank">

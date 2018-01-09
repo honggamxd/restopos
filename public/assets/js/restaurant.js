@@ -39,6 +39,8 @@
        console.log(response.data);
        show_table();
        $scope.submit = false;
+       $scope.loading_table_customers = true;
+       $scope.table_customers = {};
        $("#add-table-modal").modal("hide");
        $.notify("A Customer has been added to the list.");
      }, function(rejection) {
@@ -94,13 +96,13 @@
      show_server();
    }
    $scope.table_customers = {};
-
+   $scope.loading_table_customers = true;
    function show_table_customers() {
-     $scope.loading = false;
      $http({
        method: "GET",
        url: "/api/restaurant/table/customer/list",
      }).then(function mySuccess(response) {
+       $scope.loading_table_customers = false;
        if (angular.equals($scope.table_customers, {})) {
          $scope.table_customers = response.data.result;
        } else if (angular.equals($scope.table_customers, response.data.result)) {} else {
@@ -109,8 +111,8 @@
        if (!$('.modal').is(':visible')) {
          setTimeout(show_table_customers, 1500);
        }
-       $scope.loading = false;
      }, function(rejection) {
+       $scope.loading_table_customers = false;
        if (rejection.status != 422) {
          request_error(rejection.status);
        } else if (rejection.status == 422) {
@@ -119,7 +121,6 @@
        if (!$('.modal').is(':visible')) {
          setTimeout(show_table_customers, 1500);
        }
-       $scope.loading = false;
      });
    }
    $('.modal').on('hidden.bs.modal', function() {
@@ -148,6 +149,7 @@
        }
      }).then(function(response) {
        $scope.table_customers = {};
+       $scope.loading_table_customers = true;
        $.notify('A Customer has been removed from the list.', 'info');
      }, function(rejection) {
        if (rejection.status != 422) {
@@ -166,6 +168,8 @@
      $scope.table_name = "";
      if (!data.$parent.customer_data.has_billed_out) {
        $("#add-order-modal").modal("show");
+       $scope.table_customer_cart = {};
+       $scope.table_customer_total = ''
        $scope.table_customer_id = data.$parent.customer_data.id;
        $scope.table_name = data.$parent.customer_data.table_name;
        show_cart(data.$parent.customer_data.id);
@@ -306,18 +310,21 @@
    function show_cart(table_customer_id) {
      $scope.table_customer_cart = {};
      $scope.table_customer_total = "";
+     $scope.add_cart_submit = true;
      $http({
        method: "GET",
        url: "/api/restaurant/table/order/cart/" + table_customer_id,
      }).then(function mySuccess(response) {
        $scope.table_customer_cart = response.data.cart;
        $scope.table_customer_total = response.data.total;
+       $scope.add_cart_submit = false;
      }, function(rejection) {
        if (rejection.status != 422) {
          request_error(rejection.status);
        } else if (rejection.status == 422) {
          console.log(rejection.statusText);
        }
+       $scope.add_cart_submit = false;
      });
    }
    $scope.toggle_special_instruction = function(data) {
@@ -896,6 +903,8 @@
      }).then(function(response) {
        $('#edit-table-modal').modal('hide');
        $scope.submit = false;
+       $scope.loading_table_customers = true;
+       $scope.table_customers = {};
        $.notify("The information of customer has been updated.");
      }, function(rejection) {
        if (rejection.status != 422) {

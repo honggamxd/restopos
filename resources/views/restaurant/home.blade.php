@@ -118,7 +118,15 @@
       <tfoot>
         <tr ng-if="table_customers | isEmpty">
           <td colspan="20" style="text-align: center;">
-            <h1 ng-if="!loading">NO DATA</h1>
+            <h1 ng-if="loading_table_customers">
+              <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+              <br>
+              LOADING
+            </h1>
+            <h1>
+              <span ng-if="!loading_table_customers" ng-cloak>NO DATA</span>
+              <span ng-if="loading_table_customers" ng-cloak></span>
+            </h1>
           </td>
         </tr>
       </tfoot>
@@ -326,7 +334,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="cart_data in table_customer_cart" ng-init="table_customer_cart={};table_customer_total=''">
+                  <tr ng-repeat="cart_data in table_customer_cart">
                     <td class="center aligned middle aligned">
                       <div style="width: 100%;cursor: pointer;" ng-click="toggle_special_instruction(this)" ng-init="cart_data.show_special_instruction=false">
                         @{{cart_data.name}}

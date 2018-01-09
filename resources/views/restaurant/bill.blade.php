@@ -79,7 +79,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td style="width: 50%;vertical-align: top;">@{{items.restaurant_menu_name}}<b ng-if="items.special_instruction != ''&&bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
+      <td style="width: 50%;vertical-align: top;">@{{items.menu}}<b ng-if="items.special_instruction != '' && items.special_instruction != null && bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
       <td style="text-align: center;vertical-align: top;">@{{items.price|currency:""}}</td>
       <td style="text-align: center;vertical-align: top;" ng-bind="items.quantity"></td>
       <td style="text-align: center;vertical-align: top;" ng-show="bill.type=='bad_order'" ng-bind="items.settlement"></td>
@@ -169,7 +169,6 @@
 <script type="text/javascript">
   var app = angular.module('main', []);
   app.controller('content-controller', function($scope,$http, $sce) {
-    show_bill();
     shortcut.add("x",function() {
       window.close();
     });
@@ -178,38 +177,19 @@
     });
     @if($print==1)
     $(document).ready(function() {
-      setTimeout(function(){ window.print(); }, 2000);
+      setTimeout(function(){ window.print(); }, 1000);
     });
     @endif
     $scope.footer = {};
     $scope.payments = {};
     $scope.formdata = {};
-    $scope.formdata._token = "{{csrf_token()}}";
-    function show_bill() {
-      $scope.bill = {};
-      $http({
-          method : "GET",
-          url : "/api/restaurant/table/customer/bill/view/"+{{$id}},
-      }).then(function mySuccess(response) {
-          $scope.bill = response.data.bill;
-          $scope.bill_detail = response.data.bill_detail;
-          $scope.footer.sub_total =  response.data.sub_total;
-          $scope.footer.sc =  response.data.sc;
-          $scope.footer.vat =  response.data.vat;
-          $scope.footer.total =  response.data.total;
-      }, function myError(rejection) {
-          if(rejection.status != 422){
-            request_error(rejection.status);
-          }else if(rejection.status == 422){
-            var errors = rejection.data;
-            angular.forEach(errors, function(value, key) {
-              $.notify(value[0],'error');
-            });
-          }
-      });
-    }
+    $scope.bill_info = {!! json_encode($bill_info) !!};
+    $scope.bill = {!! json_encode($bill_info['bill']) !!};
+    $scope.bill_detail = {!! json_encode($bill_info['bill_detail']) !!};
+    $scope.excess = {!! json_encode($payment_data['excess']) !!};
+    $scope.payments = {!! json_encode($payment_data['result']) !!};
+    $scope.has_payment = {!! json_encode($has_payment) !!};
     $scope.delete = function(data){
-      console.log(data.bill.id);
       alertify.prompt(
         'Check #: '+data.bill.check_number,
         'Reason to delete:',
@@ -252,30 +232,6 @@
           
         });
     }
-    $scope.has_payment = false;
-    show_payment();
-    function show_payment() {
-      $http({
-          method : "GET",
-          url : "/api/restaurant/table/customer/payment/list/"+{{$id}},
-      }).then(function mySuccess(response) {
-          console.log(response.data.result)
-          $scope.payments = response.data.result;
-          if( typeof Object.keys($scope.payments)[0] === 'undefined' ){
-            $scope.has_payment = false;
-          }else{
-            $scope.has_payment = true;
-          }
-          $scope.excess = response.data.excess;
-      }, function myError(rejection) {
-          if(rejection.status != 422){
-            request_error(rejection.status);
-          }else if(rejection.status == 422){
-            var errors = rejection.data;
-          }
-      });
-    }
-
   });
   angular.bootstrap(document, ['main']);
 </script>

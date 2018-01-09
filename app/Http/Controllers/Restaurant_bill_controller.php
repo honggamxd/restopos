@@ -29,6 +29,14 @@ class Restaurant_bill_controller extends Controller
   {
     $data["print"] = $request->print;
     $data["id"] = $id;
+    $data['bill_info'] = $this->show_bill($request,$id);
+    $data['payment_data'] = app('App\Http\Controllers\Restaurant_payment_controller')->show($request,$id);
+    if($data['payment_data']['result']==array()){
+      $data['has_payment'] = false;
+    }else{
+      $data['has_payment'] = true;
+    }
+    // return $data;
     return view('restaurant.bill',$data);
   }
 
@@ -160,7 +168,7 @@ class Restaurant_bill_controller extends Controller
     $restaurant_menu = new Restaurant_menu;
     $restaurant_bill_detail = new Restaurant_bill_detail;
     $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
-    $data["bill"] = $restaurant_bill->find($id);
+    $data["bill"] = $restaurant_bill->findOrFail($id);
     if($data["bill"]!=null){
       $data["bill"]->date_ = date("F d, Y",$data["bill"]->date_);
       $data["bill"]->date_time = date("h:i:s A",$data["bill"]->date_time);

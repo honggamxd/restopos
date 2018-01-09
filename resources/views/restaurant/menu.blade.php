@@ -85,8 +85,23 @@
           </td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr ng-if="menu | isEmpty">
+          <td colspan="20" style="text-align: center;">
+            <h1 ng-if="loading">
+              <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+              <br>
+              LOADING
+            </h1>
+            <h1>
+              <span ng-if="!loading" ng-cloak>NO DATA</span>
+              <span ng-if="loading" ng-cloak></span>
+            </h1>
+          </td>
+        </tr>
+      </tfoot>
     </table>
-    <div ng-bind-html="pages" class="text-center"></div>
+    <div ng-bind-html="pages" class="text-center" ng-cloak></div>
   </div>
 </div>
 
@@ -253,6 +268,9 @@
     }
     function show_menu(myUrl,category='all',subcategory='all') {
       myUrl = (typeof myUrl !== 'undefined') && myUrl !== "" ? myUrl : '/api/restaurant/menu/list/list';
+      $scope.loading = true;
+      $scope.menu = {};
+      $scope.pages = "";
       $http({
         method : "GET",
         url : myUrl,
@@ -264,12 +282,14 @@
       }).then(function mySuccess(response) {
         $scope.menu = response.data.result.data;
         $scope.pages = $sce.trustAsHtml(response.data.pagination);
+        $scope.loading = false;
       }, function myError(rejection) {
           if(rejection.status != 422){
             request_error(rejection.status);
           }else if(rejection.status == 422){
             var errors = rejection.data;
           }
+        $scope.loading = false;
       });
     }
 
@@ -315,14 +335,12 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        // console.log(response.data);
         $scope.submit = false;
         $.notify($scope.formdata.name+" is added.");
         $scope.formdata.category = "";
         $scope.formdata.subcategory = "";
         $scope.formdata.name = "";
         $scope.formdata.price = "";
-        // $scope.formdata.;
         show_menu();
       }, function(rejection) {
         var errors = rejection.data;
@@ -345,11 +363,9 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       .then(function(response) {
-        console.log(response.data);
         $scope.submit = false;
         $.notify($scope.formdata.name+" is updated.");
         $('#edit-menu-modal').modal('hide');
-        // show_menu();
       }, function(rejection) {
         var errors = rejection.data;
         $scope.formerrors = errors;
@@ -381,7 +397,17 @@
       });
     }
   });
-
+  app.filter('isEmpty', function () {
+   var bar;
+   return function (obj) {
+     for (bar in obj) {
+       if (obj.hasOwnProperty(bar)) {
+         return false;
+       }
+      }
+      return true;
+    };
+  });
   angular.bootstrap(document, ['main']);
 </script>
 @endsection
