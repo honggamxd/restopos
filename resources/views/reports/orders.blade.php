@@ -83,6 +83,21 @@
           <td class="right aligned middle aligned">@{{order_data.total|currency:""}}</td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr ng-if="orders | isEmpty">
+          <td colspan="20" style="text-align: center;">
+            <h1 ng-if="loading">
+              <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+              <br>
+              LOADING
+            </h1>
+            <h1>
+              <span ng-if="!loading" ng-cloak>NO DATA</span>
+              <span ng-if="loading" ng-cloak></span>
+            </h1>
+          </td>
+        </tr>
+      </tfoot>
     </table>
   </div>
   <div ng-bind-html="paging" class="text-center"></div>
@@ -98,10 +113,10 @@
   $(document).ready(function() {
     $("#date-from,#date-to").datepicker();
   });
-  // $('.ui.checkbox').checkbox('enable');
   var app = angular.module('main', ['ngSanitize']);
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.date_from = "{{date('m/d/Y',strtotime($date_from))}}";
+    $scope.loading = true;
     $scope.date_to = "{{date('m/d/Y',strtotime($date_to))}}";
     $scope.date_from_str = "";
     $scope.date_to_str = "";
@@ -122,6 +137,10 @@
     }
     show_reports();
     function show_reports(myUrl) {
+      $scope.loading = true;
+      $scope.orders = {};
+      $scope.footer = {};
+      $scope.paging = "";
       myUrl = (typeof myUrl !== 'undefined') && myUrl !== "" ? myUrl : '/api/reports/general/orders';
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
@@ -134,6 +153,7 @@
             "server_id":server
           }
       }).then(function mySuccess(response) {
+          $scope.loading = false;
           $scope.orders = response.data.result.data;
           $scope.footer = response.data.footer;
           $scope.paging = $sce.trustAsHtml(response.data.pagination);
@@ -144,6 +164,7 @@
           }
           $scope.submit = false;
       }, function myError(rejection) {
+          $scope.loading = false;
           if(rejection.status != 422){
             request_error(rejection.status);
           }else if(rejection.status == 422){
@@ -155,13 +176,24 @@
   });
 
   app.filter('chkNull',function(){
-        return function(input){
-            if(!(angular.equals(input,null)))
-                return input;
-            else
-                return 0;
-        };
-    });
+    return function(input){
+      if(!(angular.equals(input,null)))
+        return input;
+      else
+        return 0;
+    };
+  });
+  app.filter('isEmpty', function () {
+   var bar;
+   return function (obj) {
+     for (bar in obj) {
+       if (obj.hasOwnProperty(bar)) {
+         return false;
+       }
+      }
+      return true;
+    };
+  });
   angular.bootstrap(document, ['main']);
 </script>
 @endsection
