@@ -237,7 +237,7 @@
       </tfoot>
     </table>
   </div>
-  <div ng-bind-html="paging" class="text-center" ng-show="show_paging"></div>
+  <div ng-bind-html="paging" class="text-center"></div>
 </div>
 @endsection
 
@@ -262,6 +262,11 @@
     $scope.date_from_str = "";
     $scope.date_to_str = "";
     $scope.restaurants = {!! $restaurants !!};
+
+    $(document).on('click','.pagination li a',function(e) {
+      e.preventDefault();
+      show_reports(e.target.href);
+    });
 
     $('#date_from,#date_to').datetimepicker({
       timeFormat: "hh:mm:ss tt"
@@ -292,7 +297,8 @@
       $scope.restaurant_cashiers = {!! $restaurant_cashiers !!};
       $scope.restaurant_servers = {!! $restaurant_servers !!};
     @endif
-    function show_reports(page=1) {
+    function show_reports(myUrl) {
+      myUrl = (typeof myUrl !== 'undefined') && myUrl !== "" ? myUrl : '/api/reports/general/f_and_b';
       $scope.submit = true;
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
@@ -302,7 +308,7 @@
       $scope.paging = "";
       $http({
           method : "GET",
-          url : "/api/reports/general/f_and_b",
+          url : myUrl,
           params: {
             "date_from":$scope.date_from,
             "date_to":$scope.date_to,
@@ -313,7 +319,7 @@
             "restaurant_id": restaurant,
           }
       }).then(function mySuccess(response) {
-          $scope.bills = response.data.result;
+          $scope.bills = response.data.result.data;
           $scope.footer = response.data.footer;
           $scope.paging = $sce.trustAsHtml(response.data.paging);
           $scope.submit = false;
@@ -345,6 +351,7 @@
             "server_id": server,
             "cashier_id": cashier,
             "restaurant_id": restaurant,
+            "export": 1,
 
           }
       }).then(function mySuccess(response) {

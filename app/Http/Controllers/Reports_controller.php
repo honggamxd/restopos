@@ -345,7 +345,11 @@ class Reports_controller extends Controller
       $bills->where('restaurant_id',$request->restaurant_id);
     }
     $bills->whereBetween('created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
-    $bills = $bills->get();
+    if($request->export=="1"){
+      $bills = $bills->get();
+    }else{
+      $bills = $bills->paginate(50);
+    }
 
     $footer_data = $restaurant_bill->select(
       '*',
@@ -440,7 +444,7 @@ class Reports_controller extends Controller
     foreach ($settlements as $settlement) {
       $settlement_total = $restaurant_bill->join('restaurant_payment','restaurant_bill.id','=','restaurant_payment.restaurant_bill_id');
       $settlement_total->where('restaurant_bill.deleted',0);
-      $settlement_total->whereBetween('restaurant_payment.created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
+      $settlement_total->whereBetween('restaurant_bill.created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
       $settlement_total->select(
           'restaurant_bill.*',
           'restaurant_payment.payment',
@@ -448,6 +452,7 @@ class Reports_controller extends Controller
           DB::raw('SUM(restaurant_payment.payment) as total')
           );
       $settlement_total->where('restaurant_payment.settlement',$settlement);
+      $settlement_total->whereNull('restaurant_payment.deleted_at');
       $settlement_total->where('restaurant_bill.deleted',0);
 
       if($user_data->privilege=='restaurant_cashier'){
@@ -521,6 +526,7 @@ class Reports_controller extends Controller
       $bill_data->total_settlements -= $bill_data->excess;
     }
     $data["result"] = $bills;
+    $data["paging"] = (string)$bills;
     $data["getQueryLog"] = DB::getQueryLog();
     return $data;
   }

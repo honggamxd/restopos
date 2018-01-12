@@ -148,4 +148,6 @@ Route::post('/api/users/delete/{id}', 'Users_controller@delete');
 
 
 Route::get('/restaurant/settings','Restaurant_controller@settings');
-Route::get('/test','Users_controller@test');
+Route::get('/clean_bill_detail','Users_controller@clean_bill_detail');
+Route::get('/restaurant_payment','Users_controller@restaurant_payment');
+Route::get('/bill_test','Restaurant_bill_controller@test');

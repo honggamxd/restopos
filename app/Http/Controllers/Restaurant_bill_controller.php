@@ -40,6 +40,39 @@ class Restaurant_bill_controller extends Controller
     return view('restaurant.bill',$data);
   }
 
+  public function bills_test(Request $request,$id)
+  {
+    
+    $data["print"] = $request->print;
+    $data["id"] = $id;
+    $data['bill_info'] = $this->show_bill($request,$id);
+    $data['payment_data'] = app('App\Http\Controllers\Restaurant_payment_controller')->show($request,$id);
+    if($data['payment_data']['result']==array()){
+      $data['has_payment'] = false;
+    }else{
+      $data['has_payment'] = true;
+    }
+    foreach ($data['payment_data']['result'] as $value) {
+      if($value['settlement']=='Cash'){
+        if($data['bill_info']['bill']['excess']==$value['payment']){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public function test(Request $request)
+  {
+    $bills = Restaurant_bill::all();
+    foreach ($bills as $bill) {
+      if($this->bills_test($request,$bill->id)){
+        $bill->excess = 0;
+        $bill->save();
+      }
+    }
+  }
+
   public function make_bill(Request $request,$id)
   {
     $this->validate($request, [

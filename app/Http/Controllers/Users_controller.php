@@ -7,6 +7,8 @@ use DB;
 use App\Http\Requests;
 use App\User;
 use App\Restaurant_bill_detail;
+use App\Restaurant_bill;
+use App\Restaurant_payment;
 use App\Restaurant_meal_types;
 use Carbon\Carbon;
 
@@ -182,16 +184,36 @@ class Users_controller extends Controller
     return $this->show_users($request);
   }
 
-  public function test()
+  public function clean_bill_detail()
   {
-    $test = DB::select('SELECT restaurant_menu_id,created_at FROM restaurant_bill_detail WHERE deleted_at IS NULL group by restaurant_menu_id,created_at having count(*) >= 2');
+    $test = DB::select('SELECT restaurant_menu_id,restaurant_bill_id FROM restaurant_bill_detail WHERE deleted_at IS NULL group by restaurant_menu_id,restaurant_bill_id having count(*) >= 2');
     $results= array();
     foreach ($test as $key => $value) {
-      $result = Restaurant_bill_detail::where(['restaurant_menu_id'=>$value->restaurant_menu_id,'created_at'=>$value->created_at])->orderBy('id','DESC')->first();
+      $result = Restaurant_bill_detail::where(['restaurant_menu_id'=>$value->restaurant_menu_id,'restaurant_bill_id'=>$value->restaurant_bill_id])->orderBy('id','DESC')->first();
       $result->url = url('restaurant/bill/'.$result->restaurant_bill_id);
-      $result->delete();
-      $results[] = $result;
+      $bill_data = Restaurant_bill::find($result->restaurant_id);
+      if($bill_data->type=="good_order"){
+        $result->delete();
+        $results[] = $result;
+      }
     }
-    return $results;
+    $data['results'] = $results;
+    return $data;
+  }
+  public function restaurant_payment()
+  {
+    $test = DB::select('SELECT restaurant_bill_id,settlement FROM restaurant_payment WHERE deleted_at IS NULL group by restaurant_bill_id,settlement having count(*) >= 2');
+    $results= array();
+    foreach ($test as $key => $value) {
+      $result = Restaurant_payment::where(['restaurant_bill_id'=>$value->restaurant_bill_id,'settlement'=>$value->settlement])->orderBy('id','DESC')->first();
+      $result->url = url('restaurant/bill/'.$result->restaurant_bill_id);
+      $bill_data = Restaurant_bill::find($result->restaurant_id);
+      if($bill_data->type=="good_order"){
+        $result->delete();
+        $results[] = $result;
+      }
+    }
+    $data['results'] = $results;
+    return $data;
   }
 }
