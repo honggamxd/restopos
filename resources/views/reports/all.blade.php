@@ -96,7 +96,7 @@
       <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" readonly>
       <div class="ui buttons">
         <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}" ng-disabled="submit" ng-submit="export">Filter Results</button>
-        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="submit" ng-submit="export">Download</button>
+        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="export" ng-submit="export">Download</button>
       </div>
       </div>
     </form>
