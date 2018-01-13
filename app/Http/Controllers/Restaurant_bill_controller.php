@@ -90,6 +90,7 @@ class Restaurant_bill_controller extends Controller
             $sales_inclusive_of_vat = $vatable_sales+$output_vat;
             $sc_pwd_discount = (float)$request->discount['sc_pwd_discount'];
             $sc_pwd_vat_exemption = (float)$request->discount['sc_pwd_vat_exemption'];
+            $room_service_charge = (float)$request->discount['room_service_charge'];
             // $net_billing = $sales_inclusive_of_vat-$sc_pwd_discount-$sc_pwd_vat_exemption;
             // return $data;
             // return $request->all();
@@ -134,6 +135,7 @@ class Restaurant_bill_controller extends Controller
             $restaurant_bill->sc_pwd_discount = $sc_pwd_discount;
             $restaurant_bill->sc_pwd_vat_exemption = $sc_pwd_vat_exemption;
             $restaurant_bill->total_discount = $request->discount['total'];
+            $restaurant_bill->room_service_charge = $request->discount['room_service_charge'];
             $restaurant_bill->gross_billing = $request->gross_billing;
             $restaurant_bill->net_billing = $request->net_billing;
             $restaurant_bill->total_item_amount = $request->total;

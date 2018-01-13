@@ -645,6 +645,10 @@
               <td class="right aligned middle aligned">@{{bill_preview_data.price|currency:""}}</td>
               <td class="right aligned middle aligned">@{{ (bill_preview_data.quantity_to_bill*bill_preview_data.price)|currency:"" }}</td>
             </tr>
+            <tr>
+              <th colspan="4" class="right aligned">TOTAL:</th>
+              <th class="right aligned">@{{bill_preview.total|currency:""}}</th>
+            </tr>
           </tbody>
           <tfoot>
             <tr ng-if="bill_preview.items | isEmpty">
@@ -655,6 +659,14 @@
             <tr>
               <th colspan="4" class="right aligned">DISCOUNT:</th>
               <th class="right aligned">@{{bill_preview.discount.total|currency:""}}</th>
+            </tr>
+            <tr>
+              <th colspan="4" class="right aligned" style="padding-top: 0;padding-bottom: 0">
+                <div class="checkbox">
+                  <label><input type="checkbox" ng-model="has_room_service_charge" ng-change="compute_net_total()">Room Service Charge:</label>
+                </div>
+              </th>
+              <th class="right aligned">@{{bill_preview.discount.room_service_charge|currency:""}}</th>
             </tr>
             <tr>
               <th colspan="4" class="right aligned">Gross Total:</th>

@@ -259,6 +259,7 @@ class Restaurant_table_customer_controller extends Controller
     $data['discount']['amount_disount'] = 0;
     $data['discount']['percent_disount'] = 0;
     $data['discount']['total'] = 0;
+    $data['discount']['room_service_charge'] = 0;
     $data['discount']['sc_pwd_discount'] = $data["total"]*$data['customer_data']->sc_pwd/$data['customer_data']->pax/1.12*0.2;
     $data['discount']['sc_pwd_vat_exemption'] = $data["total"]*$data['customer_data']->sc_pwd/$data['customer_data']->pax/1.12*0.12;
     $data['gross_billing'] = $data["total"];

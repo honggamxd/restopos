@@ -174,6 +174,7 @@ class Reports_controller extends Controller
 
     }else{
       $initial_headers = array(
+        'Room Service Charge',
         'Special Discount',
         'Gross Billing',
         'SC/PWD Discount',
@@ -228,6 +229,7 @@ class Reports_controller extends Controller
 
       }else{
         $initial_headers = array(
+          number_format($bill_data['room_service_charge'],2),
           number_format($bill_data['total_discount'],2),
           number_format($bill_data['gross_billing'],2),
           number_format($bill_data['sc_pwd_discount'],2),
@@ -285,6 +287,7 @@ class Reports_controller extends Controller
 
     }else{
       $initial_headers = array(
+        number_format($data['footer']['room_service_charge'],2),
         number_format($data['footer']['total_discount'],2),
         number_format($data['footer']['gross_billing'],2),
         number_format($data['footer']['sc_pwd_discount'],2),
@@ -355,6 +358,7 @@ class Reports_controller extends Controller
       '*',
       DB::raw('SUM(pax) as total_pax'),
       DB::raw('SUM(excess) as total_excess'),
+      DB::raw('SUM(room_service_charge) as total_room_service_charge'),
       DB::raw('SUM(discounts) as total_discounts'),
       DB::raw('SUM(gross_billing) as total_gross_billing'),
       DB::raw('SUM(sc_pwd_discount) as total_sc_pwd_discount'),
@@ -391,6 +395,7 @@ class Reports_controller extends Controller
     $footer_data = $footer_data->first();
     $data['footer']['pax'] = $footer_data->total_pax;
     $data['footer']['excess'] = $footer_data->total_excess;
+    $data['footer']['room_service_charge'] = $footer_data->total_room_service_charge;
     $data['footer']['discounts'] = $footer_data->total_discounts;
     $data['footer']['gross_billing'] = $footer_data->total_gross_billing;
     $data['footer']['sc_pwd_discount'] = $footer_data->total_sc_pwd_discount;

@@ -95,6 +95,10 @@
     <td ng-show="bill.type=='good_order'" colspan="3" style="text-align: right;">Gross Billing:</td>
     <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.total_item_amount|currency:""}}</td>
   </tr>
+  <tr ng-hide="bill.room_service_charge==0">
+    <td ng-show="bill.type=='good_order'" colspan="3" style="text-align: right;">Room Service Charge:</td>
+    <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.room_service_charge|currency:""}}</td>
+  </tr>
   <tr>
     <td ng-show="bill.type=='good_order'" colspan="3" style="text-align: right;">Discount:</td>
     <td ng-show="bill.type=='good_order'" style="text-align: right;">@{{bill.total_discount|currency:""}}</td>

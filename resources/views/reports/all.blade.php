@@ -123,6 +123,7 @@
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">Total Discount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_sales">NET Amount</th>
           <th class="center aligned middle aligned" ng-show="show_settlements" colspan="{{ count($settlements)+1 }}">Mode of Payments / Settlements</th>
+          <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Room Service Charge</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Special Discount</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">Gross Billing</th>
           <th rowspan="2" class="center aligned middle aligned" ng-show="show_accounting">SC/PWD Discount</th>
@@ -185,6 +186,7 @@
             @endif
           @endforeach
           <td class="right aligned middle aligned" ng-show="show_settlements">@{{bill_data.total_settlements |chkNull|currency:""}}</td>
+          <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.room_service_charge |chkNull|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.total_discount |chkNull|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.gross_billing |chkNull|currency:""}}</td>
           <td class="right aligned middle aligned" ng-show="show_accounting">@{{bill_data.sc_pwd_discount |chkNull|currency:""}}</td>
@@ -222,6 +224,7 @@
             @endif
           @endforeach
           <th class="right aligned middle aligned" ng-show="show_settlements">@{{footer.total_settlements|chkNull|currency:""}}</th>
+          <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.room_service_charge|chkNull|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.total_discount|chkNull|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.gross_billing|chkNull|currency:""}}</th>
           <th class="right aligned middle aligned" ng-show="show_accounting">@{{footer.sc_pwd_discount|chkNull|currency:""}}</th>
