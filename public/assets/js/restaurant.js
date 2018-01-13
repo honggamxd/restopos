@@ -196,11 +196,16 @@
          angular.forEach($scope.bill_preview.items, function(value, key) {
            value.quantity_to_cancel = parseInt(0);
            value.quantity = parseInt($scope.bill_preview.items[key].quantity);
-           $scope.bill_preview.items[key].quantity_to_cancel = parseInt($scope.bill_preview.items[key].quantity);
+           $scope.bill_preview.items[key].quantity_to_cancel = parseInt(0);
          });
          $scope.bill_preview.total = response.data.total;
          $scope.bill_preview.customer_data = response.data.customer_data;
+         $scope.bill_preview.customer_data.pax = parseInt(response.data.customer_data.pax);
+         $scope.bill_preview.customer_data.sc_pwd = parseInt(response.data.customer_data.sc_pwd);
          $scope.bill_preview.discount = response.data.discount;
+         angular.forEach($scope.bill_preview.discount, function(value, key) {
+          $scope.bill_preview.discount[key] = parseFloat($scope.bill_preview.discount[key]);
+         });
          $scope.bill_preview.gross_billing = response.data.gross_billing;
          $scope.bill_preview.net_billing = response.data.net_billing;
          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
