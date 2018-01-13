@@ -36,7 +36,7 @@
          'Content-Type': 'application/x-www-form-urlencoded'
        }
      }).then(function(response) {
-       console.log(response.data);
+       // console.log(response.data);
        show_table();
        $scope.submit = false;
        $scope.loading_table_customers = true;
@@ -223,7 +223,7 @@
      }
    }
    $scope.delete_cancellation_request = function(data) {
-     console.log(data.$parent.customer_data.id);
+     // console.log(data.$parent.customer_data.id);
      var formdata = {
        id: data.$parent.customer_data.id,
        _token: $scope._token
@@ -623,7 +623,7 @@
            'Content-Type': 'application/x-www-form-urlencoded'
          }
        }).then(function(response) {
-         console.log(response);
+         // console.log(response);
          $scope.bill_out_submit = false;
          $scope.bill_preview = {};
          $scope.bill_preview.customer_data = {};
@@ -672,7 +672,7 @@
      });
    }
    $scope.settle_cancelled_orders = function(data) {
-     console.log(data);
+     // console.log(data);
      $scope.submit = true;
      var formdata = {
        items: data.cancelled_orders,
@@ -710,7 +710,7 @@
      $scope.bill_preview.discount.sc_pwd_vat_exemption = $scope.bill_preview.gross_billing * $scope.bill_preview.customer_data.sc_pwd / $scope.bill_preview.customer_data.pax / 1.12 * .12;
      $scope.bill_preview.net_billing = $scope.bill_preview.gross_billing - $scope.bill_preview.discount.sc_pwd_discount - $scope.bill_preview.discount.sc_pwd_vat_exemption;
      $scope.bill_preview.net_billing = $scope.bill_preview.gross_billing - $scope.bill_preview.discount.sc_pwd_discount - $scope.bill_preview.discount.sc_pwd_vat_exemption;
-     console.log($scope.bill_preview);
+     // console.log($scope.bill_preview);
    }
    $scope.make_bill = function(data) {
      $scope.bill = {};
@@ -768,7 +768,7 @@
    $('#settlement').dropdown();
    $scope.total_payment = 0;
    $scope.add_payment = function(data) {
-     console.log(data);
+     // console.log(data);
      $scope.formdata.settlements_amount = {
        cash: 0,
        credit: 0,
@@ -808,7 +808,7 @@
      $scope.formdata.settlements_payment.package_inclusion = false;
    }
    $scope.delete_bill = function function_name(data) {
-     console.log(data.bill_data);
+     // console.log(data.bill_data);
      alertify.prompt('Check #: ' + data.$parent.bill_data.check_number, 'Reason to delete:', '', function(evt, value) {
        if (value.trim() != "") {
          var formdata = {};
