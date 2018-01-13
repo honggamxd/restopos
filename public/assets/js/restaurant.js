@@ -194,7 +194,7 @@
        }).then(function mySuccess(response) {
          $scope.bill_preview.items = response.data.result;
          angular.forEach($scope.bill_preview.items, function(value, key) {
-           value.quantity_to_cancel = 0;
+           value.quantity_to_cancel = parseInt(0);
            value.quantity = $scope.bill_preview.items[key].quantity;
          });
          $scope.bill_preview.total = response.data.total;
@@ -569,6 +569,7 @@
      $scope.bill_preview = {};
      $scope.bill_preview.customer_data = {};
      $scope.bill_out_submit = true;
+     $scope.bill_preview.discount = {};
      $scope.max = 0;
      if (data.$parent.customer_data.has_billed_out) {
        $http({
@@ -578,17 +579,20 @@
          $scope.bill_preview.items = response.data.result;
          angular.forEach($scope.bill_preview.items, function(value, key) {
            value.quantity_to_cancel = 0;
-           value.quantity = $scope.bill_preview.items[key].quantity;
+           value.quantity = parseInt($scope.bill_preview.items[key].quantity);
          });
          $scope.bill_preview.total = response.data.total;
          $scope.bill_preview.customer_data = response.data.customer_data;
-         $scope.bill_preview.customer_data.pax = response.data.customer_data.pax;
-         $scope.bill_preview.customer_data.sc_pwd = response.data.customer_data.sc_pwd;
+         $scope.bill_preview.customer_data.pax = parseInt(response.data.customer_data.pax);
+         $scope.bill_preview.customer_data.sc_pwd = parseInt(response.data.customer_data.sc_pwd);
          $scope.bill_preview.discount = response.data.discount;
          $scope.bill_preview.gross_billing = response.data.gross_billing;
          $scope.bill_preview.net_billing = response.data.net_billing;
          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
-         $scope.max = data.$parent.customer_data.pax;
+         $scope.max = $scope.bill_preview.customer_data.pax;
+         angular.forEach($scope.bill_preview.discount, function(value, key) {
+          $scope.bill_preview.discount[key] = parseFloat($scope.bill_preview.discount[key]);
+         });
          $('#bill-preview-modal').modal('show');
          if ($scope.bill_preview.customer_data.has_cancellation_request == '1') {
            $.notify('Cannot make a bill, this customer has an existing cancellation request.', 'error');
@@ -613,13 +617,14 @@
            'Content-Type': 'application/x-www-form-urlencoded'
          }
        }).then(function(response) {
+         console.log(response);
          $scope.bill_out_submit = false;
          $scope.bill_preview = {};
          $scope.bill_preview.customer_data = {};
          $scope.bill_preview.items = response.data.result;
          angular.forEach($scope.bill_preview.items, function(value, key) {
-           value.quantity_to_cancel = 0;
-           value.quantity = $scope.bill_preview.items[key].quantity;
+           value.quantity_to_cancel = parseInt(0);
+           value.quantity = parseInt($scope.bill_preview.items[key].quantity);
          });
          $scope.bill_preview.total = response.data.total;
          $scope.bill_preview.customer_data = response.data.customer_data;
@@ -627,7 +632,9 @@
          $scope.bill_preview.gross_billing = response.data.gross_billing;
          $scope.bill_preview.net_billing = response.data.net_billing;
          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
-         $scope.max = data.$parent.customer_data.pax;
+         $scope.bill_preview.customer_data.pax = parseInt(response.data.customer_data.pax);
+         $scope.bill_preview.customer_data.sc_pwd = parseInt(response.data.customer_data.sc_pwd);
+         $scope.max = parseInt(data.$parent.customer_data.pax);
          $('#bill-preview-modal').modal('show');
        }, function(rejection) {
          if (rejection.status != 422) {
@@ -889,8 +896,8 @@
    $scope.edit_table_customer = function(data) {
      $('#edit-table-modal').modal('show');
      $scope.formdata.customer_data = data.customer_data;
-     $scope.formdata.pax = data.customer_data.pax;
-     $scope.formdata.sc_pwd = data.customer_data.sc_pwd;
+     $scope.formdata.pax = parseInt(data.customer_data.pax);
+     $scope.formdata.sc_pwd = parseInt(data.customer_data.sc_pwd);
      $scope.formdata.guest_name = data.customer_data.guest_name;
      show_table(data.customer_data.table_data);
    }
