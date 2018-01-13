@@ -195,7 +195,8 @@
          $scope.bill_preview.items = response.data.result;
          angular.forEach($scope.bill_preview.items, function(value, key) {
            value.quantity_to_cancel = parseInt(0);
-           value.quantity = $scope.bill_preview.items[key].quantity;
+           value.quantity = parseInt($scope.bill_preview.items[key].quantity);
+           $scope.bill_preview.items[key].quantity_to_cancel = parseInt($scope.bill_preview.items[key].quantity);
          });
          $scope.bill_preview.total = response.data.total;
          $scope.bill_preview.customer_data = response.data.customer_data;
