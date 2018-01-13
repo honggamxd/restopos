@@ -137,6 +137,9 @@
       case 'representation':
         return 'Representation';
         break;
+      case 'package_inclusion':
+        return 'Package Inclusion';
+        break;
       default:
         return '';
         break;

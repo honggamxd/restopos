@@ -752,6 +752,8 @@
                   <option value="manager_meals">{{settlements("manager_meals")}}</option>
                   <option value="sales_office">{{settlements("sales_office")}}</option>
                   <option value="representation">{{settlements("representation")}}</option>
+                  <option value="staff_charge">{{settlements("staff_charge")}}</option>
+                  <option value="package_inclusion">{{settlements("package_inclusion")}}</option>
                 </select>
               </div>
               <div class="form-group">
@@ -781,7 +783,10 @@
                 <label>{{settlements("guest_ledger")}}:</label>
                 <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.guest_ledger"  ng-change="input_payment()">
               </div>
-              
+              <div class="form-group" ng-if="formdata.settlements_payment.staff_charge">
+                <label>{{settlements("staff_charge")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.staff_charge"  ng-change="input_payment()">
+              </div>
             </div>
             <div class="col-sm-4">
               <div class="form-group" ng-if="formdata.settlements_payment.send_bill">
@@ -808,7 +813,10 @@
                 <label>{{settlements("representation")}}:</label>
                 <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.representation"  ng-change="input_payment()">
               </div>
-              
+              <div class="form-group" ng-if="formdata.settlements_payment.package_inclusion">
+                <label>{{settlements("package_inclusion")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.package_inclusion"  ng-change="input_payment()">
+              </div>
             </div>
           </div>
           <div class="row">

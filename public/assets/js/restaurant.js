@@ -768,6 +768,8 @@
        manager_meals: 0,
        sales_office: 0,
        representation: 0,
+       staff_charge: 0,
+       package_inclusion: 0,
      };
      $scope.formdata.net_billing = data.bill_data.net_billing;
      $scope.bill_id = data.bill_data.id;
@@ -789,6 +791,8 @@
      $scope.formdata.settlements_payment.manager_meals = false;
      $scope.formdata.settlements_payment.sales_office = false;
      $scope.formdata.settlements_payment.representation = false;
+     $scope.formdata.settlements_payment.staff_charge = false;
+     $scope.formdata.settlements_payment.package_inclusion = false;
    }
    $scope.delete_bill = function function_name(data) {
      console.log(data.bill_data);
@@ -938,12 +942,12 @@
    }
 
    function excess($scope) {
-     var excess = ($scope.formdata.settlements_amount.cash + $scope.formdata.settlements_amount.credit + $scope.formdata.settlements_amount.debit + $scope.formdata.settlements_amount.cheque + $scope.formdata.settlements_amount.guest_ledger + $scope.formdata.settlements_amount.send_bill + $scope.formdata.settlements_amount.free_of_charge + $scope.formdata.settlements_amount.bod + $scope.formdata.settlements_amount.manager_meals + $scope.formdata.settlements_amount.sales_office + $scope.formdata.settlements_amount.representation) - $scope.formdata.net_billing;
+     var excess = ($scope.formdata.settlements_amount.cash + $scope.formdata.settlements_amount.credit + $scope.formdata.settlements_amount.debit + $scope.formdata.settlements_amount.cheque + $scope.formdata.settlements_amount.guest_ledger + $scope.formdata.settlements_amount.send_bill + $scope.formdata.settlements_amount.free_of_charge + $scope.formdata.settlements_amount.bod + $scope.formdata.settlements_amount.manager_meals + $scope.formdata.settlements_amount.sales_office + $scope.formdata.settlements_amount.representation + $scope.formdata.settlements_amount.staff_charge + $scope.formdata.settlements_amount.package_inclusion) - $scope.formdata.net_billing;
      return (excess >= 0 ? excess : 0);
    }
 
    function valid_payment(argument) {
-     $scope.total_payment = ($scope.formdata.settlements_amount.cash + $scope.formdata.settlements_amount.credit + $scope.formdata.settlements_amount.debit + $scope.formdata.settlements_amount.cheque + $scope.formdata.settlements_amount.guest_ledger + $scope.formdata.settlements_amount.send_bill + $scope.formdata.settlements_amount.free_of_charge + $scope.formdata.settlements_amount.bod + $scope.formdata.settlements_amount.manager_meals + $scope.formdata.settlements_amount.sales_office + $scope.formdata.settlements_amount.representation);
+     $scope.total_payment = ($scope.formdata.settlements_amount.cash + $scope.formdata.settlements_amount.credit + $scope.formdata.settlements_amount.debit + $scope.formdata.settlements_amount.cheque + $scope.formdata.settlements_amount.guest_ledger + $scope.formdata.settlements_amount.send_bill + $scope.formdata.settlements_amount.free_of_charge + $scope.formdata.settlements_amount.bod + $scope.formdata.settlements_amount.manager_meals + $scope.formdata.settlements_amount.sales_office + $scope.formdata.settlements_amount.representation + $scope.formdata.settlements_amount.staff_charge + $scope.formdata.settlements_amount.package_inclusion);
      return ($scope.total_payment >= $scope.formdata.net_billing ? true : false);
    }
    $scope.settlements_payment = function(data) {
@@ -1033,6 +1037,22 @@
      } else {
        $scope.formdata.settlements_payment.representation = false;
        $scope.formdata.settlements_amount.representation = 0;
+       $scope.formdata.excess = excess($scope);
+       $scope.valid_payment = valid_payment($scope);
+     }
+     if ($scope.formdata.settlement.includes('staff_charge')) {
+       $scope.formdata.settlements_payment.staff_charge = true;
+     } else {
+       $scope.formdata.settlements_payment.staff_charge = false;
+       $scope.formdata.settlements_amount.staff_charge = 0;
+       $scope.formdata.excess = excess($scope);
+       $scope.valid_payment = valid_payment($scope);
+     }
+     if ($scope.formdata.settlement.includes('package_inclusion')) {
+       $scope.formdata.settlements_payment.package_inclusion = true;
+     } else {
+       $scope.formdata.settlements_payment.package_inclusion = false;
+       $scope.formdata.settlements_amount.package_inclusion = 0;
        $scope.formdata.excess = excess($scope);
        $scope.valid_payment = valid_payment($scope);
      }
