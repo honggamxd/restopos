@@ -113,6 +113,14 @@ class Restaurant_table_customer_controller extends Controller
         $request->session()->put('restaurant.table_customer.'.$id.".cart",$cart_data);
       }
       return $this->show($request,$id);
+    }elseif ($type=="price") {
+      if($request->price != 0){
+        $cart_data = $request->session()->get('restaurant.table_customer.'.$id.".cart");
+        $cart_data["menu_".$request->menu_id]->price = abs($request->price);
+        $cart_data["menu_".$request->menu_id]->total = $cart_data["menu_".$request->menu_id]->quantity * $cart_data["menu_".$request->menu_id]->price;
+        $request->session()->put('restaurant.table_customer.'.$id.".cart",$cart_data);
+      }
+      return $this->show($request,$id);
     }
   }
 
@@ -220,7 +228,7 @@ class Restaurant_table_customer_controller extends Controller
         $restaurant_table_customer = new Restaurant_table_customer;
         $customer_data = $restaurant_table_customer->find($id);
         if($temp_bill_remaining_quantity==0){
-          $customer_data->cancellation_order_status = 0;
+          $customer_data->cancellation_order_status = 1;
           $customer_data->has_billed_completely = 1;
           $customer_data->has_paid = 1;
         }

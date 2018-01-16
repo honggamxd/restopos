@@ -329,6 +329,7 @@
                   <tr>
                     <th class="center aligned" style="width: 100%">Orders</th>
                     <th class="center aligned">Quantity</th>
+                    <th class="center aligned">Price</th>
                     <th class="center aligned">Total</th>
                     <th class="center aligned"></th>
                   </tr>
@@ -344,6 +345,10 @@
                     <td class="center aligned middle aligned" ng-init="cart_data.update_quantity=true">
                       <div ng-hide="cart_data.show_update_quantity" ng-click="toggle_update_quantity(this)" style="width: 100%;cursor: pointer;">@{{cart_data.quantity}}</div>
                       <input style="width: 100px" type="number" ng-show="cart_data.show_update_quantity" ng-model="cart_data.quantity" ng-blur="update_quantity(this)" focus-me="cart_data.show_update_quantity">
+                    </td>
+                    <td class="center aligned middle aligned" ng-init="cart_data.update_price=true">
+                      <div ng-hide="cart_data.show_update_price" ng-click="toggle_update_price(this)" style="width: 100%;cursor: pointer;">@{{cart_data.price}}</div>
+                      <input style="width: 100px" type="number" ng-show="cart_data.show_update_price" ng-model="cart_data.price" ng-blur="update_price(this)" focus-me="cart_data.show_update_price">
                     </td>
                     <td class="right aligned middle aligned">@{{cart_data.total|currency:""}}</td>
                     <td class="right aligned middle aligned">

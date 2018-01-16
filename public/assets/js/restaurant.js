@@ -342,8 +342,11 @@
      var toggle = (data.cart_data.show_update_quantity ? false : true);
      $scope.table_customer_cart["menu_" + data.cart_data.id].show_update_quantity = toggle;
    }
+   $scope.toggle_update_price = function(data) {
+     var toggle = (data.cart_data.show_update_price ? false : true);
+     $scope.table_customer_cart["menu_" + data.cart_data.id].show_update_price = toggle;
+   }
    $scope.add_special_instruction = _.debounce(function(data) {
-     /*console.log(data.$parent.table_customer_id);*/
      $scope.formdata.special_instruction = data.cart_data.special_instruction;
      $scope.formdata.menu_id = data.cart_data.id;
      $http({
@@ -369,6 +372,30 @@
      $http({
        method: 'POST',
        url: '/api/restaurant/table/order/cart/update/quantity/' + data.$parent.table_customer_id,
+       data: $.param($scope.formdata),
+       headers: {
+         'Content-Type': 'application/x-www-form-urlencoded'
+       }
+     }).then(function(response) {
+       /*show_cart(data.$parent.table_customer_id);*/
+       $scope.table_customer_cart = response.data.cart;
+       $scope.table_customer_total = response.data.total;
+     }, function(rejection) {
+       if (rejection.status != 422) {
+         request_error(rejection.status);
+       } else if (rejection.status == 422) {
+         var errors = rejection.data;
+       }
+     });
+   }
+   $scope.update_price = function(data) {
+     $scope.formdata.price = data.cart_data.price;
+     $scope.formdata.menu_id = data.cart_data.id;
+     $scope.table_customer_cart = {};
+     $scope.table_customer_total = "";
+     $http({
+       method: 'POST',
+       url: '/api/restaurant/table/order/cart/update/price/' + data.$parent.table_customer_id,
        data: $.param($scope.formdata),
        headers: {
          'Content-Type': 'application/x-www-form-urlencoded'
