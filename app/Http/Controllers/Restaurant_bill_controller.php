@@ -296,7 +296,17 @@ class Restaurant_bill_controller extends Controller
         DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
-    // return response()->json($FormData);
+  }
+
+  public function update(Request $request,$id)
+  {
+    try{
+      $restaurant_bill_data = Restaurant_bill::find($id);
+      $restaurant_bill_data->invoice_number = $request->invoice_number;
+      $restaurant_bill_data->save();
+      DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
   }
 
 }

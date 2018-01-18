@@ -161,12 +161,16 @@
     <td ng-show="bill.type=='good_order'" style="border-bottom: 1px solid black;padding-top: 20px;" colspan="2">Signature</td>
   </tr>
 </table>
-<a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
-<a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
+<div class="btn-group" role="group" aria-label="...">
+  <a href="javascript:void(0);" class="btn btn-info hideprint" ng-click="prompt_edit_invoice()"><span class="glyphicon glyphicon-edit"></span> Edit Invoice Number</a>
+  <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
+  <a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
+
 @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
 @else
 <a href="javascript:void(0);" class="btn btn-danger hideprint" ng-click="delete(this)" ng-if="bill.is_paid==1&&bill.deleted_at==null"><span class="glyphicon glyphicon-trash"></span> Delete</a>
 @endif
+</div>
 @endsection
 
 @section('scripts')
@@ -193,6 +197,36 @@
     $scope.excess = {!! json_encode($payment_data['excess']) !!};
     $scope.payments = {!! json_encode($payment_data['result']) !!};
     $scope.has_payment = {!! json_encode($has_payment) !!};
+
+    $scope.prompt_edit_invoice = function() {
+      alertify.prompt(
+        'Edit Invoice Number',
+        '',
+        $scope.bill.invoice_number,
+        function(evt, value){
+          $http({
+             method: 'PUT',
+             url: '/api/restaurant/table/customer/bill/view/'+$scope.bill.id,
+             data: $.param({invoice_number:value}),
+             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          })
+          .then(function(response) {
+            console.log(response.data);
+            $.notify('The Invoice number is now ' + value);
+            $scope.bill.invoice_number = value;
+          }, function(rejection) {
+            if(rejection.status != 422){
+              request_error(rejection.status);
+            }else if(rejection.status == 422){ 
+             var errors = rejection.data;
+            }
+           $scope.submit = false;
+          });
+        },
+        function(){
+          //cancel
+        });
+    }
     $scope.delete = function(data){
       alertify.prompt(
         'Check #: '+data.bill.check_number,
