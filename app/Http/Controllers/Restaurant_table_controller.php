@@ -11,7 +11,7 @@ class Restaurant_table_controller extends Controller
 {
   public function __construct()
   {
-      $this->middleware('logged');
+      $this->middleware('auth');
   }
   public function get_list(Request $request,$type)
   {

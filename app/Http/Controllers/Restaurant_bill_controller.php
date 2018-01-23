@@ -23,7 +23,7 @@ class Restaurant_bill_controller extends Controller
 {
   public function __construct()
   {
-      $this->middleware('logged');
+      $this->middleware('auth');
   }
   public function index(Request $request,$id)
   {

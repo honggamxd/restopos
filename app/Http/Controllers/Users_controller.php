@@ -11,6 +11,7 @@ use App\Restaurant_bill;
 use App\Restaurant_payment;
 use App\Restaurant_meal_types;
 use Carbon\Carbon;
+use Auth;
 
 class Users_controller extends Controller
 {
@@ -42,7 +43,11 @@ class Users_controller extends Controller
 
   public function login_index($value='')
   {
-    return view('login');
+    if(Auth::check()){
+        return redirect('/');
+    }else{
+        return view('login');
+    }
     # code...
   }
 
@@ -85,6 +90,7 @@ class Users_controller extends Controller
   
   public function logout(Request $request)
   {
+    Auth::logout();
     $request->session()->forget('users');
     return redirect('/login');
   }

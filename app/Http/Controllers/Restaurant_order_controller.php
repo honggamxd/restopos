@@ -20,7 +20,7 @@ class Restaurant_order_controller extends Controller
 {
   public function __construct()
   {
-      $this->middleware('logged');
+      $this->middleware('auth');
   }
   public function store(Request $request,$id)
   {
