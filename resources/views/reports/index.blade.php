@@ -118,12 +118,12 @@
     $("#issuances-date-from,#issuances-date-to").datepicker();
     $("#menu_popularity-date-from,#menu_popularity-date-to").datepicker();
   });
-  var app = angular.module('main', []);
+  
   app.controller('content-controller', function($scope,$http, $sce) {
 
     
 
   });
-  angular.bootstrap(document, ['main']);
+  
 </script>
 @endpush

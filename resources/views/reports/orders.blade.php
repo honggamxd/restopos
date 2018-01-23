@@ -113,7 +113,7 @@
   $(document).ready(function() {
     $("#date-from,#date-to").datepicker();
   });
-  var app = angular.module('main', ['ngSanitize']);
+  
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.date_from = "{{date('m/d/Y',strtotime($date_from))}}";
     $scope.loading = true;
@@ -174,26 +174,6 @@
           $scope.submit = false;
     }
   });
-
-  app.filter('chkNull',function(){
-    return function(input){
-      if(!(angular.equals(input,null)))
-        return input;
-      else
-        return 0;
-    };
-  });
-  app.filter('isEmpty', function () {
-   var bar;
-   return function (obj) {
-     for (bar in obj) {
-       if (obj.hasOwnProperty(bar)) {
-         return false;
-       }
-      }
-      return true;
-    };
-  });
-  angular.bootstrap(document, ['main']);
+  
 </script>
 @endpush

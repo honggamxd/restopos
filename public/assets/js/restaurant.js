@@ -3,7 +3,7 @@
  $('#add-table-modal').on('shown.bs.modal', function() {
    $('#select-tablenumber').focus();
  });
- var app = angular.module('main', []);
+
  app.controller('content-controller', function($scope, $http, $sce, $window) {
    $scope._token = csrf_token;
    $scope.formdata = {};
@@ -1101,32 +1101,3 @@
      }
    }
  });
- app.directive('focusMe', ['$timeout', '$parse', function($timeout, $parse) {
-   return {
-     link: function(scope, element, attrs) {
-       var model = $parse(attrs.focusMe);
-       scope.$watch(model, function(value) {
-         if (value === true) {
-           $timeout(function() {
-             element[0].focus();
-           });
-         }
-       });
-       element.bind('blur', function() {
-         scope.$apply(model.assign(scope, false));
-       });
-     }
-   };
- }]);
- app.filter('isEmpty', function () {
-  var bar;
-  return function (obj) {
-    for (bar in obj) {
-      if (obj.hasOwnProperty(bar)) {
-        return false;
-      }
-     }
-     return true;
-   };
- });
- angular.bootstrap(document, ['main']);

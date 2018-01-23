@@ -5,33 +5,11 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @yield('meta')
-<link rel="stylesheet" type="text/css" href="{{asset('assets/jqueryui/jquery-ui.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/font-awesome.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/balloon.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/jquery-ui-timepicker-addon.css')}}">
 
-<!-- Bootstrap -->
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap-theme.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap-select.min.css')}}">
-
-<!-- Semantic ui -->
-<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/semantic.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/dropdown.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/transition.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/sidebar.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/popup.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/semantic-ui/components/checkbox.min.css')}}">
-
-<!-- Alertify -->
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/alertify-css/alertify.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/alertify-css/themes/default.min.css')}}">
-
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/core.css')}}">
-
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 @yield('css')
 </head>
-<body ng-controller="content-controller">
+<body ng-app="main" ng-controller="content-controller">
 <div class="ui left vertical inverted labeled icon sidebar menu">
     @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
     <a class="item" href="/">
@@ -140,34 +118,7 @@
 </div>
 
 @yield('modals')
-<!-- jQuery -->
-<script type="text/javascript" src="{{asset('assets/js/jquery.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/jquery-ui.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/jquery-ui-timepicker-addon.js')}}"></script>
-
-<!-- Bootstrap -->
-<script type="text/javascript" src="{{asset('assets/js/bootstrap.min.js')}}"></script>
-
-<!-- Semantic ui components -->
-<script type="text/javascript" src="{{asset('assets/semantic-ui/components/dropdown.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/semantic-ui/components/transition.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/semantic-ui/components/sidebar.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/semantic-ui/components/popup.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/semantic-ui/components/checkbox.min.js')}}"></script>
-
-<!-- Angularjs -->
-<script type="text/javascript" src="{{asset('assets/js/1.6.5/angular.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/1.6.5/angular-route.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/1.6.5/angular-sanitize.js')}}"></script>
-
-<script type="text/javascript" src="{{asset('assets/js/moment.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/tablesort.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/alertify.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/lodash.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/shortcut.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/js/notify.min.js')}}"></script>
-
-<script type="text/javascript" src="{{asset('assets/js/core.js')}}"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 @stack('scripts')
 </body>
 </html>

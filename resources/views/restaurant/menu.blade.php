@@ -213,7 +213,7 @@
   $('table').tablesort();
 
   // $('.ui.checkbox').checkbox('enable');
-  var app = angular.module('main', ['ngSanitize']);
+  
   app.controller('add_menu-controller', function($scope,$http, $sce) {
     angular.element('.ui.checkbox').checkbox('enable');
   });
@@ -397,17 +397,7 @@
       });
     }
   });
-  app.filter('isEmpty', function () {
-   var bar;
-   return function (obj) {
-     for (bar in obj) {
-       if (obj.hasOwnProperty(bar)) {
-         return false;
-       }
-      }
-      return true;
-    };
-  });
-  angular.bootstrap(document, ['main']);
+
+  
 </script>
 @endpush

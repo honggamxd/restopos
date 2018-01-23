@@ -128,11 +128,11 @@
     setTimeout(function(){ window.print(); }, 1500);
   });
   @endif
-  var app = angular.module('main', []);
+  
   app.controller('content-controller', function($scope,$http, $sce) {
         $scope.order = {!! $order !!};
         $scope.order_detail = {!! $order_detail !!};
   });
-  angular.bootstrap(document, ['main']);
+  
 </script>
 @endpush

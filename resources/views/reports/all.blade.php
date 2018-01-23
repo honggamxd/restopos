@@ -254,7 +254,7 @@
     $("#date-from,#date-to").datepicker();
   });
   // $('.ui.checkbox').checkbox('enable');
-  var app = angular.module('main', ['ngSanitize']);
+  
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.show_sales = true;
     $scope.show_sales_information = true;
@@ -373,25 +373,7 @@
 
   });
 
-  app.filter('chkNull',function(){
-      return function(input){
-          if(!(angular.equals(input,null)))
-              return input;
-          else
-              return 0;
-      };
-  });
-  app.filter('isEmpty', function () {
-      var bar;
-      return function (obj) {
-          for (bar in obj) {
-              if (obj.hasOwnProperty(bar)) {
-                  return false;
-              }
-          }
-          return true;
-      };
-  });
-  angular.bootstrap(document, ['main']);
+
+  
 </script>
 @endpush

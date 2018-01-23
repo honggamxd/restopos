@@ -221,7 +221,7 @@
 
   
 
-  var app = angular.module('main', ['ngSanitize']);
+  
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     show_items();
     function show_items() {
@@ -241,23 +241,7 @@
     }
   });
 
-  app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {
-      return {
-          link: function (scope, element, attrs) {
-              var model = $parse(attrs.focusMe);
-              scope.$watch(model, function (value) {
-                  if (value === true) {
-                      $timeout(function () {
-                          element[0].focus();
-                      });
-                  }
-              });
-              element.bind('blur', function () {
-                  scope.$apply(model.assign(scope, false));
-              });
-          }
-      };
-  }]);
-  angular.bootstrap(document, ['main']);
+
+  
 </script>
 @endpush

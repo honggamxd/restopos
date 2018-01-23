@@ -254,7 +254,7 @@
 @push('scripts')
 <script type="text/javascript">
   
-  var app = angular.module('main', []);
+  
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.formdata = {};
     $scope.server_loading = true;
@@ -479,18 +479,8 @@
     }
 
   });
-  app.filter('isEmpty', function () {
-   var bar;
-   return function (obj) {
-     for (bar in obj) {
-       if (obj.hasOwnProperty(bar)) {
-         return false;
-       }
-      }
-      return true;
-    };
-  });
 
-  angular.bootstrap(document, ['main']);
+
+  
 </script>
 @endpush

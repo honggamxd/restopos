@@ -115,10 +115,7 @@
 
 <script type="text/javascript" src="/assets/js/core.js"></script>
 <script type="text/javascript">
-  var app = angular.module('main', ['ngSanitize']);
-  app.controller('content-controller', function($scope,$http, $sce) {
 
-  });
-  angular.bootstrap(document, ['main']);
+  
 </script>
 </body>

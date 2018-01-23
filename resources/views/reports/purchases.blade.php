@@ -56,7 +56,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
   });
-  var app = angular.module('main', ['ngSanitize']);
+  
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.show_paging = true;
     $(document).on("click",".paging",function(e) {
@@ -87,6 +87,6 @@
       });
     }
   });
-  angular.bootstrap(document, ['main']);
+  
 </script>
 @endpush

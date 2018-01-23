@@ -7,3 +7,108 @@
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+@import "node_modules/semantic-ui/dist/semantic";
+@import "node_modules/semantic-ui/dist/components/dropdown";
+@import "node_modules/semantic-ui/dist/components/transition";
+@import "node_modules/semantic-ui/dist/components/sidebar";
+@import "node_modules/semantic-ui/dist/components/popup";
+@import "node_modules/semantic-ui/dist/components/checkbox";
+@import "node_modules/alertifyjs/build/css/alertify";
+@import "node_modules/alertifyjs/build/css/themes/bootstrap";
+@import "node_modules/jquery-ui-dist/jquery-ui";
+@import "node_modules/font-awesome/scss/font-awesome";
+@import "jquery-ui-timepicker-addon";
+
+
+.row{
+  margin-top:1em;
+}
+
+.table-header{
+  text-align: center;
+}
+
+.help-block{
+  color: red;
+}
+
+.modal-body{
+  max-height: 45em;
+  overflow: auto;
+}
+
+.modal-title{
+  text-transform: uppercase;
+}
+.ui-datepicker{
+    z-index: 20000 !important;
+}
+.navbar-brand {
+  padding: 0px;
+  padding-left: 5px;
+}
+.navbar-brand>img {
+  height: 100%;
+  width: auto;
+}
+
+
+.ui-autocomplete {
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 20000 !important;
+  /* prevent horizontal scrollbar */
+  overflow-x: hidden;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+  z-index: 20000 !important;
+  height: 200px;
+}
+
+.modal-body{
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.print-hide-block{
+    
+  display:block; 
+}
+.print-hide-table{
+    
+  display:table;
+}
+.print-show-block{
+    display:none; 
+}
+.print-show-table{
+     display:none; 
+}
+@media print {
+    .print-hide-block{
+        display:none !important; 
+    }
+    .print-hide-table{
+        display:none !important; 
+    }
+    .print-show-block{
+        display:block !important; 
+    }
+    .print-show-table{
+        display:table !important; 
+    }
+}
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+}
+/*html>* {
+  background-color: grey;
+}*/
+.pusher { padding-bottom: 70px; }
+/*.ui.sidebar {
+    overflow: visible !important;
+}*/

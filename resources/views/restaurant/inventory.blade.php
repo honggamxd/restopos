@@ -38,7 +38,7 @@
 
 @push('scripts')
 <script type="text/javascript">
-  var app = angular.module('main', []);
+  
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     show_items();
     function show_items() {
@@ -56,6 +56,6 @@
       });
     }
   });
-  angular.bootstrap(document, ['main']);
+  
 </script>
 @endpush

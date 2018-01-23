@@ -191,7 +191,7 @@
 
 @push('scripts')
 <script type="text/javascript">
-  var app = angular.module('main', []);
+  
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     show_users();
     function show_users() {
@@ -317,23 +317,7 @@
     }
   });
 
-  app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {
-      return {
-          link: function (scope, element, attrs) {
-              var model = $parse(attrs.focusMe);
-              scope.$watch(model, function (value) {
-                  if (value === true) {
-                      $timeout(function () {
-                          element[0].focus();
-                      });
-                  }
-              });
-              element.bind('blur', function () {
-                  scope.$apply(model.assign(scope, false));
-              });
-          }
-      };
-  }]);
-  angular.bootstrap(document, ['main']);
+
+  
 </script>
 @endpush
