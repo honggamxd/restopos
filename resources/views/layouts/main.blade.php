@@ -168,6 +168,6 @@
 <script type="text/javascript" src="{{asset('assets/js/notify.min.js')}}"></script>
 
 <script type="text/javascript" src="{{asset('assets/js/core.js')}}"></script>
-@yield('scripts')
+@stack('scripts')
 </body>
 </html>

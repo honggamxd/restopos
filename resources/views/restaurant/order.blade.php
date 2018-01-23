@@ -113,7 +113,7 @@
 <br><p style="text-align: center;">-</p>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   $('table').tablesort();
   shortcut.add("x",function() {
@@ -135,4 +135,4 @@
   });
   angular.bootstrap(document, ['main']);
 </script>
-@endsection
+@endpush

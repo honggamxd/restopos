@@ -95,7 +95,7 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   $('table').tablesort();
   // $("#add-item-modal").modal("show");
@@ -125,4 +125,4 @@
   }]);
   angular.bootstrap(document, ['main']);
 </script>
-@endsection
+@endpush

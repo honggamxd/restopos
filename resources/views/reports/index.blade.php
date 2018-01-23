@@ -109,7 +109,7 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   $(document).ready(function() {
     $("#sales-date-from,#sales-date-to").datepicker();
@@ -126,4 +126,4 @@
   });
   angular.bootstrap(document, ['main']);
 </script>
-@endsection
+@endpush

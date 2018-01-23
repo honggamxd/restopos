@@ -972,10 +972,10 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   var csrf_token = "{{csrf_token()}}";
   var restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
 </script>
 <script type="text/javascript" src="{{asset('assets/js/restaurant.js')}}"></script>
-@endsection
+@endpush

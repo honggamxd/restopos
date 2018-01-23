@@ -89,7 +89,7 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   $(document).ready(function() {
   });
@@ -193,4 +193,4 @@
   });
   angular.bootstrap(document, ['main']);
 </script>
-@endsection
+@endpush

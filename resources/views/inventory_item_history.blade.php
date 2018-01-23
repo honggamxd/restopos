@@ -67,7 +67,7 @@ Current Quantity: <b>@{{item_data.current_quantity}}</b><br>
 
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   $('table').tablesort();
   $('.ui.checkbox').checkbox('enable');
@@ -114,4 +114,4 @@ Current Quantity: <b>@{{item_data.current_quantity}}</b><br>
   }]);
   angular.bootstrap(document, ['main']);
 </script>
-@endsection
+@endpush

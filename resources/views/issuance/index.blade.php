@@ -95,7 +95,7 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   var app = angular.module('main', ['ngSanitize']);
   app.controller('content-controller', function($scope,$http, $sce, $window) {
@@ -267,4 +267,4 @@
   }]);
   angular.bootstrap(document, ['main']);
 </script>
-@endsection
+@endpush

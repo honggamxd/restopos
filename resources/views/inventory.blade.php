@@ -214,7 +214,7 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script type="text/javascript">
   $('table').tablesort();
   $('.ui.checkbox').checkbox('enable');
@@ -260,4 +260,4 @@
   }]);
   angular.bootstrap(document, ['main']);
 </script>
-@endsection
+@endpush
