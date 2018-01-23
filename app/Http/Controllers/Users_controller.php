@@ -74,7 +74,7 @@ class Users_controller extends Controller
     try{
         $user_data = User::find($request->id);
         if($request->password!=null){
-          $user_data->password = md5($request->password);
+          $user_data->password = bcrypt(md5($request->password));
         }
         $user_data->username = $request->username;
         $user_data->name = $request->name;
@@ -146,7 +146,7 @@ class Users_controller extends Controller
         $user = new User;
         $user->name = $request->name;
         $user->username = $request->username;
-        $user->password = md5($request->password);
+        $user->password = bcrypt(md5($request->password));
         $user->privilege = $request->privilege;
         $user->allow_edit_info = ($request->allow_edit_info!=null?1:0);
         $user->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
@@ -173,7 +173,7 @@ class Users_controller extends Controller
         $user = new User;
         $user_data = $user->find($id);
         $user_data->privilege = $request->privilege;
-        $user_data->password = md5($request->password);
+        $user_data->password = bcrypt(md5($request->password));
         $user_data->allow_edit_info = ($request->allow_edit_info=='true'?1:0);
         $user_data->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
         $user_data->save();
