@@ -96,8 +96,6 @@ class Restaurant_bill_controller extends Controller
             // return $request->all();
             $meal_type = "";
             if($request->session()->get('users.user_data')->restaurant_id == 1 || $request->session()->get('users.user_data')->restaurant_id == 2 || $request->session()->get('users.user_data')->restaurant_id == 3){
-              return $request->session()->get('users.user_data')->restaurant_id;
-              return 'asdasdas';
               $meal_types = Restaurant_meal_types::where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)->get();
               $time_str = date('H:i:s');
               $time_now = strtotime($time_str);
