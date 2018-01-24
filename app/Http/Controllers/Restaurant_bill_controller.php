@@ -94,18 +94,24 @@ class Restaurant_bill_controller extends Controller
             // $net_billing = $sales_inclusive_of_vat-$sc_pwd_discount-$sc_pwd_vat_exemption;
             // return $data;
             // return $request->all();
-            $meal_types = Restaurant_meal_types::where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)->get();
-            $time_str = date('H:i:s');
-            $time_now = strtotime($time_str);
-            if(strtotime($meal_types[0]->schedule)<=$time_now&&strtotime($meal_types[1]->schedule)>$time_now){
-              $meal_type = $meal_types[0]->type;
-            }elseif(strtotime($meal_types[1]->schedule)<=$time_now&&strtotime($meal_types[2]->schedule)>$time_now){
-              $meal_type = $meal_types[1]->type;
-            }elseif(strtotime($meal_types[2]->schedule)<=$time_now&&strtotime($meal_types[3]->schedule)>$time_now){
-              $meal_type = $meal_types[2]->type;
-            }else{
-              $meal_type = $meal_types[3]->type;
+            $meal_type = "";
+            if($request->session()->get('users.user_data')->restaurant_id == 1 || $request->session()->get('users.user_data')->restaurant_id == 2 || $request->session()->get('users.user_data')->restaurant_id == 3){
+              return $request->session()->get('users.user_data')->restaurant_id;
+              return 'asdasdas';
+              $meal_types = Restaurant_meal_types::where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)->get();
+              $time_str = date('H:i:s');
+              $time_now = strtotime($time_str);
+              if(strtotime($meal_types[0]->schedule)<=$time_now&&strtotime($meal_types[1]->schedule)>$time_now){
+                $meal_type = $meal_types[0]->type;
+              }elseif(strtotime($meal_types[1]->schedule)<=$time_now&&strtotime($meal_types[2]->schedule)>$time_now){
+                $meal_type = $meal_types[1]->type;
+              }elseif(strtotime($meal_types[2]->schedule)<=$time_now&&strtotime($meal_types[3]->schedule)>$time_now){
+                $meal_type = $meal_types[2]->type;
+              }else{
+                $meal_type = $meal_types[3]->type;
+              }
             }
+
 
             // return $request->items;
             // exit;

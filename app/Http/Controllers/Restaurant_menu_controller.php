@@ -38,9 +38,9 @@ class Restaurant_menu_controller extends Controller
     DB::beginTransaction();
     try{
         $restaurant_menu = new Restaurant_menu;
-        $restaurant_menu->name = $request->name;
-        $restaurant_menu->category = $request->category;
-        $restaurant_menu->subcategory = $request->subcategory;
+        $restaurant_menu->name = strtoupper($request->name);
+        $restaurant_menu->category = strtoupper($request->category);
+        $restaurant_menu->subcategory = strtoupper($request->subcategory);
         $restaurant_menu->price = $request->price;
         $restaurant_menu->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
         $restaurant_menu->is_prepared = 1;
@@ -68,9 +68,9 @@ class Restaurant_menu_controller extends Controller
     try{
         $restaurant_menu = new Restaurant_menu;
         $restaurant_menu_data = $restaurant_menu->find($request->id);
-        $restaurant_menu_data->name = $request->name;
-        $restaurant_menu_data->category = $request->category;
-        $restaurant_menu_data->subcategory = $request->subcategory;
+        $restaurant_menu_data->name = strtoupper($request->name);
+        $restaurant_menu_data->category = strtoupper($request->category);
+        $restaurant_menu_data->subcategory = strtoupper($request->subcategory);
         $restaurant_menu_data->price = $request->price;
         $restaurant_menu_data->save();
 
