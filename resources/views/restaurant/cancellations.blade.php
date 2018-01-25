@@ -254,7 +254,7 @@
           @if(Auth::user()->privilages=="admin")
           url : "/api/restaurant/orders/cancellations/show",
           @else
-          url : "/api/restaurant/orders/cancellations/show/{{Auth::user()->id}}",
+          url : "/api/restaurant/orders/cancellations/show/{{Auth::user()->restaurant_id}}",
           @endif
       }).then(function mySuccess(response) {
         $scope.loading = false;

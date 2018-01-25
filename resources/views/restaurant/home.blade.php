@@ -975,7 +975,7 @@
 @push('scripts')
 <script type="text/javascript">
   var csrf_token = "{{csrf_token()}}";
-  var restaurant_id = {{Auth::user()->id}};
+  var restaurant_id = {{Auth::user()->restaurant_id}};
 </script>
 <script type="text/javascript" src="{{asset('assets/js/restaurant.js')}}"></script>
 @endpush
