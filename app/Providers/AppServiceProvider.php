@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(191);
         Validator::extend('custom_min', function($attribute, $value, $parameters, $validator) {
             return $value>=$parameters[0];
         });
