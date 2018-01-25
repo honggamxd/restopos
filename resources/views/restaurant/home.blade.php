@@ -614,17 +614,17 @@
           <div class="field">
             <div class="two fields">
               <div class="field">
-                <label>Percentage of Discount:</label>
+                <label>Percentage of Special Discount:</label>
                 <div class="ui right labeled input">
-                  <input type="number" min="0" max="100" placeholder="Percentage of Discount" ng-model="bill_preview.discount.percent_disount" ng-change="compute_net_total()">
+                  <input type="number" min="0" max="100" placeholder="Percentage of Special Discount" ng-model="bill_preview.discount.percent_disount" ng-change="compute_net_total()">
                   <div class="ui label">
                     %
                   </div>
                 </div>
               </div> 
               <div class="field">
-                <label>Amount of Discount:</label>
-                <input type="number" step="0.01" min="0" max="@{{bill_preview.total}}" placeholder="Amount of Discount" ng-model="bill_preview.discount.amount_disount" ng-change="compute_net_total()">
+                <label>Amount of Special Discount:</label>
+                <input type="number" step="0.01" min="0" max="@{{bill_preview.total}}" placeholder="Amount of Special Discount" ng-model="bill_preview.discount.amount_disount" ng-change="compute_net_total()">
               </div>
             </div>
           </div>
