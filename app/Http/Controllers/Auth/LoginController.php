@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
@@ -25,7 +25,21 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected function attemptLogin(Request $request)
+    {
+        $new_credentials = [
+            'username' => $request->username,
+            'password' => md5($request->password),
+        ];
+        return $this->guard()->attempt(
+            $new_credentials, $request->has('remember')
+        );
+    }
+    public function username()
+    {
+        return 'username';
+    }
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
