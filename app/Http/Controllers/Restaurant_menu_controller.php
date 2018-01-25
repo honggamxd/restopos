@@ -7,6 +7,7 @@ use DB;
 use App\Http\Requests;
 use App\Restaurant_menu;
 use App\Restaurant_menu_ingredients;
+use Auth;
 
 class Restaurant_menu_controller extends Controller
 {
@@ -20,7 +21,7 @@ class Restaurant_menu_controller extends Controller
     $restaurant = DB::table('restaurant')->get();
     $data["categories"] = explode(',', $app_config->categories);
     $data["restaurants"] = $restaurant;
-    $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
+    $data["restaurant_name"] = DB::table('restaurant')->find(Auth::user()->restaurant_id)->name;
     return view('restaurant.menu',$data);
   }
 
@@ -28,7 +29,7 @@ class Restaurant_menu_controller extends Controller
   {
     // return $request->ingredients;
     $this->validate($request,[
-        'name' => 'required|unique_menu:'.$request->category.','.$request->subcategory.','.$request->name.','.$request->session()->get('users.user_data')->restaurant_id,
+        'name' => 'required|unique_menu:'.$request->category.','.$request->subcategory.','.$request->name.','.Auth::user()->restaurant_id,
         'category' => 'required',
         'subcategory' => 'required',
         'price' => 'required',
@@ -42,7 +43,7 @@ class Restaurant_menu_controller extends Controller
         $restaurant_menu->category = strtoupper($request->category);
         $restaurant_menu->subcategory = strtoupper($request->subcategory);
         $restaurant_menu->price = $request->price;
-        $restaurant_menu->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+        $restaurant_menu->restaurant_id = Auth::user()->restaurant_id;
         $restaurant_menu->is_prepared = 1;
         $restaurant_menu->save();
 
@@ -57,7 +58,7 @@ class Restaurant_menu_controller extends Controller
   {
     // return $request->all();
     $this->validate($request,[
-        'name' => 'required|unique_menu:'.$request->category.','.$request->subcategory.','.$request->name.','.$request->session()->get('users.user_data')->restaurant_id.','.$request->id,
+        'name' => 'required|unique_menu:'.$request->category.','.$request->subcategory.','.$request->name.','.Auth::user()->restaurant_id.','.$request->id,
         'category' => 'required',
         'subcategory' => 'required',
         'price' => 'required',
@@ -89,7 +90,7 @@ class Restaurant_menu_controller extends Controller
       $data["result"]->where('is_prepared',1);
       $data["result"]->where('name','like','%'.$request->search.'%');
       $data["result"]->orderBy('name');
-      $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+      $data["result"]->where('restaurant_id',Auth::user()->restaurant_id);
       if($request->category!=null&&$request->category!='all'){
         $data['result']->where('category',$request->category);
       }
@@ -106,7 +107,7 @@ class Restaurant_menu_controller extends Controller
       $data["result"]->where('name','like','%'.$request->search.'%');
       $data["result"]->where('deleted',0);
       $data["result"]->orderBy('name');
-      $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+      $data["result"]->where('restaurant_id',Auth::user()->restaurant_id);
       if($request->category!=null&&$request->category!='all'){
         $data['result']->where('category',$request->category);
       }
@@ -152,7 +153,7 @@ class Restaurant_menu_controller extends Controller
     if($request->type=="order"){
       $search->where('is_prepared',1);
     }
-    $search->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+    $search->where('restaurant_id',Auth::user()->restaurant_id);
     $search->skip(0);
     $search->take(5);
     $search = $search->get();
@@ -178,7 +179,7 @@ class Restaurant_menu_controller extends Controller
       $search->where('category', 'like', $request->category);
     }
     $search->orderBy('subcategory');
-    $search->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+    $search->where('restaurant_id',Auth::user()->restaurant_id);
     $search->skip(0);
     $search->take(20);
     $search->distinct();
@@ -202,8 +203,8 @@ class Restaurant_menu_controller extends Controller
     $data["result"] = $restaurant_menu->query();
     $data["result"]->orderBy('category');
     $data["result"]->select('category');
-    if($request->session()->get('users.user_data')->restaurant_id!=0){
-      $data["result"]->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+    if(Auth::user()->restaurant_id!=0){
+      $data["result"]->where('restaurant_id',Auth::user()->restaurant_id);
     }
     if($request->restaurant_id!=0){
       $data["result"]->where('restaurant_id',$request->restaurant_id);
@@ -221,8 +222,8 @@ class Restaurant_menu_controller extends Controller
       $data = $restaurant_menu->query();
       $data->orderBy('subcategory');
       $data->where('category',$request->category)->select('subcategory');
-      if($request->session()->get('users.user_data')->restaurant_id!=0){
-        $data->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+      if(Auth::user()->restaurant_id!=0){
+        $data->where('restaurant_id',Auth::user()->restaurant_id);
       }
       if($request->restaurant_id!=0){
         $data->where('restaurant_id',$request->restaurant_id);

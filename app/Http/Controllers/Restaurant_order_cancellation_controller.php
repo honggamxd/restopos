@@ -19,6 +19,7 @@ use App\Restaurant_payment;
 use App\Restaurant_temp_bill;
 use App\Restaurant_temp_bill_detail;
 use App\Restaurant;
+use Auth;
 
 class Restaurant_order_cancellation_controller extends Controller
 {
@@ -97,7 +98,7 @@ class Restaurant_order_cancellation_controller extends Controller
               }
             }
           }
-          $cancellation_request_data->approved_by = $request->session()->get('users.user_data')->id;
+          $cancellation_request_data->approved_by = Auth::user()->id;
           $cancellation_request_data->approved = 1;
           $cancellation_request_data->save();
 
@@ -121,7 +122,7 @@ class Restaurant_order_cancellation_controller extends Controller
       DB::beginTransaction();
       try{
           // return $cancellation_request_data->detail;
-          $cancellation_request_data->approved_by = $request->session()->get('users.user_data')->id;
+          $cancellation_request_data->approved_by = Auth::user()->id;
           $cancellation_request_data->save();
           foreach ($cancellation_request_data->detail as $cancelled_order_item) {
             if($cancelled_order_item->quantity>0){
@@ -278,16 +279,16 @@ class Restaurant_order_cancellation_controller extends Controller
         $restaurant_bill = new Restaurant_bill;
         $check_number = $restaurant_bill
           ->where('date_',strtotime(date('m/d/Y')))
-          ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
+          ->where('restaurant_id',Auth::user()->restaurant_id)
           ->orderBy('id','DESC')
           ->value('check_number');
         $restaurant_bill->date_ = strtotime(date("m/d/Y"));
         $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
         $restaurant_bill->server_id = $restaurant_table_customer_data->server_id;
-        $restaurant_bill->cashier_id = $request->session()->get('users.user_data')->id;
+        $restaurant_bill->cashier_id = Auth::user()->id;
         $restaurant_bill->restaurant_table_customer_id = $restaurant_table_customer_data->id;
         $restaurant_bill->table_name = $restaurant_table_customer_data->table_name;
-        $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+        $restaurant_bill->restaurant_id = Auth::user()->restaurant_id;
         $restaurant_bill->is_paid = 1;
         $restaurant_bill->type = "bad_order";
         $restaurant_bill->check_number = ($check_number==null||$check_number==0?1:++$check_number);
@@ -363,8 +364,8 @@ class Restaurant_order_cancellation_controller extends Controller
           $restaurant_order_cancellation = new Restaurant_order_cancellation;
           $restaurant_order_cancellation->restaurant_order_id = $request->restaurant_order_id;
           $restaurant_order_cancellation->restaurant_table_customer_id = $request->restaurant_table_customer_id;
-          $restaurant_order_cancellation->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
-          $restaurant_order_cancellation->cancelled_by = $request->session()->get('users.user_data')->id;
+          $restaurant_order_cancellation->restaurant_id = Auth::user()->restaurant_id;
+          $restaurant_order_cancellation->cancelled_by = Auth::user()->id;
           $restaurant_order_cancellation->type = 'before_bill_out';
           $restaurant_order_cancellation->reason_cancelled = $request->reason_cancelled;
           $restaurant_order_cancellation->save();
@@ -407,8 +408,8 @@ class Restaurant_order_cancellation_controller extends Controller
       try{
           $restaurant_order_cancellation = new Restaurant_order_cancellation;
           $restaurant_order_cancellation->restaurant_table_customer_id = $request->customer_data['id'];
-          $restaurant_order_cancellation->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
-          $restaurant_order_cancellation->cancelled_by = $request->session()->get('users.user_data')->id;
+          $restaurant_order_cancellation->restaurant_id = Auth::user()->restaurant_id;
+          $restaurant_order_cancellation->cancelled_by = Auth::user()->id;
           $restaurant_order_cancellation->type = 'after_bill_out';
           $restaurant_order_cancellation->reason_cancelled = $request->reason_cancelled;
           $restaurant_order_cancellation->save();

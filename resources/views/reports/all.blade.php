@@ -3,10 +3,10 @@
 
 
 
-@if(Session::get('users.user_data')->privilege=="admin")
+@if(Auth::user()->privilege=="admin")
   @section('title', 'Order Slip Summary Report')
 @else
-  @section('title', Session::get('users.user_data')->restaurant.' Order Slip Summary Report')
+  @section('title', App\Restaurant::find(Auth::user()->restaurant_id)->name.' Order Slip Summary Report')
 @endif
 
 
@@ -18,7 +18,7 @@
 @section('breadcrumb')
 
 
-@if(Session::get('users.user_data')->privilege=="admin")
+@if(Auth::user()->privilege=="admin")
   <a class="section hideprint" href="/reports">Reports</a>
   <i class="right angle icon divider"></i>
   <div class="active section">F&B Revenue</div>
@@ -30,10 +30,10 @@
  
 <div class="col-sm-12">
 
-  @if(Session::get('users.user_data')->privilege=="admin")
+  @if(Auth::user()->privilege=="admin")
     <h1 style="text-align: center;">Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
   @else
-    <h1 style="text-align: center;"> {{Session::get('users.user_data')->restaurant}} Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
+    <h1 style="text-align: center;"> {{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
   @endif
   <div>
     <div class="checkbox">
@@ -45,19 +45,19 @@
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_settlements">Show Settlements</label>
     </div>
-    @if(Session::get('users.user_data')->privilege=="admin")
+    @if(Auth::user()->privilege=="admin")
     <div class="checkbox">
       <label><input type="checkbox" ng-model="show_accounting">Show Accounting</label>
     </div>
     @endif
   </div>
   <div>
-    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    @if(Auth::user()->privilege=="restaurant_cashier")
     <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button>
     @else
     <label>Filter By:</label>
     <form class="form-inline" style="margin-bottom: 20px;">
-      @if(Session::get('users.user_data')->privilege=="admin")
+      @if(Auth::user()->privilege=="admin")
       <div class="form-group">
       <label>Outlet:</label>
       <select class="form-control input-sm" ng-options="item as item.name for item in restaurants track by item.id" ng-model="restaurant">
@@ -276,7 +276,7 @@
     });
 
 
-    @if(Session::get('users.user_data')->privilege!="admin")
+    @if(Auth::user()->privilege!="admin")
       $scope.show_accounting = false;
     @else
       $scope.show_accounting = true;
@@ -294,7 +294,7 @@
       show_reports();
     }
 
-    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    @if(Auth::user()->privilege=="restaurant_cashier")
 
     @else
       $scope.restaurant_cashiers = {!! $restaurant_cashiers !!};

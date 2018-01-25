@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Requests;
 use App\Restaurant_table;
+use Auth;
 
 class Restaurant_table_controller extends Controller
 {
@@ -20,7 +21,7 @@ class Restaurant_table_controller extends Controller
     if($type=="serve"){
       $restaurant_table = new Restaurant_table;
       $data["result"] = $restaurant_table->where("deleted",0);
-      $data["result"]->where("restaurant_id",$request->session()->get('users.user_data')->restaurant_id);
+      $data["result"]->where("restaurant_id",Auth::user()->restaurant_id);
       $data["result"]->orderBy("occupied","ASC");
       $data["result"]->orderBy("name","ASC");
       $data["result"] = $data["result"]->get();

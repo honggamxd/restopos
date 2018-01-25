@@ -18,6 +18,7 @@ use App\Restaurant_accepted_order_cancellation;
 use App\Restaurant_order_cancellation;
 use App\Restaurant_payment;
 use App\Restaurant_meal_types;
+use Auth;
 
 class Restaurant_bill_controller extends Controller
 {
@@ -95,8 +96,8 @@ class Restaurant_bill_controller extends Controller
             // return $data;
             // return $request->all();
             $meal_type = "";
-            if($request->session()->get('users.user_data')->restaurant_id == 1 || $request->session()->get('users.user_data')->restaurant_id == 2 || $request->session()->get('users.user_data')->restaurant_id == 3){
-              $meal_types = Restaurant_meal_types::where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)->get();
+            if(Auth::user()->restaurant_id == 1 || Auth::user()->restaurant_id == 2 || Auth::user()->restaurant_id == 3){
+              $meal_types = Restaurant_meal_types::where('restaurant_id',Auth::user()->restaurant_id)->get();
               $time_str = date('H:i:s');
               $time_now = strtotime($time_str);
               if(strtotime($meal_types[0]->schedule)<=$time_now&&strtotime($meal_types[1]->schedule)>$time_now){
@@ -122,7 +123,7 @@ class Restaurant_bill_controller extends Controller
             $restaurant_bill = new Restaurant_bill;
             $check_number = $restaurant_bill
               ->where('date_',strtotime(date('m/d/Y')))
-              ->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)
+              ->where('restaurant_id',Auth::user()->restaurant_id)
               ->orderBy('id','DESC')
               ->value('check_number');
 
@@ -144,11 +145,11 @@ class Restaurant_bill_controller extends Controller
             $restaurant_bill->net_billing = $request->net_billing;
             $restaurant_bill->total_item_amount = $request->total;
             $restaurant_bill->server_id = $customer_data->server_id;
-            $restaurant_bill->cashier_id = $request->session()->get('users.user_data')->id;
+            $restaurant_bill->cashier_id = Auth::user()->id;
             $restaurant_bill->restaurant_table_customer_id = $customer_data->id;
             $restaurant_bill->table_name = $customer_data->table_name;
             $restaurant_bill->guest_name = $customer_data->guest_name;
-            $restaurant_bill->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+            $restaurant_bill->restaurant_id = Auth::user()->restaurant_id;
             $restaurant_bill->type = "good_order";
             $restaurant_bill->meal_type = $meal_type;
             $restaurant_bill->check_number = ($check_number==null||$check_number==0?1:++$check_number);
@@ -173,7 +174,7 @@ class Restaurant_bill_controller extends Controller
                 $restaurant_bill_detail->price = $preview_data["price"];
                 $restaurant_bill_detail->special_instruction = $preview_data["special_instruction"];
                 $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
-                $restaurant_bill_detail->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;
+                $restaurant_bill_detail->restaurant_id = Auth::user()->restaurant_id;
                 $restaurant_bill_detail->date_ = strtotime(date("m/d/Y"));
                 $restaurant_bill_detail->save();
                 $restaurant_temp_bill_detail_data->quantity -= abs($preview_data["quantity_to_bill"]);
@@ -261,7 +262,7 @@ class Restaurant_bill_controller extends Controller
         $restaurant_bill_data = Restaurant_bill::find($id);
         // return $restaurant_bill_data->customer;
         $restaurant_bill_data->deleted_comment = $request->deleted_comment;
-        $restaurant_bill_data->deleted_by = $request->session()->get('users.user_data')->id;
+        $restaurant_bill_data->deleted_by = Auth::user()->id;
         $restaurant_table_customer = new Restaurant_table_customer;
         $customer_data = $restaurant_table_customer->withTrashed()->find($restaurant_bill_data->restaurant_table_customer_id);
         $restaurant_bill_detail_data = Restaurant_bill_detail::where('restaurant_bill_id',$id);

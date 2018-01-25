@@ -251,10 +251,10 @@
     function show_cancellation_request() {
       $http({
           method : "GET",
-          @if(Session::get('users.user_data')->privilages=="admin")
+          @if(Auth::user()->privilages=="admin")
           url : "/api/restaurant/orders/cancellations/show",
           @else
-          url : "/api/restaurant/orders/cancellations/show/{{Session::get('users.user_data')->restaurant_id}}",
+          url : "/api/restaurant/orders/cancellations/show/{{Auth::user()->id}}",
           @endif
       }).then(function mySuccess(response) {
         $scope.loading = false;

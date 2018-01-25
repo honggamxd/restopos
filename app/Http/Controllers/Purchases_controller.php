@@ -9,6 +9,7 @@ use App\Inventory_item;
 use App\Inventory_item_detail;
 use App\Purchase;
 use App\Purchase_detail;
+use Auth;
 
 class Purchases_controller extends Controller
 {

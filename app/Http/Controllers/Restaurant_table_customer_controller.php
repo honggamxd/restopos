@@ -17,6 +17,7 @@ use App\Restaurant_bill_detail;
 use App\Restaurant_accepted_order_cancellation;
 use App\Restaurant_order_cancellation;
 use Carbon\Carbon;
+use Auth;
 
 class Restaurant_table_customer_controller extends Controller
 {
@@ -41,7 +42,7 @@ class Restaurant_table_customer_controller extends Controller
         
         $restaurant_table_customer = new Restaurant_table_customer;
         $restaurant_table_customer->restaurant_table_id = $request->table_id["id"];
-        $restaurant_table_customer->restaurant_id = $request->session()->get('users.user_data')->restaurant_id;;
+        $restaurant_table_customer->restaurant_id = Auth::user()->restaurant_id;;
         $restaurant_table_customer->table_name = $request->table_id["name"];
         $restaurant_table_customer->guest_name = ($request->guest_name==null?"":$request->guest_name);
         $restaurant_table_customer->pax = $request->pax;
@@ -156,7 +157,7 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_order_detail = new Restaurant_order_detail;
     $restaurant_table = new Restaurant_table;
     $restaurant_order = new Restaurant_order;
-    $data["result"] = $restaurant_table_customer->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id)->get();
+    $data["result"] = $restaurant_table_customer->where('restaurant_id',Auth::user()->restaurant_id)->get();
     foreach ($data["result"] as $customer_data) {
       $customer_data->time = date("h:i:s A",strtotime($customer_data->created_at));
       $customer_data->date = date("m/d/Y",strtotime($customer_data->created_at));

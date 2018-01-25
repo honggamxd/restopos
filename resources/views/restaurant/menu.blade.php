@@ -18,11 +18,11 @@
 </style>
 @endsection
 @section('breadcrumb')
-<div class="active section">{{Session::get('users.user_data')->restaurant}} Menu</div>
+<div class="active section">{{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Menu</div>
 @endsection
 @section('content')
 <div class="col-sm-12">
-<h1 style="text-align: center;">{{Session::get('users.user_data')->restaurant}} Menu</h1>
+<h1 style="text-align: center;">{{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Menu</h1>
 <br><br>
   <form class="form-horizontal ui form">
   {{ csrf_field() }}
@@ -222,7 +222,7 @@
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.formdata = {};
     $scope.formerrors = {};
-    $scope.formdata.restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+    $scope.formdata.restaurant_id = {{App\Restaurant::find(Auth::user()->restaurant_id)->name_id}};
     $("#search-menu").autocomplete({
         source: "/api/restaurant/menu/search/name",
         select: function(event, ui) {

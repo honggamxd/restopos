@@ -9,6 +9,7 @@ use App\Restaurant_payment;
 use App\Restaurant_bill;
 use App\Restaurant_bill_detail;
 use App\Restaurant_table_customer;
+use Auth;
 
 class Restaurant_payment_controller extends Controller
 {

@@ -53,7 +53,7 @@ class Users_controller extends Controller
 
   public function settings(Request $request)
   {
-    $user_data = User::find($request->session()->get('users.user_data')->id);
+    $user_data = User::find(Auth::user()->id);
     if($user_data->allow_edit_info==0){
       abort(403);
     }

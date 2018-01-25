@@ -19,6 +19,7 @@ use App\Restaurant;
 use App\Restaurant_order;
 use App\Restaurant_order_detail;
 use Carbon\Carbon;
+use Auth;
 
 class Reports_controller extends Controller
 {
@@ -40,7 +41,7 @@ class Reports_controller extends Controller
       $data["categories"] = explode(',', $app_config->categories);
       $data["settlements"] = explode(',', $app_config->settlements_arrangements);
       $data["restaurants"] = Restaurant::all();
-      $user_data = $request->session()->get('users.user_data');
+      $user_data = Auth::user();
       if($user_data->privilege=='restaurant_cashier'){
 
       }elseif($user_data->privilege=='restaurant_admin'){
@@ -83,7 +84,7 @@ class Reports_controller extends Controller
     $data = $this->get_orders_list($request);
     $data["date_from"] = date('F d, Y');
     $data["date_to"] = date('F d, Y');
-    $user_data = $request->session()->get('users.user_data');
+    $user_data = Auth::user();
     if($user_data->privilege=='restaurant_cashier'){
 
     }elseif($user_data->privilege=='restaurant_admin'){
@@ -100,7 +101,7 @@ class Reports_controller extends Controller
   public function get_orders_list(Request $request)
   {
     $orders = Restaurant_order::query();
-    $orders->where('restaurant_id',$request->session()->get('users.user_data')->restaurant_id);
+    $orders->where('restaurant_id',Auth::user()->restaurant_id);
     if($request->server_id!=null){
       $orders->where('server_id',$request->server_id);
     }
@@ -143,7 +144,7 @@ class Reports_controller extends Controller
     $data = $this->f_and_b($request);
     $fp = fopen('assets/reports/order_slip_summary.csv', 'w');
 
-    $headers = array ($request->session()->get('users.user_data')->restaurant.' Order Slip Summary Report');
+    $headers = array (Auth::user()->restaurant.' Order Slip Summary Report');
     fputcsv($fp, $headers);
     $headers = array ('Date From: '.date('F d, Y',strtotime($request->date_from)).' Date To: '.date('F d, Y',strtotime($request->date_to)) );
 
@@ -170,7 +171,7 @@ class Reports_controller extends Controller
 
     $initial_headers = array('Total Settlements');
     $headers = array_merge($headers,$initial_headers);
-    if($request->session()->get('users.user_data')->privilege!="admin"){
+    if(Auth::user()->privilege!="admin"){
 
     }else{
       $initial_headers = array(
@@ -225,7 +226,7 @@ class Reports_controller extends Controller
 
       $initial_headers = array(number_format($bill_data['total_settlements'],2));
       $headers = array_merge($headers,$initial_headers);
-      if($request->session()->get('users.user_data')->privilege!="admin"){
+      if(Auth::user()->privilege!="admin"){
 
       }else{
         $initial_headers = array(
@@ -283,7 +284,7 @@ class Reports_controller extends Controller
 
     $initial_headers = array(number_format($data['footer']['total_settlements'],2));
     $headers = array_merge($headers,$initial_headers);
-    if($request->session()->get('users.user_data')->privilege!="admin"){
+    if(Auth::user()->privilege!="admin"){
 
     }else{
       $initial_headers = array(
@@ -323,7 +324,7 @@ class Reports_controller extends Controller
     $display_per_page = $request->display_per_page;
     $limit = ($page*$display_per_page)-$display_per_page;
 
-    $user_data = $request->session()->get('users.user_data');
+    $user_data = Auth::user();
     // $data['user_data'] = $user_data;
 
     $restaurant_bill = new Restaurant_bill;

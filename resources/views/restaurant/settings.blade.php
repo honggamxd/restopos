@@ -38,7 +38,7 @@
 @section('two_row_content')
 <div class="row">
   <h1 style="text-align: center;">Restaurant Settings</h1>
-    @if(Session::get('users.user_data')->privilege=="admin")
+    @if(Auth::user()->privilege=="admin")
     <div class="col-sm-6">
         <label>Outlet:</label>
         <div class="ui action input">
@@ -260,9 +260,9 @@
     $scope.server_loading = true;
     $scope.table_loading = true;
     $scope.restaurants = {!! json_encode($restaurants) !!};
-    @if(Session::get('users.user_data')->privilege=="restaurant_admin")
+    @if(Auth::user()->privilege=="restaurant_admin")
       $scope.restaurant_id = {
-        id: {{Session::get('users.user_data')->restaurant_id}}
+        id: {{Auth::user()->restaurant_id}}
       };
     @else
       $scope.restaurant_id = $scope.restaurants[0];

@@ -139,7 +139,7 @@ Route::get('/api/reports/general/menu_popularity_export', 'Reports_controller@me
 Route::get('/users', 'Users_controller@index');
 Route::get('/account-settings', 'Users_controller@settings');
 Route::get('/login', 'Users_controller@login_index')->name('login');
-Route::post('/login', 'LoginController@login');
+Route::post('/login', 'Auth\LoginController@login');
 Route::get('/logout', 'Users_controller@logout')->name('logout');
 Route::get('/api/users', 'Users_controller@show_users');
 Route::post('/api/users/add', 'Users_controller@add');

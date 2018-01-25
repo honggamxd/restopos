@@ -11,17 +11,17 @@
 </head>
 <body ng-app="main" ng-controller="content-controller">
 <div class="ui left vertical inverted labeled icon sidebar menu">
-    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    @if(Auth::user()->privilege=="restaurant_cashier")
     <a class="item" href="/">
         <i class="food icon"></i>
-        {{Session::get('users.user_data')->restaurant}}
+        {{App\Restaurant::find(Auth::user()->restaurant_id)->name}}
     </a>
     <a class="item" href="/restaurant/reports">
         <i class="bar chart icon"></i>
         My Reports
     </a>
     @endif
-    @if(Session::get('users.user_data')->privilege=="restaurant_admin")
+    @if(Auth::user()->privilege=="restaurant_admin")
     <a class="item" href="/restaurant/cancellations">
         <i class="settings icon"></i>
         Cancellation<br>
@@ -29,26 +29,26 @@
     </a>
     <a class="item" href="/restaurant/menu">
         <i class="food icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>Menu
+        {{App\Restaurant::find(Auth::user()->restaurant_id)->name}}<br>Menu
     </a>
     <a class="item" href="/restaurant/settings">
         <i class="settings icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>
+        {{App\Restaurant::find(Auth::user()->restaurant_id)->name}}<br>
         Settings
     </a>
     <a class="item" href="/restaurant/reports">
         <i class="bar chart icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>
+        {{App\Restaurant::find(Auth::user()->restaurant_id)->name}}<br>
         Order Slip<br>
         Summary
     </a>
     <a class="item" href="/restaurant/orders">
         <i class="bar chart icon"></i>
-        {{Session::get('users.user_data')->restaurant}}<br>
+        {{App\Restaurant::find(Auth::user()->restaurant_id)->name}}<br>
         Food Orders
     </a>
     @endif
-    @if(Session::get('users.user_data')->privilege=="admin")
+    @if(Auth::user()->privilege=="admin")
     <a class="item" href="/inventory">
         <i class="browser icon"></i>
         Inventory
@@ -93,7 +93,7 @@
     <li><a href="javascript:void(0);" id="time-display"></a></li>
     <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-      {{Session::get('users.user_data')->name}}
+      {{Auth::user()->name}}
       <span class="caret"></span></a>
       <ul class="dropdown-menu">
         <li><a href="/account-settings">Account Settings</a></li>

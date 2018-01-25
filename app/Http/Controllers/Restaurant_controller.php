@@ -9,6 +9,7 @@ use App\Restaurant_menu;
 use App\Restaurant;
 use App\Issuance_to;
 use App\Restaurant_server;
+use Auth;
 
 class Restaurant_controller extends Controller
 {
@@ -18,19 +19,19 @@ class Restaurant_controller extends Controller
     }
     public function index(Request $request)
     {
-      if($request->session()->get('users.user_data')->privilege=="admin"){
+      if(Auth::user()->privilege=="admin"){
         $app_config = DB::table('app_config')->first();
         $data["categories"] = explode(',', $app_config->categories);
         return view('inventory',$data);
-      }elseif($request->session()->get('users.user_data')->privilege=="restaurant_admin"){
+      }elseif(Auth::user()->privilege=="restaurant_admin"){
         $app_config = DB::table('app_config')->first();
         $restaurant = DB::table('restaurant')->get();
         $data["categories"] = explode(',', $app_config->categories);
         $data["restaurants"] = $restaurant;
-        $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
+        $data["restaurant_name"] = DB::table('restaurant')->find(Auth::user()->restaurant_id)->name;
         return view('restaurant.cancellations',$data);
       }else{
-        $data["restaurant_name"] = DB::table('restaurant')->find($request->session()->get('users.user_data')->restaurant_id)->name;
+        $data["restaurant_name"] = DB::table('restaurant')->find(Auth::user()->restaurant_id)->name;
         $app_config = DB::table('app_config')->first();
         $data["categories"] = explode(',', $app_config->categories);
         return view('restaurant.home',$data);

@@ -3,10 +3,10 @@
 
 
 
-@if(Session::get('users.user_data')->privilege=="admin")
+@if(Auth::user()->privilege=="admin")
   @section('title', 'Food Orders')
 @else
-  @section('title', Session::get('users.user_data')->restaurant.' Food Orders')
+  @section('title', App\Restaurant::find(Auth::user()->restaurant_id)->name.' Food Orders')
 @endif
 
 
@@ -18,7 +18,7 @@
 @section('breadcrumb')
 
 
-@if(Session::get('users.user_data')->privilege=="admin")
+@if(Auth::user()->privilege=="admin")
   <a class="section hideprint" href="/reports">Reports</a>
   <i class="right angle icon divider"></i>
   <div class="active section">Food Orders</div>
@@ -30,13 +30,13 @@
  
 <div class="col-sm-12">
 
-  @if(Session::get('users.user_data')->privilege=="admin")
+  @if(Auth::user()->privilege=="admin")
     <h1 style="text-align: center;">Food Orders<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
   @else
-    <h1 style="text-align: center;"> {{Session::get('users.user_data')->restaurant}} Food Orders<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
+    <h1 style="text-align: center;"> {{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Food Orders<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
   @endif
   <div>
-    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    @if(Auth::user()->privilege=="restaurant_cashier")
     <!-- <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button> -->
     @else
     <label>Filter By:</label>
@@ -120,7 +120,7 @@
     $scope.date_to = "{{date('m/d/Y',strtotime($date_to))}}";
     $scope.date_from_str = "";
     $scope.date_to_str = "";
-    @if(Session::get('users.user_data')->privilege=="restaurant_cashier")
+    @if(Auth::user()->privilege=="restaurant_cashier")
 
     @else
       $scope.restaurant_cashiers = {!! $restaurant_cashiers !!};

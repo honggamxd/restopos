@@ -7,7 +7,7 @@ use DB;
 use App\Http\Requests;
 use App\Inventory_item;
 use App\Inventory_item_detail;
-
+use Auth;
 
 class Inventory_item_controller extends Controller
 {

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', Session::get('users.user_data')->restaurant)
+@section('title', App\Restaurant::find(Auth::user()->restaurant_id)->name)
 
 @section('css')
 <style type="text/css">
@@ -38,11 +38,11 @@
 </style>
 @endsection
 @section('breadcrumb')
-<div class="active section">{{Session::get('users.user_data')->restaurant}}</div>
+<div class="active section">{{App\Restaurant::find(Auth::user()->restaurant_id)->name}}</div>
 @endsection
 @section('content')
 <div class="col-sm-12">
-  <h1 style="text-align: center;">{{Session::get('users.user_data')->restaurant}}</h1>
+  <h1 style="text-align: center;">{{App\Restaurant::find(Auth::user()->restaurant_id)->name}}</h1>
   <div class="form-group">
       <!-- <div class="ui buttons"> -->
 <!--         <input type="text" placeholder="Search Table">
@@ -975,7 +975,7 @@
 @push('scripts')
 <script type="text/javascript">
   var csrf_token = "{{csrf_token()}}";
-  var restaurant_id = {{Session::get('users.user_data')->restaurant_id}};
+  var restaurant_id = {{Auth::user()->id}};
 </script>
 <script type="text/javascript" src="{{asset('assets/js/restaurant.js')}}"></script>
 @endpush

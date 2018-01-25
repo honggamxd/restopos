@@ -6,10 +6,10 @@
 
 @endsection
 @section('breadcrumb')
-<div class="active section">{{Session::get('users.user_data')->restaurant}} Inventory</div>
+<div class="active section">{{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Inventory</div>
 @endsection
 @section('content')
-<h1 style="text-align: center;">{{Session::get('users.user_data')->restaurant}} Inventory</h1>
+<h1 style="text-align: center;">{{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Inventory</h1>
 <div class="col-sm-12">
   <div class="table-responsive">
     <table class="ui unstackable table">

@@ -10,6 +10,7 @@ use App\Issuance_detail;
 use App\Inventory_item;
 use App\Inventory_item_detail;
 use App\Restaurant_inventory;
+use Auth;
 
 class Issuance_controller extends Controller
 {

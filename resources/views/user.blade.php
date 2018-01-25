@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="user in users" ng-hide="user.id=={{Session::get('users.user_data')->id}}">
+        <tr ng-repeat="user in users" ng-hide="user.id=={{Auth::user()->id}}">
           <td class="center aligned middle aligned">@{{user.name}}</td>
           <td class="center aligned middle aligned">@{{user.username}}</td>
           <td class="center aligned middle aligned">@{{user.str_privilege}}</td>

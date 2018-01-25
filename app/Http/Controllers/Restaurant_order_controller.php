@@ -14,6 +14,7 @@ use App\Restaurant_order;
 use App\Restaurant_order_detail;
 use App\Restaurant_order_cancellation;
 use App\Restaurant_order_cancellation_detail;
+use Auth;
 
 
 class Restaurant_order_controller extends Controller
