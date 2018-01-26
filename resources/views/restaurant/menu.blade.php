@@ -222,7 +222,7 @@
   app.controller('content-controller', function($scope,$http, $sce) {
     $scope.formdata = {};
     $scope.formerrors = {};
-    $scope.formdata.restaurant_id = {{App\Restaurant::find(Auth::user()->restaurant_id)->name_id}};
+    $scope.formdata.restaurant_id = {{Auth::user()->restaurant_id}};
     $("#search-menu").autocomplete({
         source: "/api/restaurant/menu/search/name",
         select: function(event, ui) {

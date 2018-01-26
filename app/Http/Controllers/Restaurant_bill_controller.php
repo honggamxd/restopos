@@ -77,7 +77,7 @@ class Restaurant_bill_controller extends Controller
   public function make_bill(Request $request,$id)
   {
     $this->validate($request, [
-        'items' => 'valid_restaurant_billing|discount_except:Sundry,'.$request->customer_data['sc_pwd']
+        'items' => 'valid_restaurant_billing|discount_except:sundry,'.$request->customer_data['sc_pwd']
       ],[
         'discount_except' => 'The number of SC/PWD Must be 0 if the items to bill are Sundries',
         'valid_restaurant_billing' => 'The quantity for billing of the items are not valid.'

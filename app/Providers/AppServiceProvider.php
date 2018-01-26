@@ -107,7 +107,7 @@ class AppServiceProvider extends ServiceProvider
                 if($bill_preview['quantity_to_bill']==0){
                     continue;
                 }
-                if($bill_preview['category']==$parameters[0]){
+                if(strtoupper($bill_preview['category'])==strtoupper($parameters[0])){
                     return false;
                     break;
                 }

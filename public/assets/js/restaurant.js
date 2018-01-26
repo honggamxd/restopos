@@ -477,6 +477,7 @@
      }).then(function(response) {
        $scope.submit = false;
        $("#add-order-modal").modal('hide');
+       $("#confirm-food-order-modal").modal('hide');
        show_order(response.data.id);
      }, function(rejection) {
        if (rejection.status != 422) {
@@ -522,10 +523,15 @@
      $scope.formdata._token = $scope._token;
      $scope.table_customer_cart = {};
      $scope.table_customer_total = "";
+     formdata = {
+      menu_id: data.menu_data.id,
+      table_customer_id: $scope.table_customer_id,
+      _token: $scope._token
+     };
      $http({
        method: 'POST',
        url: '/api/restaurant/table/order/cart',
-       data: $.param($scope.formdata),
+       data: $.param(formdata),
        headers: {
          'Content-Type': 'application/x-www-form-urlencoded'
        }
@@ -576,6 +582,9 @@
        }
      });
    };
+   $scope.confirm_food_order = function() {
+     $('#confirm-food-order-modal').modal('show');
+   }
    $scope.orders = {};
    $scope.view_orders = function(data) {
      $scope.orders = {};
@@ -743,6 +752,7 @@
      // console.log($scope.bill_preview);
    }
    $scope.make_bill = function(data) {
+     console.log(data);
      $scope.bill = {};
      $scope.submit = true;
      $scope.formdata = data.bill_preview;

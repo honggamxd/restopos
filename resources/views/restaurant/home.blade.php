@@ -383,12 +383,55 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="ui default button" data-dismiss="modal">Close</button>
-        <button type="button" class="ui primary button" ng-disabled="submit" ng-click="make_orders(this)" ng-class="{'loading':submit}">Confirm</button>
+        <button type="button" class="ui primary button" ng-disabled="submit" ng-click="confirm_food_order(this)" ng-class="{'loading':submit}">Make Food Order</button>
       </div>
     </div>
 
   </div>
 </div>
+
+<div id="confirm-food-order-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Confirm Orders</h4>
+      </div>
+      <div class="modal-body">
+        <table class="order-table">
+        <tbody>
+          <thead ng-if="!(table_customer_cart | isEmpty)">
+            <tr>
+              <th style="text-align: center;">ITEM</th>
+              <th style="text-align: center;">QTY</th>
+              <th style="text-align: right;">PRICE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="cart_data in table_customer_cart" ng-cloak>
+              <td>@{{cart_data.name}}<span ng-if="cart_data.special_instruction != ''"><br>(@{{cart_data.special_instruction}})</span></td>
+              <td style="text-align: center;" ng-bind="cart_data.quantity"></td>
+              <td style="text-align: right;">@{{cart_data.price|currency:""}}</td>
+            </tr>
+          </tbody>
+        <tfoot>
+          <tr ng-if="table_customer_cart | isEmpty">
+            <td colspan="20" style="text-align: center;">
+              <h1>NO DATA</h1>
+            </td>
+          </tr>
+        </tfoot>
+        </table>
+        <br>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="button" class="ui primary button" ng-disabled="submit" ng-click="make_orders(this)" ng-class="{'loading':submit}">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div id="view-list-order-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
@@ -465,7 +508,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="items in order_detail" ng-cloak>
-              <td>@{{items.restaurant_menu_name}}<span ng-if="items.special_instruction != ''"><br>(@{{items.special_instruction}})</span></td>
+              <td>@{{items.restaurant_menu_name}}<span ng-if="items.special_instruction != '' && items.special_instruction != null"><br>(@{{items.special_instruction}})</span></td>
               <td style="text-align: center;" ng-bind="items.quantity"></td>
               <td style="text-align: right;">@{{items.quantity*items.price|currency:""}}</td>
             </tr>
@@ -641,8 +684,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="bill_preview_data in bill_preview.items" ng-class="{'warning':bill_preview_data.category=='Sundry'}">
-              <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != ''"><br>(@{{bill_preview_data.special_instruction}})</span></td>
+            <tr ng-repeat="bill_preview_data in bill_preview.items" ng-class="{'warning':bill_preview_data.category=='SUNDRY'}">
+              <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != '' bill_preview_data.special_instruction != null"><br>(@{{bill_preview_data.special_instruction}})</span></td>
               <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
               <td class="center aligned middle aligned">
                 <input style="width: 100px" type="number" ng-init="bill_preview_data.quantity_to_bill = bill_preview_data.quantity" ng-model="bill_preview_data.quantity_to_bill" ng-change="bill_preview_total(this)">
