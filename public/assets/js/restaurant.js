@@ -630,6 +630,7 @@
          $scope.bill_preview.customer_data.pax = parseInt(response.data.customer_data.pax);
          $scope.bill_preview.customer_data.sc_pwd = parseInt(response.data.customer_data.sc_pwd);
          $scope.bill_preview.discount = response.data.discount;
+         $scope.bill_preview.discount.room_service_charge = 0;
          $scope.bill_preview.gross_billing = response.data.gross_billing;
          $scope.bill_preview.net_billing = response.data.net_billing;
          $scope.bill_preview.table_customer_id = data.$parent.customer_data.id;
