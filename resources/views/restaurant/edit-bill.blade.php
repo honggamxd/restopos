@@ -186,7 +186,6 @@
 <div class="btn-group" role="group" aria-label="...">
   <button class="btn btn-primary" ng-if="remaining_balance() == 0" ng-click="save()">Save Changes</button>
 </div>
-@{{items_has_sundry()}}
 @endsection
 
 @push('scripts')
