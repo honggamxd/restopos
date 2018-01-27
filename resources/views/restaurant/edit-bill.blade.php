@@ -214,7 +214,7 @@
     $scope.has_payment = {!! json_encode($has_payment) !!};
     $scope.customer_data = {!! json_encode($customer_data) !!};
     $scope.settlements = {!! json_encode($settlements) !!};
-    $scope.total_discount = $scope.bill.total_discount;
+    $scope.total_discount = parseFloat($scope.bill.total_discount);
     $scope.items_has_sundry = function() {
       items_has_sundry = false;
       angular.forEach($scope.bill_detail, function(value, key) {
@@ -225,6 +225,16 @@
       });
       return items_has_sundry;
     }
+    $scope.bill.sc_pwd = parseInt($scope.bill.sc_pwd);
+    $scope.bill.pax = parseInt($scope.bill.pax);
+    angular.forEach($scope.bill_detail, function(value, key) {
+      $scope.bill_detail[key].quantity = parseInt($scope.bill_detail[key].quantity);
+      $scope.bill_detail[key].price = parseFloat($scope.bill_detail[key].price);
+    });
+
+    angular.forEach($scope.payments, function(value, key) {
+      $scope.payments[key].payment = parseFloat($scope.payments[key].payment);
+    });
 
     $scope.change_sc_pwd = function() {
       $scope.bill.sc_pwd = $scope.items_has_sundry ? 0 : $scope.bill.sc_pwd;
