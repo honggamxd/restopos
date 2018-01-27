@@ -745,7 +745,7 @@
      $scope.bill_preview.discount.room_service_charge = ($scope.has_room_service_charge?parseFloat($scope.bill_preview.total)*0.1:0);
      $scope.bill_preview.discount.amount_disount = (typeof $scope.bill_preview.discount.amount_disount !== 'undefined') ? $scope.bill_preview.discount.amount_disount : 0;
      $scope.bill_preview.discount.total = ($scope.bill_preview.discount.amount_disount + ($scope.bill_preview.total * $scope.bill_preview.discount.percent_disount * 0.01));
-     $scope.bill_preview.gross_billing = ($scope.bill_preview.total + $scope.bill_preview.discount.room_service_charge) - $scope.bill_preview.discount.total;
+     $scope.bill_preview.gross_billing = (parseFloat($scope.bill_preview.total) + parseFloat($scope.bill_preview.discount.room_service_charge)) - parseFloat($scope.bill_preview.discount.total);
      $scope.bill_preview.discount.sc_pwd_discount = $scope.bill_preview.gross_billing * $scope.bill_preview.customer_data.sc_pwd / $scope.bill_preview.customer_data.pax / 1.12 * .2;
      $scope.bill_preview.discount.sc_pwd_vat_exemption = $scope.bill_preview.gross_billing * $scope.bill_preview.customer_data.sc_pwd / $scope.bill_preview.customer_data.pax / 1.12 * .12;
      $scope.bill_preview.net_billing = $scope.bill_preview.gross_billing - $scope.bill_preview.discount.sc_pwd_discount - $scope.bill_preview.discount.sc_pwd_vat_exemption;
