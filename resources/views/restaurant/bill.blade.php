@@ -165,6 +165,7 @@
   <a href="javascript:void(0);" class="btn btn-info hideprint" ng-click="prompt_edit_invoice()"><span class="glyphicon glyphicon-edit"></span> Edit Invoice Number</a>
   <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
   <a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
+  <a ng-href="/restaurant/bill/@{{bill.id}}/edit" class="btn btn-success hideprint" ng-hide="customer_data == null" ng-cloak><span class="glyphicon glyphicon-edit"></span> Modify Order Slip</a>
 
 @if(Auth::user()->privilege=="restaurant_cashier")
 @else
@@ -197,6 +198,7 @@
     $scope.excess = {!! json_encode($payment_data['excess']) !!};
     $scope.payments = {!! json_encode($payment_data['result']) !!};
     $scope.has_payment = {!! json_encode($has_payment) !!};
+    $scope.customer_data = {!! json_encode($customer_data) !!};
 
     $scope.prompt_edit_invoice = function() {
       alertify.prompt(

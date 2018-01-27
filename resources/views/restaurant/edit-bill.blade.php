@@ -63,7 +63,7 @@
       <input type="number" ng-model="bill.pax" min="0">
     </b></td>
     <td ng-show="bill.type=='good_order'"># of SC/PWD: <b ng-cloak>
-      <input type="number" min="0" max="@{{bill.pax}}" ng-model="bill.sc_pwd">
+      <input type="number" min="0" max="@{{bill.pax}}" ng-model="bill.sc_pwd" ng-change="change_sc_pwd()">
     </b></td>
   </tr>
 </tbody>
@@ -186,6 +186,7 @@
 <div class="btn-group" role="group" aria-label="...">
   <button class="btn btn-primary" ng-if="remaining_balance() == 0" ng-click="save()">Save Changes</button>
 </div>
+@{{items_has_sundry()}}
 @endsection
 
 @push('scripts')
@@ -215,6 +216,23 @@
     $scope.customer_data = {!! json_encode($customer_data) !!};
     $scope.settlements = {!! json_encode($settlements) !!};
     $scope.total_discount = $scope.bill.total_discount;
+    $scope.items_has_sundry = function() {
+      items_has_sundry = false;
+      angular.forEach($scope.bill_detail, function(value, key) {
+        gross_billing += (value.quantity * value.price)
+        if(value.category.toUpperCase()=="SUNDRY"){
+          items_has_sundry = true;
+        }
+      });
+      return items_has_sundry;
+    }
+
+    $scope.change_sc_pwd = function() {
+      $scope.bill.sc_pwd = $scope.items_has_sundry ? 0 : $scope.bill.sc_pwd;
+      if($scope.items_has_sundry){
+        $.notify('The number of SC/PWD Must be 0 if the items to bill has Sundries.','error');
+      }
+    }
     $scope.gross_billing = function() {
       gross_billing = 0;
       angular.forEach($scope.bill_detail, function(value, key) {
@@ -231,11 +249,11 @@
     }
 
     $scope.sc_pwd_discount = function() {
-      return $scope.discounted_gross_billing()*$scope.bill.sc_pwd/$scope.bill.pax/1.12*.2;
+      return $scope.items_has_sundry() ? 0 :$scope.discounted_gross_billing()*$scope.bill.sc_pwd/$scope.bill.pax/1.12*.2;
     }
 
     $scope.sc_pwd_vat_exemption = function() {
-      return $scope.discounted_gross_billing()*$scope.bill.sc_pwd/$scope.bill.pax/1.12*.12;
+      return $scope.items_has_sundry() ? 0 :$scope.discounted_gross_billing()*$scope.bill.sc_pwd/$scope.bill.pax/1.12*.12;
     }
 
     $scope.net_billing = function() {

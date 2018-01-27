@@ -37,7 +37,7 @@ class Restaurant_bill_controller extends Controller
     }else{
       $data['has_payment'] = true;
     }
-    // return $data;
+    $data['customer_data'] = Restaurant_table_customer::onlyTrashed()->find($data['bill_info']['bill']['restaurant_table_customer_id']);
     return view('restaurant.bill',$data);
   }
 
@@ -158,7 +158,7 @@ class Restaurant_bill_controller extends Controller
     $this->validate($request, [
         'items' => 'valid_restaurant_billing|discount_except:sundry,'.$request->customer_data['sc_pwd']
       ],[
-        'discount_except' => 'The number of SC/PWD Must be 0 if the items to bill are Sundries',
+        'discount_except' => 'The number of SC/PWD Must be 0 if the items to bill has Sundries',
         'valid_restaurant_billing' => 'The quantity for billing of the items are not valid.'
       ]);
     DB::beginTransaction();
@@ -299,12 +299,14 @@ class Restaurant_bill_controller extends Controller
         $data["bill_detail"] = $restaurant_accepted_order_cancellation->where("restaurant_bill_id",$id)->get();
         foreach ($data["bill_detail"] as $bill_detail_data) {
           $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+          $bill_detail_data->category = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->category;
           $bill_detail_data->settlement = settlements($bill_detail_data->settlement);
         }
       }else{
         $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
         foreach ($data["bill_detail"] as $bill_detail_data) {
           $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+          $bill_detail_data->category = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->category;
         }
       }
       return $data;
