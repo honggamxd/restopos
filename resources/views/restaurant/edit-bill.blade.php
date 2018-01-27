@@ -218,7 +218,6 @@
     $scope.items_has_sundry = function() {
       items_has_sundry = false;
       angular.forEach($scope.bill_detail, function(value, key) {
-        gross_billing += (value.quantity * value.price)
         if(value.category.toUpperCase()=="SUNDRY"){
           items_has_sundry = true;
         }
@@ -237,8 +236,8 @@
     });
 
     $scope.change_sc_pwd = function() {
-      $scope.bill.sc_pwd = $scope.items_has_sundry ? 0 : $scope.bill.sc_pwd;
-      if($scope.items_has_sundry){
+      $scope.bill.sc_pwd = $scope.items_has_sundry() ? 0 : $scope.bill.sc_pwd;
+      if($scope.items_has_sundry()){
         $.notify('The number of SC/PWD Must be 0 if the items to bill has Sundries.','error');
       }
     }
