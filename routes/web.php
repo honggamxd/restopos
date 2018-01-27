@@ -52,7 +52,7 @@ Route::post('/api/restaurant/table/customer/bill/delete/{id}', 'Restaurant_bill_
 Route::post('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@bill_out');
 Route::get('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@show_temp_bill');
 Route::get('/api/restaurant/table/customer/bill/view/{id}', 'Restaurant_bill_controller@show_bill');
-Route::put('/api/restaurant/table/customer/bill/view/{id}', 'Restaurant_bill_controller@update');
+Route::put('/api/restaurant/table/customer/bill/view/{id}', 'Restaurant_bill_controller@update_invoice');
 Route::get('/api/restaurant/table/customer/bill/list/{id}', 'Restaurant_bill_controller@list_bill');
 Route::get('/api/restaurant/table/customer/orders/{id}', 'Restaurant_table_customer_controller@show_order');
 Route::get('/api/restaurant/table/customer/list', 'Restaurant_table_customer_controller@get_list');
@@ -64,6 +64,8 @@ Route::get('/api/restaurant/table/list/{type}', 'Restaurant_table_controller@get
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');
 Route::get('/restaurant/cancellations', 'Restaurant_order_cancellation_controller@index');
 Route::get('/restaurant/bill/{id}', 'Restaurant_bill_controller@index');
+Route::get('/restaurant/bill/{id}/edit', 'Restaurant_bill_controller@edit');
+Route::put('/restaurant/bill/{id}/edit', 'Restaurant_bill_controller@update');
 Route::get('/api/restaurant/orders/cancellations/show/{id?}', 'Restaurant_order_cancellation_controller@show');
 Route::get('/api/restaurant/orders/cancellations/view/{id}', 'Restaurant_order_cancellation_controller@show_data');
 Route::post('/api/restaurant/orders/cancellations/accept/{id?}', 'Restaurant_order_cancellation_controller@accept_request');

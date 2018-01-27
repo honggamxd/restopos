@@ -748,7 +748,6 @@
      $scope.bill_preview.discount.sc_pwd_discount = $scope.bill_preview.gross_billing * $scope.bill_preview.customer_data.sc_pwd / $scope.bill_preview.customer_data.pax / 1.12 * .2;
      $scope.bill_preview.discount.sc_pwd_vat_exemption = $scope.bill_preview.gross_billing * $scope.bill_preview.customer_data.sc_pwd / $scope.bill_preview.customer_data.pax / 1.12 * .12;
      $scope.bill_preview.net_billing = $scope.bill_preview.gross_billing - $scope.bill_preview.discount.sc_pwd_discount - $scope.bill_preview.discount.sc_pwd_vat_exemption;
-     $scope.bill_preview.net_billing = $scope.bill_preview.gross_billing - $scope.bill_preview.discount.sc_pwd_discount - $scope.bill_preview.discount.sc_pwd_vat_exemption;
      // console.log($scope.bill_preview);
    }
    $scope.make_bill = function(data) {

@@ -41,6 +41,85 @@ class Restaurant_bill_controller extends Controller
     return view('restaurant.bill',$data);
   }
 
+  public function edit(Request $request,$id)
+  {
+    $data["print"] = $request->print;
+    $data["id"] = $id;
+    $data['bill_info'] = $this->show_bill($request,$id);
+    $data['customer_data'] = Restaurant_table_customer::onlyTrashed()->find($data['bill_info']['bill']['restaurant_table_customer_id']);
+    if($data['customer_data']==null){
+      return abort(404);
+    }
+    $data['payment_data'] = app('App\Http\Controllers\Restaurant_payment_controller')->show($request,$id);
+    if($data['payment_data']['result']==array()){
+      $data['has_payment'] = false;
+    }else{
+      $data['has_payment'] = true;
+    }
+    foreach ($data['payment_data']['result'] as $key => $payment_data) {
+      $data['payment_data']['result'][$key]['settlement_array'] = [
+        'label' => settlements($payment_data['settlement_code']),
+        'value' => $payment_data['settlement_code'],
+      ];
+    }
+    $settlements = explode(',', DB::table('app_config')->first()->settlements);
+    $settlements_dropdown = array();
+    foreach ($settlements as $settlement) {
+      $settlements_dropdown[] = [
+        'label' => settlements($settlement),
+        'value' => $settlement,
+      ];
+    }
+    $data['settlements'] = $settlements_dropdown;
+    // return $data;
+    return view('restaurant.edit-bill',$data);
+  }
+
+  public function update(Request $request)
+  {
+    DB::beginTransaction();
+    try{
+      $bill = Restaurant_bill::find($request->bill['id']);
+      $bill->excess = $request->bill['excess'];
+      $bill->discounts = $request->bill['discounts'];
+      $bill->room_service_charge = $request->bill['room_service_charge'];
+      $bill->gross_billing = $request->bill['gross_billing'];
+      $bill->sc_pwd = $request->bill['sc_pwd'];
+      $bill->sc_pwd_discount = $request->bill['sc_pwd_discount'];
+      $bill->sc_pwd_vat_exemption = $request->bill['sc_pwd_vat_exemption'];
+      $bill->total_discount = $request->bill['total_discount'];
+      $bill->net_billing = $request->bill['net_billing'];
+      $bill->sales_net_of_vat_and_service_charge = $request->bill['sales_net_of_vat_and_service_charge'];
+      $bill->service_charge = $request->bill['service_charge'];
+      $bill->vatable_sales = $request->bill['vatable_sales'];
+      $bill->output_vat = $request->bill['output_vat'];
+      $bill->sales_inclusive_of_vat = $request->bill['sales_inclusive_of_vat'];
+      $bill->total_item_amount = $request->bill['total_item_amount'];
+      $bill->pax = $request->bill['pax'];
+      $bill->guest_name = $request->bill['guest_name'];
+      $bill->save();
+
+      foreach ($request->bill_detail as $form_bill_detail) {
+        $bill_detail = Restaurant_bill_detail::find($form_bill_detail['id']);
+        $bill_detail->quantity = $form_bill_detail['quantity'];
+        $bill_detail->price = $form_bill_detail['price'];
+        $bill_detail->save();
+      }
+
+      foreach ($request->payments as $form_payments) {
+        $payments = Restaurant_payment::find($form_payments['id']);
+        $payments->payment = $form_payments['payment'];
+        $payments->settlement = $form_payments['settlement_array']['value'];
+        $payments->save();
+      }
+      DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
+    
+
+
+  }
+
   public function bills_test(Request $request,$id)
   {
     
@@ -303,7 +382,7 @@ class Restaurant_bill_controller extends Controller
     catch(\Exception $e){DB::rollback();throw $e;}
   }
 
-  public function update(Request $request,$id)
+  public function update_invoice(Request $request,$id)
   {
     try{
       $restaurant_bill_data = Restaurant_bill::find($id);
