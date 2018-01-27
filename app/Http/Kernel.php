@@ -49,9 +49,21 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
+    /*
+        auth.level::
+        1 - cashier only
+        2 - restaurant admin and cashier only
+        3 - restaurant admin only
+        4 - restaurant admin and general admin only
+        5 - general admin only
+    */
     protected $routeMiddleware = [
         'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
-        'logged' => \App\Http\Middleware\Logged::class,
+        'auth.level.1' => \App\Http\Middleware\Cashier::class,
+        'auth.level.2' => \App\Http\Middleware\RestaurantAdminAndCashier::class,
+        'auth.level.3' => \App\Http\Middleware\RestaurantAdmin::class,
+        'auth.level.4' => \App\Http\Middleware\RestaurantAndGeneralAdmin::class,
+        'auth.level.5' => \App\Http\Middleware\Admin::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,

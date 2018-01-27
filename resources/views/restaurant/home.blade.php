@@ -340,7 +340,7 @@
                       <div style="width: 100%;cursor: pointer;" ng-click="toggle_special_instruction(this)" ng-init="cart_data.show_special_instruction=false">
                         @{{cart_data.name}}
                       </div>
-                      <input type="text" name="" ng-model="cart_data.special_instruction" ng-change="add_special_instruction(this)" ng-if="cart_data.special_instruction != '' || cart_data.show_special_instruction">
+                      <input type="text" name="" ng-model="cart_data.special_instruction" ng-change="add_special_instruction(this)" ng-if="(cart_data.special_instruction != '' && cart_data.special_instruction != null) || cart_data.show_special_instruction">
                     </td>
                     <td class="center aligned middle aligned" ng-init="cart_data.update_quantity=true">
                       <div ng-hide="cart_data.show_update_quantity" ng-click="toggle_update_quantity(this)" style="width: 100%;cursor: pointer;">@{{cart_data.quantity}}</div>
@@ -409,7 +409,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="cart_data in table_customer_cart" ng-cloak>
-              <td>@{{cart_data.name}}<span ng-if="cart_data.special_instruction != ''"><br>(@{{cart_data.special_instruction}})</span></td>
+              <td>@{{cart_data.name}}<span ng-if="cart_data.special_instruction != '' && cart_data.special_instruction != null"><br>(@{{cart_data.special_instruction}})</span></td>
               <td style="text-align: center;" ng-bind="cart_data.quantity"></td>
               <td style="text-align: right;">@{{cart_data.price|currency:""}}</td>
             </tr>
@@ -602,7 +602,7 @@
             </thead>
             <tbody>
               <tr ng-repeat="bill_preview_data in bill_preview.items">
-                <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != ''"><br>(@{{bill_preview_data.special_instruction}})</span></td>
+                <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != '' && bill_preview_data.special_instruction != null"><br>(@{{bill_preview_data.special_instruction}})</span></td>
                 <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
                 <td class="center aligned middle aligned">
                   <input style="width: 100px" type="number" min="0" ng-model="bill_preview_data.quantity_to_cancel">
@@ -685,7 +685,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="bill_preview_data in bill_preview.items" ng-class="{'warning':bill_preview_data.category=='SUNDRY'}">
-              <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != '' bill_preview_data.special_instruction != null"><br>(@{{bill_preview_data.special_instruction}})</span></td>
+              <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != '' && bill_preview_data.special_instruction != null"><br>(@{{bill_preview_data.special_instruction}})</span></td>
               <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
               <td class="center aligned middle aligned">
                 <input style="width: 100px" type="number" ng-init="bill_preview_data.quantity_to_bill = bill_preview_data.quantity" ng-model="bill_preview_data.quantity_to_bill" ng-change="bill_preview_total(this)">
