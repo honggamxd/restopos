@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Validator;
 use DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
 
         Validator::extend('password', function($attribute, $value, $parameters, $validator) {
             $user_data = DB::table($parameters[0])->where('id',$parameters[1])->first();
-            return $user_data->password===md5($value);
+            return Hash::check(md5($value), $user_data->password);
         });
 
         Validator::extend('custom_unique', function($attribute, $value, $parameters, $validator) {
