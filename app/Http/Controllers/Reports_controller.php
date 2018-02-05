@@ -630,7 +630,7 @@ class Reports_controller extends Controller
     $menu_popularity->whereBetween('restaurant_bill_detail.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $menu_popularity->join('restaurant_menu','restaurant_menu.id','=','restaurant_menu_id');
     $menu_popularity->leftJoin('restaurant_bill','restaurant_bill.id','=','restaurant_bill_id');
-    $menu_popularity->where('restaurant_bill','=','good_order');
+    $menu_popularity->where('restaurant_bill.type','=','good_order');
     if($request->restaurant_id!=null){
       $menu_popularity->where('restaurant_menu.restaurant_id',$request->restaurant_id);
     }
