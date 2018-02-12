@@ -18,6 +18,8 @@ use App\Restaurant_accepted_order_cancellation;
 use App\Restaurant_order_cancellation;
 use App\Restaurant_payment;
 use App\Restaurant_meal_types;
+use App\Restaurant_invoice_number_log;
+use App\User;
 use Auth;
 
 class Restaurant_bill_controller extends Controller
@@ -390,9 +392,24 @@ class Restaurant_bill_controller extends Controller
       $restaurant_bill_data = Restaurant_bill::find($id);
       $restaurant_bill_data->invoice_number = $request->invoice_number;
       $restaurant_bill_data->save();
+
+      $invoice_number_log = new Restaurant_invoice_number_log;
+      $invoice_number_log->invoice_number = $request->invoice_number;
+      $invoice_number_log->user_id = Auth::user()->id;
+      $invoice_number_log->restaurant_bill_id = $id;
+      $invoice_number_log->save();
       DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
+  }
+
+  public function show_invoice_number_logs(Request $request,$id)
+  {
+    $logs = Restaurant_invoice_number_log::where('restaurant_bill_id',$id)->get();
+    foreach ($logs as $log) {
+      $log->user_data =  User::withTrashed()->find($log->user_id);
+    }
+    return $logs;
   }
 
 }

@@ -162,6 +162,7 @@
   </tr>
 </table>
 <div class="btn-group" role="group" aria-label="...">
+  <a href="javascript:void(0);" class="btn btn-success hideprint" ng-click="show_invoice_number_logs()"><span class="glyphicon glyphicon-edit"></span> Invoice Number Logs</a>
   <a href="javascript:void(0);" class="btn btn-info hideprint" ng-click="prompt_edit_invoice()"><span class="glyphicon glyphicon-edit"></span> Edit Invoice Number</a>
   <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
   <a href="javascript:void(0);" class="btn btn-danger hideprint" onclick="window.close()" data-balloon-pos="right" data-balloon="Can be closed by pressing the key X in the keyboard."><span class="glyphicon glyphicon-remove"></span> Close</a>
@@ -171,6 +172,45 @@
 @else
 <a href="javascript:void(0);" class="btn btn-danger hideprint" ng-click="delete(this)" ng-if="bill.is_paid==1&&bill.deleted_at==null"><span class="glyphicon glyphicon-trash"></span> Delete</a>
 @endif
+</div>
+@endsection
+
+@section('modals')
+
+<div id="invoice-number-logs-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Invoice Number Logs</h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Date Modified</th>
+                <th style="text-align: center;">Invoice Number</th>
+                <th style="text-align: center;">User</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="item in invoice_number_logs">
+                <td>@{{item.created_at}}</td>
+                <td style="text-align: center;">@{{item.invoice_number}}</td>
+                <td style="text-align: center;">@{{item.user_data.username}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="add-table-form" ng-disabled="submit" ng-show="has_table" ng-class="{'loading':submit}">Submit</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 @endsection
 
@@ -192,6 +232,7 @@
     $scope.footer = {};
     $scope.payments = {};
     $scope.formdata = {};
+    $scope.invoice_number_logs = {};
     $scope.bill_info = {!! json_encode($bill_info) !!};
     $scope.bill = {!! json_encode($bill_info['bill']) !!};
     $scope.bill_detail = {!! json_encode($bill_info['bill_detail']) !!};
@@ -228,6 +269,24 @@
         function(){
           //cancel
         });
+    }
+
+    $scope.show_invoice_number_logs = function() {
+      $('#invoice-number-logs-modal').modal('show');
+      $scope.invoice_number_logs = {};
+      $http({
+        method: "GET",
+        url: "/api/restaurant/table/customer/bill/invoice-number-logs/" + $scope.bill.id,
+      }).then(function mySuccess(response) {
+        $scope.invoice_number_logs = response.data;
+      }, function(rejection) {
+        if (rejection.status != 422) {
+          request_error(rejection.status);
+        } else if (rejection.status == 422) {
+          console.log(rejection.statusText);
+        }
+        $scope.submit = false;
+      });
     }
     $scope.delete = function(data){
       alertify.prompt(

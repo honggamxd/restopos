@@ -53,6 +53,7 @@ Route::post('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_tabl
 Route::get('/api/restaurant/table/customer/bill/preview/{id}', 'Restaurant_table_customer_controller@show_temp_bill');
 Route::get('/api/restaurant/table/customer/bill/view/{id}', 'Restaurant_bill_controller@show_bill');
 Route::put('/api/restaurant/table/customer/bill/view/{id}', 'Restaurant_bill_controller@update_invoice');
+Route::get('/api/restaurant/table/customer/bill/invoice-number-logs/{id}', 'Restaurant_bill_controller@show_invoice_number_logs');
 Route::get('/api/restaurant/table/customer/bill/list/{id}', 'Restaurant_bill_controller@list_bill');
 Route::get('/api/restaurant/table/customer/orders/{id}', 'Restaurant_table_customer_controller@show_order');
 Route::get('/api/restaurant/table/customer/list', 'Restaurant_table_customer_controller@get_list');
