@@ -201,6 +201,21 @@
                 <td style="text-align: center;">@{{item.user_data.username}}</td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr ng-if="invoice_number_logs | isEmpty">
+                <td colspan="20" style="text-align: center;">
+                  <h1 ng-if="loading_table_customers">
+                    <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+                    <br>
+                    LOADING
+                  </h1>
+                  <h1>
+                    <span ng-if="!loading_table_customers" ng-cloak>NO DATA</span>
+                    <span ng-if="loading_table_customers" ng-cloak></span>
+                  </h1>
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
