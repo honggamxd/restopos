@@ -204,14 +204,14 @@
             <tfoot>
               <tr ng-if="invoice_number_logs | isEmpty">
                 <td colspan="20" style="text-align: center;">
-                  <h1 ng-if="loading_table_customers">
+                  <h1 ng-if="loading">
                     <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
                     <br>
                     LOADING
                   </h1>
                   <h1>
-                    <span ng-if="!loading_table_customers" ng-cloak>NO DATA</span>
-                    <span ng-if="loading_table_customers" ng-cloak></span>
+                    <span ng-if="!loading" ng-cloak>NO DATA</span>
+                    <span ng-if="loading" ng-cloak></span>
                   </h1>
                 </td>
               </tr>
@@ -247,6 +247,7 @@
     $scope.footer = {};
     $scope.payments = {};
     $scope.formdata = {};
+    $scope.loading = true;
     $scope.invoice_number_logs = {};
     $scope.bill_info = {!! json_encode($bill_info) !!};
     $scope.bill = {!! json_encode($bill_info['bill']) !!};
@@ -289,10 +290,12 @@
     $scope.show_invoice_number_logs = function() {
       $('#invoice-number-logs-modal').modal('show');
       $scope.invoice_number_logs = {};
+      $scope.loading = true;
       $http({
         method: "GET",
         url: "/api/restaurant/table/customer/bill/invoice-number-logs/" + $scope.bill.id,
       }).then(function mySuccess(response) {
+        $scope.loading = false;
         $scope.invoice_number_logs = response.data;
       }, function(rejection) {
         if (rejection.status != 422) {
@@ -300,7 +303,7 @@
         } else if (rejection.status == 422) {
           console.log(rejection.statusText);
         }
-        $scope.submit = false;
+        $scope.loading = false;
       });
     }
     $scope.delete = function(data){
