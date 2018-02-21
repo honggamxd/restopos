@@ -56,8 +56,10 @@ password: admin
 * Define the name of the restaurant in the name column
 
 ## Built With
-
 * [Laravel 5.4](https://laravel.com/)
+* [AngularJS](https://angularjs.org/)
+* [Bootstrap 3](https://getbootstrap.com/)
+* [Semantic UI](https://semantic-ui.com/)
 
 ## Demo
 * [Restaurant Ordering System Demo](http://restaurant-ordering-system.systemph.com/)
