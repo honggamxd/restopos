@@ -48,6 +48,7 @@ php artisan migrate:refresh --seed
 
 ## Default Admin Account
 username: admin
+
 password: admin
 
 ## Built With
