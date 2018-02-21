@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
       );
 
       DB::table('restaurant')->insert([
-          'name' => 'Parks Office',
+          'name' => 'Restaurant Name',
       ]);
 
       $user = new User;
