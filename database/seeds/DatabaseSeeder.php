@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
         ]
       );
 
+      DB::table('restaurant')->insert([
+          'name' => 'Parks Office',
+      ]);
+
       $user = new User;
       $user->privilege = 'admin';
       $user->name = 'admin';

@@ -6,7 +6,7 @@
 
 ## Installation
 1. Clone this GIT Repository
-2. Run this commands:
+2. Run these commands:
 ```
 composer install
 ```
@@ -51,9 +51,13 @@ username: admin
 
 password: admin
 
+## Adding Restaurants
+* Insert new row in restaurant table
+* Define the name of the restaurant in the name column
+
 ## Built With
 
 * [Laravel 5.4](https://laravel.com/)
 
 ## Demo
-* [Restaurant Ordering System Demo](https://laravel.com/)
+* [Restaurant Ordering System Demo](http://restaurant-ordering-system.systemph.com/)
