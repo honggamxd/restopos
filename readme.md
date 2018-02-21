@@ -1,5 +1,12 @@
 # Restaurant Ordering System
 
+## Built With
+* [Laravel 5.4](https://laravel.com/)
+* [AngularJS](https://angularjs.org/)
+* [Bootstrap 3](https://getbootstrap.com/)
+* [Semantic UI](https://semantic-ui.com/)
+
+
 ## Prerequisites
 * [composer](https://getcomposer.org/) - PHP Dependency Management
 * [Node.js](https://nodejs.org/en/)
@@ -46,20 +53,17 @@ php artisan migrate:refresh --seed
 * Can Generate his report during the day. 
 * Can make an Order Slip and other transactions in the restaurant
 
-## Default Admin Account
-username: admin
+## Demo
+* [Restaurant Ordering System Demo](http://restaurant-ordering-system.systemph.com/)
 
+## Default Admin Account
+username: admin<br>
 password: admin
 
 ## Adding Restaurants
 * Insert new row in restaurant table
 * Define the name of the restaurant in the name column
 
-## Built With
-* [Laravel 5.4](https://laravel.com/)
-* [AngularJS](https://angularjs.org/)
-* [Bootstrap 3](https://getbootstrap.com/)
-* [Semantic UI](https://semantic-ui.com/)
-
-## Demo
-* [Restaurant Ordering System Demo](http://restaurant-ordering-system.systemph.com/)
+## Must Add in the system before making Order Slips
+* User Accounts (Restaurant Admin and Cashier)
+* Restaurant Menu,Tables,Servers or Waiters using Admin or Restaurant Admin account
