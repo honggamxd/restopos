@@ -28,23 +28,23 @@ php artisan migrate:refresh --seed
 ```
 
 ## User Privileges and Features
-* Admin
-** Full Control of the users module
-** Can add table, menu and waiters in the restaurant
-** Can Generate All kinds Reports by Date Range
-** Can modify restaurant order slip.
-** Cannot make an Order Slip and other transactions in the restaurant
+### Admin
+* Full Control of the users module
+* Can add table, menu and waiters in the restaurant
+* Can Generate All kinds Reports by Date Range
+* Can modify restaurant order slip.
+* Cannot make an Order Slip and other transactions in the restaurant
 
-* Restaurant Admin
-** Can accept cancellation of orders
-** Can Generate Reports by Date Range
-** Can add table, menu and waiters in the restaurant
-** Can modify restaurant order slip.
-** Cannot make an Order Slip and other transactions in the restaurant
+### Restaurant Admin
+* Can accept cancellation of orders
+* Can Generate Reports by Date Range
+* Can add table, menu and waiters in the restaurant
+* Can modify restaurant order slip.
+* Cannot make an Order Slip and other transactions in the restaurant
 
-* Restaurant Cashier
-** Can Generate his report during the day. 
-** Can make an Order Slip and other transactions in the restaurant
+### Restaurant Cashier
+* Can Generate his report during the day. 
+* Can make an Order Slip and other transactions in the restaurant
 
 ## Default Admin Account
 username: admin
