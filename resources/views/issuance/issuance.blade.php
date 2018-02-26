@@ -8,7 +8,7 @@
 </style>
 @endsection
 @section('breadcrumb')
-<a class="section" href="/issuance">Issuance</a>
+<a class="section" href="/issuance/list">Issuances</a>
 <i class="right angle icon divider"></i>
 <div class="active section">View</div>
 @endsection
@@ -16,11 +16,10 @@
 <h1 style="text-align: center;">Issuance</h1>
 <div class="col-sm-12">
   <p ng-cloak>
-    ID : @{{issuance.id}} <br>
-    Date : @{{issuance.date_}} <br>
-    Time : @{{issuance.date_time}} <br>
     Issuance # : @{{issuance.issuance_number}} <br>
     Issuance To : @{{issuance.issuance_to}} <br>
+    Date : @{{issuance.date_}} <br>
+    Time : @{{issuance.date_time}} <br>
   </p>
   <div class="table-responsive">
     <table class="ui single line unstackable table">

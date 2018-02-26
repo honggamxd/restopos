@@ -53,11 +53,11 @@
         <i class="browser icon"></i>
         Inventory
     </a>
-    <a class="item" href="/issuance">
+    <a class="item" href="/issuance/create">
         <i class="browser icon"></i>
         Issuance
     </a>
-    <a class="item" href="/purchase">
+    <a class="item" href="/purchase/create">
         <i class="in cart icon"></i>
         Purchases
     </a>

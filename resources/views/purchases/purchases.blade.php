@@ -8,17 +8,16 @@
 </style>
 @endsection
 @section('breadcrumb')
-<a class="section" href="/purchases">Purchases</a>
+<a class="section" href="/purchase/list">Purchases</a>
 <i class="right angle icon divider"></i>
 <div class="active section">View</div>
 @endsection
 @section('content')
 <div class="col-sm-12">
   <p ng-cloak>
-    ID : @{{purchase.id}} <br>
+    PO # : @{{purchase.po_number}} <br>
     Date : @{{purchase.date_}} <br>
     Time : @{{purchase.date_time}} <br>
-    PO # : @{{purchase.po_number}} <br>
   </p>
   <div class="table-responsive">
     <table class="ui single line unstackable table">

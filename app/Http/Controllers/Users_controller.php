@@ -133,7 +133,7 @@ class Users_controller extends Controller
     // return $request;
     $this->validate($request, [
         'name' => 'required',
-        'username' => 'required|unique:user|min:5|max:12',
+        'username' => 'required|unique:user,username,NULL,id,deleted_at,NULL|min:5|max:12',
         'password' => 'required|min:5|max:12',
         'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
     ],

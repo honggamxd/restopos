@@ -91,7 +91,8 @@ class Inventory_item_controller extends Controller
     $data['items'] = $inventory_item_detail->orderBy('id','DESC')->where('inventory_item_id',$id)->get();
     foreach ($data['items'] as $inventory_item_detail_item) {
       $inventory_item_detail_item->date_ = date('m/d/Y',$inventory_item_detail_item->date_);
-      $inventory_item_detail_item->quantity = abs($inventory_item_detail_item->quantity);
+      $inventory_item_detail_item->quantity = $inventory_item_detail_item->quantity;
+      $inventory_item_detail_item->reference_data = DB::table($inventory_item_detail_item->reference_table)->where('id',$inventory_item_detail_item->reference_id)->first();
     }
     return $data;
     // return view('inventory_item_history');

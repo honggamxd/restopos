@@ -81,9 +81,6 @@ Route::post('/api/restaurant/orders/user-cancellations/delete/{id}', 'Restaurant
 //api get
 Route::get('/api/search/inventory/item/{type}/{option}', 'Inventory_item_controller@search_item');
 
-
-Route::get('/api/purchase/cart', 'Purchases_controller@show_cart');
-Route::get('/api/purchase/cart/show', 'Purchases_controller@cart');
 Route::get('/api/inventory/item/show', 'Inventory_item_controller@show');
 
 
@@ -99,8 +96,12 @@ Route::get('/api/restaurant/inventory/items', 'Restaurant_inventory_controller@s
 
 
 //Purchases
-Route::get('/purchase', 'Purchases_controller@index')->middleware('auth.level.5');
+Route::get('/purchase/list', 'Purchases_controller@show_list')->middleware('auth.level.5');
+Route::get('/purchase/create', 'Purchases_controller@index')->middleware('auth.level.5');
 Route::get('/purchase/view/{id}', 'Purchases_controller@show')->middleware('auth.level.5');
+Route::get('/api/purchase/list', 'Purchases_controller@get_list');
+Route::get('/api/purchase/cart', 'Purchases_controller@show_cart');
+Route::get('/api/purchase/cart/show', 'Purchases_controller@cart');
 Route::post('/api/purchase/cart/item/add/{id}', 'Purchases_controller@store_cart');
 Route::post('/api/purchase/cart/info', 'Purchases_controller@add_info_cart');
 Route::post('/api/purchase/make', 'Purchases_controller@store_purchase');
@@ -110,9 +111,11 @@ Route::delete('/api/purchase/cart/delete', 'Purchases_controller@destroy_cart');
 
 
 //Issuances
-Route::get('/issuance', 'Issuance_controller@index')->middleware('auth.level.5');
+Route::get('/issuance/list', 'Issuance_controller@show_list')->middleware('auth.level.5');
+Route::get('/issuance/create', 'Issuance_controller@index')->middleware('auth.level.5');
 Route::get('/issuance/view/{id}', 'Issuance_controller@show')->middleware('auth.level.5');
 Route::get('/api/issuance/cart', 'Issuance_controller@show_cart');
+Route::get('/api/issuance/list', 'Issuance_controller@get_list');
 Route::post('/api/issuance/cart/item/add/{id}', 'Issuance_controller@store_cart');
 Route::post('/api/issuance/cart/info', 'Issuance_controller@add_info_cart');
 Route::post('/api/issuance/make', 'Issuance_controller@store_issuance');

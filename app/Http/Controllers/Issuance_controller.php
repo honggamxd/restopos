@@ -23,6 +23,23 @@ class Issuance_controller extends Controller
     $data["issuance_to"] = DB::table('issuance_to')->where('deleted',0)->get();
     return view('issuance.index',$data);
   }
+  public function show_list(Request $request)
+  {
+    return view('issuance.list');
+  }
+
+  public function get_list(Request $request)
+  {
+    $result = Issuance::query();
+    if($request->search!=null&&trim($request->search)!=""){
+      $result->where('issuance_number','LIKE',"%$request->search%");
+    }
+    $result->orderBy('issuance_number');
+    $data['pagination'] = (string)$result->paginate(50);
+    $data['result'] = $result->paginate(50);
+    return $data;
+  }
+
   public function show(Request $request,$id)
   {
     $issuance = new Issuance;
@@ -123,11 +140,12 @@ class Issuance_controller extends Controller
     $this->validate($request, [
         'items' => 'not_zero_quantity|valid_inventory_control:inventory_item_detail,inventory_item_id',
         'issuance_to' => 'required',
-        'issuance_number' => 'required|max:255',
+        'issuance_number' => 'required|max:255|unique:issuance,issuance_number,NULL,id,deleted_at,NULL',
         'comments' => 'max:255'
     ],[
       'not_zero_quantity' => 'The quantity of items to be issued must not be less than 1.',
-      'valid_inventory_control' => 'The number of quantity did not match to your remaining stocks.'
+      'valid_inventory_control' => 'The number of quantity did not match to your remaining stocks.',
+      'issuance_number.unique' => 'The Issuance Number is already in the list.'
     ]);
     DB::beginTransaction();
     try{

@@ -35,22 +35,27 @@ Current Quantity: <b>@{{item_data.current_quantity}}</b><br>
     <table class="ui sortable compact table unstackable" id="menu-table">
       <thead>
         <tr>
+          <th class="center aligned middle aligned">Reference Number</th>
           <th class="center aligned middle aligned">Date</th>
           <th class="center aligned middle aligned">Quantity</th>
           <th class="center aligned middle aligned">Unit Cost</th>
           <th class="center aligned middle aligned">Total Cost</th>
           <th class="center aligned middle aligned">Remarks</th>
-          <th class="center aligned middle aligned">Reference ID</th>
         </tr>
       </thead>
       <tbody ng-cloak>
         <tr ng-repeat="item_data in items">
+          <td class="center aligned middle aligned">
+            <a ng-href="/@{{item_data.reference_table}}/view/@{{item_data.reference_id}}">
+              <span ng-if="item_data.reference_table=='purchase'">PO #: @{{item_data.reference_data.po_number}}</span>
+              <span ng-if="item_data.reference_table=='issuance'">Issuance #:@{{item_data.reference_data.issuance_number}}</span>
+            </a>
+          </td>
           <td class="center aligned middle aligned">@{{item_data.date_}}</td>
           <td class="center aligned middle aligned">@{{item_data.quantity}}</td>
           <td class="center aligned middle aligned">@{{item_data.cost_price|currency:""}}</td>
           <td class="center aligned middle aligned">@{{item_data.quantity*item_data.cost_price|currency:""}}</td>
-          <td class="center aligned middle aligned">@{{item_data.remarks}}</td>
-          <td class="center aligned middle aligned"><a href="/@{{item_data.reference_table}}/view/@{{item_data.reference_id}}">@{{item_data.reference_id}}</a></td>
+          <td class="center aligned middle aligned">@{{item_data.reference_data.comments}}</td>
         </tr>
       </tbody>
     </table>

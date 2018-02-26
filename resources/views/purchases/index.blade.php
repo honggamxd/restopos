@@ -8,10 +8,12 @@
 </style>
 @endsection
 @section('breadcrumb')
-<div class="active section">Purchases</div>
+<a class="section" href="/purchase/list">Purchases</a>
+<i class="right angle icon divider"></i>
+<div class="active section">Create</div>
 @endsection
 @section('content')
-<h1 style="text-align: center;">Purchase</h1>
+<h1 style="text-align: center;">Create Purchase</h1>
 <div class="col-sm-9">
   <div class="row">
     <div class="col-sm-10">

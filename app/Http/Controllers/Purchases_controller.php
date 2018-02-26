@@ -22,6 +22,23 @@ class Purchases_controller extends Controller
     return view('purchases.index');
   }
 
+  public function show_list(Request $request)
+  {
+    return view('purchases.list');
+  }
+
+  public function get_list(Request $request)
+  {
+    $result = Purchase::query();
+    if($request->search!=null&&trim($request->search)!=""){
+      $result->where('po_number','LIKE',"%$request->search%");
+    }
+    $result->orderBy('po_number');
+    $data['pagination'] = (string)$result->paginate(50);
+    $data['result'] = $result->paginate(50);
+    return $data;
+  }
+
   public function store_cart(Request $request,$id)
   {
     $inventory = new Inventory_item;
@@ -125,10 +142,11 @@ class Purchases_controller extends Controller
   {
     $this->validate($request, [
         'items' => 'not_zero_quantity',
-        'po_number' => 'required|max:255',
+        'po_number' => 'required|max:255|unique:purchase,po_number,NULL,id,deleted_at,NULL',
         'comments' => 'max:255'
     ],[
-      'not_zero_quantity' => 'The quantity of items to be purchased must not be less than 1.'
+      'not_zero_quantity' => 'The quantity of items to be purchased must not be less than 1.',
+      'po_number.unique' => 'The Purchase Order Number is already in the list.'
     ]);
     DB::beginTransaction();
     try{
@@ -172,7 +190,7 @@ class Purchases_controller extends Controller
         DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
-    return response()->json($FormData);
+    // return response()->json($FormData);
     
     return $purchase_data->id;
     // return $item_data;
