@@ -12,6 +12,8 @@ use App\Restaurant_payment;
 use App\Restaurant_meal_types;
 use Carbon\Carbon;
 use Auth;
+use App;
+use PDF;
 
 class Users_controller extends Controller
 {
@@ -221,5 +223,22 @@ class Users_controller extends Controller
     }
     $data['results'] = $results;
     return $data;
+  }
+
+  public function purchase_order(Request $request)
+  {
+    $data['test'] = 'adhadhjasd';
+    $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
+    $pdf->loadView('pdf.purchase_order', $data);
+    return $pdf->stream('invoice.pdf');
+  }
+
+  public function receiving_report(Request $request)
+  {
+    $data['test'] = 'adhadhjasd';
+    $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
+    $pdf->loadView('pdf.receiving_report', $data);
+    // return view('pdf.receiving_report');
+    return $pdf->stream('invoice.pdf');
   }
 }

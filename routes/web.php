@@ -158,3 +158,5 @@ Route::get('/restaurant/settings','Restaurant_controller@settings')->middleware(
 Route::get('/clean_bill_detail','Users_controller@clean_bill_detail');
 Route::get('/restaurant_payment','Users_controller@restaurant_payment');
 Route::get('/bill_test','Restaurant_bill_controller@test');
+Route::get('/purchase_order','Users_controller@purchase_order');
+Route::get('/receiving_report','Users_controller@receiving_report');
