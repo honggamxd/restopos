@@ -10,6 +10,7 @@
 @yield('css')
 </head>
 <body ng-app="main" ng-controller="content-controller">
+@yield('overlay-div')
 <div class="ui left vertical inverted labeled icon sidebar menu">
     @if(Auth::user()->privilege=="restaurant_cashier")
     <a class="item" href="/">
