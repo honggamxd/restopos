@@ -79,14 +79,14 @@
       @if(Auth::user()->privilege=="admin")
       <div class="form-group">
       <label>Outlet:</label>
-      <select class="form-control input-sm" ng-options="item as item.name for item in restaurants track by item.id" ng-model="restaurant">
+      <select class="form-control input-sm" ng-options="item as item.name for item in restaurants track by item.id" ng-model="restaurant" ng-change="change_filters()">
         <option value="">All Outlets</option>
       </select>
       </div>
       @endif
       <div class="form-group">
         <label>Meal Type:</label>
-        <select class="form-control input-sm" ng-model="meal_type">
+        <select class="form-control input-sm" ng-model="meal_type" ng-change="change_filters()">
           <option value="">All</option>
           <option value="Breakfast">Breakfast</option>
           <option value="Lunch">Lunch</option>
@@ -96,23 +96,23 @@
       </div>
       <div class="form-group">
         <label>Server:</label>
-        <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server">
+        <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server" ng-change="change_filters()">
           <option value="">All Waiter/Waitress</option>
         </select>
       </div>
       <div class="form-group">
       <label>Cashier:</label>
-      <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_cashiers track by item.id" ng-model="cashier">
+      <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_cashiers track by item.id" ng-model="cashier" ng-change="change_filters()">
         <option value="">All Cashiers</option>
       </select>
       </div>
       <div class="form-group">
       <label>Date From:</label>
-      <input type="text" class="form-control input-sm" id="date_from" ng-model="date_from" ng-change="change_date()" readonly>
+      <input type="text" class="form-control input-sm" id="date_from" ng-model="date_from" ng-change="change_filters()" readonly>
       </div>
       <div class="form-group">
       <label>Date To:</label>
-      <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" ng-change="change_date()" readonly>
+      <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" ng-change="change_filters()" readonly>
       <div class="ui buttons">
         <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}" ng-disabled="submit" ng-submit="export">Filter Results</button>
         <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="export" ng-submit="export" ng-if="!submit && !has_daterange_changed" ng-cloak>Download</button>
@@ -470,7 +470,7 @@
       }
     }
 
-    $scope.change_date = function() {
+    $scope.change_filters = function() {
       $scope.has_daterange_changed = true;
     }
     
