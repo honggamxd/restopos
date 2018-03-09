@@ -72,7 +72,7 @@
   </div>
   <div>
     @if(Auth::user()->privilege=="restaurant_cashier")
-    <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button>
+    <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-if="!(bills | isEmpty)" ng-cloak>Download</button>
     @else
     <label>Filter By:</label>
     <form class="form-inline" style="margin-bottom: 20px;">
@@ -115,7 +115,7 @@
       <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" ng-change="change_filters()" readonly>
       <div class="ui buttons">
         <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}" ng-disabled="submit" ng-submit="export">Filter Results</button>
-        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="export" ng-submit="export" ng-if="!submit && !has_daterange_changed" ng-cloak>Download</button>
+        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="export" ng-submit="export" ng-if="!submit && !has_daterange_changed && !(bills | isEmpty)" ng-cloak>Download</button>
       </div>
       </div>
     </form>
