@@ -225,11 +225,23 @@ class Users_controller extends Controller
     return $data;
   }
 
+  public function purchase_request(Request $request)
+  {
+    $data['test'] = 'adhadhjasd';
+    $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
+    $pdf->setPaper('legal', 'portrait');
+    $pdf->loadView('pdf.purchase-request', $data);
+    // return view('pdf.purchase-request');
+    return $pdf->stream('invoice.pdf');
+  }
+
   public function purchase_order(Request $request)
   {
     $data['test'] = 'adhadhjasd';
     $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
-    $pdf->loadView('pdf.purchase_order', $data);
+    $pdf->setPaper('legal', 'portrait');
+    $pdf->loadView('pdf.purchase-order', $data);
+    // return view('pdf.purchase-order');
     return $pdf->stream('invoice.pdf');
   }
 
@@ -237,8 +249,27 @@ class Users_controller extends Controller
   {
     $data['test'] = 'adhadhjasd';
     $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
-    $pdf->loadView('pdf.receiving_report', $data);
-    // return view('pdf.receiving_report');
+    $pdf->setPaper('legal', 'portrait');
+    $pdf->loadView('pdf.receiving-report', $data);
+    // return view('pdf.receiving-report');
+    return $pdf->stream('invoice.pdf');
+  }
+  public function stock_issuance(Request $request)
+  {
+    $data['test'] = 'adhadhjasd';
+    $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
+    $pdf->setPaper('legal', 'portrait');
+    $pdf->loadView('pdf.stock-issuance', $data);
+    // return view('pdf.stock-issuance');
+    return $pdf->stream('invoice.pdf');
+  }
+  public function request_to_canvass(Request $request)
+  {
+    $data['test'] = 'adhadhjasd';
+    $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
+    $pdf->setPaper('legal', 'portrait');
+    $pdf->loadView('pdf.request-to-canvass', $data);
+    // return view('pdf.request-to-canvass');
     return $pdf->stream('invoice.pdf');
   }
 }

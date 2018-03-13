@@ -158,5 +158,8 @@ Route::get('/restaurant/settings','Restaurant_controller@settings')->middleware(
 Route::get('/clean_bill_detail','Users_controller@clean_bill_detail');
 Route::get('/restaurant_payment','Users_controller@restaurant_payment');
 Route::get('/bill_test','Restaurant_bill_controller@test');
-Route::get('/purchase_order','Users_controller@purchase_order');
-Route::get('/receiving_report','Users_controller@receiving_report');
+Route::get('/purchase-request.pdf','Users_controller@purchase_request');
+Route::get('/purchase-order.pdf','Users_controller@purchase_order');
+Route::get('/receiving-report.pdf','Users_controller@receiving_report');
+Route::get('/stock-issuance.pdf','Users_controller@stock_issuance');
+Route::get('/request-to-canvass.pdf','Users_controller@request_to_canvass');

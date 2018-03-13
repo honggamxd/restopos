@@ -1,0 +1,124 @@
+@extends('layouts.pdf')
+
+@section('title', 'Purchase Order')
+
+@section('css')
+<style type="text/css">
+  table{
+    width: 100%;
+  }
+</style>
+@endsection
+
+@section('content')
+  
+  <img style="position:absolute;right:0.5in;width: 150pt" src="{{public_path().('/assets/images/logo.png')}}">
+  <br>
+  <br>
+  <br>
+  <p style="text-align: center;" class="main-heading">e-PURCHASE ORDER</p>
+  <br>
+  <br>
+  <p style="text-align: left;margin-left: 72%" class="sub-heading">
+    No.<br>
+    Ref PR no.:<br>
+    Ref PO no.:<br>
+  </p>
+  <br>
+  <br>
+  <table style="width: 100%" class="table-bordered">
+    <tr>
+      <th style="width: 50%">
+        SUPPLIER NAME: <span></span>
+      </th>
+      <th style="width: 50%;">
+        DATE: <span></span>
+      </th>
+    </tr>
+    <tr>
+      <th style="width: 50%">
+        SUPPLIER ADDRESS: <span></span>
+      </th>
+      <th style="width: 50%;">
+        REQUESTING DEPARTMENT: <span></span>
+      </th>
+    </tr>
+    <tr>
+      <th style="width: 50%">
+        TIN: <span></span>
+      </th>
+      <th style="width: 50%;">
+        PURPOSE: <span></span>
+      </th>
+    </tr>
+    <tr>
+      <th style="width: 50%">
+        TERM: <span></span>
+      </th>
+      <th style="width: 50%;">
+        REQUEST CHARGEABLE TO: <span></span>
+      </th>
+    </tr>
+  </table>
+  <table class="table-bordered">
+    <thead>
+      <tr>
+        <th style="text-align: center;">Quantity</th>
+        <th style="text-align: center;">Unit of Measure</th>
+        <th style="text-align: center;">Particulars / Item Description</th>
+        <th style="text-align: center;">Unit Price</th>
+        <th style="text-align: right;">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th style="text-align: center;">1</th>
+        <th style="text-align: center;">PC</th>
+        <th style="text-align: center;">DESCRIPTION</th>
+        <th style="text-align: center;">224.00</th>
+        <th style="text-align: right;">224.00</th>
+      </tr>
+    </tbody>
+    <tbody>
+      <tr>
+        <th style="text-align: center;"></th>
+        <th style="text-align: center;"></th>
+        <th style="text-align: center;"></th>
+        <th style="text-align: right;">TOTAL P</th>
+        <th style="text-align: right;"></th>
+      </tr>
+    </tbody>
+  </table
+  <br>
+  <table style="width: 100%">
+    <tr>
+      <td style="width: 33%">
+        <div style="width: 75%;">
+          Requested By:<br><br><br><br><br>
+          <p style="border-bottom: 1pt solid black"></p>
+          <p style="text-align: center;padding-top: 2pt;"></p>
+        </div>
+      </td>
+      <td style="width: 33%;">
+        <div style="width: 75%;margin-right: auto;margin-left: auto">
+          Noted By:<br><br><br><br><br>
+          <p style="border-bottom: 1pt solid black"></p>
+          <p style="text-align: center;padding-top: 2pt;"></p>
+        </div>
+      </td>
+      <td style="width: 33%;">
+        <div style="width: 75%;float: right;">
+          Approved by:<br><br><br><br><br>
+          <p style="border-bottom: 1pt solid black"></p>
+          <p style="text-align: center;padding-top: 2pt;"></p>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+@endsection
+
+@push('scripts')
+<script type="text/javascript">  
+</script>
+@endpush
