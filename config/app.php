@@ -179,6 +179,9 @@ return [
         //PDF Serive
         Barryvdh\DomPDF\ServiceProvider::class,
 
+        Spatie\Fractal\FractalServiceProvider::class,
+        Tightenco\Ziggy\ZiggyServiceProvider::class,
+
     ],
 
     /*
@@ -228,6 +231,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Uuid' => Webpatser\Uuid\Uuid::class,
+
+        'Fractal' => Spatie\Fractal\FractalFacade::class,
 
     ],
 

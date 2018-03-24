@@ -22,7 +22,7 @@ class Restaurant_controller extends Controller
       if(Auth::user()->privilege=="admin"){
         $app_config = DB::table('app_config')->first();
         $data["categories"] = explode(',', $app_config->categories);
-        return view('inventory',$data);
+        return view('inventory.items',$data);
       }elseif(Auth::user()->privilege=="restaurant_admin"){
         $app_config = DB::table('app_config')->first();
         $restaurant = DB::table('restaurant')->get();

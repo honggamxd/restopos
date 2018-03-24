@@ -90,39 +90,6 @@ Route::get('/inventory/item/{id}', 'Inventory_item_controller@index_item_history
 Route::post('/api/inventory/item/add', 'Inventory_item_controller@store');
 Route::get('/api/inventory/item/history/{id}', 'Inventory_item_controller@show_item_history');
 
-//Restaurant Inventory
-Route::get('/restaurant/inventory', 'Restaurant_inventory_controller@index')->middleware('auth.level.5');
-Route::get('/api/restaurant/inventory/items', 'Restaurant_inventory_controller@show_items');
-
-
-//Purchases
-Route::get('/purchase/list', 'Purchases_controller@show_list')->middleware('auth.level.5');
-Route::get('/purchase/create', 'Purchases_controller@index')->middleware('auth.level.5');
-Route::get('/purchase/view/{id}', 'Purchases_controller@show')->middleware('auth.level.5');
-Route::get('/api/purchase/list', 'Purchases_controller@get_list');
-Route::get('/api/purchase/cart', 'Purchases_controller@show_cart');
-Route::get('/api/purchase/cart/show', 'Purchases_controller@cart');
-Route::post('/api/purchase/cart/item/add/{id}', 'Purchases_controller@store_cart');
-Route::post('/api/purchase/cart/info', 'Purchases_controller@add_info_cart');
-Route::post('/api/purchase/make', 'Purchases_controller@store_purchase');
-Route::put('/api/purchase/cart/item/update/{id}', 'Purchases_controller@update_cart_items');
-Route::delete('/api/purchase/cart/item/delete/{id}', 'Purchases_controller@delete_cart_items');
-Route::delete('/api/purchase/cart/delete', 'Purchases_controller@destroy_cart');
-
-
-//Issuances
-Route::get('/issuance/list', 'Issuance_controller@show_list')->middleware('auth.level.5');
-Route::get('/issuance/create', 'Issuance_controller@index')->middleware('auth.level.5');
-Route::get('/issuance/view/{id}', 'Issuance_controller@show')->middleware('auth.level.5');
-Route::get('/api/issuance/cart', 'Issuance_controller@show_cart');
-Route::get('/api/issuance/list', 'Issuance_controller@get_list');
-Route::post('/api/issuance/cart/item/add/{id}', 'Issuance_controller@store_cart');
-Route::post('/api/issuance/cart/info', 'Issuance_controller@add_info_cart');
-Route::post('/api/issuance/make', 'Issuance_controller@store_issuance');
-Route::put('/api/issuance/cart/item/update/{id}', 'Issuance_controller@update_cart_items');
-Route::delete('/api/issuance/cart/item/delete/{id}', 'Issuance_controller@delete_cart_items');
-Route::delete('/api/issuance/cart/delete', 'Issuance_controller@destroy_cart');
-
 //reports
 Route::get('/reports', 'Reports_controller@index')->middleware('auth.level.5');
 Route::get('/restaurant/reports', 'Reports_controller@restaurant');
@@ -163,3 +130,17 @@ Route::get('/purchase-order.pdf','Users_controller@purchase_order');
 Route::get('/receiving-report.pdf','Users_controller@receiving_report');
 Route::get('/stock-issuance.pdf','Users_controller@stock_issuance');
 Route::get('/request-to-canvass.pdf','Users_controller@request_to_canvass');
+
+Route::get('/inventory/items','Inventory\Item_controller@index')->name('inventory.item.index');
+Route::get('/api/inventory/items/item','Inventory\Item_controller@list')->name('api.inventory.item.index');
+Route::post('/api/inventory/items/item','Inventory\Item_controller@store')->name('api.inventory.item.store');
+Route::put('/api/inventory/items/item/{id}','Inventory\Item_controller@update')->name('api.inventory.item.update');
+Route::delete('/api/inventory/items/item/{id}','Inventory\Item_controller@destroy')->name('api.inventory.item.delete');
+
+
+Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.create');
+Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@list')->name('inventory.purchase-request.list');
+Route::get('/api/inventory/purchase-request/show','Inventory\Purchase_request_controller@show')->name('inventory.purchase-request.show');
+Route::post('/api/inventory/purchase-request/add','Inventory\Purchase_request_controller@store')->name('inventory.purchase-request.store');
+Route::put('/api/inventory/purchase-request/update/{id}','Inventory\Purchase_request_controller@update')->name('inventory.purchase-request.update');
+Route::put('/api/inventory/purchase-request/delete/{id}','Inventory\Purchase_request_controller@delete')->name('inventory.purchase-request.delete');

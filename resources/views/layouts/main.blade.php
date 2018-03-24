@@ -51,15 +51,11 @@
     @if(Auth::user()->privilege=="admin")
     <a class="item" href="/inventory">
         <i class="browser icon"></i>
-        Inventory
+        Items
     </a>
-    <a class="item" href="/issuance/create">
+    <a class="item" href="{{ route('inventory.purchase-request.create') }}">
         <i class="browser icon"></i>
-        Issuance
-    </a>
-    <a class="item" href="/purchase/create">
-        <i class="in cart icon"></i>
-        Purchases
+        Purhcase<br>Requeest
     </a>
     <a class="item" href="/users">
         <i class="users icon"></i>
@@ -118,6 +114,8 @@
 </div>
 
 @yield('modals')
+
+@routes
 <script src="{{ asset('js/app.js') }}"></script>
 @stack('scripts')
 </body>
