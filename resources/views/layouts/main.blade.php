@@ -49,13 +49,13 @@
     </a>
     @endif
     @if(Auth::user()->privilege=="admin")
-    <a class="item" href="/inventory">
+    <a class="item" href="{{route('inventory.item.index')}}">
         <i class="browser icon"></i>
         Items
     </a>
-    <a class="item" href="{{ route('inventory.purchase-request.create') }}">
+    <a class="item" href="{{ route('inventory.purchase-request.list') }}">
         <i class="browser icon"></i>
-        Purhcase<br>Requeest
+        Purhcase<br>Request
     </a>
     <a class="item" href="/users">
         <i class="users icon"></i>
