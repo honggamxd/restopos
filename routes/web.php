@@ -132,15 +132,17 @@ Route::get('/stock-issuance.pdf','Users_controller@stock_issuance');
 Route::get('/request-to-canvass.pdf','Users_controller@request_to_canvass');
 
 Route::get('/inventory/items','Inventory\Item_controller@index')->name('inventory.item.index');
-Route::get('/api/inventory/items/item','Inventory\Item_controller@list')->name('api.inventory.item.index');
+Route::get('/api/inventory/items/item','Inventory\Item_controller@get_list')->name('api.inventory.item.index');
 Route::post('/api/inventory/items/item','Inventory\Item_controller@store')->name('api.inventory.item.store');
 Route::put('/api/inventory/items/item/{id}','Inventory\Item_controller@update')->name('api.inventory.item.update');
 Route::delete('/api/inventory/items/item/{id}','Inventory\Item_controller@destroy')->name('api.inventory.item.delete');
 
 
-Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.create');
-Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@list')->name('inventory.purchase-request.list');
-Route::get('/api/inventory/purchase-request/show','Inventory\Purchase_request_controller@show')->name('inventory.purchase-request.show');
-Route::post('/api/inventory/purchase-request/add','Inventory\Purchase_request_controller@store')->name('inventory.purchase-request.store');
-Route::put('/api/inventory/purchase-request/update/{id}','Inventory\Purchase_request_controller@update')->name('inventory.purchase-request.update');
-Route::put('/api/inventory/purchase-request/delete/{id}','Inventory\Purchase_request_controller@delete')->name('inventory.purchase-request.delete');
+Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_controller@create')->name('inventory.purchase-request.create');
+Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@show_list')->name('inventory.purchase-request.list');
+Route::get('/inventory/purchase-request/form/{uuid}.pdf','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.index');
+Route::get('/inventory/purchase-request/edit/{uuid}','Inventory\Purchase_request_controller@edit')->name('inventory.purchase-request.edit');
+Route::get('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@get_list')->name('api.inventory.purchase-request.list');
+Route::post('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@store')->name('api.inventory.purchase-request.store');
+Route::put('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@update')->name('api.inventory.purchase-request.update');
+Route::delete('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@destroy')->name('api.inventory.purchase-request.delete');

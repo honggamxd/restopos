@@ -13,9 +13,9 @@ class CreateInventoryPuchaseRequestDetails extends Migration
      */
     public function up()
     {
-        Schema::create('inventory_puchase_request_detail', function (Blueprint $table) {
+        Schema::create('inventory_purchase_request_detail', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('inventory_puchase_request_id')->unsigned()->nullable();
+            $table->integer('inventory_purchase_request_id')->unsigned()->nullable();
             $table->integer('inventory_item_id')->unsigned()->nullable();
             $table->integer('balance_on_hand')->unsigned();
             $table->integer('quantity')->unsigned();
@@ -32,6 +32,6 @@ class CreateInventoryPuchaseRequestDetails extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventory_puchase_request_detail');
+        Schema::dropIfExists('inventory_purchase_request_detail');
     }
 }

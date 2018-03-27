@@ -31,25 +31,22 @@
                     <thead>
                         <tr>
                             <th class="center aligned middle aligned">Category</th>
+                            <th class="center aligned middle aligned">Subcategory</th>
                             <th class="center aligned middle aligned">Item</th>
                             <th class="center aligned middle aligned">Unit</th>
-                            <th class="center aligned middle aligned">Stocks</th>
                             <th class="center aligned middle aligned">Qty</th>
-                            <th class="center aligned middle aligned"></th>
+                            <th class="right aligned middle aligned">Average Cost</th>
                         </tr>
                     </thead>
                     <tbody ng-cloak>
-                        <tr ng-repeat="item in cart.items" ng-init="item.edit_quantity=false" ng-class="item.quantity == 0 ? 'error' : (item.valid == 0 ? 'warning' : '')">
+                        <tr ng-repeat="item in items" ng-init="item.edit_quantity=false" ng-class="item.quantity == 0 ? 'error' : (item.valid == 0 ? 'warning' : '')">
                             <td class="center aligned middle aligned">@{{item.category}}</td>
-                            <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
-                            <td class="center aligned middle aligned">@{{item.unit}}</td>
-                            <td class="center aligned middle aligned">@{{item.stocks}}</td>
-                            <td class="center aligned middle aligned">
-                                <div class="ui input" ng-show="item.edit_quantity">
-                                    <input type="number" placeholder="Cost Price" ng-model="item.quantity" ng-blur="update_cart(this)" focus-me="item.edit_quantity">
-                                </div>
-                            <p ng-hide="item.edit_quantity" ng-click="edit_quantity(this)" style="cursor: pointer;" data-balloon="Click to Edit" data-balloon-pos="left">@{{item.quantity}}</p>
-                            </td>
+                            <td class="center aligned middle aligned">@{{item.subcategory}}</td>
+                            <td class="center aligned middle aligned">@{{item.item_name}}</td>
+                            <td class="center aligned middle aligned">@{{item.unit_of_measure}}</td>
+                            <td class="center aligned middle aligned">@{{item.total_quantity}}</td>
+                            <td class="right aligned middle aligned">@{{item.average_cost|currency:""}}</td>
+                            <td class="center aligned middle aligned"></td>
                             <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(this)">&times;</button></td>
                         </tr>
                     </tbody>  
@@ -110,8 +107,33 @@
         $scope.formerrors = {};
         $scope.submit = false;
         $scope.loading = true;
+        
+        $scope.show_items =  _.debounce(function(url_string) {
+            url_string = (typeof url_string !== 'undefined') && url_string !== "" ? url_string : route('api.inventory.item.index').url();
+            $scope.items = {};
+            $scope.loading = true;
+            $http({
+                method: "GET",
+                url: url_string,
+                params: {
+                    searchString: $scope.searchString
+                }
+            }).then(function mySuccess(response) {
+                $scope.items = response.data.result.data;
+                $scope.pages = $sce.trustAsHtml(response.data.pages);
+                $scope.loading = false;
+            }, function(rejection) {
+                $scope.loading = false;
+                if (rejection.status != 422) {
+                    request_error(rejection.status);
+                } else if (rejection.status == 422) {
+                    console.log(rejection.statusText);
+                }
+            });
+        },250);
 
-
+        $scope.show_items();
+        
         $scope.add_item_form = function() {
             $scope.formdata = {};
             $('#add-item-modal').modal('show');

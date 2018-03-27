@@ -13,11 +13,11 @@ class CreateInventoryPuchaseRequest extends Migration
      */
     public function up()
     {
-        Schema::create('inventory_puchase_request', function (Blueprint $table) {
+        Schema::create('inventory_purchase_request', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->nullable();
-            $table->timestamp('puchase_request_date')->nullable();
-            $table->integer('puchase_request_number')->unsigned()->nullable();
+            $table->timestamp('purchase_request_date')->nullable();
+            $table->integer('purchase_request_number')->unsigned()->nullable();
             $table->string('requesting_department')->nullable();
             $table->string('reason_for_the_request')->nullable();
             $table->string('request_chargeable_to')->nullable();
@@ -44,6 +44,6 @@ class CreateInventoryPuchaseRequest extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventory_puchase_request');
+        Schema::dropIfExists('inventory_purchase_request');
     }
 }

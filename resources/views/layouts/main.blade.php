@@ -100,17 +100,21 @@
     </div>
   </div>
 </nav>
-    <div class="container-fluid">
-      <div class="ui breadcrumb">
+<div class="container-fluid">
+    <div class="ui breadcrumb">
         <a class="section hideprint hideprint" id="menu">App Menu</a>
         <i class="right angle icon divider hideprint"></i>
         @yield('breadcrumb')
-      </div>
-      <div class="row">
-        @yield('content')
-      </div>
-        @yield('two_row_content')
     </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        @yield('content')
+    </div>
+    @yield('two_row_content')
+</div>
+<div class="container">
+    @yield('padded_content')
 </div>
 
 @yield('modals')

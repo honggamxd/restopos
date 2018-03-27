@@ -22,6 +22,6 @@ class Inventory_purchase_request extends Model
 
   public function details()
   {
-      return $this->hasMany('App\Issuance_detail');
+      return $this->hasMany('App\Inventory\Inventory_purchase_request_detail');
   }
 }
