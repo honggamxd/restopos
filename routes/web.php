@@ -160,3 +160,15 @@ Route::get('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_co
 Route::post('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@store')->name('api.inventory.request-to-canvass.store');
 Route::put('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@update')->name('api.inventory.request-to-canvass.update');
 Route::delete('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@destroy')->name('api.inventory.request-to-canvass.delete');
+
+
+//Purchase Order web pages
+Route::get('/inventory/purchase-order/create','Inventory\Purchase_order_controller@create')->name('inventory.purchase-order.create');
+Route::get('/inventory/purchase-order/list','Inventory\Purchase_order_controller@show_list')->name('inventory.purchase-order.list');
+Route::get('/inventory/purchase-order/form/{uuid}.pdf','Inventory\Purchase_order_controller@index')->name('inventory.purchase-order.index');
+Route::get('/inventory/purchase-order/edit/{uuid}','Inventory\Purchase_order_controller@edit')->name('inventory.purchase-order.edit');
+//Purchase Order api request
+Route::get('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@get_list')->name('api.inventory.purchase-order.list');
+Route::post('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@store')->name('api.inventory.purchase-order.store');
+Route::put('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@update')->name('api.inventory.purchase-order.update');
+Route::delete('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@destroy')->name('api.inventory.purchase-order.delete');

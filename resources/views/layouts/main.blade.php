@@ -61,6 +61,10 @@
         <i class="browser icon"></i>
         Request to<br>Canvass
     </a>
+    <a class="item" href="{{ route('inventory.purchase-order.list') }}">
+        <i class="browser icon"></i>
+        Purchase<br>Order
+    </a>
     <a class="item" href="/users">
         <i class="users icon"></i>
         Users
