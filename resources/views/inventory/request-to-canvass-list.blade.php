@@ -40,6 +40,7 @@
                             <th style="text-align: center">Date Needed</th>
                             <th style="text-align: center">Type of Item</th>
                             <th style="text-align: center">Requested By</th>
+                            <th style="text-align: center" colspan="3">Vendors</th>
                             <th style="text-align: center"></th>
                         </tr>
                     </thead>
@@ -55,6 +56,9 @@
                             <td style="text-align: center">@{{item.date_needed_formatted}}</td>
                             <td style="text-align: center">@{{item.type_of_item_requested}}</td>
                             <td style="text-align: center">@{{item.requested_by_name}}</td>
+                            <td style="text-align: center">@{{item.vendor_1_name}}</td>
+                            <td style="text-align: center">@{{item.vendor_2_name}}</td>
+                            <td style="text-align: center">@{{item.vendor_3_name}}</td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
                                     <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>

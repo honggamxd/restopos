@@ -20,7 +20,7 @@
   <br>
   <br>
   <p style="text-align: left;margin-left: 72%" class="sub-heading">
-    No. {{ $request_to_canvass_date_formatted }} <br>
+    No. {{ $request_to_canvass_number_formatted }} <br>
   </p>
   <br>
   <br>
