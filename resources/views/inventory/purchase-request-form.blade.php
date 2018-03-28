@@ -90,6 +90,8 @@
     </div>
 </div>
 <br>
+<hr>
+<br>
 <div class="row">
     <div class="col-sm-12">
         <h2 style="text-align: center;">Purchase Request Items</h2>
@@ -167,6 +169,8 @@
         </div>
     </div>
 </div>
+<br>
+<hr>
 <br>
 <div class="row">
     <div class="col-sm-12">
