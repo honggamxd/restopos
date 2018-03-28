@@ -36,8 +36,6 @@
                             <th style="text-align: center">RTC Date</th>
                             <th style="text-align: center">Requesting Dept.</th>
                             <th style="text-align: center">Request Reason</th>
-                            <th style="text-align: center">Chargeable to</th>
-                            <th style="text-align: center">Date Needed</th>
                             <th style="text-align: center">Type of Item</th>
                             <th style="text-align: center">Requested By</th>
                             <th style="text-align: center" colspan="3">Vendors</th>
@@ -52,8 +50,6 @@
                             <td style="text-align: center">@{{item.request_to_canvass_date_formatted}}</td>
                             <td style="text-align: center">@{{item.requesting_department}}</td>
                             <td style="text-align: center">@{{item.reason_for_the_request}}</td>
-                            <td style="text-align: center">@{{item.request_chargeable_to}}</td>
-                            <td style="text-align: center">@{{item.date_needed_formatted}}</td>
                             <td style="text-align: center">@{{item.type_of_item_requested}}</td>
                             <td style="text-align: center">@{{item.requested_by_name}}</td>
                             <td style="text-align: center">@{{item.vendor_1_name}}</td>
