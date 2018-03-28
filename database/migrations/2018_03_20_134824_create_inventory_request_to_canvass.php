@@ -26,8 +26,11 @@ class CreateInventoryRequestToCanvass extends Migration
             $table->timestamp('requested_by_date')->nullable();
             $table->string('noted_by_name')->nullable();
             $table->timestamp('noted_by_date')->nullable();
-            $table->string('approved_by_name')->nullable();
-            $table->timestamp('approved_by_date')->nullable();
+            $table->string('canvass_by_name')->nullable();
+            $table->timestamp('canvass_by_date')->nullable();
+            $table->string('vendor_1_name')->nullable();
+            $table->string('vendor_2_name')->nullable();
+            $table->string('vendor_3_name')->nullable();
             $table->integer('inventory_capital_expenses_request_form_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();

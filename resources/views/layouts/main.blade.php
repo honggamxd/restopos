@@ -55,7 +55,11 @@
     </a>
     <a class="item" href="{{ route('inventory.purchase-request.list') }}">
         <i class="browser icon"></i>
-        Purhcase<br>Request
+        Purchase<br>Request
+    </a>
+    <a class="item" href="{{ route('inventory.request-to-canvass.list') }}">
+        <i class="browser icon"></i>
+        Request to<br>Canvass
     </a>
     <a class="item" href="/users">
         <i class="users icon"></i>

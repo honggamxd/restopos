@@ -20,9 +20,9 @@ class Inventory_purchase_request_detail_transformer extends TransformerAbstract
             'id' => $Purchse_request_detail->id,
             'inventory_purchase_request_id' => $Purchse_request_detail->inventory_purchase_request_id,
             'inventory_item_id' => $Purchse_request_detail->inventory_item_id,
-            'balance_on_hand' => $Purchse_request_detail->balance_on_hand,
-            'quantity' => $Purchse_request_detail->quantity,
-            'unit_price' => $Purchse_request_detail->unit_price,
+            'balance_on_hand' => (integer)$Purchse_request_detail->balance_on_hand,
+            'quantity' => (integer)$Purchse_request_detail->quantity,
+            'unit_price' => (float)$Purchse_request_detail->unit_price,
         ];
     }
 
