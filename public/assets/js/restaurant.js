@@ -711,10 +711,20 @@
      });
    }
    $scope.settle_cancelled_orders = function(data) {
-     // console.log(data);
+     // console.log(data.cancelled_orders);
      $scope.submit = true;
+     let items = {};
+     angular.forEach(data.cancelled_orders, function(value, key) {
+       items[key] = {
+        id: value.id,
+        settlement: value.settlement,
+        restaurant_menu_id: value.restaurant_menu_id,
+        menu_name: value.menu_name,
+        price: value.price,
+       }
+     });
      var formdata = {
-       items: data.cancelled_orders,
+       items: items,
        table_customer_id: data.table_customer_id,
        _token: $scope._token
      };
