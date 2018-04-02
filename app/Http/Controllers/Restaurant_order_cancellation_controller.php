@@ -264,6 +264,13 @@ class Restaurant_order_cancellation_controller extends Controller
       $data['table_customer_id'] = $cancelled_order_item->restaurant_table_customer_id;
       $data['cancelled_orders'][$key]['settlement'] = "cancelled";
     }
+    if($data['cancelled_orders']->isEmpty()){
+      $customer_data = Restaurant_table_customer::find($id);
+      if($customer_data->has_paid == 1 && $customer_data->has_billed_completely == 1 && $customer_data->has_billed_out == 1 && $customer_data->has_cancellation_request == 0){
+        $customer_data->cancellation_order_status = 2;
+        $customer_data->save();
+      }
+    }
     return $data;
   }
 

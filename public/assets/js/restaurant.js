@@ -254,10 +254,20 @@
      $scope.submit = true;
      if (type == 'before') {
        /*console.log(data);*/
+       let items = {};
+       angular.forEach(data.order_detail,function(value,key) {
+         items[key] = {
+          id:value.id,
+          restaurant_temp_bill_id:value.restaurant_temp_bill_id,
+          quantity_to_cancel:value.quantity_to_cancel,
+          restaurant_menu_id:value.restaurant_menu_id,
+          price:value.price,
+         }
+       });
        var formdata = {
          restaurant_table_customer_id: data.table_customer_id,
          restaurant_order_id: data.order.id,
-         items: data.order_detail,
+         items: items,
          reason_cancelled: $scope.formdata.reason_cancelled,
          _token: $scope._token
        };
@@ -288,6 +298,17 @@
      } else if (type == 'after') {
        data.bill_preview.reason_cancelled = $scope.formdata.reason_cancelled;
        data.bill_preview._token = $scope._token;
+       let items = {};
+       angular.forEach(data.bill_preview.items,function(value,key) {
+         items[key] = {
+          id:value.id,
+          restaurant_temp_bill_id:value.restaurant_temp_bill_id,
+          quantity_to_cancel:value.quantity_to_cancel,
+          restaurant_menu_id:value.restaurant_menu_id,
+          price:value.price,
+         }
+       });
+       data.bill_preview.items = items;
        $http({
          method: 'POST',
          url: '/api/restaurant/table/order/cancel/request/after',
@@ -464,9 +485,17 @@
      });
    }
    $scope.make_orders = function(data) {
-     $scope.formdata.table_customer_cart = $scope.table_customer_cart;
+     $scope.formdata.table_customer_cart = {};
      $scope.formdata._token = $scope._token;
      $scope.submit = true;
+     angular.forEach($scope.table_customer_cart,function(value,key) {
+       $scope.formdata.table_customer_cart[key] = {
+        id: value.id,
+        quantity: value.quantity,
+        price: value.price,
+        special_instruction: value.special_instruction,
+       }
+     });
      $http({
        method: 'POST',
        url: '/api/restaurant/table/order/make/' + $scope.table_customer_id,
@@ -762,11 +791,24 @@
      // console.log($scope.bill_preview);
    }
    $scope.make_bill = function(data) {
-     console.log(data);
+     let items = data.bill_preview.items;
      $scope.bill = {};
      $scope.submit = true;
      $scope.formdata = data.bill_preview;
      $scope.formdata._token = $scope._token;
+     $scope.formdata.items = {};
+     // console.log(items);
+     angular.forEach(items,function(value,key) {
+      $scope.formdata.items[key] = {
+        id: value.id,
+        category: value.category,
+        quantity_to_bill: value.quantity_to_bill,
+        restaurant_temp_bill_id: value.restaurant_temp_bill_id,
+        restaurant_menu_id: value.restaurant_menu_id,
+        price: value.price,
+        special_instruction: value.special_instruction,
+      }
+     });
      $http({
        method: 'POST',
        url: '/api/restaurant/table/customer/bill/make/' + data.bill_preview.table_customer_id,
