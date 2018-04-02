@@ -172,3 +172,16 @@ Route::get('/api/inventory/purchase-order/','Inventory\Purchase_order_controller
 Route::post('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@store')->name('api.inventory.purchase-order.store');
 Route::put('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@update')->name('api.inventory.purchase-order.update');
 Route::delete('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@destroy')->name('api.inventory.purchase-order.delete');
+
+
+//Receiving Report web pages
+Route::get('/inventory/receiving-report/create','Inventory\Receiving_report_controller@create')->name('inventory.receiving-report.create');
+Route::get('/inventory/receiving-report/list','Inventory\Receiving_report_controller@show_list')->name('inventory.receiving-report.list');
+Route::get('/inventory/receiving-report/form/{uuid}.pdf','Inventory\Receiving_report_controller@index')->name('inventory.receiving-report.index');
+Route::get('/inventory/receiving-report/edit/{uuid}','Inventory\Receiving_report_controller@edit')->name('inventory.receiving-report.edit');
+//Receiving Report api request
+Route::get('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@get_list')->name('api.inventory.receiving-report.list');
+Route::post('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@store')->name('api.inventory.receiving-report.store');
+Route::put('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@update')->name('api.inventory.receiving-report.update');
+Route::delete('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@destroy')->name('api.inventory.receiving-report.delete');
+

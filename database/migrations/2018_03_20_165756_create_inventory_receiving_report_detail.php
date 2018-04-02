@@ -20,6 +20,7 @@ class CreateInventoryReceivingReportDetail extends Migration
             $table->integer('quantity')->unsigned();
             $table->double('unit_price',19,2)->unsigned();
             $table->string('remarks')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

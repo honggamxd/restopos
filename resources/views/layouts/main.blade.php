@@ -65,6 +65,10 @@
         <i class="browser icon"></i>
         Purchase<br>Order
     </a>
+    <a class="item" href="{{ route('inventory.receiving-report.list') }}">
+        <i class="browser icon"></i>
+        Receiving<br>Report
+    </a>
     <a class="item" href="/users">
         <i class="users icon"></i>
         Users

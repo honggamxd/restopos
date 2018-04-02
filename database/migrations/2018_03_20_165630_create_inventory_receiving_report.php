@@ -21,6 +21,7 @@ class CreateInventoryReceivingReport extends Migration
             $table->string('supplier_name')->nullable();
             $table->string('supplier_address')->nullable();
             $table->string('supplier_tin')->nullable();
+            $table->string('supplier_contact_number')->nullable();
             $table->string('term')->nullable();
             $table->string('requesting_department')->nullable();
             $table->string('purpose')->nullable();

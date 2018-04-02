@@ -19,6 +19,7 @@ class CreateInventoryCapitalExpensesRequestFormDetail extends Migration
             $table->integer('inventory_item_id')->unsigned()->nullable();
             $table->integer('quantity')->unsigned();
             $table->double('unit_price',19,2)->unsigned();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
