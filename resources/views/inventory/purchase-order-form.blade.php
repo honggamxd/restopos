@@ -136,7 +136,7 @@
                         <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
-                                <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
+                                <input type="number" min="1" max="@{{item.quantity}}" placeholder="Quantity" ng-model="item.quantity">
                             </div>
                         </td>
                         <td class="center aligned middle aligned">
@@ -153,7 +153,7 @@
                         <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
-                                <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
+                                <input type="number" min="1" max="@{{item.quantity}}" placeholder="Quantity" ng-model="item.quantity">
                             </div>
                         </td>
                         <td class="center aligned middle aligned">
@@ -260,7 +260,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.loading = false;
 
     $scope.delete_item = function(index) {
-        delete $scope.items[index];
+        $scope.items.splice(index, 1);
+        // delete $scope.items[index];
     }
 
     $scope.save_form = function() {
@@ -374,6 +375,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         select: function(event, ui) {
             // $scope.searchString = "";
             $scope.$apply(function() {
+                $scope.items = {};
                 $scope.items = ui.item.details.data;
                 $scope.formdata.inventory_purchase_request_id = ui.item.id;
                 $scope.purchase_request_number_formatted = ui.item.purchase_request_number_formatted;

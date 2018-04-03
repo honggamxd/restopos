@@ -24,4 +24,9 @@ class Inventory_receiving_report extends Model
   {
       return $this->hasMany('App\Inventory\Inventory_receiving_report_detail');
   }
+
+  public function inventory_purchase_order()
+  {
+      return $this->belongsTo('App\Inventory\Inventory_purchase_order');
+  }
 }

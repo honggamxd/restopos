@@ -21,8 +21,8 @@
   <br>
   <p style="text-align: left;margin-left: 72%" class="sub-heading">
     No. {{ $receiving_report_number_formatted }}<br>
-    Ref PO no.:<br>
-    Ref RS no.:<br>
+    Ref PO no.: {{ $inventory_purchase_order['purchase_order_number_formatted'] }}<br>
+    Ref RS no.: {{ $inventory_purchase_order['inventory_purchase_request']['purchase_request_number_formatted'] }}<br>
   </p>
   <br>
   <br>

@@ -21,7 +21,7 @@
   <br>
   <p style="text-align: left;margin-left: 72%" class="sub-heading">
     No. {{ $purchase_order_number_formatted }}<br>
-    Ref PR no.: {{ $purchase_request['purchase_request_number_formatted'] }} <br>
+    Ref PR no.: {{ $inventory_purchase_request['purchase_request_number_formatted'] }} <br>
   </p>
   <br>
   <br>

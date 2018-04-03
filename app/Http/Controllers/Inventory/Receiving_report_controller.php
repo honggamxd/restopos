@@ -32,7 +32,7 @@ class Receiving_report_controller extends Controller
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new Inventory_Receiving_report_transformer)->parseIncludes('details.inventory_item')->toArray();
+        $data = fractal($data, new Inventory_Receiving_report_transformer)->parseIncludes('details.inventory_item,inventory_purchase_order.inventory_purchase_request')->toArray();
         $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
         $pdf->setPaper('legal', 'portrait');
         $pdf->loadView('pdf.receiving-report', $data);
@@ -75,9 +75,10 @@ class Receiving_report_controller extends Controller
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new Inventory_Receiving_report_transformer)->parseIncludes('details.inventory_item')->toArray();
+        $data = fractal($data, new Inventory_Receiving_report_transformer)->parseIncludes('details.inventory_item,inventory_purchase_order')->toArray();
         $data['data'] = $data;
         $data['edit_mode'] = 'update';
+        // return $data;
         return view('inventory.receiving-report-form',$data);
     }
 
@@ -123,6 +124,7 @@ class Receiving_report_controller extends Controller
             $receiving_report->received_by_name = $request->received_by_name;
             $receiving_report->checked_by_name = $request->checked_by_name;
             $receiving_report->posted_by_name = $request->posted_by_name;
+            $receiving_report->inventory_purchase_order_id = $request->inventory_purchase_order_id;
             $receiving_report->save();
 
             $receiving_report = Inventory_Receiving_report::orderBy('id','DESC')->first();
@@ -140,6 +142,7 @@ class Receiving_report_controller extends Controller
                 $item_detail->inventory_item_id = $form_item['id'];
                 $item_detail->unit_cost = $form_item['unit_cost'];
                 $item_detail->quantity = $form_item['quantity'];
+                $item_detail->inventory_receiving_report_id = $receiving_report->id;
                 $item_detail->save();
             }
 
@@ -204,6 +207,10 @@ class Receiving_report_controller extends Controller
                 $receiving_report_detail->quantity = $form_item['quantity'];
                 $receiving_report_detail->remarks = $form_item['remarks'];
                 $receiving_report_detail->save();
+
+                $item_detail = Inventory_item_detail::where('inventory_item_id',$receiving_report_detail->inventory_item_id)->where('inventory_receiving_report_id',$id)->first();
+                $item_detail->unit_cost = $form_item['unit_cost'];
+                $item_detail->save();
             }
 
             

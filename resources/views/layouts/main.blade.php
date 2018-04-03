@@ -129,6 +129,7 @@
     @yield('padded_content')
 </div>
 
+</div>
 @yield('modals')
 
 @routes

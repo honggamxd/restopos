@@ -15,7 +15,7 @@ class Inventory_purchase_order_transformer extends TransformerAbstract
      *
      * @return array
      */
-    protected $availableIncludes = ['details','purchase_request'];
+    protected $availableIncludes = ['details','inventory_purchase_request'];
     public function transform($purchase_order)
     {
         return [
@@ -50,7 +50,7 @@ class Inventory_purchase_order_transformer extends TransformerAbstract
         }
     }
 
-    public function includePurchaseRequest($purchase_order)
+    public function includeInventoryPurchaseRequest($purchase_order)
     {
         if ($purchase_order->inventory_purchase_request) {
             return $this->item( $purchase_order->inventory_purchase_request,  new Inventory_purchase_request_transformer());

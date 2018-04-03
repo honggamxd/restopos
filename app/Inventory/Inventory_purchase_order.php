@@ -27,7 +27,7 @@ class Inventory_purchase_order extends Model
 
   public function inventory_purchase_request()
   {
-      return $this->belongsTo('App\Inventory\Inventory_Purchase_request');
+      return $this->belongsTo('App\Inventory\Inventory_purchase_request');
   }
   
 }

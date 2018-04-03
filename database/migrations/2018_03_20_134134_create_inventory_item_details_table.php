@@ -18,6 +18,8 @@ class CreateInventoryItemDetailsTable extends Migration
             $table->integer('inventory_item_id')->unsigned()->nullable();
             $table->double('unit_cost',19,2)->unsigned();;
             $table->integer('quantity');
+            $table->integer('inventory_receiving_report_id')->unsigned()->nullable();
+            $table->integer('inventory_stock_issuance_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

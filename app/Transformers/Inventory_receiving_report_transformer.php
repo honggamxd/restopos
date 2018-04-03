@@ -15,7 +15,7 @@ class Inventory_receiving_report_transformer extends TransformerAbstract
      *
      * @return array
      */
-    protected $availableIncludes = ['details'];
+    protected $availableIncludes = ['details','inventory_purchase_order'];
     public function transform($receiving_report)
     {
         return [
@@ -48,6 +48,13 @@ class Inventory_receiving_report_transformer extends TransformerAbstract
     {
         if ($receiving_report->details) {
             return $this->collection($receiving_report->details, new Inventory_receiving_report_detail_transformer);
+        }
+    }
+
+    public function includeInventoryPurchaseOrder($purchase_order)
+    {
+        if ($purchase_order->inventory_purchase_order) {
+            return $this->item( $purchase_order->inventory_purchase_order,  new Inventory_purchase_order_transformer());
         }
     }
 }

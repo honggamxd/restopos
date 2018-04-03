@@ -32,7 +32,7 @@ class Purchase_order_controller extends Controller
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new Inventory_purchase_order_transformer)->parseIncludes('details.inventory_item,purchase_request')->toArray();
+        $data = fractal($data, new Inventory_purchase_order_transformer)->parseIncludes('details.inventory_item,inventory_purchase_request')->toArray();
         $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
         $pdf->setPaper('legal', 'portrait');
         $pdf->loadView('pdf.purchase-order', $data);
@@ -55,9 +55,9 @@ class Purchase_order_controller extends Controller
             
             });
         }
-        $number_of_pages = 50;
+        $number_of_pages = $request->autocomplete ? 10 : 50;
         $pages = (string)$result->paginate($number_of_pages);
-        $result = fractal($result->paginate($number_of_pages), new Inventory_purchase_order_transformer);
+        $result = fractal($result->paginate($number_of_pages), new Inventory_purchase_order_transformer)->parseIncludes('details.inventory_item')->toArray();
         $data['result'] = $result;
         $data['pages'] = $pages;
         return $data;
