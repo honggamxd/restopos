@@ -55,9 +55,9 @@ class Purchase_request_controller extends Controller
             
             });
         }
-        $number_of_pages = 50;
+        $number_of_pages = $request->autocomplete ? 10 : 50;
         $pages = (string)$result->paginate($number_of_pages);
-        $result = fractal($result->paginate($number_of_pages), new Inventory_purchase_request_transformer);
+        $result = fractal($result->paginate($number_of_pages), new Inventory_purchase_request_transformer)->parseIncludes('details.inventory_item')->toArray();
         $data['result'] = $result;
         $data['pages'] = $pages;
         return $data;

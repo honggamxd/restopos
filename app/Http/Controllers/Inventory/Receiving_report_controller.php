@@ -135,6 +135,12 @@ class Receiving_report_controller extends Controller
                 $receiving_report_detail->quantity = $form_item['quantity'];
                 $receiving_report_detail->remarks = $form_item['remarks'];
                 $receiving_report_detail->save();
+
+                $item_detail = new Inventory_item_detail;
+                $item_detail->inventory_item_id = $form_item['id'];
+                $item_detail->unit_cost = $form_item['unit_cost'];
+                $item_detail->quantity = $form_item['quantity'];
+                $item_detail->save();
             }
 
             

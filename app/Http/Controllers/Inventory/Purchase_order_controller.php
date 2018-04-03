@@ -32,7 +32,7 @@ class Purchase_order_controller extends Controller
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new Inventory_purchase_order_transformer)->parseIncludes('details.inventory_item')->toArray();
+        $data = fractal($data, new Inventory_purchase_order_transformer)->parseIncludes('details.inventory_item,purchase_request')->toArray();
         $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
         $pdf->setPaper('legal', 'portrait');
         $pdf->loadView('pdf.purchase-order', $data);
@@ -116,6 +116,7 @@ class Purchase_order_controller extends Controller
             $purchase_order->requested_by_name = $request->requested_by_name;
             $purchase_order->noted_by_name = $request->noted_by_name;
             $purchase_order->approved_by_name = $request->approved_by_name;
+            $purchase_order->inventory_purchase_request_id = $request->inventory_purchase_request_id;
             $purchase_order->save();
 
             $purchase_order = Inventory_purchase_order::orderBy('id','DESC')->first();

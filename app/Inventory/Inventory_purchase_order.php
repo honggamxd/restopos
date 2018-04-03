@@ -24,4 +24,10 @@ class Inventory_purchase_order extends Model
   {
       return $this->hasMany('App\Inventory\Inventory_purchase_order_detail');
   }
+
+  public function inventory_purchase_request()
+  {
+      return $this->belongsTo('App\Inventory\Inventory_Purchase_request');
+  }
+  
 }

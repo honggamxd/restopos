@@ -15,7 +15,7 @@ class Inventory_purchase_order_transformer extends TransformerAbstract
      *
      * @return array
      */
-    protected $availableIncludes = ['details'];
+    protected $availableIncludes = ['details','purchase_request'];
     public function transform($purchase_order)
     {
         return [
@@ -38,6 +38,7 @@ class Inventory_purchase_order_transformer extends TransformerAbstract
             'noted_by_date' => $purchase_order->noted_by_date,
             'approved_by_name' => $purchase_order->approved_by_name,
             'approved_by_date' => $purchase_order->approved_by_date,
+            'inventory_purchase_request_id' => $purchase_order->inventory_purchase_request_id,
             'form' => route('inventory.purchase-order.index',[$purchase_order->uuid]),
         ];
     }
@@ -46,6 +47,13 @@ class Inventory_purchase_order_transformer extends TransformerAbstract
     {
         if ($purchase_order->details) {
             return $this->collection($purchase_order->details, new Inventory_purchase_order_detail_transformer);
+        }
+    }
+
+    public function includePurchaseRequest($purchase_order)
+    {
+        if ($purchase_order->inventory_purchase_request) {
+            return $this->item( $purchase_order->inventory_purchase_request,  new Inventory_purchase_request_transformer());
         }
     }
 }

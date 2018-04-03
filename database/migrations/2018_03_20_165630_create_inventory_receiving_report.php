@@ -32,6 +32,7 @@ class CreateInventoryReceivingReport extends Migration
             $table->timestamp('checked_by_date')->nullable();
             $table->string('posted_by_name')->nullable();
             $table->timestamp('posted_by_date')->nullable();
+            $table->integer('inventory_purchase_order_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

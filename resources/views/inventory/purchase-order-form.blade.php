@@ -30,9 +30,9 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="inventory_request_to_canvass">RTC Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter RTC Number" ng-model="formdata.inventory_request_to_canvass">
-                    <p class="help-block" ng-cloak>@{{formerrors.inventory_request_to_canvass[0]}}</p>
+                    <label for="inventory_purchase_request_id">PR Number:</label>
+                    <span class="form-control" ng-bind="purchase_request_number_formatted"></span>
+                    <p class="help-block" ng-cloak></p>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
     <div class="col-sm-12">
         <h2 style="text-align: center;">Purchase Order Items</h2>
         <br>
-        <label ng-hide="edit_mode=='update'" ng-cloak>Search Item</label>
+        <label ng-hide="edit_mode=='update'" ng-cloak>Search Purchase Request Number</label>
         <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
             <i class="search icon"></i>
             <input type="text" placeholder="Search" id="search-item" ng-model="search_item_name">
@@ -130,10 +130,10 @@
                 </thead>
                 <tbody ng-cloak>
                     <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create'">
-                        <td class="center aligned middle aligned">@{{item.category}}</td>
-                        <td class="center aligned middle aligned">@{{item.subcategory}}</td>
-                        <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
-                        <td class="center aligned middle aligned">@{{item.unit_of_measure}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.category}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.subcategory}}</td>
+                        <td class="center aligned middle aligned" style="width: 100%">@{{item.inventory_item.item_name}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
                                 <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
@@ -141,7 +141,7 @@
                         </td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
-                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.unit_cost">
+                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.unit_price">
                             </div>
                         </td>
                         <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(index)">&times;</button></td>
@@ -248,6 +248,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.items = {};
+        $scope.purchase_request_number_formatted = null;
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.purchase_order_date = moment($scope.formdata.purchase_order_date.date).format("MM/DD/YYYY");
@@ -294,9 +295,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         let items = {};
         angular.forEach($scope.items,function(value, key) {
             items[key] = {
-                id: value.id,
+                id: value.inventory_item_id,
                 quantity: value.quantity,
-                unit_cost: value.unit_cost,
+                unit_cost: value.unit_price,
             };
         });
         $scope.formdata.items = items;
@@ -359,10 +360,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         source: function(request, response)
         {
             $.ajax({
-                url: route('api.inventory.item.index').url(),
+                url: route('api.inventory.purchase-request.list').url(),
                 dataType: "json",
                 data: {
-                    term : request.term,
+                    searchString : request.term,
                     autocomplete : 1
                 },
                 success: function(data) {
@@ -371,19 +372,17 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             });
         },
         select: function(event, ui) {
-            $scope.searchString = "";
+            // $scope.searchString = "";
             $scope.$apply(function() {
-                if(!$scope.items['item'+ui.item.id]){
-                    ui.item.quantity = 1;
-                    ui.item.unit_cost = 0;
-                    $scope.items['item'+ui.item.id] = ui.item;
-                }
+                $scope.items = ui.item.details.data;
+                $scope.formdata.inventory_purchase_request_id = ui.item.id;
+                $scope.purchase_request_number_formatted = ui.item.purchase_request_number_formatted;
             });
         }
     })
     .autocomplete( "instance" )._renderItem = function( ul, item ) {
         return $( "<li>" )
-        .append( "<div>" + item.item_name + "<br> <small> Category: <b>" + item.category + "</b></small>" +"<br> <small> Subcategory: <b>" + item.subcategory + "</b></small>" + "</div>" )
+        .append( "<div> PR No. <b>" + item.purchase_request_number_formatted + "</b><br> <small> PR DATE: <b>" + item.purchase_request_date_formatted + "</b></small>" + "</div>" )
         .appendTo( ul );
     };
 

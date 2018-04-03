@@ -39,6 +39,7 @@ class Inventory_receiving_report_transformer extends TransformerAbstract
             'checked_by_date' => $receiving_report->checked_by_date,
             'posted_by_name' => $receiving_report->posted_by_name,
             'posted_by_date' => $receiving_report->posted_by_date,
+            'inventory_purchase_order_id' => $receiving_report->inventory_purchase_order_id,
             'form' => route('inventory.receiving-report.index',[$receiving_report->uuid]),
         ];
     }

@@ -32,6 +32,7 @@ class CreateInventoryPuchaseOrder extends Migration
             $table->string('approved_by_name')->nullable();
             $table->timestamp('approved_by_date')->nullable();
             $table->integer('inventory_receiving_report_id')->unsigned()->nullable();
+            $table->integer('inventory_purchase_request_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
