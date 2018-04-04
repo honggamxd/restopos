@@ -110,20 +110,20 @@
         <h2 style="text-align: center;">Purchase Order Items</h2>
         <br>
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 <label ng-hide="edit_mode=='update'" ng-cloak>Search Purchase Request Number</label>
                 <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
                     <i class="search icon"></i>
                     <input type="text" placeholder="Search Purchase Request Number" id="search-purchase-request-number" ng-model="search_purchase_request">
                 </div>
             </div>
-            <div class="col-sm-6">
+            {{-- <div class="col-sm-6">
                 <label ng-hide="edit_mode=='update'" ng-cloak>Search Request to Canvass Number</label>
                 <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
                     <i class="search icon"></i>
                     <input type="text" placeholder="Search Request to Canvass Number" id="search-request-to-canvass-number" ng-model="search_request_to_canvass">
                 </div>
-            </div>
+            </div> --}}
         </div>
         <br>
         <div class="table-responsive">

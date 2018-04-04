@@ -29,11 +29,11 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="inventory_request_to_canvass">PO Number:</label>
                     <input type="text" class="form-control" placeholder="Enter PO Number">
                     <p class="help-block" ng-cloak></p>
-                </div>
+                </div> --}}
             </div>
         </div>
         <div class="row">
