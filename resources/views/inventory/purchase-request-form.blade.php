@@ -30,9 +30,9 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="inventory_request_to_canvass">RTC Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter RTC Number" ng-model="formdata.inventory_request_to_canvass">
-                    <p class="help-block" ng-cloak>@{{formerrors.inventory_request_to_canvass[0]}}</p>
+                    <label for="request_to_canvass_number_formatted">RTC Number:</label>
+                    <span class="form-control" ng-bind="request_to_canvass_number_formatted"></span>
+                    <p class="help-block" ng-cloak></p>
                 </div>
             </div>
         </div>
@@ -96,10 +96,21 @@
     <div class="col-sm-12">
         <h2 style="text-align: center;">Purchase Request Items</h2>
         <br>
-        <label ng-hide="edit_mode=='update'" ng-cloak>Search Item</label>
-        <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
-            <i class="search icon"></i>
-            <input type="text" placeholder="Search" id="search-item" ng-model="search_item_name">
+        <div class="row">
+            <div class="col-sm-6">
+                <label ng-hide="edit_mode=='update'" ng-cloak>Search Item</label>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search Item" id="search-item">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label ng-hide="edit_mode=='update'" ng-cloak>Search Request to Canvass Number</label>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search Request to Canvass Number" id="search-request-to-canvass">
+                </div>
+            </div>
         </div>
         <br>
         <div class="table-responsive">
@@ -112,14 +123,35 @@
                     <th class="center aligned middle aligned">Unit</th>
                     <th class="center aligned middle aligned">Quantity</th>
                     <th class="center aligned middle aligned">Unit Cost</th>
+                    <th class="center aligned middle aligned" ng-if="request_to_canvass_number_formatted">Vendor</th>
                     <th class="center aligned middle aligned"></th>
                 </tr>
                 </thead>
                 <tbody ng-cloak>
-                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create'">
+                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create' && request_to_canvass_number_formatted">
+                        <td class="center aligned middle aligned">@{{item.inventory_item.category}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.subcategory}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.item_name}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
+                            </div>
+                        </td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.unit_price">
+                            </div>
+                        </td>
+                        <td class="center aligned middle aligned">
+                            <select class="form-control" ng-options="vendor as vendor.vendor for vendor in item.price_selection track by vendor.price" ng-model="item.selected_vendor" ng-change="select_vendor(index,item.selected_vendor)"></select>
+                        </td>
+                        <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(index)">&times;</button></td>
+                    </tr>
+                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create' && !request_to_canvass_number_formatted">
                         <td class="center aligned middle aligned">@{{item.category}}</td>
                         <td class="center aligned middle aligned">@{{item.subcategory}}</td>
-                        <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
+                        <td class="center aligned middle aligned">@{{item.item_name}}</td>
                         <td class="center aligned middle aligned">@{{item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
@@ -136,7 +168,7 @@
                     <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='update'">
                         <td class="center aligned middle aligned">@{{item.inventory_item.category}}</td>
                         <td class="center aligned middle aligned">@{{item.inventory_item.subcategory}}</td>
-                        <td class="center aligned middle aligned" style="width: 100%">@{{item.inventory_item.item_name}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.item_name}}</td>
                         <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
@@ -236,6 +268,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.formdata.type_of_item_requested = 'operations';
         $scope.items = {};
+        $scope.price_selection = {};
+        $scope.formdata.inventory_request_to_canvass_id = null;
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.purchase_request_date = moment($scope.formdata.purchase_request_date.date).format("MM/DD/YYYY");
@@ -282,8 +316,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.submit = true;
         let items = {};
         angular.forEach($scope.items,function(value, key) {
+            let item_id = ($scope.request_to_canvass_number_formatted ? value.inventory_item_id : value.id);
             items[key] = {
-                id: value.id,
+                id: item_id,
                 quantity: value.quantity,
                 unit_cost: value.unit_cost,
             };
@@ -343,6 +378,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         });
     }
 
+    $scope.select_vendor = function(index,vendor) {
+        $scope.items[index].unit_price = vendor.price;
+    }
+
 
     $("#search-item").autocomplete({
         source: function(request, response)
@@ -363,6 +402,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $scope.searchString = "";
             $scope.$apply(function() {
                 if(!$scope.items['item'+ui.item.id]){
+                    if($scope.request_to_canvass_number_formatted){
+                        $scope.items = {};
+                        $scope.request_to_canvass_number_formatted = null;
+                        $scope.formdata.inventory_request_to_canvass_id = null;
+                    }
                     ui.item.quantity = 1;
                     ui.item.unit_cost = 0;
                     $scope.items['item'+ui.item.id] = ui.item;
@@ -373,6 +417,60 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     .autocomplete( "instance" )._renderItem = function( ul, item ) {
         return $( "<li>" )
         .append( "<div>" + item.item_name + "<br> <small> Category: <b>" + item.category + "</b></small>" +"<br> <small> Subcategory: <b>" + item.subcategory + "</b></small>" + "</div>" )
+        .appendTo( ul );
+    };
+
+    $("#search-request-to-canvass").autocomplete({
+        source: function(request, response)
+        {
+            $.ajax({
+                url: route('api.inventory.request-to-canvass.list').url(),
+                dataType: "json",
+                data: {
+                    searchString : request.term,
+                    autocomplete : 1
+                },
+                success: function(data) {
+                    response(data.result.data);
+                }
+            });
+        },
+        select: function(event, ui) {
+            $scope.searchString = "";
+            $scope.$apply(function() {
+                $scope.items = {};
+                $scope.items = ui.item.details.data;
+                $scope.items.price_selection = {};
+                angular.forEach($scope.items,function(value, key) {
+                    value.price_selection = [
+                        {
+                            'index': 0,
+                            'vendor': ui.item.vendor_1_name,
+                            'price': value.vendor_1_unit_price,
+                        },
+                        {
+                            'index': 1,
+                            'vendor': ui.item.vendor_2_name,
+                            'price': value.vendor_2_unit_price,
+                        },
+                        {
+                            'index': 2,
+                            'vendor': ui.item.vendor_3_name,
+                            'price': value.vendor_3_unit_price,
+                        },
+                    ]
+                    value.selected_vendor = value.price_selection[0];
+                    value.unit_price = value.selected_vendor.price;
+                });
+                console.log($scope.items);
+                $scope.formdata.inventory_request_to_canvass_id = ui.item.id;
+                $scope.request_to_canvass_number_formatted = ui.item.request_to_canvass_number_formatted;
+            });
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+        .append( "<div> PR No. <b>" + item.request_to_canvass_number_formatted + "</b><br> <small> PR DATE: <b>" + item.request_to_canvass_date_formatted + "</b></small>" + "</div>" )
         .appendTo( ul );
     };
 

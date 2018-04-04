@@ -55,9 +55,9 @@ class Request_to_canvass_controller extends Controller
             
             });
         }
-        $number_of_pages = 50;
+        $number_of_pages = $request->autocomplete ? 10 : 50;
         $pages = (string)$result->paginate($number_of_pages);
-        $result = fractal($result->paginate($number_of_pages), new Inventory_request_to_canvass_transformer);
+        $result = fractal($result->paginate($number_of_pages), new Inventory_request_to_canvass_transformer)->parseIncludes('details.inventory_item')->toArray();
         $data['result'] = $result;
         $data['pages'] = $pages;
         return $data;

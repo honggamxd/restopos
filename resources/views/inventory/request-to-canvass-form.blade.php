@@ -113,24 +113,24 @@
             <table class="ui single line unstackable table">
                 <thead>
                 <tr>
-                    <th class="center aligned middle aligned">Quantity</th>
-                    <th class="center aligned middle aligned">Unit of Measure</th>
                     <th class="center aligned middle aligned">Item</th>
-                    <th class="center aligned middle aligned"><span ng-bind="formdata.vendor_1_name"></span></th>
-                    <th class="center aligned middle aligned"><span ng-bind="formdata.vendor_2_name"></span></th>
-                    <th class="center aligned middle aligned"><span ng-bind="formdata.vendor_3_name"></span></th>
+                    <th class="center aligned middle aligned">Unit of Measure</th>
+                    <th class="center aligned middle aligned">Quantity</th>
+                    <th class="center aligned middle aligned"><span ng-bind="formdata.vendor_1_name"></span><br>Unit Price</th>
+                    <th class="center aligned middle aligned"><span ng-bind="formdata.vendor_2_name"></span><br>Unit Price</th>
+                    <th class="center aligned middle aligned"><span ng-bind="formdata.vendor_3_name"></span><br>Unit Price</th>
                     <th class="center aligned middle aligned"></th>
                 </tr>
                 </thead>
                 <tbody ng-cloak>
                     <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create'">
+                        <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
+                        <td class="center aligned middle aligned">@{{item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
                                 <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
                             </div>
                         </td>
-                        <td class="center aligned middle aligned">@{{item.unit_of_measure}}</td>
-                        <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
                                 <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.vendor_1_unit_price">
