@@ -91,7 +91,7 @@
         <th style="text-align: right;">{{ number_format($total,2) }}</th>
       </tr>
     </tbody>
-  </table
+  </table>
   <br>
   <table style="width: 100%">
     <tr>

@@ -215,7 +215,7 @@
                     <p class="help-block" ng-cloak>@{{formerrors.noted_by_name[0]}}</p>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4" ng-if="edit_mode=='update'">
                 <div class="form-group">
                     <label for="approved_by_name">Approved By:</label>
                     <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
@@ -376,7 +376,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 dataType: "json",
                 data: {
                     searchString : request.term,
-                    autocomplete : 1
+                    autocomplete : 1,
+                    approved: 1
                 },
                 success: function(data) {
                     response(data.result.data);
@@ -390,6 +391,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 $scope.items = ui.item.details.data;
                 $scope.formdata.inventory_purchase_request_id = ui.item.id;
                 $scope.purchase_request_number_formatted = ui.item.purchase_request_number_formatted;
+                $scope.formdata.requested_by_name = ui.item.requested_by_name;
+                $scope.formdata.requesting_department = ui.item.requesting_department;
             });
         }
     })

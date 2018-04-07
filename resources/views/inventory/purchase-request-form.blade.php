@@ -223,7 +223,7 @@
                     <p class="help-block" ng-cloak>@{{formerrors.noted_by_name[0]}}</p>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4" ng-if="edit_mode=='update'">
                 <div class="form-group">
                     <label for="approved_by_name">Approved By:</label>
                     <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
@@ -282,7 +282,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.loading = false;
 
     $scope.delete_item = function(index) {
-        delete $scope.items[index];
+        if($scope.items instanceof Array){
+            $scope.items.splice (index, 1);
+        }else{
+            delete $scope.items[index];
+        }
     }
 
     $scope.save_form = function() {
@@ -320,7 +324,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             items[key] = {
                 id: item_id,
                 quantity: value.quantity,
-                unit_cost: value.unit_cost,
+                unit_cost: value.unit_price,
             };
         });
         $scope.formdata.items = items;
@@ -440,7 +444,6 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $scope.$apply(function() {
                 $scope.items = {};
                 $scope.items = ui.item.details.data;
-                $scope.items.price_selection = {};
                 angular.forEach($scope.items,function(value, key) {
                     value.price_selection = [
                         {
@@ -462,9 +465,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                     value.selected_vendor = value.price_selection[0];
                     value.unit_price = value.selected_vendor.price;
                 });
-                console.log($scope.items);
                 $scope.formdata.inventory_request_to_canvass_id = ui.item.id;
                 $scope.request_to_canvass_number_formatted = ui.item.request_to_canvass_number_formatted;
+                $scope.formdata.type_of_item_requested = ui.item.type_of_item_requested;
             });
         }
     })

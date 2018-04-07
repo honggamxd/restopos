@@ -361,7 +361,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 dataType: "json",
                 data: {
                     searchString : request.term,
-                    autocomplete : 1
+                    autocomplete : 1,
+                    approved: 1
                 },
                 success: function(data) {
                     response(data.result.data);
@@ -374,6 +375,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 $scope.items = ui.item.details.data;
                 $scope.formdata.inventory_purchase_order_id = ui.item.id;
                 $scope.purchase_order_number_formatted = ui.item.purchase_order_number_formatted;
+                $scope.formdata.supplier_address = ui.item.supplier_address;
+                $scope.formdata.supplier_name = ui.item.supplier_name;
+                $scope.formdata.requesting_department = ui.item.requesting_department;
             });
         }
     })

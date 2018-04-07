@@ -61,6 +61,10 @@
         <i class="browser icon"></i>
         Request to<br>Canvass
     </a>
+    <a class="item" href="{{ route('inventory.capital-expenditure-request.list') }}">
+        <i class="browser icon"></i>
+        Capital<br>Expenditure<br>Request
+    </a>
     <a class="item" href="{{ route('inventory.purchase-order.list') }}">
         <i class="browser icon"></i>
         Purchase<br>Order

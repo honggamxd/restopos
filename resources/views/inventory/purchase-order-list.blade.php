@@ -40,6 +40,7 @@
                             <th style="text-align: center">Supplier</th>
                             <th style="text-align: center">Term</th>
                             <th style="text-align: center">Requested By</th>
+                            <th style="text-align: center">Approved By</th>
                             <th style="text-align: center"></th>
                         </tr>
                     </thead>
@@ -55,6 +56,7 @@
                             <td style="text-align: center">@{{item.supplier_name}}</td>
                             <td style="text-align: center">@{{item.term}}</td>
                             <td style="text-align: center">@{{item.requested_by_name}}</td>
+                            <td style="text-align: center">@{{item.approved_by_name}}</td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
                                     <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>

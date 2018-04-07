@@ -272,4 +272,13 @@ class Users_controller extends Controller
     // return view('pdf.request-to-canvass');
     return $pdf->stream('invoice.pdf');
   }
+  public function capital_expenditure_request(Request $request)
+  {
+    $data['test'] = 'adhadhjasd';
+    $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
+    $pdf->setPaper('legal', 'portrait');
+    $pdf->loadView('pdf.capital-expenditure-request', $data);
+    // return view('pdf.capital-expenditure-request');
+    return $pdf->stream('invoice.pdf');
+  }
 }

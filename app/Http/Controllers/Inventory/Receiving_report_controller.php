@@ -54,6 +54,9 @@ class Receiving_report_controller extends Controller
             $query->orWhere('receiving_report_number',$request->searchString);
             
             });
+            if($request->approved){
+                $result->whereNotNull('approved_by_name');
+            }
         }
         $number_of_pages = 50;
         $pages = (string)$result->paginate($number_of_pages);
@@ -90,13 +93,13 @@ class Receiving_report_controller extends Controller
                 'receiving_report_number' => 'required|numeric|unique:inventory_receiving_report,receiving_report_number,NULL,id,deleted_at,NULL',
                 'receiving_report_date' => 'required|date',
                 'supplier_name' => 'required',
-                'supplier_address' => 'required',
+                // 'supplier_address' => 'required',
                 // 'supplier_tin' => 'required',
-                'supplier_contact_number' => 'required',
+                // 'supplier_contact_number' => 'required',
                 // 'term' => 'required',
                 'requesting_department' => 'required',
                 // 'purpose' => 'required',
-                'request_chargeable_to' => 'required',
+                // 'request_chargeable_to' => 'required',
                 // 'received_by_name' => 'required',
                 // 'received_by_date' => 'required',
                 // 'checked_by_name' => 'required',
@@ -162,13 +165,13 @@ class Receiving_report_controller extends Controller
                 'receiving_report_number' => 'required|numeric|unique:inventory_receiving_report,receiving_report_number,'.$id.',id,deleted_at,NULL',
                 'receiving_report_date' => 'required|date',
                 'supplier_name' => 'required',
-                'supplier_address' => 'required',
+                // 'supplier_address' => 'required',
                 // 'supplier_tin' => 'required',
-                'supplier_contact_number' => 'required',
+                // 'supplier_contact_number' => 'required',
                 // 'term' => 'required',
                 'requesting_department' => 'required',
                 // 'purpose' => 'required',
-                'request_chargeable_to' => 'required',
+                // 'request_chargeable_to' => 'required',
                 // 'received_by_name' => 'required',
                 // 'received_by_date' => 'required',
                 // 'checked_by_name' => 'required',

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInventoryCapitalExpensesRequestFormDetail extends Migration
+class CreateInventoryCapitalExpensesRequestFormFooterTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateInventoryCapitalExpensesRequestFormDetail extends Migration
      */
     public function up()
     {
-        Schema::create('inventory_capital_expenditure_request_detail', function (Blueprint $table) {
+        Schema::create('inventory_expenditure_request_footer', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('inventory_capital_expenditure_request_id')->unsigned()->nullable();
+            $table->double('invoice_amount',19,2)->unsigned();
+            $table->double('approved_budget',19,2)->unsigned();
             $table->integer('inventory_item_id')->unsigned()->nullable();
-            $table->integer('quantity')->unsigned();
-            $table->double('unit_price',19,2)->unsigned();
+            $table->string('item_description')->nullable();
+            $table->text('remarks')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -31,6 +33,6 @@ class CreateInventoryCapitalExpensesRequestFormDetail extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventory_capital_expenditure_request_detail');
+        Schema::dropIfExists('inventory_expenditure_request_footer');
     }
 }

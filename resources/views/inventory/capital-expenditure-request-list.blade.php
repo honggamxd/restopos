@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Purchase Request')
+@section('title', 'Capital Expenditure Request')
 
 @section('css')
 <style type="text/css">
@@ -9,18 +9,18 @@
 </style>
 @endsection
 @section('breadcrumb')
-<div class="active section">Purchase Requests</div>
+<div class="active section">Capital Expenditure Requests</div>
 <i class="right angle icon divider"></i>
-<a class="section hideprint" href="{{route('inventory.purchase-request.create')}}">Create Purchase Request</a>
+<a class="section hideprint" href="{{route('inventory.capital-expenditure-request.create')}}">Create Capital Expenditure Request</a>
 @endsection
 
 @section('two_row_content')
-    <h1 style="text-align: center">Purchase Requests</h1>
+    <h1 style="text-align: center">Capital Expenditure Requests</h1>
     <br>
     <div class="row">
         <div class="col-sm-5">
             <div class="ui left icon input">
-                <input type="text" placeholder="Search Purchase Request Number" ng-model="searchString" ng-keyup="search()">
+                <input type="text" placeholder="Search Capital Expenditure Request Number" ng-model="searchString" ng-keyup="search()">
                 <i class="search icon"></i>
             </div>
         </div>
@@ -32,31 +32,29 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th style="text-align: center">PR No.</th>
-                            <th style="text-align: center">PR Date</th>
+                            <th style="text-align: center">CRF No.</th>
+                            <th style="text-align: center">CRF Date</th>
                             <th style="text-align: center">Requesting Dept.</th>
                             <th style="text-align: center">Request Reason</th>
                             <th style="text-align: center">Chargeable to</th>
                             <th style="text-align: center">Date Needed</th>
                             <th style="text-align: center">Type of Item</th>
                             <th style="text-align: center">Requested By</th>
-                            <th style="text-align: center">Approved By</th>
                             <th style="text-align: center"></th>
                         </tr>
                     </thead>
                     <tbody ng-repeat="item in items" ng-cloak>
                         <tr>
                             <td style="text-align: center">
-                                <a ng-href="@{{item.form}}" target="_blank">@{{item.purchase_request_number_formatted}}</a>
+                                <a ng-href="@{{item.form}}" target="_blank">@{{item.capital_expenditure_request_number_formatted}}</a>
                             </td>
-                            <td style="text-align: center">@{{item.purchase_request_date_formatted}}</td>
+                            <td style="text-align: center">@{{item.capital_expenditure_request_date_formatted}}</td>
                             <td style="text-align: center">@{{item.requesting_department}}</td>
                             <td style="text-align: center">@{{item.reason_for_the_request}}</td>
                             <td style="text-align: center">@{{item.request_chargeable_to}}</td>
                             <td style="text-align: center">@{{item.date_needed_formatted}}</td>
                             <td style="text-align: center">@{{item.type_of_item_requested}}</td>
                             <td style="text-align: center">@{{item.requested_by_name}}</td>
-                            <td style="text-align: center">@{{item.approved_by_name}}</td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
                                     <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>
@@ -110,7 +108,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     },250);
 
     $scope.show_items = function(url_string) {
-        url_string = (typeof url_string !== 'undefined') && url_string !== "" ? url_string : route('api.inventory.purchase-request.list').url();
+        url_string = (typeof url_string !== 'undefined') && url_string !== "" ? url_string : route('api.inventory.capital-expenditure-request.list').url();
         $scope.items = {};
         $scope.loading = true;
         $scope.pages = "";
@@ -135,7 +133,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     }
     $scope.show_items();
     $scope.edit_form = function(item) {
-        window.location = route('inventory.purchase-request.edit',[item.uuid]).url();
+        window.location = route('inventory.capital-expenditure-request.edit',[item.uuid]).url();
     }
 
     $scope.delete_confirm = function(item) {
@@ -155,10 +153,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.delete_form = function(id) {
         $http({
             method: 'DELETE',
-            url: route('api.inventory.purchase-request.delete',[id]).url(),
+            url: route('api.inventory.capital-expenditure-request.delete',[id]).url(),
         }).then(function(response) {
             $scope.show_items();
-            $.notify('Purchase Request has been deleted.');
+            $.notify('Capital Expenditure Request has been deleted.');
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);

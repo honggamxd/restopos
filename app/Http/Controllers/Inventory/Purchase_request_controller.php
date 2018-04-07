@@ -55,6 +55,17 @@ class Purchase_request_controller extends Controller
             
             });
         }
+        if($request->autocomplete){
+            if($request->approved=='1'){
+                $result->whereNotNull('approved_by_name');
+            }else{
+                $result->whereNull('approved_by_name');
+            }
+            
+            if($request->capex=='1'){
+                $result->where('type_of_item_requested','capex');
+            }
+        }
         $number_of_pages = $request->autocomplete ? 10 : 50;
         $pages = (string)$result->paginate($number_of_pages);
         $result = fractal($result->paginate($number_of_pages), new Inventory_purchase_request_transformer)->parseIncludes('details.inventory_item')->toArray();
@@ -89,11 +100,10 @@ class Purchase_request_controller extends Controller
                 'purchase_request_number' => 'required|numeric|unique:inventory_purchase_request,purchase_request_number,NULL,id,deleted_at,NULL',
                 'purchase_request_date' => 'required|date',
                 'requesting_department' => 'required',
-                'reason_for_the_request' => 'required',
-                'request_chargeable_to' => 'required',
+                // 'reason_for_the_request' => 'required',
+                // 'request_chargeable_to' => 'required',
                 'type_of_item_requested' => 'required',
-                'type_of_item_requested' => 'required',
-                'date_needed' => 'required|date',
+                'date_needed' => 'date',
                 'requested_by_name' => 'required',
                 // 'noted_by_name' => 'required',
                 // 'approved_by_name' => 'required',
@@ -111,8 +121,7 @@ class Purchase_request_controller extends Controller
             $purchase_request->reason_for_the_request = $request->reason_for_the_request;
             $purchase_request->request_chargeable_to = $request->request_chargeable_to;
             $purchase_request->type_of_item_requested = $request->type_of_item_requested;
-            $purchase_request->type_of_item_requested = $request->type_of_item_requested;
-            $purchase_request->date_needed = Carbon::parse($request->date_needed);
+            $purchase_request->date_needed = $request->date_needed != null ? Carbon::parse($request->date_needed) : null;
             $purchase_request->requested_by_name = $request->requested_by_name;
             $purchase_request->noted_by_name = $request->noted_by_name;
             $purchase_request->approved_by_name = $request->approved_by_name;
@@ -147,11 +156,10 @@ class Purchase_request_controller extends Controller
                 'purchase_request_number' => 'required|numeric|unique:inventory_purchase_request,purchase_request_number,'.$id.',id,deleted_at,NULL',
                 'purchase_request_date' => 'required|date',
                 'requesting_department' => 'required',
-                'reason_for_the_request' => 'required',
-                'request_chargeable_to' => 'required',
+                // 'reason_for_the_request' => 'required',
+                // 'request_chargeable_to' => 'required',
                 'type_of_item_requested' => 'required',
-                'type_of_item_requested' => 'required',
-                'date_needed' => 'required|date',
+                'date_needed' => 'date',
                 'requested_by_name' => 'required',
                 // 'noted_by_name' => 'required',
                 // 'approved_by_name' => 'required',
@@ -170,8 +178,7 @@ class Purchase_request_controller extends Controller
             $purchase_request->reason_for_the_request = $request->reason_for_the_request;
             $purchase_request->request_chargeable_to = $request->request_chargeable_to;
             $purchase_request->type_of_item_requested = $request->type_of_item_requested;
-            $purchase_request->type_of_item_requested = $request->type_of_item_requested;
-            $purchase_request->date_needed = Carbon::parse($request->date_needed);
+            $purchase_request->date_needed = $request->date_needed != null ? Carbon::parse($request->date_needed) : null;
             $purchase_request->requested_by_name = $request->requested_by_name;
             $purchase_request->noted_by_name = $request->noted_by_name;
             $purchase_request->approved_by_name = $request->approved_by_name;

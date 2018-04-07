@@ -130,6 +130,7 @@ Route::get('/purchase-order.pdf','Users_controller@purchase_order');
 Route::get('/receiving-report.pdf','Users_controller@receiving_report');
 Route::get('/stock-issuance.pdf','Users_controller@stock_issuance');
 Route::get('/request-to-canvass.pdf','Users_controller@request_to_canvass');
+Route::get('/capital-expenditure-request.pdf','Users_controller@capital_expenditure_request');
 
 Route::get('/inventory/items','Inventory\Item_controller@index')->name('inventory.item.index');
 Route::get('/api/inventory/items/item','Inventory\Item_controller@get_list')->name('api.inventory.item.index');
@@ -160,6 +161,18 @@ Route::get('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_co
 Route::post('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@store')->name('api.inventory.request-to-canvass.store');
 Route::put('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@update')->name('api.inventory.request-to-canvass.update');
 Route::delete('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@destroy')->name('api.inventory.request-to-canvass.delete');
+
+
+//Capital Expenditure Request Form web pages
+Route::get('/inventory/capital-expenditure-request/create','Inventory\Capital_expenditure_request_controller@create')->name('inventory.capital-expenditure-request.create');
+Route::get('/inventory/capital-expenditure-request/list','Inventory\Capital_expenditure_request_controller@show_list')->name('inventory.capital-expenditure-request.list');
+Route::get('/inventory/capital-expenditure-request/form/{uuid}.pdf','Inventory\Capital_expenditure_request_controller@index')->name('inventory.capital-expenditure-request.index');
+Route::get('/inventory/capital-expenditure-request/edit/{uuid}','Inventory\Capital_expenditure_request_controller@edit')->name('inventory.capital-expenditure-request.edit');
+//Capital Expenditure Request Form api request
+Route::get('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@get_list')->name('api.inventory.capital-expenditure-request.list');
+Route::post('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@store')->name('api.inventory.capital-expenditure-request.store');
+Route::put('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@update')->name('api.inventory.capital-expenditure-request.update');
+Route::delete('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@destroy')->name('api.inventory.capital-expenditure-request.delete');
 
 
 //Purchase Order web pages

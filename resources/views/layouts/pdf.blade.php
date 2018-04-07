@@ -10,21 +10,22 @@
       line-height: 1;
       padding: 0;
       margin: 0;
-      font-size: 10pt;
+      font-size: 9pt;
     }
     .main-heading{
         font-weight: bold;
-        font-size: 18pt;
+        font-size: 17pt;
     }
     .sub-heading{
         font-weight: bold;
-        font-size: 14pt;
+        font-size: 13pt;
     }
     .page-break {
         page-break-after: always;
     }
     table tr td,table tr th{
-      padding: 2pt;
+      padding: 1pt;
+      vertical-align: middle;
     }
     table{
         border-collapse: collapse;
