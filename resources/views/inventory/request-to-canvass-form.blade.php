@@ -20,10 +20,11 @@
     <div class="col-sm-12">
         <h2 style="text-align: center;">Request to Canvass Header</h2>
         <br>
+        <i>All fields marked with asterisk (*) are required field.</i>
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="request_to_canvass_number">Request to Canvass Number:</label>
+                    <label for="request_to_canvass_number"><small style="color:red">*</small> Request to Canvass Number:</label>
                     <input type="text" class="form-control" placeholder="Enter Request to Canvass Number" id="request_to_canvass_number" ng-model="formdata.request_to_canvass_number">
                     <p class="help-block" ng-cloak>@{{formerrors.request_to_canvass_number[0]}}</p>
                 </div>
@@ -39,14 +40,14 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="requesting_department">Requesting Department:</label>
+                    <label for="requesting_department"><small style="color:red">*</small> Requesting Department:</label>
                     <input type="text" class="form-control" placeholder="Enter Requesting Department" id="requesting_department" ng-model="formdata.requesting_department">
                     <p class="help-block" ng-cloak>@{{formerrors.requesting_department[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="request_to_canvass_date">Date Requested:</label>
+                    <label for="request_to_canvass_date"><small style="color:red">*</small> Date Requested:</label>
                     <input type="text" class="form-control" placeholder="Enter Date Requested" id="request_to_canvass_date" ng-model="formdata.request_to_canvass_date" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.request_to_canvass_date[0]}}</p>
                 </div>
@@ -55,7 +56,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="reason_for_the_request">Reason for the Request:</label>
+                    <label for="reason_for_the_request"><small style="color:red">*</small> Reason for the Request:</label>
                     <input type="text" class="form-control" placeholder="Enter Reason for the Request" id="reason_for_the_request" ng-model="formdata.reason_for_the_request">
                     <p class="help-block" ng-cloak>@{{formerrors.reason_for_the_request[0]}}</p>
                 </div>
@@ -204,7 +205,7 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="requested_by_name">Requested By:</label>
+                    <label for="requested_by_name"><small style="color:red">*</small> Requested By:</label>
                     <input type="text" class="form-control" placeholder="Enter Requested By" id="requested_by_name" ng-model="formdata.requested_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.requested_by_name[0]}}</p>
                 </div>
@@ -295,6 +296,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                     $scope.formdata = {};
                     $scope.formdata.type_of_item_requested = 'operations';
                     $scope.items = {};
+                    $scope.formerrors = {};
                 });
             },
             function()
@@ -335,6 +337,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
+                $.notify('Generation failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }
@@ -367,6 +370,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
+                $.notify('Updating failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }

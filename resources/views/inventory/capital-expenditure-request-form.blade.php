@@ -20,10 +20,11 @@
     <div class="col-sm-12">
         <h2 style="text-align: center;">Capital Expenditure Request Header</h2>
         <br>
+        <i>All fields marked with asterisk (*) are required field.</i>
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="capital_expenditure_request_number">Budget Number:</label>
+                    <label for="capital_expenditure_request_number"><small style="color:red">*</small> Budget Number:</label>
                     <input type="text" class="form-control" placeholder="Enter Budget Number" id="capital_expenditure_request_number" ng-model="formdata.capital_expenditure_request_number">
                     <p class="help-block" ng-cloak>@{{formerrors.capital_expenditure_request_number[0]}}</p>
                 </div>
@@ -46,7 +47,7 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="capital_expenditure_request_date">Date:</label>
+                    <label for="capital_expenditure_request_date"><small style="color:red">*</small> Date:</label>
                     <input type="text" class="form-control" placeholder="Enter Date Requested" id="capital_expenditure_request_date" ng-model="formdata.capital_expenditure_request_date" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.capital_expenditure_request_date[0]}}</p>
                 </div>
@@ -62,7 +63,7 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="department">Department:</label>
+                    <label for="department"><small style="color:red">*</small> Department:</label>
                     <input type="text" class="form-control" placeholder="Enter Department" id="department" ng-model="formdata.department">
                     <p class="help-block" ng-cloak>@{{formerrors.department[0]}}</p>
                 </div>
@@ -164,21 +165,21 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="requested_by_name">Requested By</label>
+                    <label for="requested_by_name"><small style="color:red">*</small> Requested By</label>
                     <input type="text" class="form-control" placeholder="Enter Name" id="requested_by_name" ng-model="formdata.requested_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.requested_by_name[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="requested_by_date">Date:</label>
+                    <label for="requested_by_date"><small style="color:red">*</small> Date:</label>
                     <input type="text" class="form-control" placeholder="Enter Date" id="requested_by_date" ng-model="formdata.requested_by_date" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.requested_by_date[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="requested_by_position">Position:</label>
+                    <label for="requested_by_position"><small style="color:red">*</small> Position:</label>
                     <input type="text" class="form-control" placeholder="Enter Position" id="requested_by_position" ng-model="formdata.requested_by_position">
                     <p class="help-block" ng-cloak>@{{formerrors.requested_by_position[0]}}</p>
                 </div>
@@ -311,7 +312,6 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.edit_mode = "{!! $edit_mode !!}";
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
-        $scope.formdata.type_of_item_requested = 'operations';
         $scope.items = {};
         $scope.price_selection = {};
         $scope.formdata.inventory_purchase_request_id = null;
@@ -350,8 +350,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             function(){
                 $scope.$apply(function() {
                     $scope.formdata = {};
-                    $scope.formdata.type_of_item_requested = 'operations';
                     $scope.items = {};
+                    $scope.formerrors = {};
+                    $scope.formdata.inventory_purchase_request_id = null;
                 });
             },
             function()
@@ -391,6 +392,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
+                $.notify('Generation failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }
@@ -421,6 +423,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
+                $.notify('Update failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }

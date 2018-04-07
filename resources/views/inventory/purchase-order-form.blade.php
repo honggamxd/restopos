@@ -20,10 +20,11 @@
     <div class="col-sm-12">
         <h2 style="text-align: center;">Purchase Order Header</h2>
         <br>
+        <i>All fields marked with asterisk (*) are required field.</i>
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="purchase_order_number">Purchase Order Number:</label>
+                    <label for="purchase_order_number"><small style="color:red">*</small> Purchase Order Number:</label>
                     <input type="text" class="form-control" placeholder="Enter Purchase Order Number" id="purchase_order_number" ng-model="formdata.purchase_order_number">
                     <p class="help-block" ng-cloak>@{{formerrors.purchase_order_number[0]}}</p>
                 </div>
@@ -39,14 +40,14 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="supplier_name">Supplier Name:</label>
+                    <label for="supplier_name"><small style="color:red">*</small> Supplier Name:</label>
                     <input type="text" class="form-control" placeholder="Enter Supplier Name" id="supplier_name" ng-model="formdata.supplier_name">
                     <p class="help-block" ng-cloak>@{{formerrors.supplier_name[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="purchase_order_date">Date:</label>
+                    <label for="purchase_order_date"><small style="color:red">*</small> Date:</label>
                     <input type="text" class="form-control" placeholder="Enter Date" id="purchase_order_date" ng-model="formdata.purchase_order_date" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.purchase_order_date[0]}}</p>
                 </div>
@@ -62,7 +63,7 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="requesting_department">Requesting Department:</label>
+                    <label for="requesting_department"><small style="color:red">*</small> Requesting Department:</label>
                     <input type="text" class="form-control" placeholder="Enter Requesting Department" id="requesting_department" ng-model="formdata.requesting_department">
                     <p class="help-block" ng-cloak>@{{formerrors.requesting_department[0]}}</p>
                 </div>
@@ -87,7 +88,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="term">Term:</label>
+                    <label for="term"><small style="color:red">*</small> Term:</label>
                     <input type="text" class="form-control" placeholder="Enter Term" id="term" ng-model="formdata.term">
                     <p class="help-block" ng-cloak>@{{formerrors.term[0]}}</p>
                 </div>
@@ -203,7 +204,7 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="requested_by_name">Requested By:</label>
+                    <label for="requested_by_name"><small style="color:red">*</small> Requested By:</label>
                     <input type="text" class="form-control" placeholder="Enter Requested By" id="requested_by_name" ng-model="formdata.requested_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.requested_by_name[0]}}</p>
                 </div>
@@ -290,8 +291,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             function(){
                 $scope.$apply(function() {
                     $scope.formdata = {};
-                    $scope.formdata.type_of_item_requested = 'operations';
                     $scope.items = {};
+                    $scope.formerrors = {};
+                    $scope.purchase_request_number_formatted = null;
                 });
             },
             function()
@@ -330,6 +332,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
+                $.notify('Generation failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }
@@ -360,6 +363,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
+                $.notify('Update failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }

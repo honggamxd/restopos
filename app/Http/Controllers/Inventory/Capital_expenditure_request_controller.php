@@ -98,7 +98,7 @@ class Capital_expenditure_request_controller extends Controller
                 // 'brief_project_description' => 'required',
                 // 'purpose' => 'required',
                 'requested_by_name' => 'required',
-                'requested_by_date' => 'date',
+                'requested_by_date' => 'required|date',
                 'requested_by_position' => 'required',
                 // 'approved_by_1_name' => 'required',
                 'approved_by_1_date' => 'date',
