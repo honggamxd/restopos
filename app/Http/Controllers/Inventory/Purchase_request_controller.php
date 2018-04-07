@@ -51,7 +51,7 @@ class Purchase_request_controller extends Controller
         $result = Inventory_purchase_request::query();
         if($request->searchString!=null&&trim($request->searchString)!=""){
         $result->where(function ($query) use ($request){
-            $query->orWhere('purchase_request_number',$request->searchString);
+            $query->orWhere('purchase_request_number','LIKE',"%".(integer)$request->searchString."%");
             
             });
         }

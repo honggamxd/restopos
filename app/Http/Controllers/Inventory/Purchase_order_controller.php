@@ -51,9 +51,14 @@ class Purchase_order_controller extends Controller
         $result = Inventory_purchase_order::query();
         if($request->searchString!=null&&trim($request->searchString)!=""){
         $result->where(function ($query) use ($request){
-            $query->orWhere('purchase_order_number',$request->searchString);
+            $query->where('purchase_order_number','LIKE',"%".(integer)$request->searchString."%");
             
             });
+        }
+        if($request->autocomplete){
+            if($request->approved=='1'){
+                $result->whereNotNull('approved_by_name');
+            }
         }
         $number_of_pages = $request->autocomplete ? 10 : 50;
         $pages = (string)$result->paginate($number_of_pages);

@@ -51,7 +51,7 @@ class Request_to_canvass_controller extends Controller
         $result = Inventory_request_to_canvass::query();
         if($request->searchString!=null&&trim($request->searchString)!=""){
         $result->where(function ($query) use ($request){
-            $query->orWhere('request_to_canvass_number',$request->searchString);
+            $query->orWhere('request_to_canvass_number','LIKE',"%".(integer)$request->searchString."%");
             
             });
         }

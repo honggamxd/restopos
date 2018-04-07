@@ -51,7 +51,7 @@ class Capital_expenditure_request_controller extends Controller
         $result = Inventory_capital_expenditure_request::query();
         if($request->searchString!=null&&trim($request->searchString)!=""){
         $result->where(function ($query) use ($request){
-            $query->orWhere('capital_expenditure_request_number',$request->searchString);
+            $query->orWhere('capital_expenditure_request_number','LIKE',"%".(integer)$request->searchString."%");
             
             });
         }

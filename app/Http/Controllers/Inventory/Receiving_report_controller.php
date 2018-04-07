@@ -51,10 +51,12 @@ class Receiving_report_controller extends Controller
         $result = Inventory_Receiving_report::query();
         if($request->searchString!=null&&trim($request->searchString)!=""){
         $result->where(function ($query) use ($request){
-            $query->orWhere('receiving_report_number',$request->searchString);
+            $query->orWhere('receiving_report_number','LIKE',"%".(integer)$request->searchString."%");
             
             });
-            if($request->approved){
+        }
+        if($request->autocomplete){
+            if($request->approved=='1'){
                 $result->whereNotNull('approved_by_name');
             }
         }
