@@ -263,7 +263,17 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $scope.save_form = function() {
         if($scope.edit_mode == 'create'){
-            $scope.add_form();
+            alertify.confirm(
+                'Save Receiving Request',
+                'After submitting, the items in the form will update its quantity. continue?',
+                function(){
+                    $scope.add_form();
+                },
+                function()
+                {
+                    // alertify.error('Cancel')
+                }
+            );
         }else{
             $scope.update_form();
         }

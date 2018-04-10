@@ -127,10 +127,15 @@
                         <td class="center aligned middle aligned" style="width: 100%">@{{item.inventory_item.item_name}}</td>
                         <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
-                            <div class="ui input">
+                            <div class="ui input" ng-if="!formdata.approved_by_date">
+                                <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
+                                {{-- <span ng-bind="item.quantity"></span> --}}
+                            </div>
+                            <div class="ui input" ng-if="formdata.approved_by_date">
                                 {{-- <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity"> --}}
                                 <span ng-bind="item.quantity"></span>
                             </div>
+                            <p class="help-block">@{{ formerrors['items.'+index+'.error'][0] }}</p>
                         </td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
@@ -187,9 +192,9 @@
             </div>
             <div class="col-sm-3" ng-if="edit_mode=='update'">
                 <div class="form-group">
-                    <label for="approved_name">Approved By:</label>
-                    <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_name" ng-model="formdata.approved_name">
-                    <p class="help-block" ng-cloak>@{{formerrors.approved_name[0]}}</p>
+                    <label for="approved_by_name">Approved By:</label>
+                    <input type="text" class="form-control" placeholder="Enter Approved By" id="approve_byd_name" ng-model="formdata.approved_by_name">
+                    <p class="help-block" ng-cloak>@{{formerrors.approve_byd_name[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-3">
@@ -256,7 +261,21 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         if($scope.edit_mode == 'create'){
             $scope.add_form();
         }else{
-            $scope.update_form();
+            if($scope.formdata.approved_by_name != null && $scope.formdata.approved_by_date == null){
+                alertify.confirm(
+                    'Save Stock Issuance',
+                    'After submitting, the items in the form will update its quantity. continue?',
+                    function(){
+                        $scope.update_form();
+                    },
+                    function()
+                    {
+                        // alertify.error('Cancel')
+                    }
+                );
+            }else{
+                $scope.update_form();
+            }
         }
     }
 
@@ -302,7 +321,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $scope.formdata = {};
             $scope.items = {};
             setTimeout(() => {
-                window.location.href = route('inventory.stock-issuance.index',[response.data.uuid]);
+                // window.location.href = route('inventory.stock-issuance.index',[response.data.uuid]);
             }, 2000);
         }, function(rejection) {
             if (rejection.status != 422) {
@@ -323,7 +342,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         angular.forEach($scope.items,function(value, key) {
             items[key] = {
                 id: value.id,
+                inventory_item_id: value.inventory_item_id,
                 quantity: value.quantity,
+                key: key,
                 unit_cost: value.unit_price,
                 remarks: value.remarks,
             };
@@ -335,6 +356,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
+            $scope.formdata.approved_by_date = response.data.approved_by_date;
             $.notify('Stock Issuance has been updated.');
         }, function(rejection) {
             if (rejection.status != 422) {

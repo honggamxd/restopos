@@ -9,6 +9,7 @@ use App\Http\Requests;
 use Auth;
 use Carbon\Carbon;
 use PDF;
+use Validator;
 
 use App\Inventory\Inventory_stock_issuance;
 use App\Inventory\Inventory_stock_issuance_detail;
@@ -89,8 +90,8 @@ class Stock_issuance_controller extends Controller
 
     public function store(Request $request)
     {
-        $this->validate(
-            $request,
+        $validator = Validator::make(
+            $request->all(),
             [
                 'stock_issuance_number' => 'required|numeric|unique:inventory_stock_issuance,stock_issuance_number,NULL,id,deleted_at,NULL',
                 'stock_issuance_date' => 'required|date',
@@ -112,6 +113,9 @@ class Stock_issuance_controller extends Controller
                 
             ]
         );
+        if($validator->fails()){
+            return response($validator->errors(), 422);
+        }
         DB::beginTransaction();
         try{
             $stock_issuance = new Inventory_stock_issuance;
@@ -143,13 +147,6 @@ class Stock_issuance_controller extends Controller
                 $stock_issuance_detail->quantity = $form_item['quantity'];
                 $stock_issuance_detail->remarks = $form_item['remarks'];
                 $stock_issuance_detail->save();
-
-                $item_detail = new Inventory_item_detail;
-                $item_detail->inventory_item_id = $form_item['id'];
-                $item_detail->unit_cost = $form_item['unit_cost'];
-                $item_detail->quantity = $form_item['quantity'] * -1;
-                $item_detail->inventory_stock_issuance_id = $stock_issuance->id;
-                $item_detail->save();
             }
 
             
@@ -162,8 +159,8 @@ class Stock_issuance_controller extends Controller
 
     public function update(Request $request,$id)
     {
-          $this->validate(
-            $request,
+          $validator = Validator::make(
+            $request->all(),
             [
                 'stock_issuance_number' => 'required|numeric|unique:inventory_stock_issuance,stock_issuance_number,'.$id.',id,deleted_at,NULL',
                 'stock_issuance_date' => 'required|date',
@@ -185,6 +182,19 @@ class Stock_issuance_controller extends Controller
                 
             ]
         );
+        $validator->after(function ($validator) use ($request){
+            if($request->approved_by_name != null && $request->approved_by_date == null){
+                foreach ($request->items as $form_item) {
+                    $item = fractal(Inventory_item::find($form_item['inventory_item_id']), new Inventory_item_transformer)->toArray();
+                    if($item['total_quantity']<$form_item['quantity']){
+                        $validator->errors()->add('items.'.$form_item['key'].'.error', 'Available: '.$item['total_quantity']);
+                    }
+                }
+            }
+        });
+        if($validator->fails()){
+            return response($validator->errors(), 422);
+        }
         DB::beginTransaction();
         try{
             // return $request->all();
@@ -201,12 +211,12 @@ class Stock_issuance_controller extends Controller
             $stock_issuance->issued_by_name = $request->issued_by_name;
             $stock_issuance->issued_by_date = $request->issued_by_date != null ? Carbon::parse($request->issued_by_date) : null;
             $stock_issuance->approved_by_name = $request->approved_by_name;
-            $stock_issuance->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
+            if($request->approved_by_date==null && $request->approved_by_name != null){
+                $stock_issuance->approved_by_date = Carbon::parse($request->approved_by_date);
+            }
             $stock_issuance->posted_by_name = $request->posted_by_name;
             $stock_issuance->posted_by_date = $request->posted_by_date != null ? Carbon::parse($request->posted_by_date) : null;
             $stock_issuance->save();
-
-            $stock_issuance = Inventory_stock_issuance::orderBy('id','DESC')->first();
 
             foreach ($request->items as $form_item) {
                 $stock_issuance_detail = Inventory_stock_issuance_detail::find($form_item['id']);
@@ -215,9 +225,21 @@ class Stock_issuance_controller extends Controller
                 $stock_issuance_detail->remarks = $form_item['remarks'];
                 $stock_issuance_detail->save();
 
-                $item_detail = Inventory_item_detail::where('inventory_item_id',$stock_issuance_detail->inventory_item_id)->where('inventory_stock_issuance_id',$id)->first();
-                $item_detail->unit_cost = $form_item['unit_cost'];
-                $item_detail->save();
+                $item_detail = Inventory_item_detail::where('inventory_item_id',$form_item['inventory_item_id'])->where('inventory_stock_issuance_id',$id)->first();
+                if($item_detail == null){
+                    if($request->approved_by_name != null && $request->approved_by_date == null){
+                        $item_detail = new Inventory_item_detail;
+                        $item_detail->inventory_item_id = $stock_issuance_detail->inventory_item_id;
+                        $item_detail->unit_cost = $form_item['unit_cost'];
+                        $item_detail->quantity = $form_item['quantity'] * -1;
+                        $item_detail->inventory_stock_issuance_id = $stock_issuance->id;
+                        $item_detail->save();
+                    }
+                }else{
+                    $item_detail = Inventory_item_detail::where('inventory_item_id',$stock_issuance_detail->inventory_item_id)->where('inventory_stock_issuance_id',$id)->first();
+                    $item_detail->unit_cost = $form_item['unit_cost'];
+                    $item_detail->save();
+                }
             }
 
             
