@@ -208,6 +208,7 @@ class Purchase_request_controller extends Controller
             $purchase_request_detail = Inventory_purchase_request_detail::where('inventory_purchase_request_id',$id);
             $purchase_request->delete();
             $purchase_request_detail->delete();
+            DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
     }

@@ -197,6 +197,7 @@ class Request_to_canvass_controller extends Controller
             $request_to_canvass_detail = Inventory_request_to_canvass_detail::where('inventory_request_to_canvass_id',$id);
             $request_to_canvass->delete();
             $request_to_canvass_detail->delete();
+            DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
     }

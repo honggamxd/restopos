@@ -9,15 +9,16 @@ use App\Http\Requests;
 use Auth;
 use Carbon\Carbon;
 use PDF;
+use Validator;
 
-use App\Inventory\inventory_receiving_report;
-use App\Inventory\inventory_receiving_report_detail;
+use App\Inventory\Inventory_receiving_report;
+use App\Inventory\Inventory_receiving_report_detail;
 use App\Inventory\Inventory_item;
 
 use App\Inventory\Inventory_item_detail;
 
 use App\Transformers\Inventory_item_transformer;
-use App\Transformers\inventory_receiving_report_transformer;
+use App\Transformers\Inventory_receiving_report_transformer;
 
 class Receiving_report_controller extends Controller
 {
@@ -28,11 +29,11 @@ class Receiving_report_controller extends Controller
 
     public function index(Request $request,$uuid)
     {
-        $data = inventory_receiving_report::where('uuid',$uuid)->first();
+        $data = Inventory_receiving_report::where('uuid',$uuid)->first();
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new inventory_receiving_report_transformer)->parseIncludes('details.inventory_item,inventory_purchase_order.inventory_purchase_request')->toArray();
+        $data = fractal($data, new Inventory_receiving_report_transformer)->parseIncludes('details.inventory_item,inventory_purchase_order.inventory_purchase_request')->toArray();
         $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
         $pdf->setPaper('legal', 'portrait');
         $pdf->loadView('pdf.receiving-report', $data);
@@ -48,7 +49,7 @@ class Receiving_report_controller extends Controller
 
     public function get_list(Request $request)
     {
-        $result = inventory_receiving_report::query();
+        $result = Inventory_receiving_report::query();
         if($request->searchString!=null&&trim($request->searchString)!=""){
         $result->where(function ($query) use ($request){
             $query->orWhere('receiving_report_number','LIKE',"%".(integer)$request->searchString."%");
@@ -57,7 +58,7 @@ class Receiving_report_controller extends Controller
         }
         $number_of_pages = 50;
         $pages = (string)$result->paginate($number_of_pages);
-        $result = fractal($result->paginate($number_of_pages), new inventory_receiving_report_transformer)->parseIncludes('details.inventory_item')->toArray();
+        $result = fractal($result->paginate($number_of_pages), new Inventory_receiving_report_transformer)->parseIncludes('details.inventory_item')->toArray();
         $data['result'] = $result;
         $data['pages'] = $pages;
         return $data;
@@ -71,11 +72,11 @@ class Receiving_report_controller extends Controller
     
     public function edit(Request $request,$uuid)
     {
-        $data = inventory_receiving_report::where('uuid',$uuid)->first();
+        $data = Inventory_receiving_report::where('uuid',$uuid)->first();
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new inventory_receiving_report_transformer)->parseIncludes('details.inventory_item,inventory_purchase_order')->toArray();
+        $data = fractal($data, new Inventory_receiving_report_transformer)->parseIncludes('details.inventory_item,inventory_purchase_order')->toArray();
         $data['data'] = $data;
         $data['edit_mode'] = 'update';
         // return $data;
@@ -110,7 +111,7 @@ class Receiving_report_controller extends Controller
         );
         DB::beginTransaction();
         try{
-            $receiving_report = new inventory_receiving_report;
+            $receiving_report = new Inventory_receiving_report;
             $receiving_report->receiving_report_number = $request->receiving_report_number;
             $receiving_report->receiving_report_date = Carbon::parse($request->receiving_report_date);
             $receiving_report->supplier_name = $request->supplier_name;
@@ -127,10 +128,10 @@ class Receiving_report_controller extends Controller
             $receiving_report->inventory_purchase_order_id = $request->inventory_purchase_order_id;
             $receiving_report->save();
 
-            $receiving_report = inventory_receiving_report::orderBy('id','DESC')->first();
+            $receiving_report = Inventory_receiving_report::orderBy('id','DESC')->first();
 
             foreach ($request->items as $form_item) {
-                $receiving_report_detail = new inventory_receiving_report_detail;
+                $receiving_report_detail = new Inventory_receiving_report_detail;
                 $receiving_report_detail->inventory_receiving_report_id = $receiving_report->id;
                 $receiving_report_detail->inventory_item_id = $form_item['id'];
                 $receiving_report_detail->unit_price = $form_item['unit_cost'];
@@ -183,7 +184,7 @@ class Receiving_report_controller extends Controller
         DB::beginTransaction();
         try{
             // return $request->all();
-            $receiving_report = inventory_receiving_report::findOrFail($id);
+            $receiving_report = Inventory_receiving_report::findOrFail($id);
             $receiving_report->receiving_report_number = $request->receiving_report_number;
             $receiving_report->receiving_report_date = Carbon::parse($request->receiving_report_date);
             $receiving_report->supplier_name = $request->supplier_name;
@@ -199,10 +200,10 @@ class Receiving_report_controller extends Controller
             $receiving_report->posted_by_name = $request->posted_by_name;
             $receiving_report->save();
 
-            $receiving_report = inventory_receiving_report::orderBy('id','DESC')->first();
+            $receiving_report = Inventory_receiving_report::orderBy('id','DESC')->first();
 
             foreach ($request->items as $form_item) {
-                $receiving_report_detail = inventory_receiving_report_detail::find($form_item['id']);
+                $receiving_report_detail = Inventory_receiving_report_detail::find($form_item['id']);
                 $receiving_report_detail->unit_price = $form_item['unit_cost'];
                 $receiving_report_detail->quantity = $form_item['quantity'];
                 $receiving_report_detail->remarks = $form_item['remarks'];
@@ -222,12 +223,28 @@ class Receiving_report_controller extends Controller
 
     public function destroy($id)
     {
+        $validator = Validator::make([],[]);
+        $validator->after(function ($validator) use ($id){
+            $receiving_report_detail = Inventory_receiving_report_detail::where('inventory_receiving_report_id',$id);
+            $results = $receiving_report_detail->get();
+            foreach ($results as $key => $receiving_report_item) {
+                $item = fractal(Inventory_item::find($receiving_report_item['inventory_item_id']), new Inventory_item_transformer)->toArray();
+                if($item['total_quantity']<$receiving_report_item['quantity']){
+                    $validator->errors()->add('items.'.$key.'.error', 'Remaining quantity: '.$item['total_quantity']);
+                }
+            }
+        });
+        if($validator->fails()){
+            return response($validator->errors(), 422);
+        }
         DB::beginTransaction();
         try{
-            $receiving_report = inventory_receiving_report::findOrFail($id);
-            $receiving_report_detail = inventory_receiving_report_detail::where('inventory_receiving_report_id',$id);
+            $receiving_report = Inventory_receiving_report::findOrFail($id);
+            $receiving_report_detail = Inventory_receiving_report_detail::where('inventory_receiving_report_id',$id);
+            Inventory_item_detail::where('inventory_receiving_report_id',$id)->delete();
             $receiving_report->delete();
             $receiving_report_detail->delete();
+            DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
     }

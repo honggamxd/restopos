@@ -136,10 +136,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $scope.delete_confirm = function(item) {
         alertify.confirm(
-            'DELETE PURCHASE REQUEST',
-            'Are you sure to delete this purchase request. This action is irreversible?',
+            'DELETE RECEIVING REPORT',
+            'Are you sure to delete this receiving report. This action is irreversible?',
             function(){
-                $scope.delete_form(item.id);
+                $scope.delete_form(item);
             },
             function()
             {
@@ -148,7 +148,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         );
     }
 
-    $scope.delete_form = function(id) {
+    $scope.delete_form = function(data) {
+        let id = data.id;
+        let uuid = data.uuid;
         $http({
             method: 'DELETE',
             url: route('api.inventory.receiving-report.delete',[id]).url(),
@@ -161,6 +163,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             } else if (rejection.status == 422) {
                 var errors = rejection.data;
                 $scope.formerrors = errors;
+                $.notify('Unable to delete the form, redirecting to update form page','error');
+                setTimeout(() => {
+                    window.location.href = route('inventory.receiving-report.edit',[uuid]);
+                }, 2000);
             }
         });
     }

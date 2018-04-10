@@ -147,6 +147,7 @@
                                 {{-- <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity"> --}}
                                 <span ng-bind="item.quantity"></span>
                             </div>
+                            <p class="help-block">@{{ formerrors['items.'+index+'.error'][0] }}</p>
                         </td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
@@ -226,6 +227,9 @@
                 <a href="javascript:history.back()" type="button" class="ui red button" ng-if="edit_mode=='update'" ng-cloak>
                     <span class="glyphicon glyphicon-trash"></span> Cancel
                 </a>
+                <a href="javascript:void(0);" type="button" class="ui red button" ng-if="edit_mode=='update'" ng-click="delete_confirm(formdata)">
+                    <span class="glyphicon glyphicon-trash"></span> Delete Form
+                </a>
             </div>
         </div>
     </div>
@@ -264,7 +268,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.save_form = function() {
         if($scope.edit_mode == 'create'){
             alertify.confirm(
-                'Save Receiving Request',
+                'SAVE RECEIVING REPORT',
                 'After submitting, the items in the form will update its quantity. continue?',
                 function(){
                     $scope.add_form();
@@ -359,11 +363,50 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
-                $.notify('Updating failed, please review the form.','error');
+                $.notify('Update failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }
             $scope.submit = false;
+        });
+    }
+
+    $scope.delete_confirm = function(item) {
+        alertify.confirm(
+            'DELETE RECEIVING REPORT',
+            'Are you sure to delete this receiving report. This action is irreversible?',
+            function(){
+                $scope.delete_form(item);
+            },
+            function()
+            {
+                // alertify.error('Cancel')
+            }
+        );
+    }
+
+    $scope.delete_form = function(data) {
+        let id = data.id;
+        let uuid = data.uuid;
+        $http({
+            method: 'DELETE',
+            url: route('api.inventory.receiving-report.delete',[id]).url(),
+        }).then(function(response) {
+            $.notify('Receiving Report has been deleted.');
+            setTimeout(() => {
+                window.location.href = route('inventory.receiving-report.list');
+            }, 1000);
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                var errors = rejection.data;
+                $scope.formerrors = errors;
+                $.notify('Delete failed, please review the form','error');
+                setTimeout(() => {
+                    // window.location.href = route('inventory.receiving-report.edit',[uuid]);
+                }, 2000);
+            }
         });
     }
 

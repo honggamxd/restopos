@@ -205,6 +205,7 @@ class Purchase_order_controller extends Controller
             $purchase_order_detail = Inventory_purchase_order_detail::where('inventory_purchase_order_id',$id);
             $purchase_order->delete();
             $purchase_order_detail->delete();
+            DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
     }
