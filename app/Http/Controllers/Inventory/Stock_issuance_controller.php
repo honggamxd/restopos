@@ -159,7 +159,7 @@ class Stock_issuance_controller extends Controller
 
     public function update(Request $request,$id)
     {
-          $validator = Validator::make(
+        $validator = Validator::make(
             $request->all(),
             [
                 'stock_issuance_number' => 'required|numeric|unique:inventory_stock_issuance,stock_issuance_number,'.$id.',id,deleted_at,NULL',
