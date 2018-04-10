@@ -79,7 +79,7 @@
         <h2 style="text-align: center;">Stock Issuance Items</h2>
         <br>
         <label ng-hide="edit_mode=='update'" ng-cloak>Search Receiving Report Number</label>
-        <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+        <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak  data-tooltip="Search for approved purchase orders" data-position="top right" data-inverted="">
             <i class="search icon"></i>
             <input type="text" placeholder="Search" id="search-receiving-report" ng-model="search_item_name">
         </div>
@@ -185,7 +185,7 @@
                     <p class="help-block" ng-cloak>@{{formerrors.received_by_name[0]}}</p>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3" ng-if="edit_mode=='update'">
                 <div class="form-group">
                     <label for="approved_name">Approved By:</label>
                     <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_name" ng-model="formdata.approved_name">
@@ -239,9 +239,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.receiving_report_number_formatted = null;
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
-        $scope.formdata.stock_issuance_date = moment($scope.formdata.stock_issuance_date).format("MM/DD/YYYY hh:mm:ss a");
+        $scope.formdata.stock_issuance_date = moment($scope.formdata.stock_issuance_date).format("MM/DD/YYYY");
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
-        $scope.receiving_report_number_formatted = $scope.formdata.receiving_report.receiving_report_number_formatted;
+        $scope.receiving_report_number_formatted = $scope.formdata.inventory_receiving_report ? $scope.formdata.inventory_receiving_report.receiving_report_number_formatted : null;
         delete $scope.formdata.details;
     }
     $scope.formerrors = {};

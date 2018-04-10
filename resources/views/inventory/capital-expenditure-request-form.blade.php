@@ -97,7 +97,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <label ng-hide="edit_mode=='update'" ng-cloak>Search Purchase Request Number</label>
-                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak data-tooltip="Search for unapproved purchase requests with capex type of items" data-position="top right" data-inverted="">
                     <i class="search icon"></i>
                     <input type="text" placeholder="Search Purchase Request Number" id="search-purchase-request">
                 </div>

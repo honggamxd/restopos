@@ -95,7 +95,7 @@
         <h2 style="text-align: center;">Receiving Report Items</h2>
         <br>
         <label ng-hide="edit_mode=='update'" ng-cloak>Search Purchase Order Number</label>
-        <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+        <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak data-tooltip="Search for approved purchase orders" data-position="top right" data-inverted="">
             <i class="search icon"></i>
             <input type="text" placeholder="Search" id="search-item" ng-model="search_item_name">
         </div>
@@ -383,6 +383,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 $scope.formdata.supplier_address = ui.item.supplier_address;
                 $scope.formdata.supplier_name = ui.item.supplier_name;
                 $scope.formdata.requesting_department = ui.item.requesting_department;
+                $scope.formdata.request_chargeable_to = ui.item.request_chargeable_to;
             });
         }
     })

@@ -113,7 +113,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <label ng-hide="edit_mode=='update'" ng-cloak>Search Purchase Request Number</label>
-                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak data-tooltip="Search for approved purchase requests" data-position="top right" data-inverted="">
                     <i class="search icon"></i>
                     <input type="text" placeholder="Search Purchase Request Number" id="search-purchase-request-number" ng-model="search_purchase_request">
                 </div>
