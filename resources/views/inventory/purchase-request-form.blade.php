@@ -161,7 +161,7 @@
                         </td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
-                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.unit_cost">
+                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.unit_price">
                             </div>
                         </td>
                         <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(index)">&times;</button></td>
@@ -417,7 +417,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                         $scope.formdata.inventory_request_to_canvass_id = null;
                     }
                     ui.item.quantity = 1;
-                    ui.item.unit_cost = 0;
+                    ui.item.unit_price = 0;
                     $scope.items['item'+ui.item.id] = ui.item;
                 }
             });
