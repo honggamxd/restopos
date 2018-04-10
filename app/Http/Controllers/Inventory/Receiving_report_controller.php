@@ -222,9 +222,13 @@ class Receiving_report_controller extends Controller
 
     public function destroy($id)
     {
-        $receiving_report = inventory_receiving_report::findOrFail($id);
-        $receiving_report_detail = inventory_receiving_report_detail::where('inventory_receiving_report_id',$id);
-        $receiving_report->delete();
-        $receiving_report_detail->delete();
+        DB::beginTransaction();
+        try{
+            $receiving_report = inventory_receiving_report::findOrFail($id);
+            $receiving_report_detail = inventory_receiving_report_detail::where('inventory_receiving_report_id',$id);
+            $receiving_report->delete();
+            $receiving_report_detail->delete();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
     }
 }

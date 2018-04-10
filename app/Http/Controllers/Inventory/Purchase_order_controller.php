@@ -199,9 +199,13 @@ class Purchase_order_controller extends Controller
 
     public function destroy($id)
     {
-        $purchase_order = Inventory_purchase_order::findOrFail($id);
-        $purchase_order_detail = Inventory_purchase_order_detail::where('inventory_purchase_order_id',$id);
-        $purchase_order->delete();
-        $purchase_order_detail->delete();
+        DB::beginTransaction();
+        try{
+            $purchase_order = Inventory_purchase_order::findOrFail($id);
+            $purchase_order_detail = Inventory_purchase_order_detail::where('inventory_purchase_order_id',$id);
+            $purchase_order->delete();
+            $purchase_order_detail->delete();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
     }
 }

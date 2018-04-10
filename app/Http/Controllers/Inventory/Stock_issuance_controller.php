@@ -251,9 +251,16 @@ class Stock_issuance_controller extends Controller
 
     public function destroy($id)
     {
-        $stock_issuance = Inventory_stock_issuance::findOrFail($id);
-        $stock_issuance_detail = Inventory_stock_issuance_detail::where('inventory_stock_issuance_id',$id);
-        $stock_issuance->delete();
-        $stock_issuance_detail->delete();
+        DB::beginTransaction();
+        try{
+            $stock_issuance = Inventory_stock_issuance::findOrFail($id);
+            $stock_issuance_detail = Inventory_stock_issuance_detail::where('inventory_stock_issuance_id',$id);
+            Inventory_item_detail::where('inventory_stock_issuance_id',$id)->delete();
+            $stock_issuance->delete();
+            $stock_issuance_detail->delete();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        // return $stock_issuance;
     }
 }

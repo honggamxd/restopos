@@ -191,9 +191,13 @@ class Request_to_canvass_controller extends Controller
 
     public function destroy($id)
     {
-        $request_to_canvass = Inventory_request_to_canvass::findOrFail($id);
-        $request_to_canvass_detail = Inventory_request_to_canvass_detail::where('inventory_request_to_canvass_id',$id);
-        $request_to_canvass->delete();
-        $request_to_canvass_detail->delete();
+        DB::beginTransaction();
+        try{
+            $request_to_canvass = Inventory_request_to_canvass::findOrFail($id);
+            $request_to_canvass_detail = Inventory_request_to_canvass_detail::where('inventory_request_to_canvass_id',$id);
+            $request_to_canvass->delete();
+            $request_to_canvass_detail->delete();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
     }
 }

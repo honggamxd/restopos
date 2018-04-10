@@ -263,9 +263,14 @@ class Capital_expenditure_request_controller extends Controller
 
     public function destroy($id)
     {
-        $capital_expenditure_request = Inventory_capital_expenditure_request::findOrFail($id);
-        $capital_expenditure_request_detail = Inventory_capital_expenditure_request_detail::where('inventory_capital_expenditure_request_id',$id);
-        $capital_expenditure_request->delete();
-        $capital_expenditure_request_detail->delete();
+        DB::beginTransaction();
+        try{
+            $capital_expenditure_request = Inventory_capital_expenditure_request::findOrFail($id);
+            $capital_expenditure_request_detail = Inventory_capital_expenditure_request_detail::where('inventory_capital_expenditure_request_id',$id);
+            $capital_expenditure_request->delete();
+            $capital_expenditure_request_detail->delete();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
     }
 }
