@@ -19,6 +19,7 @@
   <p style="text-align: center;" class="main-heading">PURCHASE REQUEST</p>
   <br>
   <br>
+  <br>
   <p style="text-align: left;margin-left: 72%" class="sub-heading">
     No. {{ $purchase_request_number_formatted }}<br>
     Ref RTC no.:<br>

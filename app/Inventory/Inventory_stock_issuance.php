@@ -24,4 +24,9 @@ class Inventory_stock_issuance extends Model
   {
       return $this->hasMany('App\Inventory\Inventory_stock_issuance_detail');
   }
+
+  public function inventory_receiving_report()
+  {
+      return $this->belongsTo('App\Inventory\Inventory_receiving_report');
+  }
 }

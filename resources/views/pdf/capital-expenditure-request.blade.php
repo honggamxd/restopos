@@ -17,7 +17,7 @@
   </center>
   <p style="text-align: left;margin-left: 72%" class="sub-heading">
     {{-- No.  <span>{{ $capital_expenditure_request_number_formatted }}</span><br> --}}
-    Ref PR no.:  <span>{{ $inventory_purchase_request['purchase_request_number_formatted'] }}</span> <br>
+    Ref PR no.:  {{ $inventory_purchase_request['purchase_request_number_formatted'] }}<br>
   </p>
   <br>
   <table style="width: 100%" class="table-bordered">

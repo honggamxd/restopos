@@ -19,6 +19,7 @@
   <p style="text-align: center;" class="main-heading">RECEIVING REPORT</p>
   <br>
   <br>
+  <br>
   <p style="text-align: left;margin-left: 72%" class="sub-heading">
     No. {{ $receiving_report_number_formatted }}<br>
     Ref PO no.: {{ $inventory_purchase_order['purchase_order_number_formatted'] }}<br>

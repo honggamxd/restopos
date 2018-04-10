@@ -31,6 +31,7 @@ class CreateInventoryStockIssuance extends Migration
             $table->timestamp('approved_by_date')->nullable();
             $table->string('posted_by_name')->nullable();
             $table->timestamp('posted_by_date')->nullable();
+            $table->integer('inventory_receiving_report_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

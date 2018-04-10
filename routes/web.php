@@ -198,3 +198,14 @@ Route::post('/api/inventory/receiving-report/','Inventory\Receiving_report_contr
 Route::put('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@update')->name('api.inventory.receiving-report.update');
 Route::delete('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@destroy')->name('api.inventory.receiving-report.delete');
 
+//Stock Issuance web pages
+Route::get('/inventory/stock-issuance/create','Inventory\Stock_issuance_controller@create')->name('inventory.stock-issuance.create');
+Route::get('/inventory/stock-issuance/list','Inventory\Stock_issuance_controller@show_list')->name('inventory.stock-issuance.list');
+Route::get('/inventory/stock-issuance/form/{uuid}.pdf','Inventory\Stock_issuance_controller@index')->name('inventory.stock-issuance.index');
+Route::get('/inventory/stock-issuance/edit/{uuid}','Inventory\Stock_issuance_controller@edit')->name('inventory.stock-issuance.edit');
+//Stock Issuance api request
+Route::get('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controller@get_list')->name('api.inventory.stock-issuance.list');
+Route::post('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controller@store')->name('api.inventory.stock-issuance.store');
+Route::put('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@update')->name('api.inventory.stock-issuance.update');
+Route::delete('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@destroy')->name('api.inventory.stock-issuance.delete');
+

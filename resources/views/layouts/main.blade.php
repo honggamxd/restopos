@@ -73,6 +73,10 @@
         <i class="browser icon"></i>
         Receiving<br>Report
     </a>
+    <a class="item" href="{{ route('inventory.stock-issuance.list') }}">
+        <i class="browser icon"></i>
+        Stock<br>Issuance
+    </a>
     <a class="item" href="/users">
         <i class="users icon"></i>
         Users
