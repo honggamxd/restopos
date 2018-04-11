@@ -320,10 +320,16 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.approved_by_2_position = "Managing Director";
         $scope.formdata.verified_as_funded_by_position = "Cash & Bank Section";
         $scope.formdata.recorded_by_position = "Finance Personel";
+        $scope.formdata.capital_expenditure_request_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
+        // $scope.formdata.verified_as_funded_by_date = moment().format("MM/DD/YYYY");
+        // $scope.formdata.recorded_by_date = moment().format("MM/DD/YYYY");
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
-        $scope.formdata.capital_expenditure_request_date = moment($scope.formdata.capital_expenditure_request_date.date).format("MM/DD/YYYY");
-        $scope.formdata.date_needed = moment($scope.formdata.date_needed.date).format("MM/DD/YYYY");
+        $scope.formdata.capital_expenditure_request_date = $scope.formdata.capital_expenditure_request_date ? moment($scope.formdata.capital_expenditure_request_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.requested_by_date = $scope.formdata.requested_by_date ? moment($scope.formdata.requested_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.verified_as_funded_by_date = $scope.formdata.verified_as_funded_by_date ? moment($scope.formdata.verified_as_funded_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.recorded_by_date = $scope.formdata.recorded_by_date ? moment($scope.formdata.recorded_by_date).format("MM/DD/YYYY") : null;
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
         delete $scope.formdata.details;
     }
@@ -367,9 +373,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.submit = true;
         let items = {};
         angular.forEach($scope.items,function(value, key) {
-            let item_id = ($scope.purchase_request_formatted ? value.inventory_item_id : value.id);
             items[key] = {
-                id: item_id,
+                id: value.inventory_item_id,
                 quantity: value.quantity,
                 unit_cost: value.unit_price,
             };

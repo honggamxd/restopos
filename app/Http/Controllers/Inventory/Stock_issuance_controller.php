@@ -100,17 +100,24 @@ class Stock_issuance_controller extends Controller
                 // 'supplier_name' => 'required',
                 'supplier_address' => 'required',
                 // 'supplier_tin' => 'required',
-                'received_by_name' => 'required',
-                // 'received_by_date' => 'required',
-                'issued_by_name' => 'required',
-                // 'issued_by_date' => 'required',
-                // 'approved_by_name' => 'required',
-                // 'approved_by_date' => 'required',
-                // 'posted_by_name' => 'required',
-                // 'posted_by_date' => 'required',
+                'received_by_name' => 'required_with:received_by_name,received_by_date',
+                'received_by_date' => 'required_with:received_by_name,received_by_date',
+                'issued_by_name' => 'required_with:issued_by_name,issued_by_date',
+                'issued_by_date' => 'required_with:issued_by_name,issued_by_date',
+                'approved_by_name' => 'required_with:approved_by_name,approved_by_date',
+                'approved_by_date' => 'required_with:approved_by_name,approved_by_date',
+                'posted_by_name' => 'required_with:posted_by_name,posted_by_date',
+                'posted_by_date' => 'required_with:posted_by_name,posted_by_date',
             ],
             [
-                
+                'received_by_name.required_with' => 'Required if the name or date is filled.',
+                'received_by_date.required_with' => 'Required if the name or date is filled.',
+                'issued_by_name.required_with' => 'Required if the name or date is filled.',
+                'issued_by_date.required_with' => 'Required if the name or date is filled.',
+                'approved_by_name.required_with' => 'Required if the name or date is filled.',
+                'approved_by_date.required_with' => 'Required if the name or date is filled.',
+                'posted_by_name.required_with' => 'Required if the name or date is filled.',
+                'posted_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         if($validator->fails()){
@@ -120,7 +127,7 @@ class Stock_issuance_controller extends Controller
         try{
             $stock_issuance = new Inventory_stock_issuance;
             $stock_issuance->stock_issuance_number = $request->stock_issuance_number;
-            $stock_issuance->stock_issuance_date = Carbon::parse($request->stock_issuance_date);
+            $stock_issuance->stock_issuance_date = $request->stock_issuance_date != null ? Carbon::parse($request->stock_issuance_date) : null;
             $stock_issuance->requesting_department = $request->requesting_department;
             $stock_issuance->request_chargeable_to = $request->request_chargeable_to;
             $stock_issuance->supplier_name = $request->supplier_name;
@@ -130,8 +137,8 @@ class Stock_issuance_controller extends Controller
             $stock_issuance->received_by_date = $request->received_by_date != null ? Carbon::parse($request->received_by_date) : null;
             $stock_issuance->issued_by_name = $request->issued_by_name;
             $stock_issuance->issued_by_date = $request->issued_by_date != null ? Carbon::parse($request->issued_by_date) : null;
-            $stock_issuance->approved_by_name = $request->approved_by_name;
-            $stock_issuance->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
+            // $stock_issuance->approved_by_name = $request->approved_by_name;
+            // $stock_issuance->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
             $stock_issuance->posted_by_name = $request->posted_by_name;
             $stock_issuance->posted_by_date = $request->posted_by_date != null ? Carbon::parse($request->posted_by_date) : null;
             $stock_issuance->inventory_receiving_report_id = $request->inventory_receiving_report_id;
@@ -169,21 +176,28 @@ class Stock_issuance_controller extends Controller
                 // 'supplier_name' => 'required',
                 'supplier_address' => 'required',
                 // 'supplier_tin' => 'required',
-                'received_by_name' => 'required',
-                // 'received_by_date' => 'required',
-                'issued_by_name' => 'required',
-                // 'issued_by_date' => 'required',
-                // 'approved_by_name' => 'required',
-                // 'approved_by_date' => 'required',
-                // 'posted_by_name' => 'required',
-                // 'posted_by_date' => 'required',
+                'received_by_name' => 'required_with:received_by_name,received_by_date',
+                'received_by_date' => 'required_with:received_by_name,received_by_date',
+                'issued_by_name' => 'required_with:issued_by_name,issued_by_date',
+                'issued_by_date' => 'required_with:issued_by_name,issued_by_date',
+                'approved_by_name' => 'required_with:approved_by_name,approved_by_date',
+                'approved_by_date' => 'required_with:approved_by_name,approved_by_date',
+                'posted_by_name' => 'required_with:posted_by_name,posted_by_date',
+                'posted_by_date' => 'required_with:posted_by_name,posted_by_date',
             ],
             [
-                
+                'received_by_name.required_with' => 'Required if the name or date is filled.',
+                'received_by_date.required_with' => 'Required if the name or date is filled.',
+                'issued_by_name.required_with' => 'Required if the name or date is filled.',
+                'issued_by_date.required_with' => 'Required if the name or date is filled.',
+                'approved_by_name.required_with' => 'Required if the name or date is filled.',
+                'approved_by_date.required_with' => 'Required if the name or date is filled.',
+                'posted_by_name.required_with' => 'Required if the name or date is filled.',
+                'posted_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         $validator->after(function ($validator) use ($request){
-            if($request->approved_by_name != null && $request->approved_by_date == null){
+            if($request->approved_by_name != null){
                 foreach ($request->items as $form_item) {
                     $item = fractal(Inventory_item::find($form_item['inventory_item_id']), new Inventory_item_transformer)->toArray();
                     if($item['total_quantity']<$form_item['quantity']){
@@ -197,10 +211,10 @@ class Stock_issuance_controller extends Controller
         }
         DB::beginTransaction();
         try{
-            // return $request->all();
             $stock_issuance = Inventory_stock_issuance::findOrFail($id);
+            $old_data = $stock_issuance;
             $stock_issuance->stock_issuance_number = $request->stock_issuance_number;
-            $stock_issuance->stock_issuance_date = Carbon::parse($request->stock_issuance_date);
+            $stock_issuance->stock_issuance_date = $request->stock_issuance_date != null ? Carbon::parse($request->stock_issuance_date) : null;
             $stock_issuance->requesting_department = $request->requesting_department;
             $stock_issuance->request_chargeable_to = $request->request_chargeable_to;
             $stock_issuance->supplier_name = $request->supplier_name;
@@ -211,9 +225,7 @@ class Stock_issuance_controller extends Controller
             $stock_issuance->issued_by_name = $request->issued_by_name;
             $stock_issuance->issued_by_date = $request->issued_by_date != null ? Carbon::parse($request->issued_by_date) : null;
             $stock_issuance->approved_by_name = $request->approved_by_name;
-            if($request->approved_by_date==null && $request->approved_by_name != null){
-                $stock_issuance->approved_by_date = Carbon::parse($request->approved_by_date);
-            }
+            $stock_issuance->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
             $stock_issuance->posted_by_name = $request->posted_by_name;
             $stock_issuance->posted_by_date = $request->posted_by_date != null ? Carbon::parse($request->posted_by_date) : null;
             $stock_issuance->save();
@@ -227,7 +239,7 @@ class Stock_issuance_controller extends Controller
 
                 $item_detail = Inventory_item_detail::where('inventory_item_id',$form_item['inventory_item_id'])->where('inventory_stock_issuance_id',$id)->first();
                 if($item_detail == null){
-                    if($request->approved_by_name != null && $request->approved_by_date == null){
+                    if($request->approved_by_name != null){
                         $item_detail = new Inventory_item_detail;
                         $item_detail->inventory_item_id = $stock_issuance_detail->inventory_item_id;
                         $item_detail->unit_cost = $form_item['unit_cost'];

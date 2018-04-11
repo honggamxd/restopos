@@ -232,6 +232,29 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="requested_by_date">Date:</label>
+                    <span class="form-control" ng-bind="formdata.requested_by_date" readonly></span>
+                    <p class="help-block" ng-cloak>@{{formerrors.requested_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="noted_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="noted_by_date" ng-model="formdata.noted_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.noted_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-4" ng-hide="edit_mode=='create'" ng-cloak>
+                <div class="form-group">
+                    <label for="approved_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="approved_by_date" ng-model="formdata.approved_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.approved_by_date[0]}}</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <br>
@@ -271,10 +294,16 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.items = {};
         $scope.price_selection = {};
         $scope.formdata.inventory_request_to_canvass_id = null;
+        $scope.formdata.purchase_request_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
+        // $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
-        $scope.formdata.purchase_request_date = moment($scope.formdata.purchase_request_date.date).format("MM/DD/YYYY");
-        $scope.formdata.date_needed = moment($scope.formdata.date_needed.date).format("MM/DD/YYYY");
+        $scope.formdata.purchase_request_date = $scope.formdata.purchase_request_date ? moment($scope.formdata.purchase_request_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.date_needed = $scope.formdata.date_needed ? moment($scope.formdata.date_needed).format("MM/DD/YYYY") : null;
+        $scope.formdata.requested_by_date = $scope.formdata.requested_by_date ? moment($scope.formdata.requested_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.noted_by_date = $scope.formdata.noted_by_date ? moment($scope.formdata.noted_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.approved_by_date = $scope.formdata.approved_by_date ? moment($scope.formdata.approved_by_date).format("MM/DD/YYYY") : null;
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
         delete $scope.formdata.details;
     }
@@ -317,6 +346,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             }
         );
     }
+
+    $scope.$watch('formdata["purchase_request_date"]', function (newValue, oldValue, scope) {
+        $scope.formdata.requested_by_date = newValue;
+    });
     
     $scope.add_form = function() {
         $scope.formerrors = {};
@@ -337,6 +370,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
+            $.notify('Redirecting to print preview.','info');
             $.notify('Purchase Request has been generated.');
             $scope.formdata = {};
             $scope.formdata.type_of_item_requested = 'operations';
@@ -374,6 +408,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
+            $scope.formdata.approved_by_date = response.data.approved_by_date ? moment(response.data.approved_by_date).format("MM/DD/YYYY") : null;
             $.notify('Purchase Request has been updated.');
         }, function(rejection) {
             if (rejection.status != 422) {
@@ -483,6 +518,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     };
 
     $('#purchase_request_date,#date_needed').datepicker();
+    $('#requested_by_date,#noted_by_date,#approved_by_date').datepicker();
 });
 </script>
 @endpush

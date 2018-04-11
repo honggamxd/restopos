@@ -225,6 +225,29 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="requested_by_date">Date:</label>
+                    <span class="form-control" ng-bind="formdata.requested_by_date" readonly></span>
+                    <p class="help-block" ng-cloak>@{{formerrors.requested_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="noted_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="noted_by_date" ng-model="formdata.noted_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.noted_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="canvass_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="canvass_by_date" ng-model="formdata.canvass_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.canvass_by_date[0]}}</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <br>
@@ -264,6 +287,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.vendor_1_name = 'Vendor 1';
         $scope.formdata.vendor_2_name = 'Vendor 2';
         $scope.formdata.vendor_3_name = 'Vendor 3';
+        $scope.formdata.request_to_canvass_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
+        // $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+        // $scope.formdata.canvass_by_date = moment().format("MM/DD/YYYY");
         $scope.items = {};
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
@@ -326,6 +353,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
+            $.notify('Redirecting to print preview.','info');
             $.notify('Request to Canvass has been generated.');
             $scope.formdata = {};
             $scope.formdata.type_of_item_requested = 'operations';
@@ -370,13 +398,17 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
-                $.notify('Updating failed, please review the form.','error');
+                $.notify('Update failed, please review the form.','error');
                 var errors = rejection.data;
                 $scope.formerrors = errors;
             }
             $scope.submit = false;
         });
     }
+
+    $scope.$watch('formdata["request_to_canvass_date"]', function (newValue, oldValue, scope) {
+        $scope.formdata.requested_by_date = newValue;
+    });
 
 
     $("#search-item").autocomplete({
@@ -414,6 +446,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     };
 
     $('#request_to_canvass_date,#date_needed').datepicker();
+    $('#noted_by_date,#canvass_by_date').datepicker();
 });
 </script>
 @endpush

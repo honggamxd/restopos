@@ -32,14 +32,13 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th style="text-align: center">CRF No.</th>
-                            <th style="text-align: center">CRF Date</th>
-                            <th style="text-align: center">Requesting Dept.</th>
-                            <th style="text-align: center">Request Reason</th>
-                            <th style="text-align: center">Chargeable to</th>
-                            <th style="text-align: center">Date Needed</th>
-                            <th style="text-align: center">Type of Item</th>
+                            <th style="text-align: center">Budget No.</th>
+                            <th style="text-align: center">Budget Date</th>
+                            <th style="text-align: center">Budget Description</th>
+                            <th style="text-align: center">Department</th>
+                            <th style="text-align: center">Project Description</th>
                             <th style="text-align: center">Requested By</th>
+                            <th style="text-align: center">Approved by</th>
                             <th style="text-align: center"></th>
                         </tr>
                     </thead>
@@ -49,12 +48,14 @@
                                 <a ng-href="@{{item.form}}" target="_blank">@{{item.capital_expenditure_request_number_formatted}}</a>
                             </td>
                             <td style="text-align: center">@{{item.capital_expenditure_request_date_formatted}}</td>
-                            <td style="text-align: center">@{{item.requesting_department}}</td>
-                            <td style="text-align: center">@{{item.reason_for_the_request}}</td>
-                            <td style="text-align: center">@{{item.request_chargeable_to}}</td>
-                            <td style="text-align: center">@{{item.date_needed_formatted}}</td>
-                            <td style="text-align: center">@{{item.type_of_item_requested}}</td>
+                            <td style="text-align: center">@{{item.budget_description}}</td>
+                            <td style="text-align: center">@{{item.department}}</td>
+                            <td style="text-align: center">@{{item.brief_project_description}}</td>
                             <td style="text-align: center">@{{item.requested_by_name}}</td>
+                            <td style="text-align: center">
+                                @{{item.approved_by_1_name}} <br>
+                                @{{item.approved_by_2_name}}
+                            </td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
                                     <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>

@@ -185,7 +185,7 @@
             </div>
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label for="received_by_name"><small style="color:red">*</small> Received By:</label>
+                    <label for="received_by_name">Received By:</label>
                     <input type="text" class="form-control" placeholder="Enter Received By" id="received_by_name" ng-model="formdata.received_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.received_by_name[0]}}</p>
                 </div>
@@ -193,8 +193,8 @@
             <div class="col-sm-3" ng-if="edit_mode=='update'">
                 <div class="form-group">
                     <label for="approved_by_name">Approved By:</label>
-                    <input type="text" class="form-control" placeholder="Enter Approved By" id="approve_byd_name" ng-model="formdata.approved_by_name">
-                    <p class="help-block" ng-cloak>@{{formerrors.approve_byd_name[0]}}</p>
+                    <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
+                    <p class="help-block" ng-cloak>@{{formerrors.approved_by_name[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-3">
@@ -202,6 +202,36 @@
                     <label for="posted_by_name">Posted By:</label>
                     <input type="text" class="form-control" placeholder="Enter Posted By" id="posted_by_name" ng-model="formdata.posted_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.posted_by_name[0]}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="issued_by_date">Date:</label>
+                    <span class="form-control" ng-bind="formdata.issued_by_date" readonly></span>
+                    <p class="help-block" ng-cloak>@{{formerrors.issued_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="received_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="received_by_date" ng-model="formdata.received_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.received_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-3" ng-hide="edit_mode=='create'" ng-cloack>
+                <div class="form-group">
+                    <label for="approved_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="approved_by_date" ng-model="formdata.approved_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.approved_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="posted_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="posted_by_date" ng-model="formdata.posted_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.posted_by_date[0]}}</p>
                 </div>
             </div>
         </div>
@@ -242,13 +272,22 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.receiving_report_number_formatted = null;
+        $scope.formdata.issued_by_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.stock_issuance_date = moment().format("MM/DD/YYYY");
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
-        $scope.formdata.stock_issuance_date = moment($scope.formdata.stock_issuance_date).format("MM/DD/YYYY");
+        $scope.formdata.stock_issuance_date = $scope.formdata.stock_issuance_date ? moment($scope.formdata.stock_issuance_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.issued_by_date = $scope.formdata.issued_by_date ? moment($scope.formdata.issued_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.received_by_date = $scope.formdata.received_by_date ? moment($scope.formdata.received_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.approved_by_date = $scope.formdata.approved_by_date ? moment($scope.formdata.approved_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.posted_by_date = $scope.formdata.posted_by_date ? moment($scope.formdata.posted_by_date).format("MM/DD/YYYY") : null;
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
         $scope.receiving_report_number_formatted = $scope.formdata.inventory_receiving_report ? $scope.formdata.inventory_receiving_report.receiving_report_number_formatted : null;
         delete $scope.formdata.details;
     }
+    $scope.$watch('formdata["stock_issuance_date"]', function (newValue, oldValue, scope) {
+        $scope.formdata.issued_by_date = newValue;
+    });
     $scope.formerrors = {};
     $scope.submit = false;
     $scope.loading = false;
@@ -317,11 +356,12 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
+            $.notify('Redirecting to print preview.','info');
             $.notify('Stock Issuance has been generated.');
             $scope.formdata = {};
             $scope.items = {};
             setTimeout(() => {
-                // window.location.href = route('inventory.stock-issuance.index',[response.data.uuid]);
+                window.location.href = route('inventory.stock-issuance.index',[response.data.uuid]);
             }, 2000);
         }, function(rejection) {
             if (rejection.status != 422) {
@@ -356,7 +396,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
-            $scope.formdata.approved_by_date = response.data.approved_by_date;
+            // $scope.formdata.approved_by_date = response.data.approved_by_date;
             $.notify('Stock Issuance has been updated.');
         }, function(rejection) {
             if (rejection.status != 422) {
@@ -407,6 +447,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     };
 
     $('#stock_issuance_date,#date_to').datepicker();
+    $('#received_by_date,#issued_by_date,#approved_by_date,#posted_by_date').datepicker();
 });
 </script>
 @endpush

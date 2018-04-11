@@ -95,21 +95,21 @@
       <td style="width: 33%">
         <div style="width: 75%;">
           Requested By:<br><br><br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center">{{ $requested_by_name }}</p>
+          <p style="border-bottom: 1pt solid black;text-align: center">{{ isset($requested_by_name) ? $requested_by_name : "&nbsp;" }}</p>
           <p style="text-align: center;padding-top: 2pt;"></p>
         </div>
       </td>
       <td style="width: 33%;">
         <div style="width: 75%;margin-right: auto;margin-left: auto">
           Noted By:<br><br><br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center">{{ $noted_by_name }}</p>
+          <p style="border-bottom: 1pt solid black;text-align: center">{{ isset($noted_by_name) ? $noted_by_name : "&nbsp;" }}</p>
           <p style="text-align: center;padding-top: 2pt;"></p>
         </div>
       </td>
       <td style="width: 33%;">
         <div style="width: 75%;float: right;">
           Approved by:<br><br><br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center">{{ $approved_by_name }}</p>
+          <p style="border-bottom: 1pt solid black;text-align: center">{{ isset($approved_by_name) ? $approved_by_name : "&nbsp;" }}</p>
           <p style="text-align: center;padding-top: 2pt;"></p>
         </div>
       </td>

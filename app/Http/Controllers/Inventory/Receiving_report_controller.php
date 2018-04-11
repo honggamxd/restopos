@@ -98,22 +98,27 @@ class Receiving_report_controller extends Controller
                 'requesting_department' => 'required',
                 // 'purpose' => 'required',
                 // 'request_chargeable_to' => 'required',
-                'received_by_name' => 'required',
-                // 'received_by_date' => 'required',
-                // 'checked_by_name' => 'required',
-                // 'checked_by_date' => 'required',
-                // 'posted_by_name' => 'required',
-                // 'posted_by_date' => 'required',
+                'received_by_name' => 'required_with:received_by_name,received_by_date',
+                'received_by_date' => 'required_with:received_by_name,received_by_date',
+                'checked_by_name' => 'required_with:checked_by_name,checked_by_date',
+                'checked_by_date' => 'required_with:checked_by_name,checked_by_date',
+                'posted_by_name' => 'required_with:posted_by_name,posted_by_date',
+                'posted_by_date' => 'required_with:posted_by_name,posted_by_date',
             ],
             [
-                
+                'received_by_name.required_with' => 'Required if the name or date is filled.',
+                'received_by_date.required_with' => 'Required if the name or date is filled.',
+                'checked_by_name.required_with' => 'Required if the name or date is filled.',
+                'checked_by_date.required_with' => 'Required if the name or date is filled.',
+                'posted_by_name.required_with' => 'Required if the name or date is filled.',
+                'posted_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         DB::beginTransaction();
         try{
             $receiving_report = new Inventory_receiving_report;
             $receiving_report->receiving_report_number = $request->receiving_report_number;
-            $receiving_report->receiving_report_date = Carbon::parse($request->receiving_report_date);
+            $receiving_report->receiving_report_date = $request->receiving_report_date!=null ? Carbon::parse($request->receiving_report_date) : null;
             $receiving_report->supplier_name = $request->supplier_name;
             $receiving_report->supplier_address = $request->supplier_address;
             $receiving_report->supplier_tin = $request->supplier_tin;
@@ -123,8 +128,11 @@ class Receiving_report_controller extends Controller
             $receiving_report->purpose = $request->purpose;
             $receiving_report->request_chargeable_to = $request->request_chargeable_to;
             $receiving_report->received_by_name = $request->received_by_name;
+            $receiving_report->received_by_date = $request->received_by_date!=null ? Carbon::parse($request->received_by_date) : null;
             $receiving_report->checked_by_name = $request->checked_by_name;
+            $receiving_report->checked_by_date = $request->checked_by_date!=null ? Carbon::parse($request->checked_by_date) : null;
             $receiving_report->posted_by_name = $request->posted_by_name;
+            $receiving_report->posted_by_date = $request->posted_by_date!=null ? Carbon::parse($request->posted_by_date) : null;
             $receiving_report->inventory_purchase_order_id = $request->inventory_purchase_order_id;
             $receiving_report->save();
 
@@ -157,7 +165,7 @@ class Receiving_report_controller extends Controller
 
     public function update(Request $request,$id)
     {
-          $this->validate(
+        $this->validate(
             $request,
             [
                 'receiving_report_number' => 'required|numeric|unique:inventory_receiving_report,receiving_report_number,'.$id.',id,deleted_at,NULL',
@@ -170,15 +178,20 @@ class Receiving_report_controller extends Controller
                 'requesting_department' => 'required',
                 // 'purpose' => 'required',
                 // 'request_chargeable_to' => 'required',
-                'received_by_name' => 'required',
-                // 'received_by_date' => 'required',
-                // 'checked_by_name' => 'required',
-                // 'checked_by_date' => 'required',
-                // 'posted_by_name' => 'required',
-                // 'posted_by_date' => 'required',
+                'received_by_name' => 'required_with:received_by_name,received_by_date',
+                'received_by_date' => 'required_with:received_by_name,received_by_date',
+                'checked_by_name' => 'required_with:checked_by_name,checked_by_date',
+                'checked_by_date' => 'required_with:checked_by_name,checked_by_date',
+                'posted_by_name' => 'required_with:posted_by_name,posted_by_date',
+                'posted_by_date' => 'required_with:posted_by_name,posted_by_date',
             ],
             [
-                
+                'received_by_name.required_with' => 'Required if the name or date is filled.',
+                'received_by_date.required_with' => 'Required if the name or date is filled.',
+                'checked_by_name.required_with' => 'Required if the name or date is filled.',
+                'checked_by_date.required_with' => 'Required if the name or date is filled.',
+                'posted_by_name.required_with' => 'Required if the name or date is filled.',
+                'posted_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         DB::beginTransaction();
@@ -186,7 +199,7 @@ class Receiving_report_controller extends Controller
             // return $request->all();
             $receiving_report = Inventory_receiving_report::findOrFail($id);
             $receiving_report->receiving_report_number = $request->receiving_report_number;
-            $receiving_report->receiving_report_date = Carbon::parse($request->receiving_report_date);
+            $receiving_report->receiving_report_date = $request->receiving_report_date!=null ? Carbon::parse($request->receiving_report_date) : null;
             $receiving_report->supplier_name = $request->supplier_name;
             $receiving_report->supplier_address = $request->supplier_address;
             $receiving_report->supplier_tin = $request->supplier_tin;
@@ -196,8 +209,11 @@ class Receiving_report_controller extends Controller
             $receiving_report->purpose = $request->purpose;
             $receiving_report->request_chargeable_to = $request->request_chargeable_to;
             $receiving_report->received_by_name = $request->received_by_name;
+            $receiving_report->received_by_date = $request->received_by_date!=null ? Carbon::parse($request->received_by_date) : null;
             $receiving_report->checked_by_name = $request->checked_by_name;
+            $receiving_report->checked_by_date = $request->checked_by_date!=null ? Carbon::parse($request->checked_by_date) : null;
             $receiving_report->posted_by_name = $request->posted_by_name;
+            $receiving_report->posted_by_date = $request->posted_by_date!=null ? Carbon::parse($request->posted_by_date) : null;
             $receiving_report->save();
 
             $receiving_report = Inventory_receiving_report::orderBy('id','DESC')->first();

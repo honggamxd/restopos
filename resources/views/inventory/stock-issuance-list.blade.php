@@ -38,7 +38,7 @@
                             <th style="text-align: center">Chargeable to</th>
                             <th style="text-align: center">Supplier Name</th>
                             <th style="text-align: center">Supplier Contact Number</th>
-                            <th style="text-align: center">Received By</th>
+                            <th style="text-align: center">Approved By</th>
                             <th style="text-align: center"></th>
                         </tr>
                     </thead>
@@ -52,7 +52,7 @@
                             <td style="text-align: center">@{{item.request_chargeable_to}}</td>
                             <td style="text-align: center">@{{item.supplier_name}}</td>
                             <td style="text-align: center">@{{item.supplier_contact_number}}</td>
-                            <td style="text-align: center">@{{item.received_by_name}}</td>
+                            <td style="text-align: center">@{{item.approved_by_name}}</td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
                                     <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>

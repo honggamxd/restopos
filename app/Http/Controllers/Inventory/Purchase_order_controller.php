@@ -100,10 +100,18 @@ class Purchase_order_controller extends Controller
                 'requesting_department' => 'required',
                 // 'purpose' => 'required',
                 // 'request_chargeable_to' => 'required',
-                'requested_by_name' => 'required',
+                'requested_by_name' => 'required_with:requested_by_name,requested_by_date',
+                'requested_by_date' => 'required_with:requested_by_name,requested_by_date',
+                'noted_by_name' => 'required_with:noted_by_name,noted_by_date',
+                'noted_by_date' => 'required_with:noted_by_name,noted_by_date',
             ],
             [
-                
+                'requested_by_name.required_with' => 'Required if the name or date is filled.',
+                'requested_by_date.required_with' => 'Required if the name or date is filled.',
+                'noted_by_name.required_with' => 'Required if the name or date is filled.',
+                'noted_by_date.required_with' => 'Required if the name or date is filled.',
+                'approved_by_name.required_with' => 'Required if the name or date is filled.',
+                'approved_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         DB::beginTransaction();
@@ -119,8 +127,11 @@ class Purchase_order_controller extends Controller
             $purchase_order->purpose = $request->purpose;
             $purchase_order->request_chargeable_to = $request->request_chargeable_to;
             $purchase_order->requested_by_name = $request->requested_by_name;
+            $purchase_order->requested_by_date = $request->requested_by_date!=null ? Carbon::parse($request->requested_by_date) : null;
             $purchase_order->noted_by_name = $request->noted_by_name;
+            $purchase_order->noted_by_date = $request->noted_by_date!=null ? Carbon::parse($request->noted_by_date) : null;
             $purchase_order->approved_by_name = $request->approved_by_name;
+            $purchase_order->approved_by_date = $request->approved_by_date!=null ? Carbon::parse($request->approved_by_date) : null;
             $purchase_order->inventory_purchase_request_id = $request->inventory_purchase_request_id;
             $purchase_order->save();
 
@@ -157,10 +168,20 @@ class Purchase_order_controller extends Controller
                 'requesting_department' => 'required',
                 // 'purpose' => 'required',
                 // 'request_chargeable_to' => 'required',
-                'requested_by_name' => 'required',
+                'requested_by_name' => 'required_with:requested_by_name,requested_by_date',
+                'requested_by_date' => 'required_with:requested_by_name,requested_by_date',
+                'noted_by_name' => 'required_with:noted_by_name,noted_by_date',
+                'noted_by_date' => 'required_with:noted_by_name,noted_by_date',
+                'approved_by_name' => 'required_with:approved_by_name,approved_by_date',
+                'approved_by_date' => 'required_with:approved_by_name,approved_by_date',
             ],
             [
-                
+                'requested_by_name.required_with' => 'Required if the name or date is filled.',
+                'requested_by_date.required_with' => 'Required if the name or date is filled.',
+                'noted_by_name.required_with' => 'Required if the name or date is filled.',
+                'noted_by_date.required_with' => 'Required if the name or date is filled.',
+                'approved_by_name.required_with' => 'Required if the name or date is filled.',
+                'approved_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         DB::beginTransaction();
@@ -177,8 +198,11 @@ class Purchase_order_controller extends Controller
             $purchase_order->purpose = $request->purpose;
             $purchase_order->request_chargeable_to = $request->request_chargeable_to;
             $purchase_order->requested_by_name = $request->requested_by_name;
+            $purchase_order->requested_by_date = $request->requested_by_date!=null ? Carbon::parse($request->requested_by_date) : null;
             $purchase_order->noted_by_name = $request->noted_by_name;
+            $purchase_order->noted_by_date = $request->noted_by_date!=null ? Carbon::parse($request->noted_by_date) : null;
             $purchase_order->approved_by_name = $request->approved_by_name;
+            $purchase_order->approved_by_date = $request->approved_by_date!=null ? Carbon::parse($request->approved_by_date) : null;
             $purchase_order->save();
 
             $purchase_order = Inventory_purchase_order::orderBy('id','DESC')->first();

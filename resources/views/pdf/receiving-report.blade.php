@@ -95,21 +95,21 @@
       <td style="width: 33%">
         <div style="width: 75%;">
           Received By:<br><br><br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center">{{ $received_by_name }}</p>
+          <p style="border-bottom: 1pt solid black;text-align: center">{{ isset($received_by_name) ? $received_by_name : "&nbsp;" }}</p>
           <p style="text-align: center;padding-top: 2pt;"></p>
         </div>
       </td>
       <td style="width: 33%;">
         <div style="width: 75%;margin-right: auto;margin-left: auto">
           Noted By:<br><br><br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center">{{ $checked_by_name }}</p>
+          <p style="border-bottom: 1pt solid black;text-align: center">{{ isset($checked_by_name) ? $checked_by_name : "&nbsp;" }}</p>
           <p style="text-align: center;padding-top: 2pt;"></p>
         </div>
       </td>
       <td style="width: 33%;">
         <div style="width: 75%;float: right;">
           Posted by:<br><br><br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center">{{ $posted_by_name }}</p>
+          <p style="border-bottom: 1pt solid black;text-align: center">{{ isset($posted_by_name) ? $posted_by_name : "&nbsp;" }}</p>
           <p style="text-align: center;padding-top: 2pt;"></p>
         </div>
       </td>

@@ -58,8 +58,10 @@ class Purchase_request_controller extends Controller
         if($request->autocomplete){
             if($request->approved=='1'){
                 $result->whereNotNull('approved_by_name');
+                $result->whereNotNull('approved_by_date');
             }else{
                 $result->whereNull('approved_by_name');
+                $result->whereNull('approved_by_date');
             }
             
             if($request->capex=='1'){
@@ -105,8 +107,11 @@ class Purchase_request_controller extends Controller
                 'type_of_item_requested' => 'required',
                 'date_needed' => 'date',
                 'requested_by_name' => 'required',
-                // 'noted_by_name' => 'required',
+                'requested_by_date' => 'date',
+                'noted_by_name' => 'required',
+                'noted_by_date' => 'date',
                 // 'approved_by_name' => 'required',
+                'approved_by_date' => 'date',
             ],
             [
                 
@@ -123,8 +128,11 @@ class Purchase_request_controller extends Controller
             $purchase_request->type_of_item_requested = $request->type_of_item_requested;
             $purchase_request->date_needed = $request->date_needed != null ? Carbon::parse($request->date_needed) : null;
             $purchase_request->requested_by_name = $request->requested_by_name;
+            $purchase_request->requested_by_date = $request->requested_by_date != null ? Carbon::parse($request->requested_by_date) : null;
             $purchase_request->noted_by_name = $request->noted_by_name;
-            $purchase_request->approved_by_name = $request->approved_by_name;
+            $purchase_request->noted_by_date = $request->noted_by_date != null ? Carbon::parse($request->noted_by_date) : null;
+            // $purchase_request->approved_by_name = $request->approved_by_name;
+            // $purchase_request->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
             $purchase_request->save();
 
             $purchase_request = Inventory_purchase_request::orderBy('id','DESC')->first();
@@ -161,8 +169,11 @@ class Purchase_request_controller extends Controller
                 'type_of_item_requested' => 'required',
                 'date_needed' => 'date',
                 'requested_by_name' => 'required',
-                // 'noted_by_name' => 'required',
-                // 'approved_by_name' => 'required',
+                'requested_by_date' => 'date',
+                'noted_by_name' => 'required',
+                'noted_by_date' => 'date',
+                'approved_by_name' => 'required_with:approved_by_date',
+                'approved_by_date' => 'required_with:approved_by_name',
             ],
             [
                 
@@ -180,8 +191,11 @@ class Purchase_request_controller extends Controller
             $purchase_request->type_of_item_requested = $request->type_of_item_requested;
             $purchase_request->date_needed = $request->date_needed != null ? Carbon::parse($request->date_needed) : null;
             $purchase_request->requested_by_name = $request->requested_by_name;
+            $purchase_request->requested_by_date = $request->requested_by_date != null ? Carbon::parse($request->requested_by_date) : null;
             $purchase_request->noted_by_name = $request->noted_by_name;
+            $purchase_request->noted_by_date = $request->noted_by_date != null ? Carbon::parse($request->noted_by_date) : null;
             $purchase_request->approved_by_name = $request->approved_by_name;
+            $purchase_request->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
             $purchase_request->save();
 
             $purchase_request = Inventory_purchase_request::orderBy('id','DESC')->first();

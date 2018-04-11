@@ -56,8 +56,8 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="request_chargeable_to">Reason Chargeable To:</label>
-                    <input type="text" class="form-control" placeholder="Enter Reason Chargeable To" id="request_chargeable_to" ng-model="formdata.request_chargeable_to">
+                    <label for="request_chargeable_to">Request Chargeable To:</label>
+                    <input type="text" class="form-control" placeholder="Enter Request Chargeable To" id="c" ng-model="formdata.request_chargeable_to">
                     <p class="help-block" ng-cloak>@{{formerrors.request_chargeable_to[0]}}</p>
                 </div>
             </div>
@@ -210,6 +210,29 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="received_by_date"><small style="color:red">*</small> Date:</label>
+                    <span class="form-control" ng-bind="formdata.received_by_date" readonly></span>
+                    <p class="help-block" ng-cloak>@{{formerrors.received_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="checked_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="checked_by_date" ng-model="formdata.checked_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.checked_by_date[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="posted_by_date">Date:</label>
+                    <input type="text" class="form-control" placeholder="Enter Date" id="posted_by_date" ng-model="formdata.posted_by_date" readonly>
+                    <p class="help-block" ng-cloak>@{{formerrors.posted_by_date[0]}}</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <br>
@@ -250,13 +273,19 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.purchase_order_number_formatted = null;
+        $scope.formdata.receiving_report_date = moment().format("MM/DD/YYYY hh:mm:ss a");
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
-        $scope.formdata.receiving_report_date = moment($scope.formdata.receiving_report_date).format("MM/DD/YYYY hh:mm:ss a");
+        $scope.formdata.receiving_report_date = $scope.formdata.receiving_report_date ? moment($scope.formdata.receiving_report_date).format("MM/DD/YYYY hh:mm:ss a") : null;
+        $scope.formdata.checked_by_date = $scope.formdata.checked_by_date ? moment($scope.formdata.checked_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.posted_by_date = $scope.formdata.posted_by_date ? moment($scope.formdata.posted_by_date).format("MM/DD/YYYY") : null;
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
         $scope.purchase_order_number_formatted = $scope.formdata.inventory_purchase_order.purchase_order_number_formatted;
         delete $scope.formdata.details;
     }
+    $scope.$watch('formdata["receiving_report_date"]', function (newValue, oldValue, scope) {
+        $scope.formdata.received_by_date = newValue;
+    });
     $scope.formerrors = {};
     $scope.submit = false;
     $scope.loading = false;
@@ -321,6 +350,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
+            $.notify('Redirecting to print preview.','info');
             $.notify('Receiving Report has been generated.');
             $scope.formdata = {};
             $scope.items = {};
@@ -449,6 +479,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $('#receiving_report_date,#date_to').datetimepicker({
       timeFormat: "hh:mm:ss tt"
     });
+    $('#checked_by_date,#posted_by_date').datepicker();
 });
 </script>
 @endpush

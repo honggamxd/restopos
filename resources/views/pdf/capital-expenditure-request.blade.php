@@ -144,14 +144,14 @@
       <td style="width: 40%;">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $requested_by_name }}</span></p>
-          <p style="text-align: center;padding-top: 1pt;"><span>{{ $requested_by_position }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($requested_by_name) ? $requested_by_name : "&nbsp;" }}</span></p>
+          <p style="text-align: center;padding-top: 1pt;"><span>{{ isset($requested_by_position) ? $requested_by_position : "&nbsp;" }}</span></p>
         </div>
       </td>
       <td style="width: 30%;border-right: 1pt solid black">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $requested_by_date_formatted }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($requested_by_date_formatted) ? $requested_by_date_formatted : "&nbsp;" }}</span></p>
           <p style="text-align: center;padding-top: 1pt;"><span>Date</span></p>
         </div>
       </td>
@@ -167,14 +167,14 @@
       <td style="width: 40%;">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $approved_by_1_name }}</span></p>
-          <p style="text-align: center;padding-top: 1pt;"><span>{{ $approved_by_1_position }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($approved_by_1_name) ? $approved_by_1_name : "&nbsp;" }}</span></p>
+          <p style="text-align: center;padding-top: 1pt;"><span>{{ isset($approved_by_1_position) ? $approved_by_1_position : "&nbsp;" }}</span></p>
         </div>
       </td>
       <td style="width: 30%;border-right: 1pt solid black">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $approved_by_1_date_formatted }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($approved_by_1_date_formatted) ? $approved_by_1_date_formatted : "&nbsp;" }}</span></p>
           <p style="text-align: center;padding-top: 1pt;"><span>Date</span></p>
         </div>
       </td>
@@ -190,14 +190,14 @@
       <td style="width: 40%;">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $verified_as_funded_by_name }}</span></p>
-          <p style="text-align: center;padding-top: 1pt;"><span>{{ $verified_as_funded_by_position }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($verified_as_funded_by_name) ? $verified_as_funded_by_name : "&nbsp;" }}</span></p>
+          <p style="text-align: center;padding-top: 1pt;"><span>{{ isset($verified_as_funded_by_position) ? $verified_as_funded_by_position : "&nbsp;" }}</span></p>
         </div>
       </td>
       <td style="width: 30%;border-right: 1pt solid black">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $verified_as_funded_by_date_formatted }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($verified_as_funded_by_date_formatted) ? $verified_as_funded_by_date_formatted : "&nbsp;" }}</span></p>
           <p style="text-align: center;padding-top: 1pt;"><span>Date</span></p>
         </div>
       </td>
@@ -215,8 +215,8 @@
       <td style="width: 40%;">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $approved_by_2_name }}</span></p>
-          <p style="text-align: center;padding-top: 1pt;"><span>{{ $approved_by_2_position }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($approved_by_2_name) ? $approved_by_2_name : "&nbsp;" }}</span></p>
+          <p style="text-align: center;padding-top: 1pt;"><span>{{ isset($approved_by_2_position) ? $approved_by_2_position : "&nbsp;" }}</span></p>
           <br>
           <br>
         </div>
@@ -224,7 +224,7 @@
       <td style="width: 30%;border-right: 1pt solid black">
         <div style="width: 80%;margin-left: auto;margin-right: auto">
           <br><br><br>
-          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ $approved_by_2_date_formatted }}</span></p>
+          <p style="border-bottom: 1pt solid black;text-align: center"><span>{{ isset($approved_by_2_date_formatted) ? $approved_by_2_date_formatted : "&nbsp;" }}</span></p>
           <p style="text-align: center;padding-top: 1pt;"><span>Date</span></p>
           <br>
           <br>
