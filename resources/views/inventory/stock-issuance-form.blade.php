@@ -78,10 +78,21 @@
     <div class="col-sm-12">
         <h2 style="text-align: center;">Stock Issuance Items</h2>
         <br>
-        <label ng-hide="edit_mode=='update'" ng-cloak>Search Receiving Report Number</label>
-        <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak  data-tooltip="Search for approved purchase orders" data-position="top right" data-inverted="">
-            <i class="search icon"></i>
-            <input type="text" placeholder="Search" id="search-receiving-report" ng-model="search_item_name">
+        <div class="row">
+            <div class="col-sm-6">
+                <label ng-hide="edit_mode=='update'" ng-cloak>Search Item</label>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search" id="search-item">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label ng-hide="edit_mode=='update'" ng-cloak>Search Receiving Report Number</label>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak  data-tooltip="Search for approved purchase orders" data-position="top right" data-inverted="">
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search" id="search-receiving-report" ng-model="search_item_name">
+                </div>
+            </div>
         </div>
         <br>
         <div class="table-responsive">
@@ -99,11 +110,33 @@
                 </tr>
                 </thead>
                 <tbody ng-cloak>
-                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create'">
+                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create' && receiving_report_number_formatted">
                         <td class="center aligned middle aligned">@{{item.inventory_item.category}}</td>
                         <td class="center aligned middle aligned">@{{item.inventory_item.subcategory}}</td>
                         <td class="center aligned middle aligned" style="width: 100%">@{{item.inventory_item.item_name}}</td>
                         <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
+                            </div>
+                        </td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.unit_price">
+                            </div>
+                        </td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="text" placeholder="Remarks" ng-model="item.remarks">
+                            </div>
+                        </td>
+                        <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(index)">&times;</button></td>
+                    </tr>
+                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create' && !receiving_report_number_formatted">
+                        <td class="center aligned middle aligned">@{{item.category}}</td>
+                        <td class="center aligned middle aligned">@{{item.subcategory}}</td>
+                        <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
+                        <td class="center aligned middle aligned">@{{item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
                             <div class="ui input">
                                 <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
@@ -268,6 +301,7 @@
 <script type="text/javascript">
 app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.edit_mode = "{!! $edit_mode !!}";
+    $scope.is_approved = false;
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.items = {};
@@ -280,6 +314,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.issued_by_date = $scope.formdata.issued_by_date ? moment($scope.formdata.issued_by_date).format("MM/DD/YYYY") : null;
         $scope.formdata.received_by_date = $scope.formdata.received_by_date ? moment($scope.formdata.received_by_date).format("MM/DD/YYYY") : null;
         $scope.formdata.approved_by_date = $scope.formdata.approved_by_date ? moment($scope.formdata.approved_by_date).format("MM/DD/YYYY") : null;
+        if($scope.formdata.approved_by_date){
+            $scope.is_approved = true;
+        }else{
+            $scope.is_approved = false;
+        }
         $scope.formdata.posted_by_date = $scope.formdata.posted_by_date ? moment($scope.formdata.posted_by_date).format("MM/DD/YYYY") : null;
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
         $scope.receiving_report_number_formatted = $scope.formdata.inventory_receiving_report ? $scope.formdata.inventory_receiving_report.receiving_report_number_formatted : null;
@@ -293,14 +332,18 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.loading = false;
 
     $scope.delete_item = function(index) {
-        delete $scope.items[index];
+        if($scope.items instanceof Array){
+            $scope.items.splice (index, 1);
+        }else{
+            delete $scope.items[index];
+        }
     }
 
     $scope.save_form = function() {
         if($scope.edit_mode == 'create'){
             $scope.add_form();
         }else{
-            if($scope.formdata.approved_by_name != null && $scope.formdata.approved_by_date == null){
+            if(!$scope.is_approved){
                 alertify.confirm(
                     'Save Stock Issuance',
                     'After submitting, the items in the form will update its quantity. continue?',
@@ -342,8 +385,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.submit = true;
         let items = {};
         angular.forEach($scope.items,function(value, key) {
+            let item_id = ($scope.receiving_report_number_formatted ? value.inventory_item_id : value.id);
             items[key] = {
-                id: value.inventory_item_id,
+                id: item_id,
                 quantity: value.quantity,
                 unit_cost: value.unit_price,
                 remarks: value.remarks,
@@ -396,7 +440,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
-            // $scope.formdata.approved_by_date = response.data.approved_by_date;
+            if(response.data.approved_by_date){
+                $scope.is_approved = true;
+            }else{
+                $scope.is_approved = false;
+            }
             $.notify('Stock Issuance has been updated.');
         }, function(rejection) {
             if (rejection.status != 422) {
@@ -409,6 +457,43 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $scope.submit = false;
         });
     }
+
+    $("#search-item").autocomplete({
+        source: function(request, response)
+        {
+            $.ajax({
+                url: route('api.inventory.item.index').url(),
+                dataType: "json",
+                data: {
+                    term : request.term,
+                    autocomplete : 1
+                },
+                success: function(data) {
+                    response(data.result.data);
+                }
+            });
+        },
+        select: function(event, ui) {
+            $scope.searchString = "";
+            if($scope.receiving_report_number_formatted){
+                $scope.items = {};
+                $scope.receiving_report_number_formatted = null;
+                $scope.formdata.inventory_receiving_report_id = null;
+            }
+            $scope.$apply(function() {
+                if(!$scope.items['item'+ui.item.id]){
+                    ui.item.quantity = 1;
+                    ui.item.unit_price = 0;
+                    $scope.items['item'+ui.item.id] = ui.item;
+                }
+            });
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+        .append( "<div>" + item.item_name + "<br> <small> Category: <b>" + item.category + "</b></small>" +"<br> <small> Subcategory: <b>" + item.subcategory + "</b></small>" + "</div>" )
+        .appendTo( ul );
+    };
 
 
     $("#search-receiving-report").autocomplete({

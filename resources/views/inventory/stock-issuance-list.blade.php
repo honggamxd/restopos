@@ -36,8 +36,8 @@
                             <th style="text-align: center">Issuance Date</th>
                             <th style="text-align: center">Requesting Dept.</th>
                             <th style="text-align: center">Chargeable to</th>
-                            <th style="text-align: center">Supplier Name</th>
-                            <th style="text-align: center">Supplier Contact Number</th>
+                            <th style="text-align: center">Supplier Address</th>
+                            <th style="text-align: center">Issued By</th>
                             <th style="text-align: center">Approved By</th>
                             <th style="text-align: center"></th>
                         </tr>
@@ -50,8 +50,8 @@
                             <td style="text-align: center">@{{item.stock_issuance_date_formatted}}</td>
                             <td style="text-align: center">@{{item.requesting_department}}</td>
                             <td style="text-align: center">@{{item.request_chargeable_to}}</td>
-                            <td style="text-align: center">@{{item.supplier_name}}</td>
-                            <td style="text-align: center">@{{item.supplier_contact_number}}</td>
+                            <td style="text-align: center">@{{item.supplier_address}}</td>
+                            <td style="text-align: center">@{{item.issued_by_name}}</td>
                             <td style="text-align: center">@{{item.approved_by_name}}</td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
