@@ -513,7 +513,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     })
     .autocomplete( "instance" )._renderItem = function( ul, item ) {
         return $( "<li>" )
-        .append( "<div> PR No. <b>" + item.request_to_canvass_number_formatted + "</b><br> <small> PR DATE: <b>" + item.request_to_canvass_date_formatted + "</b></small>" + "</div>" )
+        .append( "<div> RTC No. <b>" + item.request_to_canvass_number_formatted + "</b><br> <small> RTC DATE: <b>" + item.request_to_canvass_date_formatted + "</b></small>" + "</div>" )
         .appendTo( ul );
     };
 

@@ -88,7 +88,7 @@
             </div>
             <div class="col-sm-6">
                 <label ng-hide="edit_mode=='update'" ng-cloak>Search Receiving Report Number</label>
-                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak  data-tooltip="Search for approved purchase orders" data-position="top right" data-inverted="">
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
                     <i class="search icon"></i>
                     <input type="text" placeholder="Search" id="search-receiving-report" ng-model="search_item_name">
                 </div>
