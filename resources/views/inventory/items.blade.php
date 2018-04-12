@@ -49,9 +49,30 @@
                             <td class="center aligned middle aligned"></td>
                             <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(this)">&times;</button></td>
                         </tr>
-                    </tbody>  
+                    </tbody>
+                    <tfoot>
+                        <tr ng-if="items | isEmpty">
+                            <td colspan="20" style="text-align: center;">
+                                <h1 ng-if="loading">
+                                    <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+                                    <br>
+                                    LOADING
+                                </h1>
+                                <h1>
+                                    <span ng-if="!loading" ng-cloak>NO DATA</span>
+                                    <span ng-if="loading" ng-cloak></span>
+                                </h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="200">
+                                &nbsp;
+                            </th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
+            <div ng-bind-html="pages" class="text-center" ng-cloak></div>
         </div>
     </div>
 </div>
@@ -107,11 +128,13 @@
         $scope.formerrors = {};
         $scope.submit = false;
         $scope.loading = true;
+        $scope.pages = "";
         
         $scope.show_items =  _.debounce(function(url_string) {
             url_string = (typeof url_string !== 'undefined') && url_string !== "" ? url_string : route('api.inventory.item.index').url();
             $scope.items = {};
             $scope.loading = true;
+            $scope.pages = "";
             $http({
                 method: "GET",
                 url: url_string,
@@ -148,6 +171,9 @@
                 data: $.param($scope.formdata)
             }).then(function(response) {
                 $scope.submit = false;
+                $.notify('An item has been added.');
+                $scope.formdata = {};
+                $scope.show_items();
             }, function(rejection) {
                 if (rejection.status != 422) {
                     request_error(rejection.status);
@@ -217,6 +243,11 @@
                 $scope.submit = false;
             });
         }
+
+        $(document).on('click','.pagination li a',function(e) {
+            e.preventDefault();
+            $scope.show_items(e.target.href);
+        });
     });
 </script>
 @endpush
