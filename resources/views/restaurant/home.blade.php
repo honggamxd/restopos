@@ -1025,5 +1025,5 @@
   var csrf_token = "{{csrf_token()}}";
   var restaurant_id = {{Auth::user()->restaurant_id}};
 </script>
-<script type="text/javascript" src="{{asset('assets/js/restaurant.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/restaurant.js')}}?ver={{$js_version}}"></script>
 @endpush

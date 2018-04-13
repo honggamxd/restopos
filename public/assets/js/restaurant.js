@@ -301,11 +301,17 @@
        let items = {};
        angular.forEach(data.bill_preview.items,function(value,key) {
          items[key] = {
-          id:value.id,
-          restaurant_temp_bill_id:value.restaurant_temp_bill_id,
-          quantity_to_cancel:value.quantity_to_cancel,
-          restaurant_menu_id:value.restaurant_menu_id,
-          price:value.price,
+           id:value.id,
+           quantity_to_bill: value.quantity_to_bill,
+           name: value.name,
+           category: value.category,
+           restaurant_menu_id: value.restaurant_menu_id,
+           quantity: value.quantity,
+           price: value.price,
+           restaurant_menu_name: value.restaurant_menu_name,
+           special_instruction: value.special_instruction,
+           restaurant_temp_bill_id: value.restaurant_temp_bill_id,
+           quantity_to_cancel: value.quantity_to_cancel,
          }
        });
        data.bill_preview.items = items;
