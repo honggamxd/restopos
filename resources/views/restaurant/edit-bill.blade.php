@@ -184,7 +184,7 @@
   </tr>
 </table>
 <div class="btn-group" role="group" aria-label="...">
-  <button class="btn btn-primary" ng-if="remaining_balance() == 0" ng-click="save()">Save Changes</button>
+  <button class="btn btn-primary" ng-click="save()">Save Changes</button>
 </div>
 @endsection
 
@@ -288,6 +288,10 @@
       console.log(data.payment_data.settlement);
     }
     $scope.save = function() {
+      if($scope.remaining_balance()!=0){
+        $.notify('Unable to modify, the remaining balance must be 0 in order to modify.','error');
+        return false;
+      }
       $scope.bill.gross_billing = $scope.discounted_gross_billing();
       $scope.bill.total_item_amount = $scope.gross_billing();
       $scope.bill.room_service_charge = $scope.room_service_charge();
