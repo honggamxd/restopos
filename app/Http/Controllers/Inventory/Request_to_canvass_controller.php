@@ -66,6 +66,8 @@ class Request_to_canvass_controller extends Controller
     public function create(Request $request)
     {
         $data['edit_mode'] = 'create';
+        $form_number = Inventory_request_to_canvass::orderBy('request_to_canvass_number','DESC')->first();
+        $data['form_number'] = $form_number ? ++$form_number->request_to_canvass_number : 1;
         return view('inventory.request-to-canvass-form',$data);
     }
     

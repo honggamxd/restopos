@@ -79,6 +79,8 @@ class Purchase_request_controller extends Controller
     public function create(Request $request)
     {
         $data['edit_mode'] = 'create';
+        $form_number = Inventory_purchase_request::orderBy('purchase_request_number','DESC')->first();
+        $data['form_number'] = $form_number ? ++$form_number->purchase_request_number : 1;
         return view('inventory.purchase-request-form',$data);
     }
     
@@ -106,15 +108,20 @@ class Purchase_request_controller extends Controller
                 // 'request_chargeable_to' => 'required',
                 'type_of_item_requested' => 'required',
                 'date_needed' => 'date',
-                'requested_by_name' => 'required',
-                'requested_by_date' => 'date',
-                'noted_by_name' => 'required',
-                'noted_by_date' => 'date',
-                // 'approved_by_name' => 'required',
-                'approved_by_date' => 'date',
+                'requested_by_name' => 'required_with:requested_by_name,requested_by_date',
+                'requested_by_date' => 'required_with:requested_by_name,requested_by_date',
+                'noted_by_name' => 'required_with:noted_by_name,noted_by_date',
+                'noted_by_date' => 'required_with:noted_by_name,noted_by_date',
+                'approved_by_name' => 'required_with:approved_by_name,approved_by_date',
+                'approved_by_date' => 'required_with:approved_by_name,approved_by_date',
             ],
             [
-                
+                'requested_by_name.required_with' => 'Required if the name or date is filled.',
+                'requested_by_date.required_with' => 'Required if the name or date is filled.',
+                'noted_by_name.required_with' => 'Required if the name or date is filled.',
+                'noted_by_date.required_with' => 'Required if the name or date is filled.',
+                'approved_by_name.required_with' => 'Required if the name or date is filled.',
+                'approved_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         DB::beginTransaction();
@@ -168,15 +175,20 @@ class Purchase_request_controller extends Controller
                 // 'request_chargeable_to' => 'required',
                 'type_of_item_requested' => 'required',
                 'date_needed' => 'date',
-                'requested_by_name' => 'required',
-                'requested_by_date' => 'date',
-                'noted_by_name' => 'required',
-                'noted_by_date' => 'date',
-                'approved_by_name' => 'required_with:approved_by_date',
-                'approved_by_date' => 'required_with:approved_by_name',
+                'requested_by_name' => 'required_with:requested_by_name,requested_by_date',
+                'requested_by_date' => 'required_with:requested_by_name,requested_by_date',
+                'noted_by_name' => 'required_with:noted_by_name,noted_by_date',
+                'noted_by_date' => 'required_with:noted_by_name,noted_by_date',
+                'approved_by_name' => 'required_with:approved_by_name,approved_by_date',
+                'approved_by_date' => 'required_with:approved_by_name,approved_by_date',
             ],
             [
-                
+                'requested_by_name.required_with' => 'Required if the name or date is filled.',
+                'requested_by_date.required_with' => 'Required if the name or date is filled.',
+                'noted_by_name.required_with' => 'Required if the name or date is filled.',
+                'noted_by_date.required_with' => 'Required if the name or date is filled.',
+                'approved_by_name.required_with' => 'Required if the name or date is filled.',
+                'approved_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
         DB::beginTransaction();

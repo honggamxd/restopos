@@ -71,6 +71,8 @@ class Purchase_order_controller extends Controller
     public function create(Request $request)
     {
         $data['edit_mode'] = 'create';
+        $form_number = Inventory_purchase_order::orderBy('purchase_order_number','DESC')->first();
+        $data['form_number'] = $form_number ? ++$form_number->purchase_order_number : 1;
         return view('inventory.purchase-order-form',$data);
     }
     

@@ -322,6 +322,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.recorded_by_position = "Finance Personel";
         $scope.formdata.capital_expenditure_request_date = moment().format("MM/DD/YYYY");
         $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.capital_expenditure_request_number = {{ $form_number}};
         // $scope.formdata.verified_as_funded_by_date = moment().format("MM/DD/YYYY");
         // $scope.formdata.recorded_by_date = moment().format("MM/DD/YYYY");
     }else{
@@ -388,6 +389,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $scope.submit = false;
             $.notify('Capital Expenditure Request has been generated.');
             $scope.formdata = {};
+            $scope.formdata.capital_expenditure_request_number = response.data.capital_expenditure_request_number + 1;
             $scope.formdata.type_of_item_requested = 'operations';
             $scope.items = {};
             setTimeout(() => {

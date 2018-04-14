@@ -273,6 +273,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.purchase_order_number_formatted = null;
+        $scope.formdata.receiving_report_number = {{ $form_number}};
         $scope.formdata.receiving_report_date = moment().format("MM/DD/YYYY hh:mm:ss a");
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
@@ -353,6 +354,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $.notify('Redirecting to print preview.','info');
             $.notify('Receiving Report has been generated.');
             $scope.formdata = {};
+            $scope.formdata.receiving_report_number = response.data.receiving_report_number + 1;
             $scope.items = {};
             setTimeout(() => {
                 window.location.href = route('inventory.receiving-report.index',[response.data.uuid]);

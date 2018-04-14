@@ -284,6 +284,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.formdata.type_of_item_requested = 'operations';
+        $scope.formdata.request_to_canvass_number = {{ $form_number}};
         $scope.formdata.vendor_1_name = 'Vendor 1';
         $scope.formdata.vendor_2_name = 'Vendor 2';
         $scope.formdata.vendor_3_name = 'Vendor 3';
@@ -357,6 +358,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $.notify('Request to Canvass has been generated.');
             $scope.formdata = {};
             $scope.formdata.type_of_item_requested = 'operations';
+            $scope.formdata.request_to_canvass_number = response.data.request_to_canvass_number + 1;
             $scope.items = {};
             setTimeout(() => {
                 window.location.href = route('inventory.request-to-canvass.index',[response.data.uuid]);

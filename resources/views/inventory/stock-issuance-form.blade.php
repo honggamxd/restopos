@@ -306,6 +306,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.receiving_report_number_formatted = null;
+        $scope.formdata.stock_issuance_number = {{ $form_number}};
         $scope.formdata.issued_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.stock_issuance_date = moment().format("MM/DD/YYYY");
     }else{
@@ -403,6 +404,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $.notify('Redirecting to print preview.','info');
             $.notify('Stock Issuance has been generated.');
             $scope.formdata = {};
+            $scope.formdata.stock_issuance_number = response.data.stock_issuance_number + 1;
             $scope.items = {};
             setTimeout(() => {
                 window.location.href = route('inventory.stock-issuance.index',[response.data.uuid]);

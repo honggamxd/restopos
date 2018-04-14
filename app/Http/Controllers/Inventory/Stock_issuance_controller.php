@@ -72,6 +72,8 @@ class Stock_issuance_controller extends Controller
     public function create(Request $request)
     {
         $data['edit_mode'] = 'create';
+        $form_number = Inventory_stock_issuance::orderBy('stock_issuance_number','DESC')->first();
+        $data['form_number'] = $form_number ? ++$form_number->stock_issuance_number : 1;
         return view('inventory.stock-issuance-form',$data);
     }
     

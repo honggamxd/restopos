@@ -67,6 +67,8 @@ class Receiving_report_controller extends Controller
     public function create(Request $request)
     {
         $data['edit_mode'] = 'create';
+        $form_number = Inventory_receiving_report::orderBy('receiving_report_number','DESC')->first();
+        $data['form_number'] = $form_number ? ++$form_number->receiving_report_number : 1;
         return view('inventory.receiving-report-form',$data);
     }
     

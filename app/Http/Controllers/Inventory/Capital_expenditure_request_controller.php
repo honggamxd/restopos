@@ -69,6 +69,8 @@ class Capital_expenditure_request_controller extends Controller
     public function create(Request $request)
     {
         $data['edit_mode'] = 'create';
+        $form_number = Inventory_capital_expenditure_request::orderBy('capital_expenditure_request_number','DESC')->first();
+        $data['form_number'] = $form_number ? ++$form_number->capital_expenditure_request_number : 1;
         return view('inventory.capital-expenditure-request-form',$data);
     }
     

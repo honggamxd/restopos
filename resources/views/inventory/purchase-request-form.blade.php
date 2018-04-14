@@ -291,6 +291,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.formdata.type_of_item_requested = 'operations';
+        $scope.formdata.purchase_request_number = {{ $form_number}};
         $scope.items = {};
         $scope.price_selection = {};
         $scope.formdata.inventory_request_to_canvass_id = null;
@@ -373,6 +374,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $.notify('Redirecting to print preview.','info');
             $.notify('Purchase Request has been generated.');
             $scope.formdata = {};
+            $scope.formdata.purchase_request_number = response.data.purchase_request_number + 1;
             $scope.formdata.type_of_item_requested = 'operations';
             $scope.items = {};
             setTimeout(() => {
