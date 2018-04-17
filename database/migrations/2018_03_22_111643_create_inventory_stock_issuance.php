@@ -27,6 +27,7 @@ class CreateInventoryStockIssuance extends Migration
             $table->timestamp('received_by_date')->nullable();
             $table->string('issued_by_name')->nullable();
             $table->timestamp('issued_by_date')->nullable();
+            $table->boolean('is_approved');
             $table->string('approved_by_name')->nullable();
             $table->timestamp('approved_by_date')->nullable();
             $table->string('posted_by_name')->nullable();

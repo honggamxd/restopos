@@ -35,6 +35,7 @@ class Inventory_purchase_request_transformer extends TransformerAbstract
             'requested_by_date' => $Purchase_request->requested_by_date,
             'noted_by_name' => $Purchase_request->noted_by_name,
             'noted_by_date' => $Purchase_request->noted_by_date,
+            'is_approved' => $Purchase_request->is_approved == 1,
             'approved_by_name' => $Purchase_request->approved_by_name,
             'approved_by_date' => $Purchase_request->approved_by_date,
             'inventory_receiving_report_id' => $Purchase_request->inventory_receiving_report_id,

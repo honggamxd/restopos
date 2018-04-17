@@ -144,11 +144,13 @@ Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_cont
 Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@show_list')->name('inventory.purchase-request.list');
 Route::get('/inventory/purchase-request/form/{uuid}.pdf','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.index');
 Route::get('/inventory/purchase-request/edit/{uuid}','Inventory\Purchase_request_controller@edit')->name('inventory.purchase-request.edit');
+
 //Purchase Request api request
 Route::get('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@get_list')->name('api.inventory.purchase-request.list');
 Route::post('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@store')->name('api.inventory.purchase-request.store');
 Route::put('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@update')->name('api.inventory.purchase-request.update');
 Route::delete('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@destroy')->name('api.inventory.purchase-request.delete');
+Route::patch('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@approve')->name('api.inventory.purchase-request.approve');
 
 
 //Request to Canvass web pages
@@ -156,6 +158,7 @@ Route::get('/inventory/request-to-canvass/create','Inventory\Request_to_canvass_
 Route::get('/inventory/request-to-canvass/list','Inventory\Request_to_canvass_controller@show_list')->name('inventory.request-to-canvass.list');
 Route::get('/inventory/request-to-canvass/form/{uuid}.pdf','Inventory\Request_to_canvass_controller@index')->name('inventory.request-to-canvass.index');
 Route::get('/inventory/request-to-canvass/edit/{uuid}','Inventory\Request_to_canvass_controller@edit')->name('inventory.request-to-canvass.edit');
+
 //Request to Canvass api request
 Route::get('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@get_list')->name('api.inventory.request-to-canvass.list');
 Route::post('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@store')->name('api.inventory.request-to-canvass.store');
@@ -168,6 +171,7 @@ Route::get('/inventory/capital-expenditure-request/create','Inventory\Capital_ex
 Route::get('/inventory/capital-expenditure-request/list','Inventory\Capital_expenditure_request_controller@show_list')->name('inventory.capital-expenditure-request.list');
 Route::get('/inventory/capital-expenditure-request/form/{uuid}.pdf','Inventory\Capital_expenditure_request_controller@index')->name('inventory.capital-expenditure-request.index');
 Route::get('/inventory/capital-expenditure-request/edit/{uuid}','Inventory\Capital_expenditure_request_controller@edit')->name('inventory.capital-expenditure-request.edit');
+
 //Capital Expenditure Request Form api request
 Route::get('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@get_list')->name('api.inventory.capital-expenditure-request.list');
 Route::post('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@store')->name('api.inventory.capital-expenditure-request.store');
@@ -180,6 +184,7 @@ Route::get('/inventory/purchase-order/create','Inventory\Purchase_order_controll
 Route::get('/inventory/purchase-order/list','Inventory\Purchase_order_controller@show_list')->name('inventory.purchase-order.list');
 Route::get('/inventory/purchase-order/form/{uuid}.pdf','Inventory\Purchase_order_controller@index')->name('inventory.purchase-order.index');
 Route::get('/inventory/purchase-order/edit/{uuid}','Inventory\Purchase_order_controller@edit')->name('inventory.purchase-order.edit');
+
 //Purchase Order api request
 Route::get('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@get_list')->name('api.inventory.purchase-order.list');
 Route::post('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@store')->name('api.inventory.purchase-order.store');
@@ -192,6 +197,7 @@ Route::get('/inventory/receiving-report/create','Inventory\Receiving_report_cont
 Route::get('/inventory/receiving-report/list','Inventory\Receiving_report_controller@show_list')->name('inventory.receiving-report.list');
 Route::get('/inventory/receiving-report/form/{uuid}.pdf','Inventory\Receiving_report_controller@index')->name('inventory.receiving-report.index');
 Route::get('/inventory/receiving-report/edit/{uuid}','Inventory\Receiving_report_controller@edit')->name('inventory.receiving-report.edit');
+
 //Receiving Report api request
 Route::get('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@get_list')->name('api.inventory.receiving-report.list');
 Route::post('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@store')->name('api.inventory.receiving-report.store');

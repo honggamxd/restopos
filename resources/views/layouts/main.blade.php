@@ -142,6 +142,7 @@
 
 @routes
 <script src="{{ asset('js/app.js') }}"></script>
+<script>user_data = {name: "{{Auth::user()->name}}",username: "{{Auth::user()->username}}"};</script>
 @stack('scripts')
 </body>
 </html>

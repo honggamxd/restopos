@@ -24,8 +24,9 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="purchase_request_number"><small style="color:red">*</small> Purchase Request Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter Purchase Request Number" id="purchase_request_number" ng-model="formdata.purchase_request_number">
+                    <label for="purchase_request_number">Purchase Request Number:</label>
+                    <input type="text" class="form-control" placeholder="Enter Purchase Request Number" value="Auto Generated" readonly>
+                    {{-- <input type="text" class="form-control" placeholder="Enter Purchase Request Number" id="purchase_request_number" ng-model="formdata.purchase_request_number"> --}}
                     <p class="help-block" ng-cloak>@{{formerrors.purchase_request_number[0]}}</p>
                 </div>
             </div>
@@ -72,8 +73,8 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="request_chargeable_to">Reason Chargeable To:</label>
-                    <input type="text" class="form-control" placeholder="Enter Reason Chargeable To" id="request_chargeable_to" ng-model="formdata.request_chargeable_to">
+                    <label for="request_chargeable_to">Request Chargeable To:</label>
+                    <input type="text" class="form-control" placeholder="Enter Request Chargeable To" id="request_chargeable_to" ng-model="formdata.request_chargeable_to">
                     <p class="help-block" ng-cloak>@{{formerrors.request_chargeable_to[0]}}</p>
                 </div>
             </div>
@@ -226,7 +227,7 @@
             </div>
             <div class="col-sm-4" ng-if="edit_mode=='update'">
                 <div class="form-group">
-                    <label for="approved_by_name">Approved By:</label>
+                    <label for="approved_by_name">Approved By: <a href="javascript:void(0);" ng-click="fill_approved_by()"><small data-tooltip="This will fill your name and date" data-position="right center" data-inverted="">Fill</small></a></label>
                     <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.approved_by_name[0]}}</p>
                 </div>
@@ -291,7 +292,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.formdata.type_of_item_requested = 'operations';
-        $scope.formdata.purchase_request_number = {{ isset($form_number) ? $form_number : 0 }};
+        $scope.formdata.requested_by_name = user_data.name;
         $scope.items = {};
         $scope.price_selection = {};
         $scope.formdata.inventory_request_to_canvass_id = null;
@@ -324,7 +325,21 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         if($scope.edit_mode == 'create'){
             $scope.add_form();
         }else{
-            $scope.update_form();
+             if(!$scope.formdata.is_approved){
+                alertify.confirm(
+                    'Approving Purchase Request',
+                    'After submitting, the system cannot unapprove this purchase request form. continue?',
+                    function(){
+                        $scope.update_form();
+                    },
+                    function()
+                    {
+                        // alertify.error('Cancel')
+                    }
+                );
+            }else{
+                $scope.update_form();
+            }
         }
     }
 
@@ -411,6 +426,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         }).then(function(response) {
             $scope.submit = false;
             $scope.formdata.approved_by_date = response.data.approved_by_date ? moment(response.data.approved_by_date).format("MM/DD/YYYY") : null;
+            $scope.formdata.is_approved = response.data.is_approved;
             $.notify('Purchase Request has been updated.');
         }, function(rejection) {
             if (rejection.status != 422) {
@@ -426,6 +442,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $scope.select_vendor = function(index,vendor) {
         $scope.items[index].unit_price = vendor.price;
+    }
+
+    $scope.fill_approved_by = function() {
+        $scope.formdata.approved_by_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.approved_by_name = user_data.name;
     }
 
 

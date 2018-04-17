@@ -27,6 +27,7 @@ class CreateInventoryCapitalExpensesRequestForm extends Migration
             $table->string('requested_by_name')->nullable();
             $table->timestamp('requested_by_date')->nullable();
             $table->string('requested_by_position')->nullable();
+            $table->boolean('is_approved');
             $table->string('approved_by_1_name')->nullable();
             $table->timestamp('approved_by_1_date')->nullable();
             $table->string('approved_by_1_position')->nullable();

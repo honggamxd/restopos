@@ -21,7 +21,6 @@ class CreateInventoryRequestToCanvass extends Migration
             $table->string('requesting_department')->nullable();
             $table->text('reason_for_the_request')->nullable();
             $table->string('type_of_item_requested')->nullable();
-            $table->integer('inventory_purchase_request_id')->unsigned()->nullable();
             $table->string('requested_by_name')->nullable();
             $table->timestamp('requested_by_date')->nullable();
             $table->string('noted_by_name')->nullable();
@@ -31,7 +30,7 @@ class CreateInventoryRequestToCanvass extends Migration
             $table->string('vendor_1_name')->nullable();
             $table->string('vendor_2_name')->nullable();
             $table->string('vendor_3_name')->nullable();
-            $table->integer('inventory_capital_expenses_request_form_id')->unsigned()->nullable();
+            $table->integer('inventory_purchase_request_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -158,7 +158,7 @@ class Purchase_order_controller extends Controller
 
     public function update(Request $request,$id)
     {
-          $this->validate(
+        $this->validate(
             $request,
             [
                 'purchase_order_number' => 'required|numeric|unique:inventory_purchase_order,purchase_order_number,'.$id.',id,deleted_at,NULL',
@@ -205,6 +205,7 @@ class Purchase_order_controller extends Controller
             $purchase_order->noted_by_date = $request->noted_by_date!=null ? Carbon::parse($request->noted_by_date) : null;
             $purchase_order->approved_by_name = $request->approved_by_name;
             $purchase_order->approved_by_date = $request->approved_by_date!=null ? Carbon::parse($request->approved_by_date) : null;
+            $purchase_order->is_approved = $request->approved_by_date != null ? 1 : 0;
             $purchase_order->save();
 
             $purchase_order = Inventory_purchase_order::orderBy('id','DESC')->first();

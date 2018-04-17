@@ -36,6 +36,7 @@ class Inventory_capital_expenditure_request_transformer extends TransformerAbstr
             'requested_by_date' => $capital_expenditure_request->requested_by_date,
             'requested_by_date_formatted' => $capital_expenditure_request->requested_by_date!=null ? Carbon::parse($capital_expenditure_request->requested_by_date)->format('F d, Y') : '',
             'requested_by_position' => $capital_expenditure_request->requested_by_position,
+            'is_approved' => $capital_expenditure_request->is_approved == 1,
             'approved_by_1_name' => $capital_expenditure_request->approved_by_1_name,
             'approved_by_1_date' => $capital_expenditure_request->approved_by_1_date,
             'approved_by_1_date_formatted' => $capital_expenditure_request->approved_by_1_date!=null ? Carbon::parse($capital_expenditure_request->approved_by_1_date)->format('F d, Y') : '',

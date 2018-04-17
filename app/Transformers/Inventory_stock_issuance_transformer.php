@@ -35,6 +35,7 @@ class Inventory_stock_issuance_transformer extends TransformerAbstract
             'received_by_date' => $stock_issuance->received_by_date,
             'issued_by_name' => $stock_issuance->issued_by_name,
             'issued_by_date' => $stock_issuance->issued_by_date,
+            'is_approved' => $stock_issuance->is_approved == 1,
             'approved_by_name' => $stock_issuance->approved_by_name,
             'approved_by_date' => $stock_issuance->approved_by_date,
             'posted_by_name' => $stock_issuance->posted_by_name,

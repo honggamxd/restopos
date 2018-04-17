@@ -228,6 +228,7 @@ class Stock_issuance_controller extends Controller
             $stock_issuance->issued_by_date = $request->issued_by_date != null ? Carbon::parse($request->issued_by_date) : null;
             $stock_issuance->approved_by_name = $request->approved_by_name;
             $stock_issuance->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
+            $stock_issuance->is_approved = $request->approved_by_date != null ? 1 : 0;
             $stock_issuance->posted_by_name = $request->posted_by_name;
             $stock_issuance->posted_by_date = $request->posted_by_date != null ? Carbon::parse($request->posted_by_date) : null;
             $stock_issuance->save();

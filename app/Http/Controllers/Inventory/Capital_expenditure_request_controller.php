@@ -251,6 +251,7 @@ class Capital_expenditure_request_controller extends Controller
             $capital_expenditure_request->requested_by_name = $request->requested_by_name;
             $capital_expenditure_request->requested_by_date = $request->requested_by_date !=null ? Carbon::parse($request->requested_by_date) : null;
             $capital_expenditure_request->requested_by_position = $request->requested_by_position;
+            $capital_expenditure_request->is_approved = $request->approved_by_date != null ? 1 : 0;
             $capital_expenditure_request->approved_by_1_name = $request->approved_by_1_name;
             $capital_expenditure_request->approved_by_1_date = $request->approved_by_1_date !=null ? Carbon::parse($request->approved_by_1_date) : null;
             $capital_expenditure_request->approved_by_1_position = $request->approved_by_1_position;

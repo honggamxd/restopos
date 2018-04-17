@@ -9,6 +9,7 @@ use App\Http\Requests;
 use Auth;
 use Carbon\Carbon;
 use PDF;
+use Validator;
 
 use App\Inventory\Inventory_purchase_request;
 use App\Inventory\Inventory_purchase_request_detail;
@@ -101,13 +102,13 @@ class Purchase_request_controller extends Controller
         $this->validate(
             $request,
             [
-                'purchase_request_number' => 'required|numeric|unique:inventory_purchase_request,purchase_request_number,NULL,id,deleted_at,NULL',
+                // 'purchase_request_number' => 'required|numeric|unique:inventory_purchase_request,purchase_request_number,NULL,id,deleted_at,NULL',
                 'purchase_request_date' => 'required|date',
                 'requesting_department' => 'required',
                 // 'reason_for_the_request' => 'required',
                 // 'request_chargeable_to' => 'required',
                 'type_of_item_requested' => 'required',
-                'date_needed' => 'date',
+                'date_needed' => 'required|date',
                 'requested_by_name' => 'required_with:requested_by_name,requested_by_date',
                 'requested_by_date' => 'required_with:requested_by_name,requested_by_date',
                 'noted_by_name' => 'required_with:noted_by_name,noted_by_date',
@@ -168,13 +169,13 @@ class Purchase_request_controller extends Controller
           $this->validate(
             $request,
             [
-                'purchase_request_number' => 'required|numeric|unique:inventory_purchase_request,purchase_request_number,'.$id.',id,deleted_at,NULL',
+                // 'purchase_request_number' => 'required|numeric|unique:inventory_purchase_request,purchase_request_number,'.$id.',id,deleted_at,NULL',
                 'purchase_request_date' => 'required|date',
                 'requesting_department' => 'required',
                 // 'reason_for_the_request' => 'required',
                 // 'request_chargeable_to' => 'required',
                 'type_of_item_requested' => 'required',
-                'date_needed' => 'date',
+                'date_needed' => 'required|date',
                 'requested_by_name' => 'required_with:requested_by_name,requested_by_date',
                 'requested_by_date' => 'required_with:requested_by_name,requested_by_date',
                 'noted_by_name' => 'required_with:noted_by_name,noted_by_date',
@@ -208,6 +209,7 @@ class Purchase_request_controller extends Controller
             $purchase_request->noted_by_date = $request->noted_by_date != null ? Carbon::parse($request->noted_by_date) : null;
             $purchase_request->approved_by_name = $request->approved_by_name;
             $purchase_request->approved_by_date = $request->approved_by_date != null ? Carbon::parse($request->approved_by_date) : null;
+            $purchase_request->is_approved = $request->approved_by_date != null ? 1 : 0;
             $purchase_request->save();
 
             $purchase_request = Inventory_purchase_request::orderBy('id','DESC')->first();
@@ -223,7 +225,7 @@ class Purchase_request_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
-        return $purchase_request;
+        return fractal($purchase_request, new Inventory_purchase_request_transformer)->toArray();
     }
 
     public function destroy($id)
@@ -237,5 +239,34 @@ class Purchase_request_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
+    }
+
+    
+    public function approve($id)
+    {
+        $validator = Validator::make(
+            [],
+            []
+        );
+        $validator->after(function ($validator) use ($id){
+            $purchase_request = Inventory_purchase_request::findOrFail($id);
+            if($purchase_request->is_approved==1){
+                $validator->errors()->add('error', 'The purchase request that you are going to approve is already approved by  '.$purchase_request->approved_by_name.' on '.Carbon::parse($purchase_request->approved_by_date)->format('F d, Y') );
+            }
+        });
+        if($validator->fails()){
+            return response($validator->errors(), 422);
+        }
+        DB::beginTransaction();
+        try{
+            $purchase_request = Inventory_purchase_request::findOrFail($id);
+            $purchase_request->approved_by_name = Auth::user()->name;
+            $purchase_request->approved_by_date = Carbon::now()->format('Y-m-d');
+            $purchase_request->is_approved = 1;
+            $purchase_request->save();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        return fractal($purchase_request, new Inventory_purchase_request_transformer)->parseIncludes('details.inventory_item')->toArray();
     }
 }
