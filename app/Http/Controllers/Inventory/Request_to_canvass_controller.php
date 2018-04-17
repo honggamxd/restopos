@@ -88,7 +88,7 @@ class Request_to_canvass_controller extends Controller
         $this->validate(
             $request,
             [
-                'request_to_canvass_number' => 'required|numeric|unique:inventory_request_to_canvass,request_to_canvass_number,NULL,id,deleted_at,NULL',
+                // 'request_to_canvass_number' => 'required|numeric|unique:inventory_request_to_canvass,request_to_canvass_number,NULL,id,deleted_at,NULL',
                 'request_to_canvass_date' => 'required|date',
                 'requesting_department' => 'required',
                 'reason_for_the_request' => 'required',
@@ -144,7 +144,7 @@ class Request_to_canvass_controller extends Controller
           $this->validate(
             $request,
             [
-                'request_to_canvass_number' => 'required|numeric|unique:inventory_request_to_canvass,request_to_canvass_number,'.$id.',id,deleted_at,NULL',
+                // 'request_to_canvass_number' => 'required|numeric|unique:inventory_request_to_canvass,request_to_canvass_number,'.$id.',id,deleted_at,NULL',
                 'request_to_canvass_date' => 'required|date',
                 'requesting_department' => 'required',
                 'reason_for_the_request' => 'required',

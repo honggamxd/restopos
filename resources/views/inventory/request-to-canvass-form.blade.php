@@ -25,7 +25,8 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="request_to_canvass_number"><small style="color:red">*</small> Request to Canvass Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter Request to Canvass Number" id="request_to_canvass_number" ng-model="formdata.request_to_canvass_number">
+                    {{-- <input type="text" class="form-control" placeholder="Enter Request to Canvass Number" id="request_to_canvass_number" ng-model="formdata.request_to_canvass_number"> --}}
+                    <input type="text" class="form-control" placeholder="Enter Request to Canvass Number" id="request_to_canvass_number" value="Auto Generated" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.request_to_canvass_number[0]}}</p>
                 </div>
             </div>
@@ -319,8 +320,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.edit_mode = "{!! $edit_mode !!}";
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
+        $scope.formdata.requested_by_name = user_data.name;
         $scope.formdata.type_of_item_requested = 'operations';
-        $scope.formdata.request_to_canvass_number = {{ isset($form_number) ? $form_number : 0 }};;
         $scope.formdata.vendor_1_name = 'Vendor 1';
         $scope.formdata.vendor_2_name = 'Vendor 2';
         $scope.formdata.vendor_3_name = 'Vendor 3';
@@ -518,7 +519,6 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 $scope.purchase_request_number_formatted = ui.item.purchase_request_number_formatted;
                 $scope.formdata.reason_for_the_request = ui.item.reason_for_the_request;
                 $scope.formdata.type_of_item_requested = ui.item.type_of_item_requested;
-                $scope.formdata.requested_by_name = ui.item.requested_by_name;
                 $scope.formdata.requesting_department = ui.item.requesting_department;
             });
         }

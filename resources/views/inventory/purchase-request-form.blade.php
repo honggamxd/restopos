@@ -325,7 +325,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         if($scope.edit_mode == 'create'){
             $scope.add_form();
         }else{
-             if(!$scope.formdata.is_approved){
+             if(!$scope.formdata.is_approved && $scope.formdata.approved_by_name){
                 alertify.confirm(
                     'Approving Purchase Request',
                     'After submitting, the system cannot unapprove this purchase request form. continue?',

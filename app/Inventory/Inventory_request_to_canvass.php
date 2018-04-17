@@ -15,6 +15,8 @@ class Inventory_request_to_canvass extends Model
     parent::boot();
     static::creating(function($Inventory_request_to_canvass) {
         $uuid = \Webpatser\Uuid\Uuid::generate();
+        $request_to_canvass_number = Inventory_request_to_canvass::withTrashed()->orderBy('request_to_canvass_number','DESC')->first();
+        $Inventory_request_to_canvass->request_to_canvass_number = $request_to_canvass_number ? $request_to_canvass_number->request_to_canvass_number + 1 : 1;
         $Inventory_request_to_canvass->uuid = $uuid->string;
         return $Inventory_request_to_canvass;
     });
