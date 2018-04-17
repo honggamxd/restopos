@@ -15,6 +15,8 @@ class Inventory_purchase_order extends Model
     parent::boot();
     static::creating(function($Inventory_purchase_order) {
         $uuid = \Webpatser\Uuid\Uuid::generate();
+        $purchase_order_number = Inventory_purchase_order::withTrashed()->orderBy('purchase_order_number','DESC')->first();
+        $Inventory_purchase_order->purchase_order_number = $purchase_order_number ? $purchase_order_number->purchase_order_number + 1 : 1;
         $Inventory_purchase_order->uuid = $uuid->string;
         return $Inventory_purchase_order;
     });

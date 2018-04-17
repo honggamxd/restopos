@@ -25,7 +25,8 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="capital_expenditure_request_number"><small style="color:red">*</small> Budget Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter Budget Number" id="capital_expenditure_request_number" ng-model="formdata.capital_expenditure_request_number">
+                    {{-- <input type="text" class="form-control" placeholder="Enter Budget Number" id="capital_expenditure_request_number" ng-model="formdata.capital_expenditure_request_number"> --}}
+                    <input type="text" class="form-control" placeholder="Enter Budget Number" id="capital_expenditure_request_number" value="Auto Generated" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.capital_expenditure_request_number[0]}}</p>
                 </div>
             </div>
@@ -314,6 +315,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.price_selection = {};
+        $scope.formdata.requested_by_name = user_data.name;
         $scope.formdata.inventory_purchase_request_id = null;
         $scope.formdata.requested_by_position = "Department Head";
         $scope.formdata.approved_by_1_position = "Resort Manager";
@@ -322,7 +324,6 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.recorded_by_position = "Finance Personel";
         $scope.formdata.capital_expenditure_request_date = moment().format("MM/DD/YYYY");
         $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
-        $scope.formdata.capital_expenditure_request_number = {{ isset($form_number) ? $form_number : 0 }};
         // $scope.formdata.verified_as_funded_by_date = moment().format("MM/DD/YYYY");
         // $scope.formdata.recorded_by_date = moment().format("MM/DD/YYYY");
     }else{
@@ -463,7 +464,6 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 $scope.formdata.inventory_purchase_request_id = ui.item.id;
                 $scope.purchase_request_number_formatted = ui.item.purchase_request_number_formatted;
                 $scope.formdata.department = ui.item.requesting_department;
-                $scope.formdata.requested_by_name = ui.item.requested_by_name;
             });
         }
     })

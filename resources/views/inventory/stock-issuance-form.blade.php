@@ -25,7 +25,8 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="stock_issuance_number"><small style="color:red">*</small> Stock Issuance Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter Stock Issuance Number" id="stock_issuance_number" ng-model="formdata.stock_issuance_number">
+                    {{-- <input type="text" class="form-control" placeholder="Enter Stock Issuance Number" id="stock_issuance_number" ng-model="formdata.stock_issuance_number"> --}}
+                    <input type="text" class="form-control" placeholder="Enter Stock Issuance Number" id="stock_issuance_number" value="Auto Generated" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.stock_issuance_number[0]}}</p>
                 </div>
             </div>
@@ -306,9 +307,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.receiving_report_number_formatted = null;
-        $scope.formdata.stock_issuance_number = {{ isset($form_number) ? $form_number : 0 }};;
         $scope.formdata.issued_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.stock_issuance_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.issued_by_name = user_data.name;
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.stock_issuance_date = $scope.formdata.stock_issuance_date ? moment($scope.formdata.stock_issuance_date).format("MM/DD/YYYY") : null;

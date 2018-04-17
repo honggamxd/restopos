@@ -91,7 +91,7 @@ class Capital_expenditure_request_controller extends Controller
         $this->validate(
             $request,
             [
-                'capital_expenditure_request_number' => 'required|numeric|unique:inventory_capital_expenditure_request,capital_expenditure_request_number,NULL,id,deleted_at,NULL',
+                // 'capital_expenditure_request_number' => 'required|numeric|unique:inventory_capital_expenditure_request,capital_expenditure_request_number,NULL,id,deleted_at,NULL',
                 'capital_expenditure_request_date' => 'required|date',
                 // 'budget_description' => 'required',
                 // 'budget_amount' => 'required',
@@ -140,7 +140,7 @@ class Capital_expenditure_request_controller extends Controller
         DB::beginTransaction();
         try{
             $capital_expenditure_request = new Inventory_capital_expenditure_request;
-            $capital_expenditure_request->capital_expenditure_request_number = $request->capital_expenditure_request_number;
+            // $capital_expenditure_request->capital_expenditure_request_number = $request->capital_expenditure_request_number;
             $capital_expenditure_request->capital_expenditure_request_date = Carbon::parse($request->capital_expenditure_request_date);
             $capital_expenditure_request->budget_description = $request->budget_description;
             $capital_expenditure_request->budget_amount = $request->budget_amount ? $request->budget_amount : 0;
@@ -190,7 +190,7 @@ class Capital_expenditure_request_controller extends Controller
           $this->validate(
             $request,
             [
-                'capital_expenditure_request_number' => 'required|numeric|unique:inventory_capital_expenditure_request,capital_expenditure_request_number,'.$id.',id,deleted_at,NULL',
+                // 'capital_expenditure_request_number' => 'required|numeric|unique:inventory_capital_expenditure_request,capital_expenditure_request_number,'.$id.',id,deleted_at,NULL',
                 'capital_expenditure_request_date' => 'required|date',
                 // 'budget_description' => 'required',
                 // 'budget_amount' => 'required',
@@ -240,7 +240,7 @@ class Capital_expenditure_request_controller extends Controller
         try{
             // return $request->all();
             $capital_expenditure_request = Inventory_capital_expenditure_request::findOrFail($id);
-            $capital_expenditure_request->capital_expenditure_request_number = $request->capital_expenditure_request_number;
+            // $capital_expenditure_request->capital_expenditure_request_number = $request->capital_expenditure_request_number;
             $capital_expenditure_request->capital_expenditure_request_date = Carbon::parse($request->capital_expenditure_request_date);
             $capital_expenditure_request->budget_description = $request->budget_description;
             $capital_expenditure_request->budget_amount = $request->budget_amount ? $request->budget_amount : 0;

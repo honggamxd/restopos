@@ -128,7 +128,7 @@ class Purchase_request_controller extends Controller
         DB::beginTransaction();
         try{
             $purchase_request = new Inventory_purchase_request;
-            $purchase_request->purchase_request_number = $request->purchase_request_number;
+            // $purchase_request->purchase_request_number = $request->purchase_request_number;
             $purchase_request->purchase_request_date = Carbon::parse($request->purchase_request_date);
             $purchase_request->requesting_department = $request->requesting_department;
             $purchase_request->reason_for_the_request = $request->reason_for_the_request;
@@ -196,7 +196,7 @@ class Purchase_request_controller extends Controller
         try{
             // return $request->all();
             $purchase_request = Inventory_purchase_request::findOrFail($id);
-            $purchase_request->purchase_request_number = $request->purchase_request_number;
+            // $purchase_request->purchase_request_number = $request->purchase_request_number;
             $purchase_request->purchase_request_date = Carbon::parse($request->purchase_request_date);
             $purchase_request->requesting_department = $request->requesting_department;
             $purchase_request->reason_for_the_request = $request->reason_for_the_request;

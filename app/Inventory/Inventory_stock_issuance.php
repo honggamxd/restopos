@@ -15,6 +15,8 @@ class Inventory_stock_issuance extends Model
     parent::boot();
     static::creating(function($Inventory_stock_issuance) {
         $uuid = \Webpatser\Uuid\Uuid::generate();
+        $stock_issuance_number = Inventory_stock_issuance::withTrashed()->orderBy('stock_issuance_number','DESC')->first();
+        $Inventory_stock_issuance->stock_issuance_number = $stock_issuance_number ? $stock_issuance_number->stock_issuance_number + 1 : 1;
         $Inventory_stock_issuance->uuid = $uuid->string;
         return $Inventory_stock_issuance;
     });

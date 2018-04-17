@@ -90,7 +90,7 @@ class Receiving_report_controller extends Controller
         $this->validate(
             $request,
             [
-                'receiving_report_number' => 'required|numeric|unique:inventory_receiving_report,receiving_report_number,NULL,id,deleted_at,NULL',
+                // 'receiving_report_number' => 'required|numeric|unique:inventory_receiving_report,receiving_report_number,NULL,id,deleted_at,NULL',
                 'receiving_report_date' => 'required|date',
                 'supplier_name' => 'required',
                 // 'supplier_address' => 'required',
@@ -119,7 +119,7 @@ class Receiving_report_controller extends Controller
         DB::beginTransaction();
         try{
             $receiving_report = new Inventory_receiving_report;
-            $receiving_report->receiving_report_number = $request->receiving_report_number;
+            // $receiving_report->receiving_report_number = $request->receiving_report_number;
             $receiving_report->receiving_report_date = $request->receiving_report_date!=null ? Carbon::parse($request->receiving_report_date) : null;
             $receiving_report->supplier_name = $request->supplier_name;
             $receiving_report->supplier_address = $request->supplier_address;
@@ -170,7 +170,7 @@ class Receiving_report_controller extends Controller
         $this->validate(
             $request,
             [
-                'receiving_report_number' => 'required|numeric|unique:inventory_receiving_report,receiving_report_number,'.$id.',id,deleted_at,NULL',
+                // 'receiving_report_number' => 'required|numeric|unique:inventory_receiving_report,receiving_report_number,'.$id.',id,deleted_at,NULL',
                 'receiving_report_date' => 'required|date',
                 'supplier_name' => 'required',
                 // 'supplier_address' => 'required',
@@ -200,7 +200,7 @@ class Receiving_report_controller extends Controller
         try{
             // return $request->all();
             $receiving_report = Inventory_receiving_report::findOrFail($id);
-            $receiving_report->receiving_report_number = $request->receiving_report_number;
+            // $receiving_report->receiving_report_number = $request->receiving_report_number;
             $receiving_report->receiving_report_date = $request->receiving_report_date!=null ? Carbon::parse($request->receiving_report_date) : null;
             $receiving_report->supplier_name = $request->supplier_name;
             $receiving_report->supplier_address = $request->supplier_address;

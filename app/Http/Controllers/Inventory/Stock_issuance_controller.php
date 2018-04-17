@@ -95,7 +95,7 @@ class Stock_issuance_controller extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'stock_issuance_number' => 'required|numeric|unique:inventory_stock_issuance,stock_issuance_number,NULL,id,deleted_at,NULL',
+                // 'stock_issuance_number' => 'required|numeric|unique:inventory_stock_issuance,stock_issuance_number,NULL,id,deleted_at,NULL',
                 'stock_issuance_date' => 'required|date',
                 'requesting_department' => 'required',
                 'request_chargeable_to' => 'required',
@@ -128,7 +128,7 @@ class Stock_issuance_controller extends Controller
         DB::beginTransaction();
         try{
             $stock_issuance = new Inventory_stock_issuance;
-            $stock_issuance->stock_issuance_number = $request->stock_issuance_number;
+            // $stock_issuance->stock_issuance_number = $request->stock_issuance_number;
             $stock_issuance->stock_issuance_date = $request->stock_issuance_date != null ? Carbon::parse($request->stock_issuance_date) : null;
             $stock_issuance->requesting_department = $request->requesting_department;
             $stock_issuance->request_chargeable_to = $request->request_chargeable_to;
@@ -171,7 +171,7 @@ class Stock_issuance_controller extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'stock_issuance_number' => 'required|numeric|unique:inventory_stock_issuance,stock_issuance_number,'.$id.',id,deleted_at,NULL',
+                // 'stock_issuance_number' => 'required|numeric|unique:inventory_stock_issuance,stock_issuance_number,'.$id.',id,deleted_at,NULL',
                 'stock_issuance_date' => 'required|date',
                 'requesting_department' => 'required',
                 'request_chargeable_to' => 'required',
@@ -215,7 +215,7 @@ class Stock_issuance_controller extends Controller
         try{
             $stock_issuance = Inventory_stock_issuance::findOrFail($id);
             $old_data = $stock_issuance;
-            $stock_issuance->stock_issuance_number = $request->stock_issuance_number;
+            // $stock_issuance->stock_issuance_number = $request->stock_issuance_number;
             $stock_issuance->stock_issuance_date = $request->stock_issuance_date != null ? Carbon::parse($request->stock_issuance_date) : null;
             $stock_issuance->requesting_department = $request->requesting_department;
             $stock_issuance->request_chargeable_to = $request->request_chargeable_to;

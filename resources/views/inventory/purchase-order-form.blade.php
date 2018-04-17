@@ -25,7 +25,8 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="purchase_order_number"><small style="color:red">*</small> Purchase Order Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter Purchase Order Number" id="purchase_order_number" ng-model="formdata.purchase_order_number">
+                    {{-- <input type="text" class="form-control" placeholder="Enter Purchase Order Number" id="purchase_order_number" ng-model="formdata.purchase_order_number"> --}}
+                    <input type="text" class="form-control" placeholder="Enter Purchase Order Number" id="purchase_order_number" value="Auto Generated" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.purchase_order_number[0]}}</p>
                 </div>
             </div>
@@ -284,8 +285,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.purchase_request_number_formatted = null;
-        $scope.formdata.purchase_order_number = {{ isset($form_number) ? $form_number : 0 }};
         $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.requested_by_name = user_data.name;
         // $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.purchase_order_date = moment().format("MM/DD/YYYY");
     }else{
@@ -431,7 +432,6 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 $scope.items = ui.item.details.data;
                 $scope.formdata.inventory_purchase_request_id = ui.item.id;
                 $scope.purchase_request_number_formatted = ui.item.purchase_request_number_formatted;
-                $scope.formdata.requested_by_name = ui.item.requested_by_name;
                 $scope.formdata.requesting_department = ui.item.requesting_department;
             });
         }

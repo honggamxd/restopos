@@ -15,6 +15,8 @@ class Inventory_receiving_report extends Model
     parent::boot();
     static::creating(function($Inventory_receiving_report) {
         $uuid = \Webpatser\Uuid\Uuid::generate();
+        $receiving_report_number = Inventory_receiving_report::withTrashed()->orderBy('receiving_report_number','DESC')->first();
+        $Inventory_receiving_report->receiving_report_number = $receiving_report_number ? $receiving_report_number->receiving_report_number + 1 : 1;
         $Inventory_receiving_report->uuid = $uuid->string;
         return $Inventory_receiving_report;
     });

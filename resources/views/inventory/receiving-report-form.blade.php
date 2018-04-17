@@ -25,7 +25,8 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="receiving_report_number"><small style="color:red">*</small> Receiving Report Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter Receiving Report Number" id="receiving_report_number" ng-model="formdata.receiving_report_number">
+                    {{-- <input type="text" class="form-control" placeholder="Enter Receiving Report Number" id="receiving_report_number" ng-model="formdata.receiving_report_number"> --}}
+                    <input type="text" class="form-control" placeholder="Enter Receiving Report Number" id="receiving_report_number" value="Auto Generated" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.receiving_report_number[0]}}</p>
                 </div>
             </div>
@@ -273,8 +274,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.purchase_order_number_formatted = null;
-        $scope.formdata.receiving_report_number = {{ isset($form_number) ? $form_number : 0 }};;
         $scope.formdata.receiving_report_date = moment().format("MM/DD/YYYY hh:mm:ss a");
+        $scope.formdata.received_by_name = user_data.name;
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.receiving_report_date = $scope.formdata.receiving_report_date ? moment($scope.formdata.receiving_report_date).format("MM/DD/YYYY hh:mm:ss a") : null;

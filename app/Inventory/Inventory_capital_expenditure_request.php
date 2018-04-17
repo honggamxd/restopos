@@ -15,6 +15,8 @@ class Inventory_capital_expenditure_request extends Model
     parent::boot();
     static::creating(function($Inventory_capital_expenditure_request) {
         $uuid = \Webpatser\Uuid\Uuid::generate();
+        $capital_expenditure_request_number = Inventory_capital_expenditure_request::withTrashed()->orderBy('capital_expenditure_request_number','DESC')->first();
+        $Inventory_capital_expenditure_request->capital_expenditure_request_number = $capital_expenditure_request_number ? $capital_expenditure_request_number->capital_expenditure_request_number + 1 : 1;
         $Inventory_capital_expenditure_request->uuid = $uuid->string;
         return $Inventory_capital_expenditure_request;
     });

@@ -104,7 +104,7 @@ class Request_to_canvass_controller extends Controller
         DB::beginTransaction();
         try{
             $request_to_canvass = new Inventory_request_to_canvass;
-            $request_to_canvass->request_to_canvass_number = $request->request_to_canvass_number;
+            // $request_to_canvass->request_to_canvass_number = $request->request_to_canvass_number;
             $request_to_canvass->request_to_canvass_date = Carbon::parse($request->request_to_canvass_date);
             $request_to_canvass->requesting_department = $request->requesting_department;
             $request_to_canvass->reason_for_the_request = $request->reason_for_the_request;
@@ -161,7 +161,7 @@ class Request_to_canvass_controller extends Controller
         try{
             // return $request->all();
             $request_to_canvass = Inventory_request_to_canvass::findOrFail($id);
-            $request_to_canvass->request_to_canvass_number = $request->request_to_canvass_number;
+            // $request_to_canvass->request_to_canvass_number = $request->request_to_canvass_number;
             $request_to_canvass->request_to_canvass_date = Carbon::parse($request->request_to_canvass_date);
             $request_to_canvass->requesting_department = $request->requesting_department;
             $request_to_canvass->reason_for_the_request = $request->reason_for_the_request;

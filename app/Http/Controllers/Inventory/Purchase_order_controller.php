@@ -93,7 +93,7 @@ class Purchase_order_controller extends Controller
         $this->validate(
             $request,
             [
-                'purchase_order_number' => 'required|numeric|unique:inventory_purchase_order,purchase_order_number,NULL,id,deleted_at,NULL',
+                // 'purchase_order_number' => 'required|numeric|unique:inventory_purchase_order,purchase_order_number,NULL,id,deleted_at,NULL',
                 'purchase_order_date' => 'required|date',
                 'supplier_name' => 'required',
                 // 'supplier_address' => 'required',
@@ -119,7 +119,7 @@ class Purchase_order_controller extends Controller
         DB::beginTransaction();
         try{
             $purchase_order = new Inventory_purchase_order;
-            $purchase_order->purchase_order_number = $request->purchase_order_number;
+            // $purchase_order->purchase_order_number = $request->purchase_order_number;
             $purchase_order->purchase_order_date = Carbon::parse($request->purchase_order_date);
             $purchase_order->supplier_name = $request->supplier_name;
             $purchase_order->supplier_address = $request->supplier_address;
@@ -161,7 +161,7 @@ class Purchase_order_controller extends Controller
         $this->validate(
             $request,
             [
-                'purchase_order_number' => 'required|numeric|unique:inventory_purchase_order,purchase_order_number,'.$id.',id,deleted_at,NULL',
+                // 'purchase_order_number' => 'required|numeric|unique:inventory_purchase_order,purchase_order_number,'.$id.',id,deleted_at,NULL',
                 'purchase_order_date' => 'required|date',
                 'supplier_name' => 'required',
                 // 'supplier_address' => 'required',
@@ -190,7 +190,7 @@ class Purchase_order_controller extends Controller
         try{
             // return $request->all();
             $purchase_order = Inventory_purchase_order::findOrFail($id);
-            $purchase_order->purchase_order_number = $request->purchase_order_number;
+            // $purchase_order->purchase_order_number = $request->purchase_order_number;
             $purchase_order->purchase_order_date = Carbon::parse($request->purchase_order_date);
             $purchase_order->supplier_name = $request->supplier_name;
             $purchase_order->supplier_address = $request->supplier_address;
