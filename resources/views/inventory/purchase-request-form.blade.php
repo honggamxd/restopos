@@ -291,7 +291,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.formdata.type_of_item_requested = 'operations';
-        $scope.formdata.purchase_request_number = {{ $form_number}};
+        $scope.formdata.purchase_request_number = {{ isset($form_number) ? $form_number : 0 }};
         $scope.items = {};
         $scope.price_selection = {};
         $scope.formdata.inventory_request_to_canvass_id = null;

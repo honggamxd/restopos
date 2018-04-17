@@ -322,7 +322,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.recorded_by_position = "Finance Personel";
         $scope.formdata.capital_expenditure_request_date = moment().format("MM/DD/YYYY");
         $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
-        $scope.formdata.capital_expenditure_request_number = {{ $form_number}};
+        $scope.formdata.capital_expenditure_request_number = {{ isset($form_number) ? $form_number : 0 }};
         // $scope.formdata.verified_as_funded_by_date = moment().format("MM/DD/YYYY");
         // $scope.formdata.recorded_by_date = moment().format("MM/DD/YYYY");
     }else{

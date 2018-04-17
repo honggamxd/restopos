@@ -306,7 +306,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.receiving_report_number_formatted = null;
-        $scope.formdata.stock_issuance_number = {{ $form_number}};
+        $scope.formdata.stock_issuance_number = {{ isset($form_number) ? $form_number : 0 }};;
         $scope.formdata.issued_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.stock_issuance_date = moment().format("MM/DD/YYYY");
     }else{

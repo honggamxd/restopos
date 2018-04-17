@@ -284,7 +284,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.purchase_request_number_formatted = null;
-        $scope.formdata.purchase_order_number = {{ $form_number}};
+        $scope.formdata.purchase_order_number = {{ isset($form_number) ? $form_number : 0 }};
         $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
         // $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.purchase_order_date = moment().format("MM/DD/YYYY");

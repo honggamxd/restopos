@@ -273,7 +273,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata = {};
         $scope.items = {};
         $scope.purchase_order_number_formatted = null;
-        $scope.formdata.receiving_report_number = {{ $form_number}};
+        $scope.formdata.receiving_report_number = {{ isset($form_number) ? $form_number : 0 }};;
         $scope.formdata.receiving_report_date = moment().format("MM/DD/YYYY hh:mm:ss a");
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};

@@ -284,7 +284,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.formdata.type_of_item_requested = 'operations';
-        $scope.formdata.request_to_canvass_number = {{ $form_number}};
+        $scope.formdata.request_to_canvass_number = {{ isset($form_number) ? $form_number : 0 }};;
         $scope.formdata.vendor_1_name = 'Vendor 1';
         $scope.formdata.vendor_2_name = 'Vendor 2';
         $scope.formdata.vendor_3_name = 'Vendor 3';
