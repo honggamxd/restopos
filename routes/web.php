@@ -140,81 +140,81 @@ Route::delete('/api/inventory/items/item/{id}','Inventory\Item_controller@destro
 
 
 //Purchase Request web pages
-Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_controller@create')->name('inventory.purchase-request.create');
-Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@show_list')->name('inventory.purchase-request.list');
+Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_controller@create')->name('inventory.purchase-request.create')->middleware('auth');
+Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@show_list')->name('inventory.purchase-request.list')->middleware('auth');
 Route::get('/inventory/purchase-request/form/{uuid}.pdf','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.index');
-Route::get('/inventory/purchase-request/edit/{uuid}','Inventory\Purchase_request_controller@edit')->name('inventory.purchase-request.edit');
+Route::get('/inventory/purchase-request/edit/{uuid}','Inventory\Purchase_request_controller@edit')->name('inventory.purchase-request.edit')->middleware('auth');
 
 //Purchase Request api request
-Route::get('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@get_list')->name('api.inventory.purchase-request.list');
-Route::post('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@store')->name('api.inventory.purchase-request.store');
-Route::put('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@update')->name('api.inventory.purchase-request.update');
-Route::delete('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@destroy')->name('api.inventory.purchase-request.delete');
-Route::patch('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@approve')->name('api.inventory.purchase-request.approve');
+Route::get('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@get_list')->name('api.inventory.purchase-request.list')->middleware('auth');
+Route::post('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@store')->name('api.inventory.purchase-request.store')->middleware('auth');
+Route::put('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@update')->name('api.inventory.purchase-request.update')->middleware('auth');
+Route::delete('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@destroy')->name('api.inventory.purchase-request.delete')->middleware('auth');
+Route::patch('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@approve')->name('api.inventory.purchase-request.approve')->middleware('auth');
 
 
 //Request to Canvass web pages
-Route::get('/inventory/request-to-canvass/create','Inventory\Request_to_canvass_controller@create')->name('inventory.request-to-canvass.create');
-Route::get('/inventory/request-to-canvass/list','Inventory\Request_to_canvass_controller@show_list')->name('inventory.request-to-canvass.list');
+Route::get('/inventory/request-to-canvass/create','Inventory\Request_to_canvass_controller@create')->name('inventory.request-to-canvass.create')->middleware('auth');
+Route::get('/inventory/request-to-canvass/list','Inventory\Request_to_canvass_controller@show_list')->name('inventory.request-to-canvass.list')->middleware('auth');
 Route::get('/inventory/request-to-canvass/form/{uuid}.pdf','Inventory\Request_to_canvass_controller@index')->name('inventory.request-to-canvass.index');
-Route::get('/inventory/request-to-canvass/edit/{uuid}','Inventory\Request_to_canvass_controller@edit')->name('inventory.request-to-canvass.edit');
+Route::get('/inventory/request-to-canvass/edit/{uuid}','Inventory\Request_to_canvass_controller@edit')->name('inventory.request-to-canvass.edit')->middleware('auth');
 
 //Request to Canvass api request
-Route::get('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@get_list')->name('api.inventory.request-to-canvass.list');
-Route::post('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@store')->name('api.inventory.request-to-canvass.store');
-Route::put('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@update')->name('api.inventory.request-to-canvass.update');
-Route::delete('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@destroy')->name('api.inventory.request-to-canvass.delete');
+Route::get('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@get_list')->name('api.inventory.request-to-canvass.list')->middleware('auth');
+Route::post('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@store')->name('api.inventory.request-to-canvass.store')->middleware('auth');
+Route::put('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@update')->name('api.inventory.request-to-canvass.update')->middleware('auth');
+Route::delete('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@destroy')->name('api.inventory.request-to-canvass.delete')->middleware('auth');
 
 
 //Capital Expenditure Request Form web pages
-Route::get('/inventory/capital-expenditure-request/create','Inventory\Capital_expenditure_request_controller@create')->name('inventory.capital-expenditure-request.create');
-Route::get('/inventory/capital-expenditure-request/list','Inventory\Capital_expenditure_request_controller@show_list')->name('inventory.capital-expenditure-request.list');
+Route::get('/inventory/capital-expenditure-request/create','Inventory\Capital_expenditure_request_controller@create')->name('inventory.capital-expenditure-request.create')->middleware('auth');
+Route::get('/inventory/capital-expenditure-request/list','Inventory\Capital_expenditure_request_controller@show_list')->name('inventory.capital-expenditure-request.list')->middleware('auth');
 Route::get('/inventory/capital-expenditure-request/form/{uuid}.pdf','Inventory\Capital_expenditure_request_controller@index')->name('inventory.capital-expenditure-request.index');
-Route::get('/inventory/capital-expenditure-request/edit/{uuid}','Inventory\Capital_expenditure_request_controller@edit')->name('inventory.capital-expenditure-request.edit');
+Route::get('/inventory/capital-expenditure-request/edit/{uuid}','Inventory\Capital_expenditure_request_controller@edit')->name('inventory.capital-expenditure-request.edit')->middleware('auth');
 
 //Capital Expenditure Request Form api request
-Route::get('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@get_list')->name('api.inventory.capital-expenditure-request.list');
-Route::post('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@store')->name('api.inventory.capital-expenditure-request.store');
-Route::put('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@update')->name('api.inventory.capital-expenditure-request.update');
-Route::delete('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@destroy')->name('api.inventory.capital-expenditure-request.delete');
+Route::get('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@get_list')->name('api.inventory.capital-expenditure-request.list')->middleware('auth');
+Route::post('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@store')->name('api.inventory.capital-expenditure-request.store')->middleware('auth');
+Route::put('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@update')->name('api.inventory.capital-expenditure-request.update')->middleware('auth');
+Route::delete('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@destroy')->name('api.inventory.capital-expenditure-request.delete')->middleware('auth');
 
 
 //Purchase Order web pages
-Route::get('/inventory/purchase-order/create','Inventory\Purchase_order_controller@create')->name('inventory.purchase-order.create');
-Route::get('/inventory/purchase-order/list','Inventory\Purchase_order_controller@show_list')->name('inventory.purchase-order.list');
+Route::get('/inventory/purchase-order/create','Inventory\Purchase_order_controller@create')->name('inventory.purchase-order.create')->middleware('auth');
+Route::get('/inventory/purchase-order/list','Inventory\Purchase_order_controller@show_list')->name('inventory.purchase-order.list')->middleware('auth');
 Route::get('/inventory/purchase-order/form/{uuid}.pdf','Inventory\Purchase_order_controller@index')->name('inventory.purchase-order.index');
-Route::get('/inventory/purchase-order/edit/{uuid}','Inventory\Purchase_order_controller@edit')->name('inventory.purchase-order.edit');
+Route::get('/inventory/purchase-order/edit/{uuid}','Inventory\Purchase_order_controller@edit')->name('inventory.purchase-order.edit')->middleware('auth');
 
 //Purchase Order api request
-Route::get('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@get_list')->name('api.inventory.purchase-order.list');
-Route::post('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@store')->name('api.inventory.purchase-order.store');
-Route::put('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@update')->name('api.inventory.purchase-order.update');
-Route::delete('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@destroy')->name('api.inventory.purchase-order.delete');
-Route::patch('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@approve')->name('api.inventory.purchase-order.approve');
+Route::get('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@get_list')->name('api.inventory.purchase-order.list')->middleware('auth');
+Route::post('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@store')->name('api.inventory.purchase-order.store')->middleware('auth');
+Route::put('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@update')->name('api.inventory.purchase-order.update')->middleware('auth');
+Route::delete('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@destroy')->name('api.inventory.purchase-order.delete')->middleware('auth');
+Route::patch('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@approve')->name('api.inventory.purchase-order.approve')->middleware('auth');
 
 
 //Receiving Report web pages
-Route::get('/inventory/receiving-report/create','Inventory\Receiving_report_controller@create')->name('inventory.receiving-report.create');
-Route::get('/inventory/receiving-report/list','Inventory\Receiving_report_controller@show_list')->name('inventory.receiving-report.list');
+Route::get('/inventory/receiving-report/create','Inventory\Receiving_report_controller@create')->name('inventory.receiving-report.create')->middleware('auth');
+Route::get('/inventory/receiving-report/list','Inventory\Receiving_report_controller@show_list')->name('inventory.receiving-report.list')->middleware('auth');
 Route::get('/inventory/receiving-report/form/{uuid}.pdf','Inventory\Receiving_report_controller@index')->name('inventory.receiving-report.index');
-Route::get('/inventory/receiving-report/edit/{uuid}','Inventory\Receiving_report_controller@edit')->name('inventory.receiving-report.edit');
+Route::get('/inventory/receiving-report/edit/{uuid}','Inventory\Receiving_report_controller@edit')->name('inventory.receiving-report.edit')->middleware('auth');
 
 //Receiving Report api request
-Route::get('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@get_list')->name('api.inventory.receiving-report.list');
-Route::post('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@store')->name('api.inventory.receiving-report.store');
-Route::put('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@update')->name('api.inventory.receiving-report.update');
-Route::delete('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@destroy')->name('api.inventory.receiving-report.delete');
+Route::get('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@get_list')->name('api.inventory.receiving-report.list')->middleware('auth');
+Route::post('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@store')->name('api.inventory.receiving-report.store')->middleware('auth');
+Route::put('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@update')->name('api.inventory.receiving-report.update')->middleware('auth');
+Route::delete('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@destroy')->name('api.inventory.receiving-report.delete')->middleware('auth');
 
 //Stock Issuance web pages
-Route::get('/inventory/stock-issuance/create','Inventory\Stock_issuance_controller@create')->name('inventory.stock-issuance.create');
-Route::get('/inventory/stock-issuance/list','Inventory\Stock_issuance_controller@show_list')->name('inventory.stock-issuance.list');
+Route::get('/inventory/stock-issuance/create','Inventory\Stock_issuance_controller@create')->name('inventory.stock-issuance.create')->middleware('auth');
+Route::get('/inventory/stock-issuance/list','Inventory\Stock_issuance_controller@show_list')->name('inventory.stock-issuance.list')->middleware('auth');
 Route::get('/inventory/stock-issuance/form/{uuid}.pdf','Inventory\Stock_issuance_controller@index')->name('inventory.stock-issuance.index');
-Route::get('/inventory/stock-issuance/edit/{uuid}','Inventory\Stock_issuance_controller@edit')->name('inventory.stock-issuance.edit');
+Route::get('/inventory/stock-issuance/edit/{uuid}','Inventory\Stock_issuance_controller@edit')->name('inventory.stock-issuance.edit')->middleware('auth');
 
 //Stock Issuance api request
-Route::get('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controller@get_list')->name('api.inventory.stock-issuance.list');
-Route::post('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controller@store')->name('api.inventory.stock-issuance.store');
-Route::put('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@update')->name('api.inventory.stock-issuance.update');
-Route::delete('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@destroy')->name('api.inventory.stock-issuance.delete');
-Route::patch('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@approve')->name('api.inventory.stock-issuance.approve');
+Route::get('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controller@get_list')->name('api.inventory.stock-issuance.list')->middleware('auth');
+Route::post('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controller@store')->name('api.inventory.stock-issuance.store')->middleware('auth');
+Route::put('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@update')->name('api.inventory.stock-issuance.update')->middleware('auth');
+Route::delete('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@destroy')->name('api.inventory.stock-issuance.delete')->middleware('auth');
+Route::patch('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@approve')->name('api.inventory.stock-issuance.approve')->middleware('auth');
 

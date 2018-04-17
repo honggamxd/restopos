@@ -24,7 +24,7 @@ class Purchase_order_controller extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     public function index(Request $request,$uuid)
