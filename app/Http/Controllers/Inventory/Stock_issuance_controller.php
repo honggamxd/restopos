@@ -198,8 +198,9 @@ class Stock_issuance_controller extends Controller
                 'posted_by_date.required_with' => 'Required if the name or date is filled.',
             ]
         );
-        $validator->after(function ($validator) use ($request){
-            if($request->approved_by_name != null){
+        $validator->after(function ($validator) use ($request,$id){
+            $stock_issuance = Inventory_stock_issuance::findOrFail($id);
+            if($request->approved_by_name != null && $stock_issuance->is_approved==0){
                 foreach ($request->items as $form_item) {
                     $item = fractal(Inventory_item::find($form_item['inventory_item_id']), new Inventory_item_transformer)->toArray();
                     if($item['total_quantity']<$form_item['quantity']){
@@ -242,7 +243,7 @@ class Stock_issuance_controller extends Controller
 
                 $item_detail = Inventory_item_detail::where('inventory_item_id',$form_item['inventory_item_id'])->where('inventory_stock_issuance_id',$id)->first();
                 if($item_detail == null){
-                    if($request->approved_by_name != null){
+                    if($stock_issuance->is_approved != null){
                         $item_detail = new Inventory_item_detail;
                         $item_detail->inventory_item_id = $stock_issuance_detail->inventory_item_id;
                         $item_detail->unit_cost = $form_item['unit_cost'];
@@ -261,7 +262,7 @@ class Stock_issuance_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
-        return $stock_issuance;
+        return fractal($stock_issuance, new Inventory_stock_issuance_transformer)->parseIncludes('details.inventory_item')->toArray();
     }
 
     public function destroy($id)
@@ -277,5 +278,49 @@ class Stock_issuance_controller extends Controller
         }
         catch(\Exception $e){DB::rollback();throw $e;}
         // return $stock_issuance;
+    }
+
+    public function approve($id)
+    {
+        $validator = Validator::make(
+            [],
+            []
+        );
+        $validator->after(function ($validator) use ($id){
+            $stock_issuance = Inventory_stock_issuance::findOrFail($id);
+            if($stock_issuance->is_approved==1){
+                $validator->errors()->add('error', 'The purchase request that you are going to approve is already approved by  '.$stock_issuance->approved_by_name.' on '.Carbon::parse($stock_issuance->approved_by_date)->format('F d, Y') );
+            }
+        });
+        if($validator->fails()){
+            return response($validator->errors(), 422);
+        }
+        DB::beginTransaction();
+        try{
+            $stock_issuance = Inventory_stock_issuance::findOrFail($id);
+            $stock_issuance->approved_by_name = Auth::user()->name;
+            $stock_issuance->approved_by_date = Carbon::now()->format('Y-m-d');
+            $stock_issuance->is_approved = 1;
+            $stock_issuance->save();
+            $stock_issuance_items = Inventory_stock_issuance_detail::where('inventory_stock_issuance_id',$id)->get();
+            foreach ($stock_issuance_items as $form_item) {
+                $item_detail = Inventory_item_detail::where('inventory_item_id',$form_item->inventory_item_id)->where('inventory_stock_issuance_id',$id)->first();
+                if($item_detail == null){
+                    if($stock_issuance->is_approved != null){
+                        $stock_issuance_detail = Inventory_stock_issuance_detail::find($form_item->id);
+                        $item_detail = new Inventory_item_detail;
+                        $item_detail->inventory_item_id = $stock_issuance_detail->inventory_item_id;
+                        $item_detail->unit_cost = $form_item->unit_price;
+                        $item_detail->quantity = $form_item->quantity * -1;
+                        $item_detail->inventory_stock_issuance_id = $stock_issuance->id;
+                        $item_detail->save();
+                    }
+                }
+            }
+            
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        return fractal($stock_issuance, new Inventory_stock_issuance_transformer)->parseIncludes('details.inventory_item')->toArray();
     }
 }

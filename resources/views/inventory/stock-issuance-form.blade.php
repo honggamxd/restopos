@@ -226,7 +226,7 @@
             </div>
             <div class="col-sm-3" ng-if="edit_mode=='update'">
                 <div class="form-group">
-                    <label for="approved_by_name">Approved By:</label>
+                    <label for="approved_by_name">Approved By: <a href="javascript:void(0);" ng-click="fill_approved_by()"><small data-tooltip="This will fill your name and date" data-position="right center" data-inverted="">Fill</small></a></label>
                     <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.approved_by_name[0]}}</p>
                 </div>
@@ -345,7 +345,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         if($scope.edit_mode == 'create'){
             $scope.add_form();
         }else{
-            if(!$scope.is_approved){
+            if(!$scope.formdata.is_approved && $scope.formdata.approved_by_name){
                 alertify.confirm(
                     'Save Stock Issuance',
                     'After submitting, the items in the form will update its quantity. continue?',
@@ -443,11 +443,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
-            if(response.data.approved_by_date){
-                $scope.is_approved = true;
-            }else{
-                $scope.is_approved = false;
-            }
+            $scope.formdata.approved_by_date = response.data.approved_by_date ? moment(response.data.approved_by_date.date).format("MM/DD/YYYY") : null;
+            $scope.formdata.is_approved = response.data.is_approved;
             $.notify('Stock Issuance has been updated.');
         }, function(rejection) {
             if (rejection.status != 422) {
@@ -459,6 +456,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             }
             $scope.submit = false;
         });
+    }
+
+    $scope.fill_approved_by = function() {
+        $scope.formdata.approved_by_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.approved_by_name = user_data.name;
     }
 
     $("#search-item").autocomplete({
