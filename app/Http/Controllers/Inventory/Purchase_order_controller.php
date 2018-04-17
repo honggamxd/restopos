@@ -9,6 +9,7 @@ use App\Http\Requests;
 use Auth;
 use Carbon\Carbon;
 use PDF;
+use Validator;
 
 use App\Inventory\Inventory_purchase_order;
 use App\Inventory\Inventory_purchase_order_detail;
@@ -235,5 +236,33 @@ class Purchase_order_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
+    }
+
+    public function approve($id)
+    {
+        $validator = Validator::make(
+            [],
+            []
+        );
+        $validator->after(function ($validator) use ($id){
+            $purchase_order = Inventory_purchase_order::findOrFail($id);
+            if($purchase_order->is_approved==1){
+                $validator->errors()->add('error', 'The purchase order that you are going to approve is already approved by  '.$purchase_order->approved_by_name.' on '.Carbon::parse($purchase_order->approved_by_date)->format('F d, Y') );
+            }
+        });
+        if($validator->fails()){
+            return response($validator->errors(), 422);
+        }
+        DB::beginTransaction();
+        try{
+            $purchase_order = Inventory_purchase_order::findOrFail($id);
+            $purchase_order->approved_by_name = Auth::user()->name;
+            $purchase_order->approved_by_date = Carbon::now()->format('Y-m-d');
+            $purchase_order->is_approved = 1;
+            $purchase_order->save();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        return fractal($purchase_order, new Inventory_purchase_order_transformer)->parseIncludes('details.inventory_item')->toArray();
     }
 }

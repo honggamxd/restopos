@@ -219,7 +219,7 @@
             </div>
             <div class="col-sm-4" ng-if="edit_mode=='update'">
                 <div class="form-group">
-                    <label for="approved_by_name">Approved By:</label>
+                    <label for="approved_by_name">Approved By: <a href="javascript:void(0);" ng-click="fill_approved_by()"><small data-tooltip="This will fill your name and date" data-position="right center" data-inverted="">Fill</small></a></label>
                     <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.approved_by_name[0]}}</p>
                 </div>
@@ -315,7 +315,21 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         if($scope.edit_mode == 'create'){
             $scope.add_form();
         }else{
-            $scope.update_form();
+             if(!$scope.formdata.is_approved && $scope.formdata.approved_by_name){
+                alertify.confirm(
+                    'Approving Purchase Order',
+                    'After submitting, the system cannot unapprove this purchase order form. continue?',
+                    function(){
+                        $scope.update_form();
+                    },
+                    function()
+                    {
+                        // alertify.error('Cancel')
+                    }
+                );
+            }else{
+                $scope.update_form();
+            }
         }
     }
 
@@ -406,6 +420,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             }
             $scope.submit = false;
         });
+    }
+
+    $scope.fill_approved_by = function() {
+        $scope.formdata.approved_by_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.approved_by_name = user_data.name;
     }
 
 

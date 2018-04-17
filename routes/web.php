@@ -190,6 +190,7 @@ Route::get('/api/inventory/purchase-order/','Inventory\Purchase_order_controller
 Route::post('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@store')->name('api.inventory.purchase-order.store');
 Route::put('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@update')->name('api.inventory.purchase-order.update');
 Route::delete('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@destroy')->name('api.inventory.purchase-order.delete');
+Route::patch('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@approve')->name('api.inventory.purchase-order.approve');
 
 
 //Receiving Report web pages
