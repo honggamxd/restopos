@@ -32,7 +32,7 @@ class Request_to_canvass_controller extends Controller
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new Inventory_request_to_canvass_transformer)->parseIncludes('details.inventory_item')->toArray();
+        $data = fractal($data, new Inventory_request_to_canvass_transformer)->parseIncludes('details.inventory_item,inventory_purchase_request')->toArray();
         $pdf = PDF::setOptions(['dpi' => 600, 'defaultFont' => 'Helvetica']);
         $pdf->setPaper('legal', 'portrait');
         $pdf->loadView('pdf.request-to-canvass', $data);
@@ -77,7 +77,7 @@ class Request_to_canvass_controller extends Controller
         if($data==null){
             return abort('404');
         }
-        $data = fractal($data, new Inventory_request_to_canvass_transformer)->parseIncludes('details.inventory_item')->toArray();
+        $data = fractal($data, new Inventory_request_to_canvass_transformer)->parseIncludes('details.inventory_item,inventory_purchase_request')->toArray();
         $data['data'] = $data;
         $data['edit_mode'] = 'update';
         return view('inventory.request-to-canvass-form',$data);
@@ -115,6 +115,7 @@ class Request_to_canvass_controller extends Controller
             $request_to_canvass->vendor_1_name = $request->vendor_1_name;
             $request_to_canvass->vendor_2_name = $request->vendor_2_name;
             $request_to_canvass->vendor_3_name = $request->vendor_3_name;
+            $request_to_canvass->inventory_purchase_request_id = $request->inventory_purchase_request_id;
             $request_to_canvass->save();
 
             $request_to_canvass = Inventory_request_to_canvass::orderBy('id','DESC')->first();

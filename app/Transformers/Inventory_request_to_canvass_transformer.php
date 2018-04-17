@@ -7,6 +7,7 @@ use Carbon\Carbon;
 // Inventory_request_to_canvass
 
 use App\Transformers\Inventory_request_to_canvass_detail_transformer;
+use App\Transformers\Inventory_purchase_request_transformer;
 
 class Inventory_request_to_canvass_transformer extends TransformerAbstract
 {
@@ -15,7 +16,7 @@ class Inventory_request_to_canvass_transformer extends TransformerAbstract
      *
      * @return array
      */
-    protected $availableIncludes = ['details'];
+    protected $availableIncludes = ['details','inventory_purchase_request'];
     public function transform($request_to_canvass)
     {
         return [
@@ -47,6 +48,13 @@ class Inventory_request_to_canvass_transformer extends TransformerAbstract
     {
         if ($request_to_canvass->details) {
             return $this->collection($request_to_canvass->details, new Inventory_request_to_canvass_detail_transformer);
+        }
+    }
+
+    public function includeInventoryPurchaseRequest ($request_to_canvass)
+    {
+        if ($request_to_canvass->inventory_purchase_request) {
+            return $this->item($request_to_canvass->inventory_purchase_request, new Inventory_purchase_request_transformer);
         }
     }
 }

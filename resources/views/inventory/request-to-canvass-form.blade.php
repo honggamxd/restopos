@@ -30,11 +30,11 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                {{-- <div class="form-group">
-                    <label for="inventory_request_to_canvass">PO Number:</label>
-                    <input type="text" class="form-control" placeholder="Enter PO Number">
+                <div class="form-group">
+                    <label for="purchase_request_number_formatted">PR Number:</label>
+                    <span class="form-control" ng-bind="purchase_request_number_formatted"></span>
                     <p class="help-block" ng-cloak></p>
-                </div> --}}
+                </div>
             </div>
         </div>
         <div class="row">
@@ -104,10 +104,21 @@
     <div class="col-sm-12">
         <h2 style="text-align: center;">Request to Canvass Items</h2>
         <br>
-        <label ng-hide="edit_mode=='update'" ng-cloak>Search Item</label>
-        <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
-            <i class="search icon"></i>
-            <input type="text" placeholder="Search" id="search-item" ng-model="search_item_name">
+        <div class="row">
+            <div class="col-sm-6">
+                <label ng-hide="edit_mode=='update'" ng-cloak>Search Item</label>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search" id="search-item" ng-model="search_item_name">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label ng-hide="edit_mode=='update'" ng-cloak>Search Purchase Request Number</label>
+                <div class="ui icon input fluid" ng-hide="edit_mode=='update'" ng-cloak>
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search" id="search-purchase-request">
+                </div>
+            </div>
         </div>
         <br>
         <div class="table-responsive">
@@ -124,7 +135,32 @@
                 </tr>
                 </thead>
                 <tbody ng-cloak>
-                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create'">
+                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create' && purchase_request_number_formatted">
+                        <td class="center aligned middle aligned" style="width: 100%">@{{item.inventory_item.item_name}}</td>
+                        <td class="center aligned middle aligned">@{{item.inventory_item.unit_of_measure}}</td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="1" placeholder="Quantity" ng-model="item.quantity">
+                            </div>
+                        </td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.vendor_1_unit_price">
+                            </div>
+                        </td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.vendor_2_unit_price">
+                            </div>
+                        </td>
+                        <td class="center aligned middle aligned">
+                            <div class="ui input">
+                                <input type="number" min="0" step="0.01" placeholder="Unit Cost" ng-model="item.vendor_3_unit_price">
+                            </div>
+                        </td>
+                        <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(index)">&times;</button></td>
+                    </tr>
+                    <tr ng-repeat="(index,item) in items" ng-if="edit_mode=='create' && !purchase_request_number_formatted">
                         <td class="center aligned middle aligned" style="width: 100%">@{{item.item_name}}</td>
                         <td class="center aligned middle aligned">@{{item.unit_of_measure}}</td>
                         <td class="center aligned middle aligned">
@@ -431,6 +467,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         select: function(event, ui) {
             $scope.searchString = "";
             $scope.$apply(function() {
+                if($scope.purchase_request_number_formatted){
+                    $scope.purchase_request_number_formatted = null;
+                    $scope.formdata.inventory_purchase_request_id = null;
+                    $scope.items = {};
+                }
                 if(!$scope.items['item'+ui.item.id]){
                     ui.item.quantity = 1;
                     ui.item.vendor_1_unit_price = 0;
@@ -444,6 +485,47 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     .autocomplete( "instance" )._renderItem = function( ul, item ) {
         return $( "<li>" )
         .append( "<div>" + item.item_name + "<br> <small> Category: <b>" + item.category + "</b></small>" +"<br> <small> Subcategory: <b>" + item.subcategory + "</b></small>" + "</div>" )
+        .appendTo( ul );
+    };
+
+    $("#search-purchase-request").autocomplete({
+        source: function(request, response)
+        {
+            $.ajax({
+                url: route('api.inventory.purchase-request.list').url(),
+                dataType: "json",
+                data: {
+                    searchString : request.term,
+                    autocomplete : 1,
+                    approved: 0
+                },
+                success: function(data) {
+                    response(data.result.data);
+                }
+            });
+        },
+        select: function(event, ui) {
+            $scope.searchString = "";
+            $scope.$apply(function() {
+                $scope.items = {};
+                $scope.items = ui.item.details.data;
+                angular.forEach($scope.items,function(value, key) {
+                    value.vendor_1_unit_price = 0;
+                    value.vendor_2_unit_price = 0;
+                    value.vendor_3_unit_price = 0;
+                });
+                $scope.formdata.inventory_purchase_request_id = ui.item.id;
+                $scope.purchase_request_number_formatted = ui.item.purchase_request_number_formatted;
+                $scope.formdata.reason_for_the_request = ui.item.reason_for_the_request;
+                $scope.formdata.type_of_item_requested = ui.item.type_of_item_requested;
+                $scope.formdata.requested_by_name = ui.item.requested_by_name;
+                $scope.formdata.requesting_department = ui.item.requesting_department;
+            });
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+        .append( "<div> PR No. <b>" + item.purchase_request_number_formatted + "</b><br> <small> PR DATE: <b>" + item.purchase_request_date_formatted + "</b></small>" + "</div>" )
         .appendTo( ul );
     };
 

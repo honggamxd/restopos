@@ -24,4 +24,9 @@ class Inventory_request_to_canvass extends Model
   {
       return $this->hasMany('App\Inventory\Inventory_request_to_canvass_detail');
   }
+  
+  public function inventory_purchase_request()
+  {
+      return $this->belongsTo('App\Inventory\Inventory_purchase_request');
+  }
 }
