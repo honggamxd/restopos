@@ -12,6 +12,7 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "spatie/laravel-fractal": "^4.5",
+        "swiftmailer/swiftmailer": "^5.4",
         "tightenco/ziggy": "^0.6.2",
         "webpatser/laravel-uuid": "^2.0"
     },

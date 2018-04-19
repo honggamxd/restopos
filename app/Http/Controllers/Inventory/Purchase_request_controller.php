@@ -10,6 +10,9 @@ use Auth;
 use Carbon\Carbon;
 use PDF;
 use Validator;
+use Swift_SmtpTransport;
+use Swift_Mailer;
+use Swift_Message;
 
 use App\Inventory\Inventory_purchase_request;
 use App\Inventory\Inventory_purchase_request_detail;
@@ -268,5 +271,27 @@ class Purchase_request_controller extends Controller
         }
         catch(\Exception $e){DB::rollback();throw $e;}
         return fractal($purchase_request, new Inventory_purchase_request_transformer)->parseIncludes('details.inventory_item')->toArray();
+    }
+
+    public function settings(Request $request)
+    {
+        // Create the Transport
+        $transport = (new Swift_SmtpTransport('sg2plcpnl0251.prod.sin2.secureserver.net', 25))
+        ->setUsername('malagos-inventory-mailing')
+        ->setPassword('malagosmailing')
+        ;
+
+        // Create the Mailer using your created Transport
+        $mailer = new Swift_Mailer($transport);
+
+        // Create a message
+        $message = (new Swift_Message('Wonderful Subject'))
+        ->setFrom(['john@doe.com' => 'John Doe'])
+        ->setTo(['anonympox@gmail.com' => 'A name'])
+        ->setBody('Here is the message itself')
+        ;
+
+        // Send the message
+        $result = $mailer->send($message);
     }
 }
