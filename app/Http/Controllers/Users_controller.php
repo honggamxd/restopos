@@ -103,30 +103,8 @@ class Users_controller extends Controller
   public function show_users(Request $request)
   {
     $user = new User;
-    $data['result'] = $user->all();
-    foreach ($data['result'] as $user_data) {
-      switch ($user_data->privilege) {
-        case 'admin':
-          # code...
-          $user_data->str_privilege = "Admin";
-          break;
-        case 'restaurant_admin':
-          # code...
-          $user_data->str_privilege = "Restaurant Admin";
-          break;
-        case 'restaurant_cashier':
-          # code...
-          $user_data->str_privilege = "Restaurant Cashier";
-          break;
-        
-        default:
-          # code...
-          break;
-      }
-    }
     $data['result'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
     return $data;
-    # code...
   }
 
   public function add(Request $request)
