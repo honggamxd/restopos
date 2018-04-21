@@ -9,9 +9,18 @@ use DB;
 
 class Inventory_purchase_request_recipient extends Model
 {
-    use SoftDeletes;
     protected $table = 'inventory_purchase_request_recipient';
     protected $dates = ['deleted_at'];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function($Inventory_purchase_request_recipient) {
+            $uuid = \Webpatser\Uuid\Uuid::generate();
+            $Inventory_purchase_request_recipient->uuid = $uuid->string;
+            return $Inventory_purchase_request_recipient;
+        });
+    }
 
     public function user()
     {

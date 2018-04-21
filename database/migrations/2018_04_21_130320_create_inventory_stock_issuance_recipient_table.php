@@ -15,8 +15,9 @@ class CreateInventoryStockIssuanceRecipientTable extends Migration
     {
         Schema::create('inventory_stock_issuance_recipient', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('uuid')->nullable();
             $table->integer('user_id')->unsigned()->nullable();
-            $table->boolean('allow_accept')->unsigned();
+            $table->boolean('allow_approve')->unsigned();
             $table->boolean('notify_email')->unsigned();
             $table->softDeletes();
             $table->timestamps();

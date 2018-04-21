@@ -27,6 +27,7 @@ class AddEmailAddressUserTable extends Migration
     {
         Schema::table('user', function (Blueprint $table) {
             //
+            $table->dropColumn('email_address');
         });
     }
 }

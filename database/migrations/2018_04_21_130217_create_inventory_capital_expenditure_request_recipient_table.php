@@ -15,8 +15,9 @@ class CreateInventoryCapitalExpenditureRequestRecipientTable extends Migration
     {
         Schema::create('inventory_capital_expenditure_request_recipient', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('uuid')->nullable();
             $table->integer('user_id')->unsigned()->nullable();
-            $table->boolean('allow_accept')->unsigned();
+            $table->boolean('allow_approve')->unsigned();
             $table->boolean('notify_email')->unsigned();
             $table->softDeletes();
             $table->timestamps();

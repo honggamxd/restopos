@@ -14,13 +14,17 @@ use Validator;
 
 use App\Inventory\Inventory_purchase_request;
 use App\Inventory\Inventory_purchase_request_detail;
+use App\Inventory\Inventory_purchase_request_recipient;
 use App\Inventory\Inventory_item;
 
 use App\Inventory\Inventory_item_detail;
+use App\User;
+use App\Transformers\User_transformer;
 
 use App\Transformers\Inventory_item_transformer;
 use App\Transformers\Inventory_purchase_request_transformer;
-
+use App\Transformers\Inventory_purchase_request_recipient_transformer;
+use App\Helpers\MailNotification;
 
 class Purchase_request_controller extends Controller
 {
@@ -168,7 +172,7 @@ class Purchase_request_controller extends Controller
 
     public function update(Request $request,$id)
     {
-          $this->validate(
+        $this->validate(
             $request,
             [
                 // 'purchase_request_number' => 'required|numeric|unique:inventory_purchase_request,purchase_request_number,'.$id.',id,deleted_at,NULL',
@@ -272,8 +276,66 @@ class Purchase_request_controller extends Controller
         return fractal($purchase_request, new Inventory_purchase_request_transformer)->parseIncludes('details.inventory_item')->toArray();
     }
 
-    public function settings(Request $request)
+    public function notification_settings(Request $request)
     {
+        $user = new User;
+        $data['users'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
+        // return $data;
+        return view('inventory.purchase-request-notification-settings',$data);
 
+
+        // $mailer = new MailNotification;
+        // $mailer->send_to_address = '';
+        // $mailer->send_to_name = '';
+        // $mailer->subject = '';
+        // $mailer->message = '';
+        // $mailer->attachment_path = '';
+        // $mailer->attachment_filename = '';
+        // dd($mailer->send());
+    }
+
+    public function get_recipients(Request $request)
+    {
+        $data['result'] = fractal(Inventory_purchase_request_recipient::all(), new Inventory_purchase_request_recipient_transformer)->parseIncludes('user')->toArray();
+        return $data;
+    }
+
+    public function store_recipient(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'user' => 'required|unique:inventory_purchase_request_recipient,user_id,NULL,id,deleted_at,NULL',
+            ],
+            [
+                'requested_by_name.required_with' => 'Required if the name or date is filled.',
+            ]
+        );
+        DB::beginTransaction();
+        try{
+            $recipient = new Inventory_purchase_request_recipient;
+            $recipient->user_id = $request->user['id'];
+            $recipient->allow_approve = $request->allow_approve && $request->allow_approve == 'true' ? 1 : 0;
+            $recipient->notify_email = $request->notify_email && $request->notify_email == 'true' ? 1 : 0;
+            $recipient->save();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        return fractal($recipient, new Inventory_purchase_request_recipient_transformer)->parseIncludes('user.restaurant')->toArray();
+    }
+
+    public function update_recipient(Request $request,$id)
+    {
+        $recipient = Inventory_purchase_request_recipient::findOrFail($id);
+        $recipient->allow_approve = $request->allow_approve == 'true' ? 1 : 0;
+        $recipient->notify_email = $request->notify_email == 'true' ? 1 : 0;
+        $recipient->save();
+        return fractal($recipient, new Inventory_purchase_request_recipient_transformer)->parseIncludes('user.restaurant')->toArray();
+    }
+
+    public function destroy_recipient($id)
+    {
+        $recipient = Inventory_purchase_request_recipient::findOrFail($id);
+        $recipient->delete();
     }
 }

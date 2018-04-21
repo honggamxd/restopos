@@ -13,6 +13,10 @@
 <i class="right angle icon divider"></i>
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Purchase Request</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Purchase Request</div>
+<i class="divider" ng-if="edit_mode=='update'">|</i>
+<a class="section" ng-if="edit_mode=='update'" href="{{route('inventory.purchase-request.create')}}">Create Purchase Request</a>
+<i class="divider">|</i>
+<a class="section" href="{{route('inventory.purchase-request.notification-settings')}}">Notification Settings</a>
 @endsection
 @section('padded_content')
 <form id="add-form" ng-submit="save_form()" class="form">

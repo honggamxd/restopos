@@ -114,7 +114,7 @@ Route::get('/account-settings', 'Users_controller@settings');
 Route::get('/login', 'Users_controller@login_index')->name('login');
 Route::post('/login', 'Auth\LoginController@login');
 Route::get('/logout', 'Users_controller@logout')->name('logout');
-Route::get('/api/users', 'Users_controller@show_users');
+Route::get('/api/users', 'Users_controller@show_users')->name('api.user.list');
 Route::post('/api/users/add', 'Users_controller@add');
 Route::post('/api/users/settings', 'Users_controller@save_settings');
 Route::post('/api/users/edit/{id}', 'Users_controller@edit_privilege');
@@ -144,7 +144,7 @@ Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_cont
 Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@show_list')->name('inventory.purchase-request.list')->middleware('auth');
 Route::get('/inventory/purchase-request/form/{uuid}.pdf','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.index');
 Route::get('/inventory/purchase-request/edit/{uuid}','Inventory\Purchase_request_controller@edit')->name('inventory.purchase-request.edit')->middleware('auth');
-Route::get('/inventory/purchase-request/settings','Inventory\Purchase_request_controller@settings')->name('inventory.purchase-request.settings');
+Route::get('/inventory/purchase-request/notification-settings','Inventory\Purchase_request_controller@notification_settings')->name('inventory.purchase-request.notification-settings');
 
 //Purchase Request api request
 Route::get('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@get_list')->name('api.inventory.purchase-request.list')->middleware('auth');
@@ -152,6 +152,10 @@ Route::post('/api/inventory/purchase-request/','Inventory\Purchase_request_contr
 Route::put('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@update')->name('api.inventory.purchase-request.update')->middleware('auth');
 Route::delete('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@destroy')->name('api.inventory.purchase-request.delete')->middleware('auth');
 Route::patch('/api/inventory/purchase-request/{id}','Inventory\Purchase_request_controller@approve')->name('api.inventory.purchase-request.approve')->middleware('auth');
+Route::get('/api/inventory/purchase-request-recipient/','Inventory\Purchase_request_controller@get_recipients')->name('api.inventory.purchase-request.recipient.list')->middleware('auth');
+Route::post('/api/inventory/purchase-request-recipient/','Inventory\Purchase_request_controller@store_recipient')->name('api.inventory.purchase-request.recipient.store')->middleware('auth');
+Route::patch('/api/inventory/purchase-request-recipient/{id}','Inventory\Purchase_request_controller@update_recipient')->name('api.inventory.purchase-request.recipient.update')->middleware('auth');
+Route::delete('/api/inventory/purchase-request-recipient/{id}','Inventory\Purchase_request_controller@destroy_recipient')->name('api.inventory.purchase-request.recipient.destroy')->middleware('auth');
 
 
 //Request to Canvass web pages

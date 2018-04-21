@@ -37,7 +37,8 @@ class MailNotification
     }
 
     public function send(){
-
+        sleep(5);
+        return 'true';
         // Create the Transport
         $transport = (new Swift_SmtpTransport($this->mail_host, 25))
         ->setUsername($this->mail_username)

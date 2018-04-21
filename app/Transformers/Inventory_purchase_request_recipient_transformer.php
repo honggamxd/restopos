@@ -18,7 +18,7 @@ class Inventory_purchase_request_recipient_transformer extends TransformerAbstra
         return [
             'id' => $purchase_request_recipient->id,
             'user_id' => (int)$purchase_request_recipient->user_id,
-            'allow_accept' => $purchase_request_recipient->allow_accept == 1,
+            'allow_approve' => $purchase_request_recipient->allow_approve == 1,
             'notify_email' => $purchase_request_recipient->notify_email == 1,
         ];
     }
