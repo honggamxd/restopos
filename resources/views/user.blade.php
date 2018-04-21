@@ -35,11 +35,13 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="user in users" ng-hide="user.id=={{Auth::user()->id}}">
+        <tr ng-repeat="user in users.data" ng-hide="user.id=={{Auth::user()->id}}">
           <td class="center aligned middle aligned">@{{user.name}}</td>
           <td class="center aligned middle aligned">@{{user.username}}</td>
           <td class="center aligned middle aligned">@{{user.str_privilege}}</td>
-          <td class="center aligned middle aligned">@{{user.restaurant_name}}</td>
+          <td class="center aligned middle aligned">
+            <span ng-if="user.restaurant">@{{user.restaurant.name}}</span>
+          </td>
           <td class="center aligned middle aligned">
             <div class="ui buttons">
               <button class="ui primary button" ng-click="edit_user(this)" data-balloon="Click Edit the Privilege of the User" data-balloon-pos="down">

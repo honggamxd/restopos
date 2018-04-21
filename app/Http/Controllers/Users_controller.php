@@ -15,6 +15,8 @@ use Auth;
 use App;
 use PDF;
 
+use App\Transformers\User_transformer;
+
 class Users_controller extends Controller
 {
 
@@ -121,11 +123,8 @@ class Users_controller extends Controller
           # code...
           break;
       }
-      
-      if($user_data->restaurant_id!=0){
-        $user_data->restaurant_name = DB::table('restaurant')->find($user_data->restaurant_id)->name;
-      }
     }
+    $data['result'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
     return $data;
     # code...
   }

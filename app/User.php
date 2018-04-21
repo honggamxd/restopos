@@ -15,4 +15,9 @@ class User extends Authenticatable
   protected $fillable = [
       'username', 'password',
   ];
+
+  public function restaurant()
+  {
+    return $this->belongsTo('App\Restaurant');
+  }
 }
