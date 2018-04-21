@@ -1,8 +1,5 @@
 @extends('layouts.main')
 
-
-
-
 @if(Auth::user()->privilege=="admin")
   @section('title', 'Order Slip Summary Report')
 @else
@@ -26,10 +23,32 @@
   <div class="active section">F&B Revenue</div>
 @endif
 @endsection
+@section('overlay-div')
+<div ng-style="overlay_div" ng-cloak>
+  <div style="margin-top: 10vh;text-align: center;padding-right: 20%;padding-left: 20%;">
+      
+      @if(Auth::user()->privilege=="admin")
+        <h1 style="text-align: center;">Export Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
+      @else
+        <h1 style="text-align: center;">Export {{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
+      @endif    
+      <br>
+      <span>@{{export_status}}</span>
+      <br>
+      <div class="progress" ng-if="export_progress != ''">
+        <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+        aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:@{{export_progress}}">
+          @{{export_progress}} Exported
+        </div>
+      </div>
+      <br>
+      <p ng-if="export_progress=='100%'">if download doesn't start automatically, Click <a href="javascript:void(0)" ng-click="download_exported()">here</a> to download.</p>
+      <p ng-if="export_progress=='100%'"><a href="javscript:void(0)" ng-click="close_overlay_div()">Close</a></p>
+  </div>
+</div>
+@endsection
 @section('content')
- 
 <div class="col-sm-12">
-
   @if(Auth::user()->privilege=="admin")
     <h1 style="text-align: center;">Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
   @else
@@ -53,21 +72,21 @@
   </div>
   <div>
     @if(Auth::user()->privilege=="restaurant_cashier")
-    <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}">Download</button>
+    <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-if="!(bills | isEmpty)" ng-cloak>Download</button>
     @else
     <label>Filter By:</label>
     <form class="form-inline" style="margin-bottom: 20px;">
       @if(Auth::user()->privilege=="admin")
       <div class="form-group">
       <label>Outlet:</label>
-      <select class="form-control input-sm" ng-options="item as item.name for item in restaurants track by item.id" ng-model="restaurant">
+      <select class="form-control input-sm" ng-options="item as item.name for item in restaurants track by item.id" ng-model="restaurant" ng-change="change_filters()">
         <option value="">All Outlets</option>
       </select>
       </div>
       @endif
       <div class="form-group">
         <label>Meal Type:</label>
-        <select class="form-control input-sm" ng-model="meal_type">
+        <select class="form-control input-sm" ng-model="meal_type" ng-change="change_filters()">
           <option value="">All</option>
           <option value="Breakfast">Breakfast</option>
           <option value="Lunch">Lunch</option>
@@ -77,26 +96,26 @@
       </div>
       <div class="form-group">
         <label>Server:</label>
-        <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server">
+        <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_servers track by item.id" ng-model="server" ng-change="change_filters()">
           <option value="">All Waiter/Waitress</option>
         </select>
       </div>
       <div class="form-group">
       <label>Cashier:</label>
-      <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_cashiers track by item.id" ng-model="cashier">
+      <select class="form-control input-sm" ng-options="item as item.name for item in restaurant_cashiers track by item.id" ng-model="cashier" ng-change="change_filters()">
         <option value="">All Cashiers</option>
       </select>
       </div>
       <div class="form-group">
       <label>Date From:</label>
-      <input type="text" class="form-control input-sm" id="date_from" ng-model="date_from" readonly>
+      <input type="text" class="form-control input-sm" id="date_from" ng-model="date_from" ng-change="change_filters()" readonly>
       </div>
       <div class="form-group">
       <label>Date To:</label>
-      <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" readonly>
+      <input type="text" class="form-control input-sm" id="date_to" ng-model="date_to" ng-change="change_filters()" readonly>
       <div class="ui buttons">
         <button class="ui primary button" ng-click="filter_result()" ng-class="{'loading':submit}" ng-disabled="submit" ng-submit="export">Filter Results</button>
-        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="export" ng-submit="export">Download</button>
+        <button class="ui positive button" ng-click="export_reports()" ng-class="{'loading':export}" ng-disabled="export" ng-submit="export" ng-if="!submit && !has_daterange_changed && !(bills | isEmpty)" ng-cloak>Download</button>
       </div>
       </div>
     </form>
@@ -260,11 +279,19 @@
     $scope.show_sales_information = true;
     $scope.show_paging = false;
     $scope.show_settlements = true;
+    $scope.export_status = "";
+    $scope.export_page = 1;
     $scope.date_from = "{{date('m/d/Y h:i:s A',strtotime($date_from))}}";
     $scope.date_to = "{{date('m/d/Y h:i:s A',strtotime($date_to))}}";
     $scope.date_from_str = "";
     $scope.date_to_str = "";
+    $scope.number_of_pages = 0;
+    $scope.export_progress = "";
+    $scope.has_daterange_changed = false;
     $scope.restaurants = {!! $restaurants !!};
+    $scope.overlay_div = {
+      'display': 'none'
+    }
 
     $(document).on('click','.pagination li a',function(e) {
       e.preventDefault();
@@ -301,6 +328,7 @@
       $scope.restaurant_servers = {!! $restaurant_servers !!};
     @endif
     function show_reports(myUrl) {
+      $scope.has_daterange_changed = false;
       myUrl = (typeof myUrl !== 'undefined') && myUrl !== "" ? myUrl : '/api/reports/general/f_and_b';
       $scope.submit = true;
       var server = ($scope.server==undefined?"":$scope.server['id']);
@@ -309,22 +337,25 @@
       $scope.bills = {};
       $scope.footer = {};
       $scope.paging = "";
+      $scope.number_of_pages = 0;
       $http({
-          method : "GET",
-          url : myUrl,
-          params: {
-            "date_from":$scope.date_from,
-            "date_to":$scope.date_to,
-            "paging":$scope.show_paging,
-            "meal_type": $scope.meal_type,
-            "server_id": server,
-            "cashier_id": cashier,
-            "restaurant_id": restaurant,
-          }
+        method : "GET",
+        url : myUrl,
+        params: {
+          "date_from":$scope.date_from,
+          "date_to":$scope.date_to,
+          "paging":$scope.show_paging,
+          "meal_type": $scope.meal_type,
+          "server_id": server,
+          "cashier_id": cashier,
+          "restaurant_id": restaurant,
+        }
       }).then(function mySuccess(response) {
-          $scope.bills = response.data.result.data;
-          $scope.footer = response.data.footer;
-          $scope.paging = $sce.trustAsHtml(response.data.paging);
+        $scope.has_daterange_changed = false;
+        $scope.bills = response.data.result.data;
+        $scope.footer = response.data.footer;
+        $scope.number_of_pages = response.data.result.last_page;
+        $scope.paging = $sce.trustAsHtml(response.data.paging);
           $scope.submit = false;
           $scope.date_from_str = moment($scope.date_from).format("MMMM DD, YYYY");
           $scope.date_to_str = moment($scope.date_to).format("MMMM DD, YYYY");
@@ -338,16 +369,27 @@
           $scope.submit = false;
       });
     }
-
+    // $scope.export_reports_parameters = 
     $scope.export_reports = function(page=1) {
       $scope.export = true;
+      $scope.overlay_div = {
+        'z-index': '2000',
+        'width': '100vw',
+        'height': '100vh',
+        'background-color': 'white',
+        'position': 'fixed',
+        'display': 'block'
+      }
+      $scope.export_status = "Preparing to Export.. ";
+      $scope.export_page = 1;
+      $scope.export_progress = "0%";
       var server = ($scope.server==undefined?"":$scope.server['id']);
       var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
       var restaurant = ($scope.restaurant==undefined?"":$scope.restaurant['id']);
       $http({
-          method : "GET",
+          method : "POST",
           url : "/api/reports/general/f_and_b_export",
-          params: {
+          data: $.param({
             "date_from":$scope.date_from,
             "date_to":$scope.date_to,
             "meal_type": $scope.meal_type,
@@ -355,12 +397,11 @@
             "cashier_id": cashier,
             "restaurant_id": restaurant,
             "export": 1,
-
-          }
+          })
       }).then(function mySuccess(response) {
-        $scope.export = false;
-        // console.log(response);
-        window.location = response.data;
+        $scope.export_status = "Exporting Report.. ";
+        $scope.export_progress = "0%";
+        write_csv($scope.export_page);
       }, function myError(rejection) {
           if(rejection.status != 422){
             request_error(rejection.status);
@@ -371,6 +412,73 @@
       });
     }
 
+    function write_csv(page = 1) {
+      $scope.export = true;
+      var server = ($scope.server==undefined?"":$scope.server['id']);
+      var cashier = ($scope.cashier==undefined?"":$scope.cashier['id']);
+      var restaurant = ($scope.restaurant==undefined?"":$scope.restaurant['id']);
+      $http({
+          method : "PATCH",
+          url : "/api/reports/general/f_and_b_export",
+          data: {
+            "date_from":$scope.date_from,
+            "date_to":$scope.date_to,
+            "meal_type": $scope.meal_type,
+            "server_id": server,
+            "cashier_id": cashier,
+            "restaurant_id": restaurant,
+            "export": 1,
+            "page": page,
+            "is_last_page": ($scope.number_of_pages==page)
+          }
+      }).then(function mySuccess(response) {
+        $scope.export = false;
+        let num = (($scope.export_page/$scope.number_of_pages) * 100);
+        $scope.export_progress = num.toFixed(2) + "%"
+        $scope.export_page = response.data.page;
+        if(response.data.download!=''){
+          // console.log(response.data.download);
+          $scope.export_status = "Export Complete";
+          $scope.export_progress = "100%";
+          window.location = response.data.download;
+        }
+        if($scope.export_page>=$scope.number_of_pages+1){
+
+        }else{
+          if(typeof $scope.number_of_pages === 'undefined'){
+
+          }else{
+            setTimeout(write_csv($scope.export_page), 1500);
+          }
+        }
+      }, function myError(rejection) {
+          if(rejection.status != 422){
+            request_error(rejection.status);
+          }else if(rejection.status == 422){
+            var errors = rejection.data;
+          }
+          $scope.export = false;
+      });
+    }
+
+    $scope.download_exported = function() {
+      window.location = "/assets/reports/order_slip_summary.csv";
+    }
+    $scope.close_overlay_div = function() {
+      $scope.overlay_div = {
+        'display': 'none',
+      }
+    }
+
+    $scope.change_filters = function() {
+      $scope.has_daterange_changed = true;
+    }
+    
+    window.onbeforeunload = confirmExit;
+
+    function confirmExit() {
+      if ($scope.export) return "Exporting is still in progress.";
+    }
   });
 
 

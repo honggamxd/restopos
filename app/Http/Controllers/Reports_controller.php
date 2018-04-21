@@ -130,188 +130,10 @@ class Reports_controller extends Controller
     }
   }
 
-  public function f_and_b_export(Request $request)
-  {
-    $app_config = DB::table('app_config')->first();
-    $categories = $app_config->categories;
-    $categories = explode(',', $categories);
 
-    $settlements = $app_config->settlements.','.$app_config->badorder_settlements;
-    $settlements = explode(',', $app_config->settlements_arrangements);
-    foreach ($settlements as $settlement) {
-      $settlements_headers[] = settlements($settlement);
-    }
-    $data = $this->f_and_b($request);
-    $fp = fopen('assets/reports/order_slip_summary.csv', 'w');
-
-    $headers = array (Auth::user()->restaurant.' Order Slip Summary Report');
-    fputcsv($fp, $headers);
-    $headers = array ('Date From: '.date('F d, Y',strtotime($request->date_from)).' Date To: '.date('F d, Y',strtotime($request->date_to)) );
-
-    fputcsv($fp, $headers);
-    $headers = array (
-      'Date',
-      'Outlet',
-      'Check #',
-      'Invoice #',
-      'Guest Name',
-      '# of Pax',
-      '# of SC/PWD',
-      'Server',
-      'Cashier'
-    );
-    $headers = array_merge($headers,$categories);
-    $initial_headers = array(
-      'Gross Amount',
-      'Total Discount',
-      'NET Amount'
-    );
-    $headers = array_merge($headers,$initial_headers);
-    $headers = array_merge($headers,$settlements_headers);
-
-    $initial_headers = array('Total Settlements');
-    $headers = array_merge($headers,$initial_headers);
-    if(Auth::user()->privilege!="admin"){
-
-    }else{
-      $initial_headers = array(
-        'Room Service Charge',
-        'Special Discount',
-        'Gross Billing',
-        'SC/PWD Discount',
-        'SC/PWD VAT Exemption',
-        'NET Billing',
-        'Sales NET of VAT & Service Charge',
-        'Service Charge',
-        'VATable Sales',
-        'Output VAT',
-        'Sales Inclusive of VAT',
-      );
-      $headers = array_merge($headers,$initial_headers);
-    }
-
-    fputcsv($fp, $headers);
-    foreach ($data['result'] as $bill_data) {
-      $headers = array (
-        $bill_data['date_'],
-        $bill_data['restaurant_name'],
-        $bill_data['check_number'],
-        $bill_data['invoice_number'],
-        $bill_data['guest_name'],
-        $bill_data['pax'],
-        $bill_data['sc_pwd'],
-        $bill_data['server_name'],
-        $bill_data['cashier_name']
-      );
-      $categories_values = array();
-      foreach ($categories as $key) {
-        $categories_values[] = number_format($bill_data[$key],2);
-      }
-      $headers = array_merge($headers,$categories_values);
-      $initial_headers = array(
-        number_format($bill_data['total_item_amount'],2),
-        number_format($bill_data['special_trade_discount'],2),
-        number_format($bill_data['net_total_amount'],2)
-      );
-      $headers = array_merge($headers,$initial_headers);
-      $settlements_values = array();
-      foreach ($settlements as $key) {
-        if($key=="cash"){
-          $settlements_values[] = number_format($bill_data[$key]-$bill_data['excess'],2);
-        }else{
-          $settlements_values[] = number_format($bill_data[$key],2);
-        }
-      }
-      $headers = array_merge($headers,$settlements_values);
-
-      $initial_headers = array(number_format($bill_data['total_settlements'],2));
-      $headers = array_merge($headers,$initial_headers);
-      if(Auth::user()->privilege!="admin"){
-
-      }else{
-        $initial_headers = array(
-          number_format($bill_data['room_service_charge'],2),
-          number_format($bill_data['total_discount'],2),
-          number_format($bill_data['gross_billing'],2),
-          number_format($bill_data['sc_pwd_discount'],2),
-          number_format($bill_data['sc_pwd_vat_exemption'],2),
-          number_format($bill_data['net_billing'],2),
-          number_format($bill_data['sales_net_of_vat_and_service_charge'],2),
-          number_format($bill_data['service_charge'],2),
-          number_format($bill_data['vatable_sales'],2),
-          number_format($bill_data['output_vat'],2),
-          number_format($bill_data['sales_inclusive_of_vat'],2),
-        );
-        $headers = array_merge($headers,$initial_headers);
-      }
-      fputcsv($fp, $headers);
-    }
-
-
-    //Footer
-
-    $headers = array (
-      "",
-      "",
-      "",
-      "",
-      "",
-      $data['footer']['pax'],
-      $data['footer']['sc_pwd'],
-      "",
-      ""
-    );
-    $categories_values = array();
-    foreach ($categories as $key) {
-      $categories_values[] = number_format($data['footer'][$key],2);
-    }
-    $headers = array_merge($headers,$categories_values);
-    $initial_headers = array(
-      number_format($data['footer']['total_item_amount'],2),
-      number_format($data['footer']['special_trade_discount'],2),
-      number_format($data['footer']['net_total_amount'],2)
-    );
-    $headers = array_merge($headers,$initial_headers);
-    $settlements_values = array();
-    foreach ($settlements as $key) {
-      if($key=="cash"){
-        $settlements_values[] = number_format($data['footer'][$key]-$data['footer']['excess'],2);
-      }else{
-        $settlements_values[] = number_format($data['footer'][$key],2);
-      }
-    }
-    $headers = array_merge($headers,$settlements_values);
-
-    $initial_headers = array(number_format($data['footer']['total_settlements'],2));
-    $headers = array_merge($headers,$initial_headers);
-    if(Auth::user()->privilege!="admin"){
-
-    }else{
-      $initial_headers = array(
-        number_format($data['footer']['room_service_charge'],2),
-        number_format($data['footer']['total_discount'],2),
-        number_format($data['footer']['gross_billing'],2),
-        number_format($data['footer']['sc_pwd_discount'],2),
-        number_format($data['footer']['sc_pwd_vat_exemption'],2),
-        number_format($data['footer']['net_billing'],2),
-        number_format($data['footer']['sales_net_of_vat_and_service_charge'],2),
-        number_format($data['footer']['service_charge'],2),
-        number_format($data['footer']['vatable_sales'],2),
-        number_format($data['footer']['output_vat'],2),
-        number_format($data['footer']['sales_inclusive_of_vat'],2),
-      );
-      $headers = array_merge($headers,$initial_headers);
-    }
-      fputcsv($fp, $headers);  
-    
-
-
-    fclose($fp);
-    return asset('assets/reports/order_slip_summary.csv');
-  }
   public function f_and_b(Request $request)
   {
-    DB::enableQueryLog();
+    // DB::enableQueryLog();
     
     $app_config = DB::table('app_config')->first();
     $categories = $app_config->categories;
@@ -349,12 +171,8 @@ class Reports_controller extends Controller
       $bills->where('restaurant_id',$request->restaurant_id);
     }
     $bills->whereBetween('created_at',[Carbon::parse($request->date_from),Carbon::parse($request->date_to)]);
-    if($request->export=="1"){
-      $bills = $bills->get();
-    }else{
-      $bills = $bills->paginate(50);
-    }
-
+    $bills = $bills->paginate(50);
+    
     $footer_data = $restaurant_bill->select(
       '*',
       DB::raw('SUM(pax) as total_pax'),
@@ -533,8 +351,256 @@ class Reports_controller extends Controller
     }
     $data["result"] = $bills;
     $data["paging"] = (string)$bills;
-    $data["getQueryLog"] = DB::getQueryLog();
+    // $data["getQueryLog"] = DB::getQueryLog();
     return $data;
+  }
+
+
+  public function create_f_and_b_csv(Request $request)
+  {
+    $app_config = DB::table('app_config')->first();
+    $categories = $app_config->categories;
+    $categories = explode(',', $categories);
+
+    $settlements = $app_config->settlements.','.$app_config->badorder_settlements;
+    $settlements = explode(',', $app_config->settlements_arrangements);
+    foreach ($settlements as $settlement) {
+      $settlements_headers[] = settlements($settlement);
+    }
+    $data = $this->f_and_b($request);
+    $fp = fopen('assets/reports/order_slip_summary.csv', 'w');
+
+    $headers = array (Auth::user()->restaurant.' Order Slip Summary Report');
+    fputcsv($fp, $headers);
+    $headers = array ('Date From: '.date('F d, Y',strtotime($request->date_from)).' Date To: '.date('F d, Y',strtotime($request->date_to)) );
+    fputcsv($fp, $headers);
+
+    $headers = array (
+      'Date',
+      'Outlet',
+      'Check #',
+      'Invoice #',
+      'Guest Name',
+      '# of Pax',
+      '# of SC/PWD',
+      'Server',
+      'Cashier'
+    );
+    $headers = array_merge($headers,$categories);
+    $initial_headers = array(
+      'Gross Amount',
+      'Total Discount',
+      'NET Amount'
+    );
+    $headers = array_merge($headers,$initial_headers);
+    $headers = array_merge($headers,$settlements_headers);
+
+    $initial_headers = array('Total Settlements');
+    $headers = array_merge($headers,$initial_headers);
+    if(Auth::user()->privilege!="admin"){
+
+    }else{
+      $initial_headers = array(
+        'Room Service Charge',
+        'Special Discount',
+        'Gross Billing',
+        'SC/PWD Discount',
+        'SC/PWD VAT Exemption',
+        'NET Billing',
+        'Sales NET of VAT & Service Charge',
+        'Service Charge',
+        'VATable Sales',
+        'Output VAT',
+        'Sales Inclusive of VAT',
+      );
+      $headers = array_merge($headers,$initial_headers);
+    }
+    fputcsv($fp, $headers);
+    fclose($fp);
+
+  }
+  
+
+  public function f_and_b_export(Request $request)
+  {
+    $return_data = array();
+    $return_data['download'] = '';
+    $app_config = DB::table('app_config')->first();
+    $categories = $app_config->categories;
+    $categories = explode(',', $categories);
+
+    $settlements = $app_config->settlements.','.$app_config->badorder_settlements;
+    $settlements = explode(',', $app_config->settlements_arrangements);
+    foreach ($settlements as $settlement) {
+      $settlements_headers[] = settlements($settlement);
+    }
+    $data = $this->f_and_b($request);
+    $fp = fopen('assets/reports/order_slip_summary.csv', 'a');
+    foreach ($data['result'] as $bill_data) {
+      $headers = array (
+        $bill_data['date_'],
+        $bill_data['restaurant_name'],
+        $bill_data['check_number'],
+        $bill_data['invoice_number'],
+        $bill_data['guest_name'],
+        $bill_data['pax'],
+        $bill_data['sc_pwd'],
+        $bill_data['server_name'],
+        $bill_data['cashier_name']
+      );
+      $categories_values = array();
+      foreach ($categories as $key) {
+        $categories_values[] = number_format($bill_data[$key],2);
+      }
+      $headers = array_merge($headers,$categories_values);
+      $initial_headers = array(
+        number_format($bill_data['total_item_amount'],2),
+        number_format($bill_data['special_trade_discount'],2),
+        number_format($bill_data['net_total_amount'],2)
+      );
+      $headers = array_merge($headers,$initial_headers);
+      $settlements_values = array();
+      foreach ($settlements as $key) {
+        if($key=="cash"){
+          $settlements_values[] = number_format($bill_data[$key]-$bill_data['excess'],2);
+        }else{
+          $settlements_values[] = number_format($bill_data[$key],2);
+        }
+      }
+      $headers = array_merge($headers,$settlements_values);
+
+      $initial_headers = array(number_format($bill_data['total_settlements'],2));
+      $headers = array_merge($headers,$initial_headers);
+      if(Auth::user()->privilege!="admin"){
+
+      }else{
+        $initial_headers = array(
+          number_format($bill_data['room_service_charge'],2),
+          number_format($bill_data['total_discount'],2),
+          number_format($bill_data['gross_billing'],2),
+          number_format($bill_data['sc_pwd_discount'],2),
+          number_format($bill_data['sc_pwd_vat_exemption'],2),
+          number_format($bill_data['net_billing'],2),
+          number_format($bill_data['sales_net_of_vat_and_service_charge'],2),
+          number_format($bill_data['service_charge'],2),
+          number_format($bill_data['vatable_sales'],2),
+          number_format($bill_data['output_vat'],2),
+          number_format($bill_data['sales_inclusive_of_vat'],2),
+        );
+        $headers = array_merge($headers,$initial_headers);
+      }
+      fputcsv($fp, $headers);
+    }
+
+
+    if($request->is_last_page == "true"){
+      //Footer
+      $headers = array (
+        "",
+        "",
+        "",
+        "",
+        "",
+        $data['footer']['pax'],
+        $data['footer']['sc_pwd'],
+        "",
+        ""
+      );
+      $categories_values = array();
+      foreach ($categories as $key) {
+        $categories_values[] = number_format($data['footer'][$key],2);
+      }
+      $headers = array_merge($headers,$categories_values);
+      $initial_headers = array(
+        number_format($data['footer']['total_item_amount'],2),
+        number_format($data['footer']['special_trade_discount'],2),
+        number_format($data['footer']['net_total_amount'],2)
+      );
+      $headers = array_merge($headers,$initial_headers);
+      $settlements_values = array();
+      foreach ($settlements as $key) {
+        if($key=="cash"){
+          $settlements_values[] = number_format($data['footer'][$key]-$data['footer']['excess'],2);
+        }else{
+          $settlements_values[] = number_format($data['footer'][$key],2);
+        }
+      }
+      $headers = array_merge($headers,$settlements_values);
+
+      $initial_headers = array(number_format($data['footer']['total_settlements'],2));
+      $headers = array_merge($headers,$initial_headers);
+      if(Auth::user()->privilege!="admin"){
+
+      }else{
+        $initial_headers = array(
+          number_format($data['footer']['room_service_charge'],2),
+          number_format($data['footer']['total_discount'],2),
+          number_format($data['footer']['gross_billing'],2),
+          number_format($data['footer']['sc_pwd_discount'],2),
+          number_format($data['footer']['sc_pwd_vat_exemption'],2),
+          number_format($data['footer']['net_billing'],2),
+          number_format($data['footer']['sales_net_of_vat_and_service_charge'],2),
+          number_format($data['footer']['service_charge'],2),
+          number_format($data['footer']['vatable_sales'],2),
+          number_format($data['footer']['output_vat'],2),
+          number_format($data['footer']['sales_inclusive_of_vat'],2),
+        );
+        $headers = array_merge($headers,$initial_headers);
+      }
+      fputcsv($fp, $headers);
+
+
+      $headers = array (
+        'Date',
+        'Outlet',
+        'Check #',
+        'Invoice #',
+        'Guest Name',
+        '# of Pax',
+        '# of SC/PWD',
+        'Server',
+        'Cashier'
+      );
+      $headers = array_merge($headers,$categories);
+      $initial_headers = array(
+        'Gross Amount',
+        'Total Discount',
+        'NET Amount'
+      );
+      $headers = array_merge($headers,$initial_headers);
+      $headers = array_merge($headers,$settlements_headers);
+  
+      $initial_headers = array('Total Settlements');
+      $headers = array_merge($headers,$initial_headers);
+      if(Auth::user()->privilege!="admin"){
+  
+      }else{
+        $initial_headers = array(
+          'Room Service Charge',
+          'Special Discount',
+          'Gross Billing',
+          'SC/PWD Discount',
+          'SC/PWD VAT Exemption',
+          'NET Billing',
+          'Sales NET of VAT & Service Charge',
+          'Service Charge',
+          'VATable Sales',
+          'Output VAT',
+          'Sales Inclusive of VAT',
+        );
+        $headers = array_merge($headers,$initial_headers);
+      }
+      fputcsv($fp, $headers);
+      $return_data['download'] = $this->download_csv($request);
+    }
+    fclose($fp);
+    $return_data['page'] = $request->page+1;
+    return $return_data;
+  }
+  
+  public function download_csv(Request $request)
+  {
+    return asset('assets/reports/order_slip_summary.csv');
   }
 
   public function purhcased_item(Request $request)

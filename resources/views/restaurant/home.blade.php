@@ -814,6 +814,7 @@
                   <option value="representation">{{settlements("representation")}}</option>
                   <option value="staff_charge">{{settlements("staff_charge")}}</option>
                   <option value="package_inclusion">{{settlements("package_inclusion")}}</option>
+                  <option value="kitchen_use">{{settlements("kitchen_use")}}</option>
                 </select>
               </div>
               <div class="form-group">
@@ -847,12 +848,12 @@
                 <label>{{settlements("staff_charge")}}:</label>
                 <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.staff_charge"  ng-change="input_payment()">
               </div>
-            </div>
-            <div class="col-sm-4">
               <div class="form-group" ng-if="formdata.settlements_payment.send_bill">
                 <label>{{settlements("send_bill")}}:</label>
                 <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.send_bill"  ng-change="input_payment()">
               </div>
+            </div>
+            <div class="col-sm-4">
               <div class="form-group" ng-if="formdata.settlements_payment.free_of_charge">
                 <label>{{settlements("free_of_charge")}}:</label>
                 <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.free_of_charge"  ng-change="input_payment()">
@@ -876,6 +877,10 @@
               <div class="form-group" ng-if="formdata.settlements_payment.package_inclusion">
                 <label>{{settlements("package_inclusion")}}:</label>
                 <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.package_inclusion"  ng-change="input_payment()">
+              </div>
+              <div class="form-group" ng-if="formdata.settlements_payment.kitchen_use">
+                <label>{{settlements("kitchen_use")}}:</label>
+                <input type="number" class="form-control" step="0.01" ng-model="formdata.settlements_amount.kitchen_use"  ng-change="input_payment()">
               </div>
             </div>
           </div>
