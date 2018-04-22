@@ -30,12 +30,6 @@ class MailNotification
         // $this->send_to_address = '';
         // $this->send_to_name = '';
         // $this->subject = '';
-        $this->message = "Good Day! ".$this->form_type." No. ".$this->form_number." has been generated.";
-        if($this->can_approve){
-            $this->message .= '<br>You can approve by clicking this <a href="'.$this->form_approval_url.'">link</a>';
-            $this->message .= '<br>Or copy and paste link below to your browser&#39;s address bar';
-            $this->message .= '<br><a href="'.$this->form_approval_url.'">'.$this->form_approval_url.'</a>';
-        }
         // $this->attachment_path = '';
         // $this->attachment_filename = '';
         $this->mail_host = config('mail.host');
@@ -46,6 +40,13 @@ class MailNotification
     }
 
     public function send(){
+
+        $this->message = "Good Day! ".$this->form_type." No. ".$this->form_number." has been generated.";
+        if($this->can_approve){
+            $this->message .= '<br>You can approve by clicking this <a href="'.$this->form_approval_url.'">link</a>';
+            $this->message .= '<br>Or copy and paste link below to your browser&#39;s address bar';
+            $this->message .= '<br><a href="'.$this->form_approval_url.'">'.$this->form_approval_url.'</a>';
+        }
         // Create the Transport
         $transport = (new Swift_SmtpTransport($this->mail_host, 25))
         ->setUsername($this->mail_username)
