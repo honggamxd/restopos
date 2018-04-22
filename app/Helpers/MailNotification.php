@@ -67,7 +67,7 @@ class MailNotification
 
             $message->attach($attachments);
         }
-        return $message;
+        // return $message;
 
         // Send the message
         return $mailer->send($message);
