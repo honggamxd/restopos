@@ -18,6 +18,28 @@
 <i class="divider">|</i>
 <a class="section" href="{{route('inventory.purchase-request.notification-settings')}}">Notification Settings</a>
 @endsection
+
+@section('overlay-div')
+<div ng-style="overlay_div" ng-cloak>
+    <div style="margin-top: 10vh;text-align: center;padding-right: 20%;padding-left: 20%;">
+        <span ng-if="sent_emails!=recipients.length">
+            Sending Purchase Request to: @{{recipient.user.name}}<@{{recipient.user.email_address}}>
+        </span>
+        <span ng-if="sent_emails==recipients.length">
+            Sent All Mails
+        </span>
+        <div class="progress" ng-if="mail_progress != ''">
+            <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:@{{mail_progress}}">
+            @{{sent_emails}}/@{{recipients.length}} Sent
+            </div>
+        </div>
+        <p ng-if="generated_form.form"><a ng-href="@{{generated_form.form}}">View Generated Purchase Request Form</a></p>
+        <p><a href="{{route('inventory.purchase-request.create')}}">Create new Purchase Request</a></p>
+  </div>
+</div>
+@endsection
+
 @section('padded_content')
 <form id="add-form" ng-submit="save_form()" class="form">
 <div class="row">
@@ -293,6 +315,12 @@
 <script type="text/javascript">
 app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.edit_mode = "{!! $edit_mode !!}";
+    $scope.overlay_div = {
+      'display': 'none'
+    }
+    $scope.recipients = [];
+    $scope.recipient = {};
+    $scope.sent_emails = 0;
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.formdata.type_of_item_requested = 'operations';
@@ -313,6 +341,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
         delete $scope.formdata.details;
     }
+    $scope.generated_form = {};
     $scope.formerrors = {};
     $scope.submit = false;
     $scope.loading = false;
@@ -325,6 +354,21 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         }
     }
 
+    $scope.close_overlay_div = function() {
+      $scope.overlay_div = {
+        'display': 'none',
+      }
+    }
+    $scope.open_overlay_div = function() {
+        $scope.overlay_div = {
+            'z-index': '2000',
+            'width': '100vw',
+            'height': '100vh',
+            'background-color': 'white',
+            'position': 'fixed',
+            'display': 'block'
+        }
+    }
     $scope.save_form = function() {
         if($scope.edit_mode == 'create'){
             $scope.add_form();
@@ -390,15 +434,27 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
-            $.notify('Redirecting to print preview.','info');
-            $.notify('Purchase Request has been generated.');
+            $scope.mail_progress = '';
+            $scope.sent_emails = 0;
+            $scope.generated_form = response.data.purchase_request;
+            $scope.recipients = response.data.recipients.data;
+
             $scope.formdata = {};
             $scope.formdata.purchase_request_number = response.data.purchase_request_number + 1;
             $scope.formdata.type_of_item_requested = 'operations';
             $scope.items = {};
-            setTimeout(() => {
-                window.location.href = route('inventory.purchase-request.index',[response.data.uuid]);
-            }, 2000);
+
+            if($scope.recipients.length == 0){
+                $.notify('Redirecting to print preview.','info');
+                setTimeout(() => {
+                    window.location.href = route('inventory.purchase-request.index',[$scope.generated_form.uuid]);
+                }, 2000);
+            }else{
+                $scope.mail_progress = "0%";
+                $scope.mail_users();
+                $scope.open_overlay_div();
+            }
+            $.notify('Purchase Order has been generated.');
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
@@ -451,6 +507,43 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.fill_approved_by = function() {
         $scope.formdata.approved_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.approved_by_name = user_data.name;
+    }
+
+    $scope.mail_users = function() {
+        let user = $scope.recipients[$scope.sent_emails];
+        $scope.recipient = user;
+        console.log(user);
+        if($scope.sent_emails==0){
+            $scope.mail_progress = "0%";
+        }
+        $http({
+            method: 'POST',
+            url: route('api.inventory.purchase-request.notify.recipient',{uuid:$scope.generated_form.uuid,recipient:user.user_id}).url(),
+            data: $.param(
+                {
+                    user:user,
+                    form_type: "Purchase Request",
+                    generated_form: $scope.generated_form,
+                }
+            )
+        }).then(function(response) {
+            $scope.submit = false;
+            $scope.sent_emails++;
+            if($scope.sent_emails!=$scope.recipients.length){
+                $scope.mail_users();
+            }
+            let num = (($scope.sent_emails/$scope.recipients.length) * 100);
+            $scope.mail_progress = num.toFixed(2) + "%"
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                $.notify('Generation failed, please review the form.','error');
+                var errors = rejection.data;
+                $scope.formerrors = errors;
+            }
+            $scope.submit = false;
+        });
     }
 
 
@@ -546,6 +639,12 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $('#purchase_request_date,#date_needed').datepicker();
     $('#requested_by_date,#noted_by_date,#approved_by_date').datepicker();
+
+    window.onbeforeunload = confirmExit;
+
+    function confirmExit() {
+      if ($scope.sent_emails!=$scope.recipients.length) return "Exporting is still in progress.";
+    }
 });
 </script>
 @endpush

@@ -166,7 +166,15 @@ class Purchase_request_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
-        return $purchase_request;
+        $data['purchase_request'] = fractal($purchase_request, new Inventory_purchase_request_transformer)->toArray();
+        $recipients = Inventory_purchase_request_recipient::query();
+        $recipients->leftJoin('user','inventory_purchase_request_recipient.user_id','=','user.id');
+        $recipients->select('inventory_purchase_request_recipient.*');
+        $recipients->whereNotNull('user.email_address');
+        $recipients->where('inventory_purchase_request_recipient.notify_email','1');
+        $recipients = $recipients->get();
+        $data['recipients'] = fractal($recipients, new Inventory_purchase_request_recipient_transformer)->parseIncludes('user')->toArray();
+        return $data;
         # code...
     }
 
@@ -282,16 +290,6 @@ class Purchase_request_controller extends Controller
         $data['users'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
         // return $data;
         return view('inventory.purchase-request-notification-settings',$data);
-
-
-        // $mailer = new MailNotification;
-        // $mailer->send_to_address = '';
-        // $mailer->send_to_name = '';
-        // $mailer->subject = '';
-        // $mailer->message = '';
-        // $mailer->attachment_path = '';
-        // $mailer->attachment_filename = '';
-        // dd($mailer->send());
     }
 
     public function get_recipients(Request $request)
@@ -306,6 +304,7 @@ class Purchase_request_controller extends Controller
             $request,
             [
                 'user' => 'required|unique:inventory_purchase_request_recipient,user_id,NULL,id,deleted_at,NULL',
+                'user.email_address' => 'required',
             ],
             [
                 'requested_by_name.required_with' => 'Required if the name or date is filled.',
@@ -337,5 +336,21 @@ class Purchase_request_controller extends Controller
     {
         $recipient = Inventory_purchase_request_recipient::findOrFail($id);
         $recipient->delete();
+    }
+
+    public function mail_user(Request $request,$uuid,$user_id)
+    {   
+        $file_name = $request->generated_form['purchase_request_number_formatted'].'-purchase-request-'.Carbon::parse($request->generated_form['purchase_request_date'])->format('Y-m-d').'-'.$request->generated_form['uuid'].'.pdf';
+        $mailer = new MailNotification;
+        $mailer->send_to_address = $request->user['user']['email_address'];
+        $mailer->send_to_name = $request->user['user']['name'];
+        $mailer->subject = $request->form_type . " No." . $request->generated_form['purchase_request_number_formatted'];
+        $mailer->form_type = $request->form_type;
+        $mailer->form_number = $request->generated_form['purchase_request_number_formatted'];
+        $mailer->attachment_path = $request->generated_form['form'];
+        $mailer->attachment_filename = $file_name;
+        $mailer->form_approval_url = $request->generated_form['form'];
+        $mailer->can_approve = true;
+        return $mailer->send();
     }
 }

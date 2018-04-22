@@ -157,6 +157,7 @@ Route::get('/api/inventory/purchase-request-recipient/','Inventory\Purchase_requ
 Route::post('/api/inventory/purchase-request-recipient/','Inventory\Purchase_request_controller@store_recipient')->name('api.inventory.purchase-request.recipient.store')->middleware('auth');
 Route::patch('/api/inventory/purchase-request-recipient/{id}','Inventory\Purchase_request_controller@update_recipient')->name('api.inventory.purchase-request.recipient.update')->middleware('auth');
 Route::delete('/api/inventory/purchase-request-recipient/{id}','Inventory\Purchase_request_controller@destroy_recipient')->name('api.inventory.purchase-request.recipient.destroy')->middleware('auth');
+Route::post('/api/inventory/purchase-request/{uuid}/notify/{recipient}','Inventory\Purchase_request_controller@mail_user')->name('api.inventory.purchase-request.notify.recipient')->middleware('auth');
 
 
 //Request to Canvass web pages

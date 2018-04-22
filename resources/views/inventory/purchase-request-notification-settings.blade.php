@@ -207,6 +207,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                     request_error(rejection.status);
                 } else if (rejection.status == 422) {
                     var errors = rejection.data;
+                    if(errors['user.email_address']){
+                        $.notify('This user does not have email address, or if it has, please try to refresh the page','error');
+                    }
                     $scope.formerrors = errors;
                 }
                 $scope.submit = false;
