@@ -146,6 +146,7 @@ Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_contro
 Route::get('/inventory/purchase-request/form/{uuid}.pdf','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.index');
 Route::get('/inventory/purchase-request/edit/{uuid}','Inventory\Purchase_request_controller@edit')->name('inventory.purchase-request.edit')->middleware('auth');
 Route::get('/inventory/purchase-request/notification-settings','Inventory\Purchase_request_controller@notification_settings')->name('inventory.purchase-request.notification-settings');
+Route::get('/inventory/purchase-request/approve','Inventory\Purchase_request_controller@email_approve')->name('inventory.purchase-request.email-approve')->middleware('auth');
 
 //Purchase Request api request
 Route::get('/api/inventory/purchase-request/','Inventory\Purchase_request_controller@get_list')->name('api.inventory.purchase-request.list')->middleware('auth');

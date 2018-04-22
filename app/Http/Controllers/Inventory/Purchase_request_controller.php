@@ -10,6 +10,7 @@ use Auth;
 use Carbon\Carbon;
 use PDF;
 use Validator;
+use App;
 
 
 use App\Inventory\Inventory_purchase_request;
@@ -349,8 +350,12 @@ class Purchase_request_controller extends Controller
         $mailer->form_number = $request->generated_form['purchase_request_number_formatted'];
         $mailer->attachment_path = $request->generated_form['form'];
         $mailer->attachment_filename = $file_name;
-        $mailer->form_approval_url = $request->generated_form['form'];
+        $mailer->form_approval_url = route('inventory.purchase-request.email-approve').'?form='.urlencode($request->generated_form['form']).'&uuid='.$request->generated_form['uuid'].'&code='.bcrypt('');
         $mailer->can_approve = true;
-        return $mailer->send();
+        if(App::environment('local')){
+            dd($mailer);
+        }else{
+            return $mailer->send();
+        }
     }
 }
