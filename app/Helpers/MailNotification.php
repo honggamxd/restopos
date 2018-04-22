@@ -41,12 +41,15 @@ class MailNotification
 
     public function send(){
 
-        $this->message = "Good Day! ".$this->form_type." No. ".$this->form_number." has been generated.";
+        $this->message = 'Hello '.$this->send_to_name.',';
+        $this->message .= '<br><br><a href="'.$this->attachment_path.'">'.$this->form_type." No. ".$this->form_number."</a> has been generated.";
         if($this->can_approve){
-            $this->message .= '<br>You can approve by clicking this <a href="'.$this->form_approval_url.'">link</a>';
-            $this->message .= '<br>Or copy and paste link below to your browser&#39;s address bar';
-            $this->message .= '<br><a href="'.$this->form_approval_url.'">'.$this->form_approval_url.'</a>';
+            $this->message .= '<br><br>To approve this '.strtolower($this->form_type).' form, please click on the link below:';
+            $this->message .= '<br><br><a href="'.$this->form_approval_url.'">Click here to approve</a>.';
+            $this->message .= '<br><br>Or copy and paste link below to your browser&#39;s address bar';
+            $this->message .= '<br><br><a href="'.$this->form_approval_url.'">'.$this->form_approval_url.'</a>';
         }
+        $this->message .="<br><br><br><i>* This is a system generated e-mail, please do not reply.</i>";
         // Create the Transport
         $transport = (new Swift_SmtpTransport($this->mail_host, 25))
         ->setUsername($this->mail_username)
