@@ -31,6 +31,7 @@ class Purchase_order_controller extends Controller
     public function __construct()
     {
         // $this->middleware('auth');
+        $this->check_json_settings();
     }
 
     public function index(Request $request,$uuid)
@@ -283,7 +284,6 @@ class Purchase_order_controller extends Controller
     public function settings(Request $request)
     {
         $user = new User;
-        $this->check_json_settings();
 
         $data['users'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
         return view('inventory.purchase-order-settings',$data);
