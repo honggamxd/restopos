@@ -33,7 +33,7 @@
             </div>
         </div>
         <p ng-if="generated_form.form"><a ng-href="@{{generated_form.form}}">View Generated Purchase Order Form</a></p>
-        <p><a href="{{route('inventory.purchase-request.create')}}">Create new Purchase Order</a></p>
+        <p><a href="{{route('inventory.purchase-order.create')}}">Create new Purchase Order</a></p>
   </div>
 </div>
 @endsection
