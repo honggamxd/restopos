@@ -194,6 +194,8 @@ Route::get('/inventory/purchase-order/create','Inventory\Purchase_order_controll
 Route::get('/inventory/purchase-order/list','Inventory\Purchase_order_controller@show_list')->name('inventory.purchase-order.list')->middleware('auth');
 Route::get('/inventory/purchase-order/form/{uuid}.pdf','Inventory\Purchase_order_controller@index')->name('inventory.purchase-order.index');
 Route::get('/inventory/purchase-order/edit/{uuid}','Inventory\Purchase_order_controller@edit')->name('inventory.purchase-order.edit')->middleware('auth');
+Route::get('/inventory/purchase-order/settings','Inventory\Purchase_order_controller@settings')->name('inventory.purchase-order.settings');
+Route::get('/inventory/purchase-order/approve','Inventory\Purchase_order_controller@email_approve')->name('inventory.purchase-order.email-approve')->middleware('auth');
 
 //Purchase Order api request
 Route::get('/api/inventory/purchase-order/','Inventory\Purchase_order_controller@get_list')->name('api.inventory.purchase-order.list')->middleware('auth');
@@ -201,6 +203,13 @@ Route::post('/api/inventory/purchase-order/','Inventory\Purchase_order_controlle
 Route::put('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@update')->name('api.inventory.purchase-order.update')->middleware('auth');
 Route::delete('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@destroy')->name('api.inventory.purchase-order.delete')->middleware('auth');
 Route::patch('/api/inventory/purchase-order/{id}','Inventory\Purchase_order_controller@approve')->name('api.inventory.purchase-order.approve')->middleware('auth');
+Route::get('/api/inventory/purchase-order-recipient/','Inventory\Purchase_order_controller@get_recipients')->name('api.inventory.purchase-order.recipient.list')->middleware('auth');
+Route::post('/api/inventory/purchase-order-recipient/','Inventory\Purchase_order_controller@store_recipient')->name('api.inventory.purchase-order.recipient.store')->middleware('auth');
+Route::patch('/api/inventory/purchase-order-recipient/{id}','Inventory\Purchase_order_controller@update_recipient')->name('api.inventory.purchase-order.recipient.update')->middleware('auth');
+Route::delete('/api/inventory/purchase-order-recipient/{id}','Inventory\Purchase_order_controller@destroy_recipient')->name('api.inventory.purchase-order.recipient.destroy')->middleware('auth');
+Route::post('/api/inventory/purchase-order/{uuid}/notify/{recipient}','Inventory\Purchase_order_controller@mail_user')->name('api.inventory.purchase-order.notify.recipient')->middleware('auth');
+Route::patch('/api/inventory/footer/settings/purchase-order','Inventory\Purchase_order_controller@update_footer_settings')->name('api.inventory.purchase-order.footer.update')->middleware('auth');
+Route::get('/api/inventory/footer/settings/purchase-order','Inventory\Purchase_order_controller@get_footer_settings')->name('api.inventory.purchase-order.footer.get')->middleware('auth');
 
 
 //Receiving Report web pages

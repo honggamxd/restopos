@@ -10,15 +10,21 @@ use Auth;
 use Carbon\Carbon;
 use PDF;
 use Validator;
+use App;
 
 use App\Inventory\Inventory_purchase_order;
 use App\Inventory\Inventory_purchase_order_detail;
+use App\Inventory\Inventory_purchase_order_recipient;
 use App\Inventory\Inventory_item;
 
 use App\Inventory\Inventory_item_detail;
+use App\User;
+use App\Transformers\User_transformer;
 
 use App\Transformers\Inventory_item_transformer;
 use App\Transformers\Inventory_purchase_order_transformer;
+use App\Transformers\Inventory_purchase_order_recipient_transformer;
+use App\Helpers\MailNotification;
 
 class Purchase_order_controller extends Controller
 {
@@ -153,7 +159,15 @@ class Purchase_order_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
-        return $purchase_order;
+        $data['purchase_order'] = fractal($purchase_order, new Inventory_purchase_order_transformer)->toArray();
+        $recipients = Inventory_purchase_order_recipient::query();
+        $recipients->leftJoin('user','inventory_purchase_order_recipient.user_id','=','user.id');
+        $recipients->select('inventory_purchase_order_recipient.*');
+        $recipients->whereNotNull('user.email_address');
+        $recipients->where('inventory_purchase_order_recipient.notify_email','1');
+        $recipients = $recipients->get();
+        $data['recipients'] = fractal($recipients, new Inventory_purchase_order_recipient_transformer)->parseIncludes('user')->toArray();
+        return $data;
         # code...
     }
 
@@ -264,5 +278,121 @@ class Purchase_order_controller extends Controller
         }
         catch(\Exception $e){DB::rollback();throw $e;}
         return fractal($purchase_order, new Inventory_purchase_order_transformer)->parseIncludes('details.inventory_item')->toArray();
+    }
+
+    public function settings(Request $request)
+    {
+        $user = new User;
+        $this->check_json_settings();
+
+        $data['users'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
+        return view('inventory.purchase-order-settings',$data);
+    }
+
+    private function check_json_settings()
+    {
+        if(!file_exists(public_path('settings/purchase-order.json'))){
+            $data = array();
+            $data['footer'] = ['noted_by_name'=>[]];
+            $fp = fopen('settings/purchase-order.json', 'w');
+            fwrite($fp, json_encode($data));
+            fclose($fp);
+        }
+    }
+
+    public function update_footer_settings(Request $request)
+    {
+        $data = array();
+        $data['footer'] = ['noted_by_name'=>$request->noted_by_name];
+        $fp = fopen('settings/purchase-order.json', 'w');
+        fwrite($fp, json_encode($data));
+        fclose($fp);
+    }
+
+    public function get_footer_settings(Request $request)
+    {
+        $string = file_get_contents(public_path("settings/purchase-order.json"));
+        return $string;
+    }
+
+    public function get_recipients(Request $request)
+    {
+        $data['result'] = fractal(Inventory_purchase_order_recipient::all(), new Inventory_purchase_order_recipient_transformer)->parseIncludes('user')->toArray();
+        return $data;
+    }
+
+    public function store_recipient(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'user' => 'required|unique:inventory_purchase_order_recipient,user_id,NULL,id,deleted_at,NULL',
+                'user.email_address' => 'required',
+            ],
+            [
+                'requested_by_name.required_with' => 'Required if the name or date is filled.',
+            ]
+        );
+        DB::beginTransaction();
+        try{
+            $recipient = new Inventory_purchase_order_recipient;
+            $recipient->user_id = $request->user['id'];
+            $recipient->allow_approve = $request->allow_approve && $request->allow_approve == 'true' ? 1 : 0;
+            $recipient->notify_email = $request->notify_email && $request->notify_email == 'true' ? 1 : 0;
+            $recipient->save();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        return fractal($recipient, new Inventory_purchase_order_recipient_transformer)->parseIncludes('user.restaurant')->toArray();
+    }
+
+    public function update_recipient(Request $request,$id)
+    {
+        $recipient = Inventory_purchase_order_recipient::findOrFail($id);
+        $recipient->allow_approve = $request->allow_approve == 'true' ? 1 : 0;
+        $recipient->notify_email = $request->notify_email == 'true' ? 1 : 0;
+        $recipient->save();
+        return fractal($recipient, new Inventory_purchase_order_recipient_transformer)->parseIncludes('user.restaurant')->toArray();
+    }
+
+    public function destroy_recipient($id)
+    {
+        $recipient = Inventory_purchase_order_recipient::findOrFail($id);
+        $recipient->delete();
+    }
+
+    public function mail_user(Request $request,$uuid,$user_id)
+    {   
+        $file_name = $request->generated_form['purchase_order_number_formatted'].'-purchase-order-'.Carbon::parse($request->generated_form['purchase_order_date'])->format('Y-m-d').'-'.$request->generated_form['uuid'].'.pdf';
+        $mailer = new MailNotification;
+        $mailer->send_to_address = $request->user['user']['email_address'];
+        $mailer->send_to_name = $request->user['user']['name'];
+        $mailer->subject = $request->form_type . " No." . $request->generated_form['purchase_order_number_formatted'];
+        $mailer->form_type = $request->form_type;
+        $mailer->form_number = $request->generated_form['purchase_order_number_formatted'];
+        $mailer->attachment_path = $request->generated_form['form'];
+        $mailer->attachment_filename = $file_name;
+        $mailer->form_approval_url = route('inventory.purchase-order.email-approve').'?form='.urlencode($request->generated_form['form']).'&uuid='.$request->generated_form['uuid'].'&code='.urlencode(bcrypt($request->generated_form['uuid']));
+        $mailer->can_approve = true;
+        if(App::environment('local')){
+            dd($mailer);
+        }else{
+            return $mailer->send();
+        }
+    }
+
+    public function email_approve(Request $request)
+    {
+        $uuid = $request->uuid;
+        $form = $request->form;
+        $purchase_order = Inventory_purchase_order::where('uuid',$uuid)->first();
+        if($purchase_order){
+            if($purchase_order['is_approved']==1){
+                return abort('404');
+            }
+        }else{
+            return abort('404');
+        }
+        return view('inventory.purchase-order-email-approve',compact('form','purchase_order'));
     }
 }

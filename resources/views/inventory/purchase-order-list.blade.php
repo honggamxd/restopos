@@ -12,6 +12,8 @@
 <div class="active section">Purchase Orders</div>
 <i class="right angle icon divider"></i>
 <a class="section hideprint" href="{{route('inventory.purchase-order.create')}}">Create Purchase Order</a>
+<i class="divider">|</i>
+<a class="section" href="{{route('inventory.purchase-order.settings')}}">Settings</a>
 @endsection
 
 @section('two_row_content')
