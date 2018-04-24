@@ -181,12 +181,21 @@ Route::get('/inventory/capital-expenditure-request/create','Inventory\Capital_ex
 Route::get('/inventory/capital-expenditure-request/list','Inventory\Capital_expenditure_request_controller@show_list')->name('inventory.capital-expenditure-request.list')->middleware('auth');
 Route::get('/inventory/capital-expenditure-request/form/{uuid}.pdf','Inventory\Capital_expenditure_request_controller@index')->name('inventory.capital-expenditure-request.index');
 Route::get('/inventory/capital-expenditure-request/edit/{uuid}','Inventory\Capital_expenditure_request_controller@edit')->name('inventory.capital-expenditure-request.edit')->middleware('auth');
+Route::get('/inventory/capital-expenditure-request/settings','Inventory\Capital_expenditure_request_controller@settings')->name('inventory.capital-expenditure-request.settings');
+Route::get('/inventory/capital-expenditure-request/approve','Inventory\Capital_expenditure_request_controller@email_approve')->name('inventory.capital-expenditure-request.email-approve')->middleware('auth');
 
 //Capital Expenditure Request Form api request
 Route::get('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@get_list')->name('api.inventory.capital-expenditure-request.list')->middleware('auth');
 Route::post('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@store')->name('api.inventory.capital-expenditure-request.store')->middleware('auth');
 Route::put('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@update')->name('api.inventory.capital-expenditure-request.update')->middleware('auth');
 Route::delete('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@destroy')->name('api.inventory.capital-expenditure-request.delete')->middleware('auth');
+Route::get('/api/inventory/capital-expenditure-request-recipient/','Inventory\Capital_expenditure_request_controller@get_recipients')->name('api.inventory.capital-expenditure-request.recipient.list')->middleware('auth');
+Route::post('/api/inventory/capital-expenditure-request-recipient/','Inventory\Capital_expenditure_request_controller@store_recipient')->name('api.inventory.capital-expenditure-request.recipient.store')->middleware('auth');
+Route::patch('/api/inventory/capital-expenditure-request-recipient/{id}','Inventory\Capital_expenditure_request_controller@update_recipient')->name('api.inventory.capital-expenditure-request.recipient.update')->middleware('auth');
+Route::delete('/api/inventory/capital-expenditure-request-recipient/{id}','Inventory\Capital_expenditure_request_controller@destroy_recipient')->name('api.inventory.capital-expenditure-request.recipient.destroy')->middleware('auth');
+Route::post('/api/inventory/capital-expenditure-request/{uuid}/notify/{recipient}','Inventory\Capital_expenditure_request_controller@mail_user')->name('api.inventory.capital-expenditure-request.notify.recipient')->middleware('auth');
+Route::patch('/api/inventory/footer/settings/capital-expenditure-request','Inventory\Capital_expenditure_request_controller@update_footer_settings')->name('api.inventory.capital-expenditure-request.footer.update')->middleware('auth');
+Route::get('/api/inventory/footer/settings/capital-expenditure-request','Inventory\Capital_expenditure_request_controller@get_footer_settings')->name('api.inventory.capital-expenditure-request.footer.get')->middleware('auth');
 
 
 //Purchase Order web pages

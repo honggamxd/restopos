@@ -12,6 +12,8 @@
 <div class="active section">Capital Expenditure Requests</div>
 <i class="right angle icon divider"></i>
 <a class="section hideprint" href="{{route('inventory.capital-expenditure-request.create')}}">Create Capital Expenditure Request</a>
+<i class="divider">|</i>
+<a class="section" href="{{route('inventory.capital-expenditure-request.settings')}}">Settings</a>
 @endsection
 
 @section('two_row_content')

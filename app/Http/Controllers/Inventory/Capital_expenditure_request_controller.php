@@ -9,21 +9,28 @@ use App\Http\Requests;
 use Auth;
 use Carbon\Carbon;
 use PDF;
+use App;
 
 use App\Inventory\Inventory_capital_expenditure_request;
 use App\Inventory\Inventory_capital_expenditure_request_detail;
+use App\Inventory\Inventory_capital_expenditure_request_recipient;
 use App\Inventory\Inventory_item;
 
 use App\Inventory\Inventory_item_detail;
+use App\User;
+use App\Transformers\User_transformer;
 
 use App\Transformers\Inventory_item_transformer;
 use App\Transformers\Inventory_capital_expenditure_request_transformer;
+use App\Transformers\Inventory_capital_expenditure_request_recipient_transformer;
+use App\Helpers\MailNotification;
 
 class Capital_expenditure_request_controller extends Controller
 {
     public function __construct()
     {
         // $this->middleware('auth');
+        $this->check_json_settings();
     }
 
     public function index(Request $request,$uuid)
@@ -181,7 +188,15 @@ class Capital_expenditure_request_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
-        return $capital_expenditure_request;
+        $data['capital_expenditure_request'] = fractal($capital_expenditure_request, new Inventory_capital_expenditure_request_transformer)->toArray();
+        $recipients = Inventory_capital_expenditure_request_recipient::query();
+        $recipients->leftJoin('user','inventory_capital_expenditure_request_recipient.user_id','=','user.id');
+        $recipients->select('inventory_capital_expenditure_request_recipient.*');
+        $recipients->whereNotNull('user.email_address');
+        $recipients->where('inventory_capital_expenditure_request_recipient.notify_email','1');
+        $recipients = $recipients->get();
+        $data['recipients'] = fractal($recipients, new Inventory_capital_expenditure_request_recipient_transformer)->parseIncludes('user')->toArray();
+        return $data;
         # code...
     }
 
@@ -293,5 +308,120 @@ class Capital_expenditure_request_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
+    }
+
+    public function settings(Request $request)
+    {
+        $user = new User;
+
+        $data['users'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
+        return view('inventory.capital-expenditure-request-settings',$data);
+    }
+
+    private function check_json_settings()
+    {
+        if(!file_exists(public_path('settings/capital-expenditure-request.json'))){
+            $data = array();
+            $data['footer'] = ['noted_by_name'=>[]];
+            $fp = fopen('settings/capital-expenditure-request.json', 'w');
+            fwrite($fp, json_encode($data));
+            fclose($fp);
+        }
+    }
+
+    public function update_footer_settings(Request $request)
+    {
+        $data = array();
+        $data['footer'] = ['noted_by_name'=>$request->noted_by_name];
+        $fp = fopen('settings/capital-expenditure-request.json', 'w');
+        fwrite($fp, json_encode($data));
+        fclose($fp);
+    }
+
+    public function get_footer_settings(Request $request)
+    {
+        $string = file_get_contents(public_path("settings/capital-expenditure-request.json"));
+        return $string;
+    }
+
+    public function get_recipients(Request $request)
+    {
+        $data['result'] = fractal(Inventory_capital_expenditure_request_recipient::all(), new Inventory_capital_expenditure_request_recipient_transformer)->parseIncludes('user')->toArray();
+        return $data;
+    }
+
+    public function store_recipient(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'user' => 'required|unique:inventory_capital_expenditure_request_recipient,user_id,NULL,id,deleted_at,NULL',
+                'user.email_address' => 'required',
+            ],
+            [
+                'requested_by_name.required_with' => 'Required if the name or date is filled.',
+            ]
+        );
+        DB::beginTransaction();
+        try{
+            $recipient = new Inventory_capital_expenditure_request_recipient;
+            $recipient->user_id = $request->user['id'];
+            $recipient->allow_approve = $request->allow_approve && $request->allow_approve == 'true' ? 1 : 0;
+            $recipient->notify_email = $request->notify_email && $request->notify_email == 'true' ? 1 : 0;
+            $recipient->save();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        return fractal($recipient, new Inventory_capital_expenditure_request_recipient_transformer)->parseIncludes('user.restaurant')->toArray();
+    }
+
+    public function update_recipient(Request $request,$id)
+    {
+        $recipient = Inventory_capital_expenditure_request_recipient::findOrFail($id);
+        $recipient->allow_approve = $request->allow_approve == 'true' ? 1 : 0;
+        $recipient->notify_email = $request->notify_email == 'true' ? 1 : 0;
+        $recipient->save();
+        return fractal($recipient, new Inventory_capital_expenditure_request_recipient_transformer)->parseIncludes('user.restaurant')->toArray();
+    }
+
+    public function destroy_recipient($id)
+    {
+        $recipient = Inventory_capital_expenditure_request_recipient::findOrFail($id);
+        $recipient->delete();
+    }
+
+    public function mail_user(Request $request,$uuid,$user_id)
+    {   
+        $file_name = $request->generated_form['capital_expenditure_request_number_formatted'].'-capital-expenditure-request-'.Carbon::parse($request->generated_form['capital_expenditure_request_date'])->format('Y-m-d').'-'.$request->generated_form['uuid'].'.pdf';
+        $mailer = new MailNotification;
+        $mailer->send_to_address = $request->user['user']['email_address'];
+        $mailer->send_to_name = $request->user['user']['name'];
+        $mailer->subject = $request->form_type . " No." . $request->generated_form['capital_expenditure_request_number_formatted'];
+        $mailer->form_type = $request->form_type;
+        $mailer->form_number = $request->generated_form['capital_expenditure_request_number_formatted'];
+        $mailer->attachment_path = $request->generated_form['form'];
+        $mailer->attachment_filename = $file_name;
+        $mailer->form_approval_url = route('inventory.capital-expenditure-request.email-approve').'?form='.urlencode($request->generated_form['form']).'&uuid='.$request->generated_form['uuid'].'&code='.urlencode(bcrypt($request->generated_form['uuid']));
+        $mailer->can_approve = true;
+        if(App::environment('local')){
+            dd($mailer);
+        }else{
+            return $mailer->send();
+        }
+    }
+
+    public function email_approve(Request $request)
+    {
+        $uuid = $request->uuid;
+        $form = $request->form;
+        $capital_expenditure_request = Inventory_capital_expenditure_request::where('uuid',$uuid)->first();
+        if($capital_expenditure_request){
+            if($capital_expenditure_request['is_approved']==1){
+                return abort('404');
+            }
+        }else{
+            return abort('404');
+        }
+        return view('inventory.capital-expenditure-request-email-approve',compact('form','capital_expenditure_request'));
     }
 }

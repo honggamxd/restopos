@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Purchase Order')
+@section('title', 'Capital Expenditure Request')
 
 @section('css')
 <style type="text/css">
@@ -9,7 +9,7 @@
 </style>
 @endsection
 @section('breadcrumb')
-<a class="section" href="{{route('inventory.purchase-order.list')}}">Purchase Orders</a>
+<a class="section" href="{{route('inventory.capital-expenditure-request.list')}}">Capital Expenditure Requests</a>
 <i class="right angle icon divider"></i>
 <div class="active section" ng-cloak>Confirmation of Approval</div>
 @endsection
@@ -41,8 +41,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.is_approved = false;
     $scope.approve_confirm = function(){
         alertify.confirm(
-            'Approving Purchase Order',
-            'After submitting, the system cannot unapprove this purchase order form. continue?',
+            'Approving Capital Expenditure Request',
+            'After submitting, the system cannot unapprove this capital expenditure request form. continue?',
             function(){
                 $scope.approve_form();
             },
@@ -54,12 +54,12 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     }
 
     $scope.approve_form = function() {
-        let id = {!! json_encode($purchase_order['id']) !!};
+        let id = {!! json_encode($capital_expenditure_request['id']) !!};
         $http({
             method: 'PATCH',
-            url: route('api.inventory.purchase-order.approve',[id]).url(),
+            url: route('api.inventory.capital-expenditure-request.approve',[id]).url(),
         }).then(function(response) {
-            $.notify('Purchase Order has been approved.', {
+            $.notify('Capital Expenditure Request has been approved.', {
                 position: "top right"
             });
             $scope.is_approved = true;
