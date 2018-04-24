@@ -12,6 +12,8 @@
 <div class="active section">Stock Issuances</div>
 <i class="right angle icon divider"></i>
 <a class="section hideprint" href="{{route('inventory.stock-issuance.create')}}">Create Stock Issuance</a>
+<i class="divider">|</i>
+<a class="section" href="{{route('inventory.stock-issuance.settings')}}">Settings</a>
 @endsection
 
 @section('two_row_content')

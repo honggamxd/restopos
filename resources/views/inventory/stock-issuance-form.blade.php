@@ -13,7 +13,31 @@
 <i class="right angle icon divider"></i>
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Stock Issuance</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Stock Issuance</div>
+<i class="divider">|</i>
+<a class="section" href="{{route('inventory.stock-issuance.settings')}}">Settings</a>
 @endsection
+
+@section('overlay-div')
+<div ng-style="overlay_div" ng-cloak>
+    <div style="margin-top: 10vh;text-align: center;padding-right: 20%;padding-left: 20%;">
+        <span ng-if="sent_emails!=recipients.length">
+            Sending Stock Issuance to: @{{recipient.user.name}}<@{{recipient.user.email_address}}>
+        </span>
+        <span ng-if="sent_emails==recipients.length">
+            Sent All Mails
+        </span>
+        <div class="progress" ng-if="mail_progress != ''">
+            <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:@{{mail_progress}}">
+            @{{sent_emails}}/@{{recipients.length}} Sent
+            </div>
+        </div>
+        <p ng-if="generated_form.form"><a ng-href="@{{generated_form.form}}">View Generated Stock Issuance Form</a></p>
+        <p><a href="{{route('inventory.stock-issuance.create')}}">Create new Stock Issuance</a></p>
+  </div>
+</div>
+@endsection
+
 @section('padded_content')
 <form id="add-form" ng-submit="save_form()" class="form">
 <div class="row">
@@ -302,6 +326,13 @@
 <script type="text/javascript">
 app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.edit_mode = "{!! $edit_mode !!}";
+    $scope.overlay_div = {
+      'display': 'none'
+    }
+    $scope.recipients = [];
+    $scope.recipient = {};
+    $scope.sent_emails = 0;
+    $scope.generated_form = {}
     $scope.is_approved = false;
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
@@ -310,6 +341,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.issued_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.stock_issuance_date = moment().format("MM/DD/YYYY");
         $scope.formdata.issued_by_name = user_data.name;
+        get_settings();
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.stock_issuance_date = $scope.formdata.stock_issuance_date ? moment($scope.formdata.stock_issuance_date).format("MM/DD/YYYY") : null;
@@ -338,6 +370,21 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $scope.items.splice (index, 1);
         }else{
             delete $scope.items[index];
+        }
+    }
+    $scope.close_overlay_div = function() {
+      $scope.overlay_div = {
+        'display': 'none',
+      }
+    }
+    $scope.open_overlay_div = function() {
+        $scope.overlay_div = {
+            'z-index': '2000',
+            'width': '100vw',
+            'height': '100vh',
+            'background-color': 'white',
+            'position': 'fixed',
+            'display': 'block'
         }
     }
 
@@ -402,14 +449,24 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             data: $.param($scope.formdata)
         }).then(function(response) {
             $scope.submit = false;
-            $.notify('Redirecting to print preview.','info');
-            $.notify('Stock Issuance has been generated.');
+            $scope.mail_progress = '';
+            $scope.sent_emails = 0;
+            $scope.generated_form = response.data.stock_issuance;
+            $scope.recipients = response.data.recipients.data;
             $scope.formdata = {};
             $scope.formdata.stock_issuance_number = response.data.stock_issuance_number + 1;
             $scope.items = {};
-            setTimeout(() => {
-                window.location.href = route('inventory.stock-issuance.index',[response.data.uuid]);
-            }, 2000);
+            if($scope.recipients.length == 0){
+                $.notify('Redirecting to print preview.','info');
+                setTimeout(() => {
+                    window.location.href = route('inventory.stock-issuance.index',[$scope.generated_form.uuid]);
+                }, 2000);
+            }else{
+                $scope.mail_progress = "0%";
+                $scope.mail_users();
+                $scope.open_overlay_div();
+            }
+            $.notify('Stock Issuance has been generated.');
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
@@ -461,6 +518,59 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.fill_approved_by = function() {
         $scope.formdata.approved_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.approved_by_name = user_data.name;
+    }
+    $scope.mail_users = function() {
+        let user = $scope.recipients[$scope.sent_emails];
+        $scope.recipient = user;
+        console.log(user);
+        if($scope.sent_emails==0){
+            $scope.mail_progress = "0%";
+        }
+        $http({
+            method: 'POST',
+            url: route('api.inventory.stock-issuance.notify.recipient',{uuid:$scope.generated_form.uuid,recipient:user.user_id}).url(),
+            data: $.param(
+                {
+                    user:user,
+                    form_type: "Stock Issuance",
+                    generated_form: $scope.generated_form,
+                }
+            )
+        }).then(function(response) {
+            $scope.submit = false;
+            $scope.sent_emails++;
+            if($scope.sent_emails!=$scope.recipients.length){
+                $scope.mail_users();
+            }
+            let num = (($scope.sent_emails/$scope.recipients.length) * 100);
+            $scope.mail_progress = num.toFixed(2) + "%"
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                $.notify('Generation failed, please review the form.','error');
+                var errors = rejection.data;
+                $scope.formerrors = errors;
+            }
+            $scope.submit = false;
+        });
+    }
+
+    function get_settings() {
+        $http({
+            method: "GET",
+            url: route('api.inventory.stock-issuance.footer.get').url(),
+        }).then(function mySuccess(response) {
+            let footer = response.data.footer;
+            $scope.formdata.noted_by_name = footer.noted_by_name;
+            $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                console.log(rejection.statusText);
+            }
+        });
     }
 
     $("#search-item").autocomplete({
@@ -538,6 +648,12 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $('#stock_issuance_date,#date_to').datepicker();
     $('#received_by_date,#issued_by_date,#approved_by_date,#posted_by_date').datepicker();
+
+    window.onbeforeunload = confirmExit;
+
+    function confirmExit() {
+      if ($scope.sent_emails!=$scope.recipients.length) return "Exporting is still in progress.";
+    }
 });
 </script>
 @endpush

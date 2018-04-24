@@ -238,6 +238,8 @@ Route::get('/inventory/stock-issuance/create','Inventory\Stock_issuance_controll
 Route::get('/inventory/stock-issuance/list','Inventory\Stock_issuance_controller@show_list')->name('inventory.stock-issuance.list')->middleware('auth');
 Route::get('/inventory/stock-issuance/form/{uuid}.pdf','Inventory\Stock_issuance_controller@index')->name('inventory.stock-issuance.index');
 Route::get('/inventory/stock-issuance/edit/{uuid}','Inventory\Stock_issuance_controller@edit')->name('inventory.stock-issuance.edit')->middleware('auth');
+Route::get('/inventory/stock-issuance/settings','Inventory\Stock_issuance_controller@settings')->name('inventory.stock-issuance.settings');
+Route::get('/inventory/stock-issuance/approve','Inventory\Stock_issuance_controller@email_approve')->name('inventory.stock-issuance.email-approve')->middleware('auth');
 
 //Stock Issuance api request
 Route::get('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controller@get_list')->name('api.inventory.stock-issuance.list')->middleware('auth');
@@ -245,4 +247,11 @@ Route::post('/api/inventory/stock-issuance/','Inventory\Stock_issuance_controlle
 Route::put('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@update')->name('api.inventory.stock-issuance.update')->middleware('auth');
 Route::delete('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@destroy')->name('api.inventory.stock-issuance.delete')->middleware('auth');
 Route::patch('/api/inventory/stock-issuance/{id}','Inventory\Stock_issuance_controller@approve')->name('api.inventory.stock-issuance.approve')->middleware('auth');
+Route::get('/api/inventory/stock-issuance-recipient/','Inventory\Stock_issuance_controller@get_recipients')->name('api.inventory.stock-issuance.recipient.list')->middleware('auth');
+Route::post('/api/inventory/stock-issuance-recipient/','Inventory\Stock_issuance_controller@store_recipient')->name('api.inventory.stock-issuance.recipient.store')->middleware('auth');
+Route::patch('/api/inventory/stock-issuance-recipient/{id}','Inventory\Stock_issuance_controller@update_recipient')->name('api.inventory.stock-issuance.recipient.update')->middleware('auth');
+Route::delete('/api/inventory/stock-issuance-recipient/{id}','Inventory\Stock_issuance_controller@destroy_recipient')->name('api.inventory.stock-issuance.recipient.destroy')->middleware('auth');
+Route::post('/api/inventory/stock-issuance/{uuid}/notify/{recipient}','Inventory\Stock_issuance_controller@mail_user')->name('api.inventory.stock-issuance.notify.recipient')->middleware('auth');
+Route::patch('/api/inventory/footer/settings/stock-issuance','Inventory\Stock_issuance_controller@update_footer_settings')->name('api.inventory.stock-issuance.footer.update')->middleware('auth');
+Route::get('/api/inventory/footer/settings/stock-issuance','Inventory\Stock_issuance_controller@get_footer_settings')->name('api.inventory.stock-issuance.footer.get')->middleware('auth');
 
