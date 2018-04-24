@@ -17,9 +17,10 @@
 @section('two_row_content')
     <div class="row">
         <div class="col-sm-12">
-            <div style="text-align: center" ng-if="!is_approved">
+            <div style="text-align: center">
                 <div class="ui buttons">
-                    <button class="ui green button" ng-click="approve_confirm(item)"><span class="glyphicon glyphicon-ok"></span>Approve</button>
+                    <button class="ui green button" ng-if="!is_approved" ng-click="approve_confirm(item)"><span class="glyphicon glyphicon-ok"></span>Approve</button>
+                    <button class="ui red button" onclick="window.close()"><span class="glyphicon glyphicon-remove"></span>Close</button>
                 </div>
             </div>
             <br>
