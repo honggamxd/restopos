@@ -63,7 +63,8 @@ class MailNotification
         $message = (new Swift_Message($this->subject))
         ->setFrom([$this->mail_from_address => $this->mail_from_name])
         ->setTo([$this->send_to_address => $this->send_to_name])
-        ->setBody($this->message,'text/html');
+        ->setBody($this->message,'text/html')
+        ->setPriority(1);
                 //attachments
         if($this->attachment_filename && $this->attachment_path){
             $attachments = Swift_Attachment::fromPath($this->attachment_path)

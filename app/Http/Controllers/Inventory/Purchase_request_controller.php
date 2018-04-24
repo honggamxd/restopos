@@ -350,12 +350,27 @@ class Purchase_request_controller extends Controller
         $mailer->form_number = $request->generated_form['purchase_request_number_formatted'];
         $mailer->attachment_path = $request->generated_form['form'];
         $mailer->attachment_filename = $file_name;
-        $mailer->form_approval_url = route('inventory.purchase-request.email-approve').'?form='.urlencode($request->generated_form['form']).'&uuid='.$request->generated_form['uuid'].'&code='.bcrypt('');
+        $mailer->form_approval_url = route('inventory.purchase-request.email-approve').'?form='.urlencode($request->generated_form['form']).'&uuid='.$request->generated_form['uuid'].'&code='.urlencode(bcrypt($request->generated_form['uuid']));
         $mailer->can_approve = true;
         if(App::environment('local')){
             dd($mailer);
         }else{
             return $mailer->send();
         }
+    }
+
+    public function email_approve(Request $request)
+    {
+        $uuid = $request->uuid;
+        $form = $request->form;
+        $purchase_request = Inventory_purchase_request::where('uuid',$uuid)->first();
+        if($purchase_request){
+            if($purchase_request['is_approved']==1){
+                return abort('404');
+            }
+        }else{
+            return abort('404');
+        }
+        return view('inventory.purchase-request-email-approve',compact('form','purchase_request'));
     }
 }
