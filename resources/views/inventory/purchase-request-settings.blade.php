@@ -13,81 +13,94 @@
 <i class="right angle icon divider"></i>
 <a class="section hideprint" href="{{route('inventory.purchase-request.create')}}">Create Purchase Request</a>
 <i class="divider">|</i>
-<div class="active section">Notification Settings</div>
+<div class="active section">Settings</div>
 @endsection
 
-@section('two_row_content')
-    <h1 style="text-align: center">Purchase Request Email Notification Settings</h1>
-    <br>
-    <div class="row">
-        <div class="col-sm-5">
-            <button class="ui primary button" ng-click="add_recipient_form()">Add Recipient</button>
-        </div>
-    </div>
+@section('padded_content')
+    <h1 style="text-align: center">Purchase Request Settings</h1>
     <br>
     <div class="row">
         <div class="col-sm-12">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th style="text-align: center">Username</th>
-                            <th style="text-align: center">Name</th>
-                            <th style="text-align: center">Email Address</th>
-                            <th style="text-align: center">Email Notification</th>
-                            <th style="text-align: center">Approve via Email</th>
-                            <th style="text-align: center"></th>
-                        </tr>
-                    </thead>
-                    <tbody ng-repeat="(index,item) in items" ng-cloak>
-                        <tr>
-                            <td style="text-align: center">@{{item.user.username}}</td>
-                            <td style="text-align: center">@{{item.user.name}}</td>
-                            <td style="text-align: center">@{{item.user.email_address}}</td>
-                            <td style="text-align: center">
-                                <div class="ui toggle checkbox">
-                                    <input type="checkbox" ng-model="item.notify_email" ng-change="edit_recipient(item)">
-                                    <label ng-if="item.notify_email">On</label>
-                                    <label ng-if="!item.notify_email">Off</label>
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div class="ui toggle checkbox">
-                                    <input type="checkbox" ng-model="item.allow_approve" ng-change="edit_recipient(item)">
-                                    <label ng-if="item.allow_approve">Allowed</label>
-                                    <label ng-if="!item.allow_approve">Disallowed</label>
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div class="ui buttons">
-                                    <button type="button" class="ui red button" ng-click="delete_confirm(item)"><span class="glyphicon glyphicon-trash"></span></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr ng-if="items | isEmpty">
-                            <td colspan="20" style="text-align: center;">
-                                <h1 ng-if="loading">
-                                    <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
-                                    <br>
-                                    LOADING
-                                </h1>
-                                <h1>
-                                    <span ng-if="!loading" ng-cloak>NO DATA</span>
-                                    <span ng-if="loading" ng-cloak></span>
-                                </h1>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th colspan="200">
-                                &nbsp;
-                            </th>
-                        </tr>
-                    </tfoot>
-                </table>
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="pill" href="#notification-settings">Email Notifications</a></li>
+                <li><a data-toggle="pill" href="#footer-settings">Footer</a></li>
+            </ul>
+            <br>
+            <br>
+            <div class="tab-content">
+                <div id="notification-settings" class="tab-pane fade in active">
+                    <button class="ui primary button" ng-click="add_recipient_form()">Add Recipient</button>
+                    <br>
+                    <br>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center">Username</th>
+                                    <th style="text-align: center">Name</th>
+                                    <th style="text-align: center">Email Address</th>
+                                    <th style="text-align: center">Email Notification</th>
+                                    <th style="text-align: center">Approve via Email</th>
+                                    <th style="text-align: center"></th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="(index,item) in items" ng-cloak>
+                                <tr>
+                                    <td style="text-align: center">@{{item.user.username}}</td>
+                                    <td style="text-align: center">@{{item.user.name}}</td>
+                                    <td style="text-align: center">@{{item.user.email_address}}</td>
+                                    <td style="text-align: center">
+                                        <div class="ui toggle checkbox">
+                                            <input type="checkbox" ng-model="item.notify_email" ng-change="edit_recipient(item)">
+                                            <label ng-if="item.notify_email">On</label>
+                                            <label ng-if="!item.notify_email">Off</label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <div class="ui toggle checkbox">
+                                            <input type="checkbox" ng-model="item.allow_approve" ng-change="edit_recipient(item)">
+                                            <label ng-if="item.allow_approve">Allowed</label>
+                                            <label ng-if="!item.allow_approve">Disallowed</label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <div class="ui buttons">
+                                            <button type="button" class="ui red button" ng-click="delete_confirm(item)"><span class="glyphicon glyphicon-trash"></span></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr ng-if="items | isEmpty">
+                                    <td colspan="20" style="text-align: center;">
+                                        <h1 ng-if="loading">
+                                            <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+                                            <br>
+                                            LOADING
+                                        </h1>
+                                        <h1>
+                                            <span ng-if="!loading" ng-cloak>NO DATA</span>
+                                            <span ng-if="loading" ng-cloak></span>
+                                        </h1>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="200">
+                                        &nbsp;
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div ng-bind-html="pages" class="text-center" ng-cloak></div>
+                </div>
+                <div id="footer-settings" class="tab-pane fade">
+                    <div class="form-group">
+                        <label for="noted_by_name">Default Name of Noted By:</label>
+                        <input type="text" class="form-control" placeholder="Enter Noted By" id="noted_by_name" ng-model="footer.noted_by_name">
+                    </div>    
+                </div>
             </div>
-            <div ng-bind-html="pages" class="text-center" ng-cloak></div>
         </div>
     </div>
 @endsection
@@ -151,6 +164,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.items = {};
     $scope.pages = "";
     $scope.searchString = "";
+    $scope.footer = {};
     $scope.users = {!! json_encode($users['data']) !!};
 
     $scope.show_recipients = function(url_string) {
@@ -176,8 +190,25 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             }
         });
     }
+
+    $scope.get_settings = function() {
+        $http({
+            method: "GET",
+            url: route('api.inventory.purchase-request.footer.get').url(),
+        }).then(function mySuccess(response) {
+            $scope.footer = response.data.footer;
+        }, function(rejection) {
+            $scope.loading = false;
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                console.log(rejection.statusText);
+            }
+        });
+    }
     
     $scope.show_recipients();
+    $scope.get_settings();
 
     $scope.add_recipient_form = function(){
         $scope.formdata = {
@@ -268,6 +299,32 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             }
         });
     }
+
+    $scope.update_footer_settings = function() {
+        $http({
+            method: 'PATCH',
+            url: route('api.inventory.purchase-request.footer.update').url(),
+            data: $.param($scope.footer)
+        }).then(function(response) {
+            $scope.submit = false;
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                var errors = rejection.data;
+                $scope.formerrors = errors;
+            }
+            $scope.submit = false;
+        });
+    }
+
+    $("#noted_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
+        select: function(event, ui) {
+            $scope.footer.noted_by_name = ui.item.value;
+            $scope.update_footer_settings();
+        }
+    });
 
 });
 </script>

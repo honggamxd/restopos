@@ -102,9 +102,30 @@ class Users_controller extends Controller
 
   public function show_users(Request $request)
   {
-    $user = new User;
-    $data['result'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
-    return $data;
+    $users = User::query();
+    $users->orderBy('name');
+    if($request->searchString){
+      $searchString = $request->searchString;
+      $users->where('name','LIKE',"%$searchString%");
+    }
+    if($request->fieldName){
+      $users->where($request->fieldName,$request->fieldValue);
+    }
+    $users = $users->get();
+    $data['result'] = fractal($users, new User_transformer)->parseIncludes('restaurant')->toArray();
+    if($request->term){
+      $autocomplete = array();
+      foreach ($data['result']['data'] as $user) {
+        $autocomplete[] = [
+          'label' => $user['name'],
+          'id' => $user['id'],
+          'value' => $user['name'],
+        ];
+      }
+      return $autocomplete;
+    }else{
+      return $data;
+    }
   }
 
   public function add(Request $request)

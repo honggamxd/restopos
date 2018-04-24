@@ -13,7 +13,7 @@
 <i class="right angle icon divider"></i>
 <a class="section hideprint" href="{{route('inventory.purchase-request.create')}}">Create Purchase Request</a>
 <i class="divider">|</i>
-<a class="section" href="{{route('inventory.purchase-request.notification-settings')}}">Notification Settings</a>
+<a class="section" href="{{route('inventory.purchase-request.settings')}}">Settings</a>
 @endsection
 
 @section('two_row_content')

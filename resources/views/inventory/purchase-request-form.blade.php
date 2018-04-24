@@ -16,7 +16,7 @@
 <i class="divider" ng-if="edit_mode=='update'">|</i>
 <a class="section" ng-if="edit_mode=='update'" href="{{route('inventory.purchase-request.create')}}">Create Purchase Request</a>
 <i class="divider">|</i>
-<a class="section" href="{{route('inventory.purchase-request.notification-settings')}}">Notification Settings</a>
+<a class="section" href="{{route('inventory.purchase-request.settings')}}">Settings</a>
 @endsection
 
 @section('overlay-div')
@@ -330,6 +330,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.inventory_request_to_canvass_id = null;
         $scope.formdata.purchase_request_date = moment().format("MM/DD/YYYY");
         $scope.formdata.requested_by_date = moment().format("MM/DD/YYYY");
+        get_settings();
         // $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
@@ -546,6 +547,22 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         });
     }
 
+    function get_settings() {
+        $http({
+            method: "GET",
+            url: route('api.inventory.purchase-request.footer.get').url(),
+        }).then(function mySuccess(response) {
+            let footer = response.data.footer;
+            $scope.formdata.noted_by_name = footer.noted_by_name;
+            $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                console.log(rejection.statusText);
+            }
+        });
+    }
 
     $("#search-item").autocomplete({
         source: function(request, response)

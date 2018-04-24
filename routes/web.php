@@ -145,7 +145,7 @@ Route::get('/inventory/purchase-request/create','Inventory\Purchase_request_cont
 Route::get('/inventory/purchase-request/list','Inventory\Purchase_request_controller@show_list')->name('inventory.purchase-request.list')->middleware('auth');
 Route::get('/inventory/purchase-request/form/{uuid}.pdf','Inventory\Purchase_request_controller@index')->name('inventory.purchase-request.index');
 Route::get('/inventory/purchase-request/edit/{uuid}','Inventory\Purchase_request_controller@edit')->name('inventory.purchase-request.edit')->middleware('auth');
-Route::get('/inventory/purchase-request/notification-settings','Inventory\Purchase_request_controller@notification_settings')->name('inventory.purchase-request.notification-settings');
+Route::get('/inventory/purchase-request/settings','Inventory\Purchase_request_controller@settings')->name('inventory.purchase-request.settings');
 Route::get('/inventory/purchase-request/approve','Inventory\Purchase_request_controller@email_approve')->name('inventory.purchase-request.email-approve')->middleware('auth');
 
 //Purchase Request api request
@@ -159,6 +159,8 @@ Route::post('/api/inventory/purchase-request-recipient/','Inventory\Purchase_req
 Route::patch('/api/inventory/purchase-request-recipient/{id}','Inventory\Purchase_request_controller@update_recipient')->name('api.inventory.purchase-request.recipient.update')->middleware('auth');
 Route::delete('/api/inventory/purchase-request-recipient/{id}','Inventory\Purchase_request_controller@destroy_recipient')->name('api.inventory.purchase-request.recipient.destroy')->middleware('auth');
 Route::post('/api/inventory/purchase-request/{uuid}/notify/{recipient}','Inventory\Purchase_request_controller@mail_user')->name('api.inventory.purchase-request.notify.recipient')->middleware('auth');
+Route::patch('/api/inventory/footer/settings/purchase-request','Inventory\Purchase_request_controller@update_footer_settings')->name('api.inventory.purchase-request.footer.update')->middleware('auth');
+Route::get('/api/inventory/footer/settings/purchase-request','Inventory\Purchase_request_controller@get_footer_settings')->name('api.inventory.purchase-request.footer.get')->middleware('auth');
 
 
 //Request to Canvass web pages

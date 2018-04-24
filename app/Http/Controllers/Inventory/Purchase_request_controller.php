@@ -285,12 +285,39 @@ class Purchase_request_controller extends Controller
         return fractal($purchase_request, new Inventory_purchase_request_transformer)->parseIncludes('details.inventory_item')->toArray();
     }
 
-    public function notification_settings(Request $request)
+    public function settings(Request $request)
     {
         $user = new User;
+        $this->check_json_settings();
+
         $data['users'] = fractal(User::all(), new User_transformer)->parseIncludes('restaurant')->toArray();
-        // return $data;
-        return view('inventory.purchase-request-notification-settings',$data);
+        return view('inventory.purchase-request-settings',$data);
+    }
+
+    private function check_json_settings()
+    {
+        if(!file_exists(public_path('settings/purchase-request.json'))){
+            $data = array();
+            $data['footer'] = ['noted_by_name'=>[]];
+            $fp = fopen('settings/purchase-request.json', 'w');
+            fwrite($fp, json_encode($data));
+            fclose($fp);
+        }
+    }
+
+    public function update_footer_settings(Request $request)
+    {
+        $data = array();
+        $data['footer'] = ['noted_by_name'=>$request->noted_by_name];
+        $fp = fopen('settings/purchase-request.json', 'w');
+        fwrite($fp, json_encode($data));
+        fclose($fp);
+    }
+
+    public function get_footer_settings(Request $request)
+    {
+        $string = file_get_contents(public_path("settings/purchase-request.json"));
+        return $string;
     }
 
     public function get_recipients(Request $request)
