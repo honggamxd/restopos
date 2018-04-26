@@ -10,6 +10,7 @@ use Auth;
 use Carbon\Carbon;
 use PDF;
 use App;
+use Validator;
 
 use App\Inventory\Inventory_capital_expenditure_request;
 use App\Inventory\Inventory_capital_expenditure_request_detail;
@@ -308,6 +309,34 @@ class Capital_expenditure_request_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
+    }
+
+    public function approve($id)
+    {
+        $validator = Validator::make(
+            [],
+            []
+        );
+        $validator->after(function ($validator) use ($id){
+            $capital_expenditure_request = Inventory_capital_expenditure_request::findOrFail($id);
+            if($capital_expenditure_request->is_approved==1){
+                $validator->errors()->add('error', 'The capital expenditure request form that you are going to approve is already approved by  '.$capital_expenditure_request->approved_by_1_name.' on '.Carbon::parse($capital_expenditure_request->approved_by_1_date)->format('F d, Y') );
+            }
+        });
+        if($validator->fails()){
+            return response($validator->errors(), 422);
+        }
+        DB::beginTransaction();
+        try{
+            $capital_expenditure_request = Inventory_capital_expenditure_request::findOrFail($id);
+            $capital_expenditure_request->approved_by_1_name = Auth::user()->name;
+            $capital_expenditure_request->approved_by_1_date = Carbon::now()->format('Y-m-d');
+            $capital_expenditure_request->is_approved = 1;
+            $capital_expenditure_request->save();
+            DB::commit();
+        }
+        catch(\Exception $e){DB::rollback();throw $e;}
+        return fractal($capital_expenditure_request, new Inventory_capital_expenditure_request_transformer)->parseIncludes('details.inventory_item')->toArray();
     }
 
     public function settings(Request $request)

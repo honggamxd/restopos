@@ -189,6 +189,7 @@ Route::get('/api/inventory/capital-expenditure-request/','Inventory\Capital_expe
 Route::post('/api/inventory/capital-expenditure-request/','Inventory\Capital_expenditure_request_controller@store')->name('api.inventory.capital-expenditure-request.store')->middleware('auth');
 Route::put('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@update')->name('api.inventory.capital-expenditure-request.update')->middleware('auth');
 Route::delete('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@destroy')->name('api.inventory.capital-expenditure-request.delete')->middleware('auth');
+Route::patch('/api/inventory/capital-expenditure-request/{id}','Inventory\Capital_expenditure_request_controller@approve')->name('api.inventory.capital-expenditure-request.approve')->middleware('auth');
 Route::get('/api/inventory/capital-expenditure-request-recipient/','Inventory\Capital_expenditure_request_controller@get_recipients')->name('api.inventory.capital-expenditure-request.recipient.list')->middleware('auth');
 Route::post('/api/inventory/capital-expenditure-request-recipient/','Inventory\Capital_expenditure_request_controller@store_recipient')->name('api.inventory.capital-expenditure-request.recipient.store')->middleware('auth');
 Route::patch('/api/inventory/capital-expenditure-request-recipient/{id}','Inventory\Capital_expenditure_request_controller@update_recipient')->name('api.inventory.capital-expenditure-request.recipient.update')->middleware('auth');

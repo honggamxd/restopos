@@ -44,7 +44,7 @@
                             <th style="text-align: center"></th>
                         </tr>
                     </thead>
-                    <tbody ng-repeat="item in items" ng-cloak>
+                    <tbody ng-repeat="(index,item) in items" ng-cloak>
                         <tr>
                             <td style="text-align: center">
                                 <a ng-href="@{{item.form}}" target="_blank">@{{item.capital_expenditure_request_number_formatted}}</a>
@@ -60,6 +60,7 @@
                             </td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
+                                    <button type="button" class="ui green button" ng-click="approve_confirm(item,index)" ng-if="!item.is_approved"><span class="glyphicon glyphicon-ok"></span></button>
                                     <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>
                                     <button type="button" class="ui red button" ng-click="delete_confirm(item)"><span class="glyphicon glyphicon-trash"></span></button>
                                 </div>
@@ -166,6 +167,38 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             } else if (rejection.status == 422) {
                 var errors = rejection.data;
                 $scope.formerrors = errors;
+            }
+        });
+    }
+
+    $scope.approve_confirm = function(item,index){
+        alertify.confirm(
+            'Approving Capital Expenditure Request',
+            'After approving, the system cannot unapprove this capital expenditure request form. continue?',
+            function(){
+                $scope.approve_form(item,index);
+            },
+            function()
+            {
+                // alertify.error('Cancel')
+            }
+        );
+    }
+
+    $scope.approve_form = function(item,index) {
+        let id = item.id;
+        $http({
+            method: 'PATCH',
+            url: route('api.inventory.capital-expenditure-request.approve',[id]).url(),
+        }).then(function(response) {
+            $scope.items[index] = response.data;
+            $.notify('Capital Expenditure Request has been approved.');
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                var errors = rejection.data;
+                $.notify(errors.error[0],'error');
             }
         });
     }

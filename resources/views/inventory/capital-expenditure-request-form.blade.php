@@ -363,6 +363,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.formdata.capital_expenditure_request_date = $scope.formdata.capital_expenditure_request_date ? moment($scope.formdata.capital_expenditure_request_date).format("MM/DD/YYYY") : null;
         $scope.formdata.requested_by_date = $scope.formdata.requested_by_date ? moment($scope.formdata.requested_by_date).format("MM/DD/YYYY") : null;
         $scope.formdata.verified_as_funded_by_date = $scope.formdata.verified_as_funded_by_date ? moment($scope.formdata.verified_as_funded_by_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.approved_by_1_date = $scope.formdata.approved_by_1_date ? moment($scope.formdata.approved_by_1_date).format("MM/DD/YYYY") : null;
+        $scope.formdata.approved_by_2_date = $scope.formdata.approved_by_2_date ? moment($scope.formdata.approved_by_2_date).format("MM/DD/YYYY") : null;
         $scope.formdata.recorded_by_date = $scope.formdata.recorded_by_date ? moment($scope.formdata.recorded_by_date).format("MM/DD/YYYY") : null;
         $scope.items = {!! isset($data) ? json_encode($data['details']['data']) : '{}' !!};
         delete $scope.formdata.details;
