@@ -14,6 +14,8 @@
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Stock Issuance</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Stock Issuance</div>
 <i class="divider">|</i>
+<a class="section" href="{{route('inventory.stock-issuance.create')}}" ng-if="edit_mode=='update'" ng-cloak>Create Stock Issuance</a>
+<i class="divider" ng-if="edit_mode=='update'">|</i>
 <a class="section" href="{{route('inventory.stock-issuance.settings')}}">Settings</a>
 @endsection
 

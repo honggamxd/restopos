@@ -171,7 +171,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.approve_confirm = function(item,index){
         alertify.confirm(
             'Save Stock Issuance',
-            'After Approving, the items in the form will update its quantity. continue?',
+            'After approving, the items in the form will update its quantity. continue?',
             function(){
                 $scope.approve_form(item,index);
             },
@@ -184,6 +184,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $scope.approve_form = function(item,index) {
         let id = item.id;
+        let uuid = item.uuid;
         $http({
             method: 'PATCH',
             url: route('api.inventory.stock-issuance.approve',[id]).url(),
@@ -195,7 +196,10 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 request_error(rejection.status);
             } else if (rejection.status == 422) {
                 var errors = rejection.data;
-                $.notify(errors.error[0],'error');
+                $.notify('Unable to approve the form, redirecting to update form page','error');
+                setTimeout(() => {
+                    window.location.href = route('inventory.stock-issuance.edit',[uuid]);
+                }, 2000);
             }
         });
     }

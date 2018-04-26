@@ -42,7 +42,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.approve_confirm = function(){
         alertify.confirm(
             'Approving Purchase Request',
-            'After submitting, the system cannot unapprove this purchase request form. continue?',
+            'After approving, the system cannot unapprove this purchase request form. continue?',
             function(){
                 $scope.approve_form();
             },

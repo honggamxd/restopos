@@ -306,6 +306,14 @@ class Stock_issuance_controller extends Controller
             $stock_issuance = Inventory_stock_issuance::findOrFail($id);
             if($stock_issuance->is_approved==1){
                 $validator->errors()->add('error', 'The purchase request that you are going to approve is already approved by  '.$stock_issuance->approved_by_name.' on '.Carbon::parse($stock_issuance->approved_by_date)->format('F d, Y') );
+            }else{
+                $stock_issuance = Inventory_stock_issuance::findOrFail($id);
+                foreach ($stock_issuance->details as $form_item) {
+                    $item = fractal(Inventory_item::find($form_item->inventory_item_id), new Inventory_item_transformer)->toArray();
+                    if($item['total_quantity']<$form_item->quantity){
+                        $validator->errors()->add('error', 'Items');
+                    }
+                }
             }
         });
         if($validator->fails()){
@@ -334,7 +342,7 @@ class Stock_issuance_controller extends Controller
                 }
             }
             
-            DB::commit();
+            // DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
         return fractal($stock_issuance, new Inventory_stock_issuance_transformer)->parseIncludes('details.inventory_item')->toArray();
