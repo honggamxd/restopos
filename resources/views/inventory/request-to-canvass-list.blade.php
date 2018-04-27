@@ -12,6 +12,8 @@
 <div class="active section">Request to Canvasses</div>
 <i class="right angle icon divider"></i>
 <a class="section hideprint" href="{{route('inventory.request-to-canvass.create')}}">Create Request to Canvass</a>
+<i class="divider">|</i>
+<a class="section" href="{{route('inventory.request-to-canvass.settings')}}">Settings</a>
 @endsection
 
 @section('two_row_content')

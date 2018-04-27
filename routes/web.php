@@ -168,12 +168,15 @@ Route::get('/inventory/request-to-canvass/create','Inventory\Request_to_canvass_
 Route::get('/inventory/request-to-canvass/list','Inventory\Request_to_canvass_controller@show_list')->name('inventory.request-to-canvass.list')->middleware('auth');
 Route::get('/inventory/request-to-canvass/form/{uuid}.pdf','Inventory\Request_to_canvass_controller@index')->name('inventory.request-to-canvass.index');
 Route::get('/inventory/request-to-canvass/edit/{uuid}','Inventory\Request_to_canvass_controller@edit')->name('inventory.request-to-canvass.edit')->middleware('auth');
+Route::get('/inventory/request-to-canvass/settings','Inventory\Request_to_canvass_controller@settings')->name('inventory.request-to-canvass.settings')->middleware('auth');
 
 //Request to Canvass api request
 Route::get('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@get_list')->name('api.inventory.request-to-canvass.list')->middleware('auth');
 Route::post('/api/inventory/request-to-canvass/','Inventory\Request_to_canvass_controller@store')->name('api.inventory.request-to-canvass.store')->middleware('auth');
 Route::put('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@update')->name('api.inventory.request-to-canvass.update')->middleware('auth');
 Route::delete('/api/inventory/request-to-canvass/{id}','Inventory\Request_to_canvass_controller@destroy')->name('api.inventory.request-to-canvass.delete')->middleware('auth');
+Route::patch('/api/inventory/footer/settings/request-to-canvass','Inventory\Request_to_canvass_controller@update_footer_settings')->name('api.inventory.request-to-canvass.footer.update')->middleware('auth');
+Route::get('/api/inventory/footer/settings/request-to-canvass','Inventory\Request_to_canvass_controller@get_footer_settings')->name('api.inventory.request-to-canvass.footer.get')->middleware('auth');
 
 
 //Capital Expenditure Request Form web pages
@@ -227,12 +230,15 @@ Route::get('/inventory/receiving-report/create','Inventory\Receiving_report_cont
 Route::get('/inventory/receiving-report/list','Inventory\Receiving_report_controller@show_list')->name('inventory.receiving-report.list')->middleware('auth');
 Route::get('/inventory/receiving-report/form/{uuid}.pdf','Inventory\Receiving_report_controller@index')->name('inventory.receiving-report.index');
 Route::get('/inventory/receiving-report/edit/{uuid}','Inventory\Receiving_report_controller@edit')->name('inventory.receiving-report.edit')->middleware('auth');
+Route::get('/inventory/receiving-report/settings','Inventory\Receiving_report_controller@settings')->name('inventory.receiving-report.settings')->middleware('auth');
 
 //Receiving Report api request
 Route::get('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@get_list')->name('api.inventory.receiving-report.list')->middleware('auth');
 Route::post('/api/inventory/receiving-report/','Inventory\Receiving_report_controller@store')->name('api.inventory.receiving-report.store')->middleware('auth');
 Route::put('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@update')->name('api.inventory.receiving-report.update')->middleware('auth');
 Route::delete('/api/inventory/receiving-report/{id}','Inventory\Receiving_report_controller@destroy')->name('api.inventory.receiving-report.delete')->middleware('auth');
+Route::patch('/api/inventory/footer/settings/receiving-report','Inventory\Receiving_report_controller@update_footer_settings')->name('api.inventory.receiving-report.footer.update')->middleware('auth');
+Route::get('/api/inventory/footer/settings/receiving-report','Inventory\Receiving_report_controller@get_footer_settings')->name('api.inventory.receiving-report.footer.get')->middleware('auth');
 
 //Stock Issuance web pages
 Route::get('/inventory/stock-issuance/create','Inventory\Stock_issuance_controller@create')->name('inventory.stock-issuance.create')->middleware('auth');

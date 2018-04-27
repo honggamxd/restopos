@@ -13,6 +13,10 @@
 <i class="right angle icon divider"></i>
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Request to Canvass</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Request to Canvass</div>
+<i class="divider">|</i>
+<a class="section" href="{{route('inventory.request-to-canvass.create')}}" ng-if="edit_mode=='update'" ng-cloak>Create Request to Canvass</a>
+<i class="divider" ng-if="edit_mode=='update'">|</i>
+<a class="section" href="{{route('inventory.request-to-canvass.settings')}}">Settings</a>
 @endsection
 @section('padded_content')
 <form id="add-form" ng-submit="save_form()" class="form">
@@ -331,6 +335,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         // $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
         // $scope.formdata.canvass_by_date = moment().format("MM/DD/YYYY");
         $scope.items = {};
+        get_settings();
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.request_to_canvass_date = moment($scope.formdata.request_to_canvass_date.date).format("MM/DD/YYYY");
@@ -449,6 +454,23 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.$watch('formdata["request_to_canvass_date"]', function (newValue, oldValue, scope) {
         $scope.formdata.requested_by_date = newValue;
     });
+
+    function get_settings() {
+        $http({
+            method: "GET",
+            url: route('api.inventory.request-to-canvass.footer.get').url(),
+        }).then(function mySuccess(response) {
+            let footer = response.data.footer;
+            $scope.formdata.noted_by_name = footer.noted_by_name;
+            $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                console.log(rejection.statusText);
+            }
+        });
+    }
 
 
     $("#search-item").autocomplete({

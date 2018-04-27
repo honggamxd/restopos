@@ -24,6 +24,7 @@ class Request_to_canvass_controller extends Controller
     public function __construct()
     {
         // $this->middleware('auth');
+        $this->check_json_settings();
     }
 
     public function index(Request $request,$uuid)
@@ -203,5 +204,36 @@ class Request_to_canvass_controller extends Controller
             DB::commit();
         }
         catch(\Exception $e){DB::rollback();throw $e;}
+    }
+
+    public function settings(Request $request)
+    {
+        return view('inventory.request-to-canvass-settings');
+    }
+
+    private function check_json_settings()
+    {
+        if(!file_exists(public_path('settings/request-to-canvass.json'))){
+            $data = array();
+            $data['footer'] = ['noted_by_name'=>[]];
+            $fp = fopen('settings/request-to-canvass.json', 'w');
+            fwrite($fp, json_encode($data));
+            fclose($fp);
+        }
+    }
+
+    public function update_footer_settings(Request $request)
+    {
+        $data = array();
+        $data['footer'] = ['noted_by_name'=>$request->noted_by_name];
+        $fp = fopen('settings/request-to-canvass.json', 'w');
+        fwrite($fp, json_encode($data));
+        fclose($fp);
+    }
+
+    public function get_footer_settings(Request $request)
+    {
+        $string = file_get_contents(public_path("settings/request-to-canvass.json"));
+        return $string;
     }
 }

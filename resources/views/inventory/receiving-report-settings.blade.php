@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Purchase Request Email Notification')
+@section('title', 'Receiving Report Email Notification')
 
 @section('css')
 <style type="text/css">
@@ -9,92 +9,25 @@
 </style>
 @endsection
 @section('breadcrumb')
-<a class="section" href="{{route('inventory.purchase-request.list')}}">Purchase Requests</a>
+<a class="section" href="{{route('inventory.receiving-report.list')}}">Receiving Reports</a>
 <i class="right angle icon divider"></i>
-<a class="section hideprint" href="{{route('inventory.purchase-request.create')}}">Create Purchase Request</a>
+<a class="section hideprint" href="{{route('inventory.receiving-report.create')}}">Create Receiving Report</a>
 <i class="divider">|</i>
 <div class="active section">Settings</div>
 @endsection
 
 @section('padded_content')
-    <h1 style="text-align: center">Purchase Request Settings</h1>
+    <h1 style="text-align: center">Receiving Report Settings</h1>
     <br>
     <div class="row">
         <div class="col-sm-12">
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="pill" href="#notification-settings">Email Notifications</a></li>
-                <li><a data-toggle="pill" href="#footer-settings">Footer</a></li>
+                <li class="active"><a data-toggle="pill" href="#footer-settings">Footer</a></li>
             </ul>
             <br>
             <br>
             <div class="tab-content">
-                <div id="notification-settings" class="tab-pane fade in active">
-                    <button class="ui primary button" ng-click="add_recipient_form()">Add Recipient</button>
-                    <br>
-                    <br>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="text-align: center">Username</th>
-                                    <th style="text-align: center">Name</th>
-                                    <th style="text-align: center">Email Address</th>
-                                    <th style="text-align: center">Email Notification</th>
-                                    <th style="text-align: center">Approve via Email</th>
-                                    <th style="text-align: center"></th>
-                                </tr>
-                            </thead>
-                            <tbody ng-repeat="(index,item) in items" ng-cloak>
-                                <tr>
-                                    <td style="text-align: center">@{{item.user.username}}</td>
-                                    <td style="text-align: center">@{{item.user.name}}</td>
-                                    <td style="text-align: center">@{{item.user.email_address}}</td>
-                                    <td style="text-align: center">
-                                        <div class="ui toggle checkbox">
-                                            <input type="checkbox" ng-model="item.notify_email" ng-change="edit_recipient(item)">
-                                            <label ng-if="item.notify_email">On</label>
-                                            <label ng-if="!item.notify_email">Off</label>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <div class="ui toggle checkbox">
-                                            <input type="checkbox" ng-model="item.allow_approve" ng-change="edit_recipient(item)">
-                                            <label ng-if="item.allow_approve">Allowed</label>
-                                            <label ng-if="!item.allow_approve">Disallowed</label>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <div class="ui buttons">
-                                            <button type="button" class="ui red button" ng-click="delete_confirm(item)"><span class="glyphicon glyphicon-trash"></span></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr ng-if="items | isEmpty">
-                                    <td colspan="20" style="text-align: center;">
-                                        <h1 ng-if="loading">
-                                            <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
-                                            <br>
-                                            LOADING
-                                        </h1>
-                                        <h1>
-                                            <span ng-if="!loading" ng-cloak>NO DATA</span>
-                                            <span ng-if="loading" ng-cloak></span>
-                                        </h1>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th colspan="200">
-                                        &nbsp;
-                                    </th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div ng-bind-html="pages" class="text-center" ng-cloak></div>
-                </div>
-                <div id="footer-settings" class="tab-pane fade">
+                <div id="footer-settings" class="tab-pane fade in active">
                     <div class="form-group">
                         <label for="noted_by_name">Noted By:</label>
                         <input type="text" class="form-control" placeholder="Search for Name of User" id="noted_by_name" ng-model="footer.noted_by_name" ng-change="update_footer_settings()">
@@ -165,36 +98,11 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.pages = "";
     $scope.searchString = "";
     $scope.footer = {};
-    $scope.users = {!! json_encode($users['data']) !!};
-
-    $scope.show_recipients = function(url_string) {
-        url_string = (typeof url_string !== 'undefined') && url_string !== "" ? url_string : route('api.inventory.purchase-request.recipient.list').url();
-        $scope.items = {};
-        $scope.loading = true;
-        $scope.pages = "";
-        $http({
-            method: "GET",
-            url: url_string,
-            params: {
-                searchString: $scope.searchString
-            }
-        }).then(function mySuccess(response) {
-            $scope.items = response.data.result.data;
-            $scope.loading = false;
-        }, function(rejection) {
-            $scope.loading = false;
-            if (rejection.status != 422) {
-                request_error(rejection.status);
-            } else if (rejection.status == 422) {
-                console.log(rejection.statusText);
-            }
-        });
-    }
 
     $scope.get_settings = function() {
         $http({
             method: "GET",
-            url: route('api.inventory.purchase-request.footer.get').url(),
+            url: route('api.inventory.receiving-report.footer.get').url(),
         }).then(function mySuccess(response) {
             $scope.footer = response.data.footer;
         }, function(rejection) {
@@ -207,7 +115,6 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         });
     }
     
-    $scope.show_recipients();
     $scope.get_settings();
 
     $scope.add_recipient_form = function(){
@@ -223,7 +130,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $scope.submit = true;
             $http({
                 method: 'POST',
-                url: route('api.inventory.purchase-request.recipient.store').url(),
+                url: route('api.inventory.receiving-report.recipient.store').url(),
                 data: $.param($scope.formdata)
             }).then(function(response) {
                 $scope.submit = false;
@@ -252,7 +159,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.submit = true;
         $http({
             method: 'PATCH',
-            url: route('api.inventory.purchase-request.recipient.update',[item.id]).url(),
+            url: route('api.inventory.receiving-report.recipient.update',[item.id]).url(),
             data: $.param(item)
         }).then(function(response) {
             $scope.submit = false;
@@ -286,7 +193,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         let name = item.user.name;
         $http({
             method: 'DELETE',
-            url: route('api.inventory.purchase-request.recipient.destroy',[id]).url(),
+            url: route('api.inventory.receiving-report.recipient.destroy',[id]).url(),
         }).then(function(response) {
             $scope.show_recipients();
             $.notify(name+' has been removed.');
@@ -303,7 +210,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.update_footer_settings = function() {
         $http({
             method: 'PATCH',
-            url: route('api.inventory.purchase-request.footer.update').url(),
+            url: route('api.inventory.receiving-report.footer.update').url(),
             data: $.param($scope.footer)
         }).then(function(response) {
             $scope.submit = false;

@@ -13,6 +13,10 @@
 <i class="right angle icon divider"></i>
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Receiving Report</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Receiving Report</div>
+<i class="divider" ng-if="edit_mode=='update'">|</i>
+<a class="section" href="{{route('inventory.receiving-report.create')}}" ng-if="edit_mode=='update'" ng-cloak>Create Receiving Report</a>
+{{-- <i class="divider">|</i> --}}
+{{-- <a class="section" href="{{route('inventory.receiving-report.settings')}}">Settings</a> --}}
 @endsection
 @section('padded_content')
 <form id="add-form" ng-submit="save_form()" class="form">
@@ -276,6 +280,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.purchase_order_number_formatted = null;
         $scope.formdata.receiving_report_date = moment().format("MM/DD/YYYY hh:mm:ss a");
         $scope.formdata.received_by_name = user_data.name;
+        get_settings();
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.receiving_report_date = $scope.formdata.receiving_report_date ? moment($scope.formdata.receiving_report_date).format("MM/DD/YYYY hh:mm:ss a") : null;
@@ -439,6 +444,23 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
                 setTimeout(() => {
                     // window.location.href = route('inventory.receiving-report.edit',[uuid]);
                 }, 2000);
+            }
+        });
+    }
+
+    function get_settings() {
+        $http({
+            method: "GET",
+            url: route('api.inventory.receiving-report.footer.get').url(),
+        }).then(function mySuccess(response) {
+            let footer = response.data.footer;
+            $scope.formdata.noted_by_name = footer.noted_by_name;
+            $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                console.log(rejection.statusText);
             }
         });
     }
