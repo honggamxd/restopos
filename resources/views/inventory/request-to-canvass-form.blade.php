@@ -64,8 +64,9 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="type_of_item_requested">Type of Item Requested:</label>
+                    <label for="type_of_item_requested"><small style="color:red">*</small> Type of Item Requested:</label>
                     <select class="form-control" id="type_of_item_requested" ng-model="formdata.type_of_item_requested">
+                        <option value="">Select type of items requested</option>
                         <option value="operations">Operations</option>
                         <option value="capex">Capex</option>
                     </select>
@@ -321,7 +322,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.formdata.requested_by_name = user_data.name;
-        $scope.formdata.type_of_item_requested = 'operations';
+        $scope.formdata.type_of_item_requested = null;
         $scope.formdata.vendor_1_name = 'Vendor 1';
         $scope.formdata.vendor_2_name = 'Vendor 2';
         $scope.formdata.vendor_3_name = 'Vendor 3';
@@ -359,7 +360,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             function(){
                 $scope.$apply(function() {
                     $scope.formdata = {};
-                    $scope.formdata.type_of_item_requested = 'operations';
+                    $scope.formdata.type_of_item_requested = null;
                     $scope.items = {};
                     $scope.formerrors = {};
                 });
@@ -394,7 +395,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             $.notify('Redirecting to print preview.','info');
             $.notify('Request to Canvass has been generated.');
             $scope.formdata = {};
-            $scope.formdata.type_of_item_requested = 'operations';
+            $scope.formdata.type_of_item_requested = null;
             $scope.formdata.request_to_canvass_number = response.data.request_to_canvass_number + 1;
             $scope.items = {};
             setTimeout(() => {

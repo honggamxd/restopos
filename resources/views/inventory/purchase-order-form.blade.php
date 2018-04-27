@@ -104,7 +104,7 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="purpose">Purpose:</label>
+                    <label for="purpose"><small style="color:red">*</small> Purpose:</label>
                     <input type="text" class="form-control" placeholder="Enter Purpose" id="purpose" ng-model="formdata.purpose">
                     <p class="help-block" ng-cloak>@{{formerrors.purpose[0]}}</p>
                 </div>
@@ -120,8 +120,8 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="request_chargeable_to">Reason Chargeable To:</label>
-                    <input type="text" class="form-control" placeholder="Enter Reason Chargeable To" id="request_chargeable_to" ng-model="formdata.request_chargeable_to">
+                    <label for="request_chargeable_to"><small style="color:red">*</small> Request Chargeable To:</label>
+                    <input type="text" class="form-control" placeholder="Enter Request Chargeable To" id="request_chargeable_to" ng-model="formdata.request_chargeable_to">
                     <p class="help-block" ng-cloak>@{{formerrors.request_chargeable_to[0]}}</p>
                 </div>
             </div>

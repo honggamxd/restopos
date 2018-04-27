@@ -83,14 +83,14 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="reason_for_the_request">Reason for the Request:</label>
+                    <label for="reason_for_the_request"><small style="color:red">*</small> Reason for the Request:</label>
                     <input type="text" class="form-control" placeholder="Enter Reason for the Request" id="reason_for_the_request" ng-model="formdata.reason_for_the_request">
                     <p class="help-block" ng-cloak>@{{formerrors.reason_for_the_request[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="date_needed">Date Needed:</label>
+                    <label for="date_needed"><small style="color:red">*</small> Date Needed:</label>
                     <input type="text" class="form-control" placeholder="Enter Date Needed" id="date_needed" ng-model="formdata.date_needed" readonly>
                     <p class="help-block" ng-cloak>@{{formerrors.date_needed[0]}}</p>
                 </div>
@@ -99,15 +99,16 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="request_chargeable_to">Request Chargeable To:</label>
+                    <label for="request_chargeable_to"><small style="color:red">*</small> Request Chargeable To:</label>
                     <input type="text" class="form-control" placeholder="Enter Request Chargeable To" id="request_chargeable_to" ng-model="formdata.request_chargeable_to">
                     <p class="help-block" ng-cloak>@{{formerrors.request_chargeable_to[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="type_of_item_requested">Type of Item Requested:</label>
+                    <label for="type_of_item_requested"><small style="color:red">*</small> Type of Item Requested:</label>
                     <select class="form-control" id="type_of_item_requested" ng-model="formdata.type_of_item_requested">
+                        <option value="">Select type of items requested</option>
                         <option value="operations">Operations</option>
                         <option value="capex">Capex</option>
                     </select>
@@ -323,7 +324,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.sent_emails = 0;
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
-        $scope.formdata.type_of_item_requested = 'operations';
+        $scope.formdata.type_of_item_requested = null;
         $scope.formdata.requested_by_name = user_data.name;
         $scope.items = {};
         $scope.price_selection = {};
@@ -399,7 +400,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             function(){
                 $scope.$apply(function() {
                     $scope.formdata = {};
-                    $scope.formdata.type_of_item_requested = 'operations';
+                    $scope.formdata.type_of_item_requested = null;
                     $scope.items = {};
                     $scope.formerrors = {};
                     $scope.request_to_canvass_number_formatted = null;
@@ -442,7 +443,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
             $scope.formdata = {};
             $scope.formdata.purchase_request_number = response.data.purchase_request_number + 1;
-            $scope.formdata.type_of_item_requested = 'operations';
+            $scope.formdata.type_of_item_requested = null;
             $scope.items = {};
 
             if($scope.recipients.length == 0){
