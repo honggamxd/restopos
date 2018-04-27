@@ -360,7 +360,7 @@ class Stock_issuance_controller extends Controller
     {
         if(!file_exists(public_path('settings/stock-issuance.json'))){
             $data = array();
-            $data['footer'] = ['noted_by_name'=>[]];
+            $data['footer'] = ['posted_by_name'=>[]];
             $fp = fopen('settings/stock-issuance.json', 'w');
             fwrite($fp, json_encode($data));
             fclose($fp);
@@ -370,7 +370,7 @@ class Stock_issuance_controller extends Controller
     public function update_footer_settings(Request $request)
     {
         $data = array();
-        $data['footer'] = ['noted_by_name'=>$request->noted_by_name];
+        $data['footer'] = ['posted_by_name'=>$request->posted_by_name];
         $fp = fopen('settings/stock-issuance.json', 'w');
         fwrite($fp, json_encode($data));
         fclose($fp);

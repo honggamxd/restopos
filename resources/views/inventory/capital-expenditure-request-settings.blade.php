@@ -96,8 +96,16 @@
                 </div>
                 <div id="footer-settings" class="tab-pane fade">
                     <div class="form-group">
-                        <label for="noted_by_name">Default Name of Noted By:</label>
-                        <input type="text" class="form-control" placeholder="Enter Noted By" id="noted_by_name" ng-model="footer.noted_by_name">
+                        <label for="verified_as_funded_by_name">Verified as Funded By:</label>
+                        <input type="text" class="form-control" placeholder="Search for Name of User" id="verified_as_funded_by_name" ng-model="footer.verified_as_funded_by_name">
+                    </div>    
+                    <div class="form-group">
+                        <label for="recorded_by_name">Recorded by:</label>
+                        <input type="text" class="form-control" placeholder="Search for Name of User" id="recorded_by_name" ng-model="footer.recorded_by_name">
+                    </div>    
+                    <div class="form-group">
+                        <label for="approved_by_2_name">Managing Director:</label>
+                        <input type="text" class="form-control" placeholder="Search for Name of User" id="approved_by_2_name" ng-model="footer.approved_by_2_name">
                     </div>    
                 </div>
             </div>
@@ -318,10 +326,26 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         });
     }
 
-    $("#noted_by_name").autocomplete({
+    $("#verified_as_funded_by_name").autocomplete({
         source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
         select: function(event, ui) {
-            $scope.footer.noted_by_name = ui.item.value;
+            $scope.footer.verified_as_funded_by_name = ui.item.value;
+            $scope.update_footer_settings();
+        }
+    });
+
+    $("#approved_by_2_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
+        select: function(event, ui) {
+            $scope.footer.approved_by_2_name = ui.item.value;
+            $scope.update_footer_settings();
+        }
+    });
+
+    $("#recorded_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
+        select: function(event, ui) {
+            $scope.footer.recorded_by_name = ui.item.value;
             $scope.update_footer_settings();
         }
     });

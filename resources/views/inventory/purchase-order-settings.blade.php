@@ -96,8 +96,8 @@
                 </div>
                 <div id="footer-settings" class="tab-pane fade">
                     <div class="form-group">
-                        <label for="noted_by_name">Default Name of Noted By:</label>
-                        <input type="text" class="form-control" placeholder="Enter Noted By" id="noted_by_name" ng-model="footer.noted_by_name">
+                        <label for="noted_by_name">Noted By:</label>
+                        <input type="text" class="form-control" placeholder="Search for Name of User" id="noted_by_name" ng-model="footer.noted_by_name" ng-change="update_footer_settings()">
                     </div>    
                 </div>
             </div>

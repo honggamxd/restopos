@@ -311,7 +311,7 @@ class Capital_expenditure_request_controller extends Controller
         catch(\Exception $e){DB::rollback();throw $e;}
     }
 
-    public function approve($id)
+    public function approve(Request $request,$id)
     {
         $validator = Validator::make(
             [],
@@ -328,9 +328,12 @@ class Capital_expenditure_request_controller extends Controller
         }
         DB::beginTransaction();
         try{
+            $settings = json_decode($this->get_footer_settings($request));
             $capital_expenditure_request = Inventory_capital_expenditure_request::findOrFail($id);
             $capital_expenditure_request->approved_by_1_name = Auth::user()->name;
             $capital_expenditure_request->approved_by_1_date = Carbon::now()->format('Y-m-d');
+            $capital_expenditure_request->approved_by_2_name = $settings->footer->approved_by_2_name;
+            $capital_expenditure_request->approved_by_2_date = Carbon::now()->format('Y-m-d');
             $capital_expenditure_request->is_approved = 1;
             $capital_expenditure_request->save();
             DB::commit();
@@ -351,7 +354,11 @@ class Capital_expenditure_request_controller extends Controller
     {
         if(!file_exists(public_path('settings/capital-expenditure-request.json'))){
             $data = array();
-            $data['footer'] = ['noted_by_name'=>[]];
+            $data['footer'] = [
+                'verified_as_funded_by_name'=>[],
+                'approved_by_2_name'=>[],
+                'recorded_by_name'=>[]
+            ];
             $fp = fopen('settings/capital-expenditure-request.json', 'w');
             fwrite($fp, json_encode($data));
             fclose($fp);
@@ -361,7 +368,11 @@ class Capital_expenditure_request_controller extends Controller
     public function update_footer_settings(Request $request)
     {
         $data = array();
-        $data['footer'] = ['noted_by_name'=>$request->noted_by_name];
+        $data['footer'] = [
+            'verified_as_funded_by_name'=>$request->verified_as_funded_by_name,
+            'approved_by_2_name'=>$request->approved_by_2_name,
+            'recorded_by_name'=>$request->recorded_by_name,
+        ];
         $fp = fopen('settings/capital-expenditure-request.json', 'w');
         fwrite($fp, json_encode($data));
         fclose($fp);

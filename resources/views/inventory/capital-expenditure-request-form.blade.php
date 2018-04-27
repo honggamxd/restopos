@@ -256,7 +256,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" ng-if="edit_mode=='update'">
+        {{-- <div class="row" ng-if="edit_mode=='update'">
             <div class="col-sm-4">
                 <div class="form-group">
                     <label for="approved_by_2_name">Approved By</label>
@@ -278,7 +278,7 @@
                     <p class="help-block" ng-cloak>@{{formerrors.approved_by_2_position[0]}}</p>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
@@ -543,8 +543,12 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             url: route('api.inventory.capital-expenditure-request.footer.get').url(),
         }).then(function mySuccess(response) {
             let footer = response.data.footer;
-            $scope.formdata.noted_by_name = footer.noted_by_name;
-            $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+            $scope.formdata.verified_as_funded_by_name = footer.verified_as_funded_by_name;
+            // $scope.formdata.approved_by_2_name = footer.approved_by_2_name;
+            $scope.formdata.recorded_by_name = footer.recorded_by_name;
+            $scope.formdata.verified_as_funded_by_date = moment().format("MM/DD/YYYY");
+            // $scope.formdata.approved_by_2_date = moment().format("MM/DD/YYYY");
+            $scope.formdata.recorded_by_date = moment().format("MM/DD/YYYY");
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);

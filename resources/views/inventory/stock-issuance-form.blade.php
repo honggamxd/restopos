@@ -564,8 +564,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             url: route('api.inventory.stock-issuance.footer.get').url(),
         }).then(function mySuccess(response) {
             let footer = response.data.footer;
-            $scope.formdata.noted_by_name = footer.noted_by_name;
-            $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+            $scope.formdata.posted_by_name = footer.posted_by_name;
+            $scope.formdata.posted_by_date = moment().format("MM/DD/YYYY");
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
