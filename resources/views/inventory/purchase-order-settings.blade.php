@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Purchase Order Email Notification')
+@section('title', 'Purchase Order Settings')
 
 @section('css')
 <style type="text/css">

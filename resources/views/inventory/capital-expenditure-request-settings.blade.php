@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Capital Expenditure Request Email Notification')
+@section('title', 'Capital Expenditure Request Settings')
 
 @section('css')
 <style type="text/css">

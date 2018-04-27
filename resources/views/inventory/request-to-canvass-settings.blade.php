@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Request to Canvass Email Notification')
+@section('title', 'Request to Canvass Settings')
 
 @section('css')
 <style type="text/css">

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Receiving Report Email Notification')
+@section('title', 'Receiving Report Settings')
 
 @section('css')
 <style type="text/css">

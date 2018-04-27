@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Stock Issuance Email Notification')
+@section('title', 'Stock Issuance Settings')
 
 @section('css')
 <style type="text/css">
