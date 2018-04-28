@@ -36,6 +36,39 @@
 
 </style>
 @endsection
+@section('modals')
+<div id="add-payment-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Payment</h4>
+      </div>
+      <div class="modal-body">
+        <form id="add-payment-form" ng-submit="add_payment()">
+        {{ csrf_field() }}
+        <div class="form-group">
+          <label>Type of Settlement</label>
+          <select class="form-control" ng-model="new_settlement_formdata.type" ng-options="item as item.label for item in settlements track by item.value">
+            <option value="">Select Settlement</option>
+          </select>
+          <p class="help-block">@{{new_settlement_formerrors.type[0]}}</p>
+
+          <label>Amount</label>
+          <input class="form-control" ng-model="new_settlement_formdata.amount" type="number" step="0.01">
+          <p class="help-block">@{{new_settlement_formerrors.amount[0]}}</p>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="add-payment-form" ng-disabled="submit" ng-class="{'loading':submit}">Submit</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+@endsection
 @section('breadcrumb')
 <a class="section hideprint" href="/restaurant">Restaurant</a>
 <i class="right angle icon divider hideprint"></i>
@@ -136,9 +169,10 @@
   <tr>
     <td>&nbsp;</td>
   </tr>
-  <tr ng-repeat="payment_data in payments" ng-show="has_payment">
+  <tr ng-repeat="(index,payment_data) in payments" ng-show="has_payment">
     <td ng-show="bill.type=='bad_order'" style="text-align: right;"></td>
     <td colspan="3" style="text-align: right;">
+      <a href="javascipt:void(0)" ng-click="delete_settlement_confirmation(payment_data,index)" style="cursor: pointer" title="Delete Settlement">X</a>&nbsp;
       <select ng-model="payment_data.settlement_array" ng-options="item as item.label for item in settlements track by item.value" ng-change="change_settlement(this)">
       </select>
     :</td>
@@ -185,6 +219,7 @@
 </table>
 <div class="btn-group" role="group" aria-label="...">
   <button class="btn btn-primary" ng-if="remaining_balance() == 0" ng-click="save()">Save Changes</button>
+  <button class="btn btn-success" ng-click="add_payment_form()">Add Payment</button>
 </div>
 @endsection
 
@@ -203,6 +238,11 @@
       setTimeout(function(){ window.print(); }, 1000);
     });
     @endif
+    $scope.new_settlement_formdata = {
+      type: null,
+      amount: 0,
+    };
+    $scope.new_settlement_formerrors = {};
     $scope.footer = {};
     $scope.payments = {};
     $scope.formdata = {};
@@ -310,7 +350,7 @@
       }
       $http({
         method: 'PUT',
-        url: '/restaurant/bill/{id}/edit',
+        url: '/restaurant/bill/'+$scope.bill.id+'/edit',
         data: $.param($scope.formdata),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -333,6 +373,75 @@
       });
       console.log($scope.formdata);
     }
+
+    $scope.delete_settlement_confirmation = function(payment_data,index) {
+      console.log(payment_data);
+      console.log(index);
+      alertify.confirm(
+        'DELETE  <b style=" text-transform: uppercase;">'+payment_data.settlement+'</b>',
+        'Are you sure you want to delete this  <b>'+payment_data.settlement+'</b> settlement?',
+        function(){
+          $scope.delete_settlement(payment_data,index);
+        },
+        function()
+        {
+          // alertify.error('Cancel')
+        }
+      );
+    }
+    
+    $scope.delete_settlement = function(payment_data,index) {
+      $http({
+        method: 'DELETE',
+        url: '/api/restaurant/table/customer/payment/delete/'+payment_data.id,
+      })
+      .then(function(response) {
+        $.notify('The settlement '+payment_data.settlement+' has been deleted.');
+        $scope.payments.splice(index,1);
+      }, function(rejection) {
+        var errors = rejection.data;
+        if(rejection.status != 422){
+          request_error(rejection.status);
+        }else if(rejection.status == 422){        
+            var errors = rejection.data;
+            $scope.formerrors = errors;
+            $scope.submit = false;
+        }
+      });
+    }
+
+    $scope.add_payment_form = function() {
+      $('#add-payment-modal').modal('show');
+      $scope.new_settlement_formdata = {
+        type: null,
+        amount: 0,
+      }
+      $scope.new_settlement_formerrors = {};
+    }
+
+    $scope.add_payment = function() {
+      $http({
+        method: 'POST',
+        url: '/api/restaurant/table/customer/payment/add/'+$scope.bill.id,
+        data: $.param($scope.new_settlement_formdata),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }).then(function(response) {
+        $scope.payments.push(response.data);
+        $('#add-payment-modal').modal('hide');
+        $.notify('A new settlement has been added.');
+      }, function(rejection) {
+        if (rejection.status != 422) {
+          request_error(rejection.status);
+        } else if (rejection.status == 422) {
+          var errors = rejection.data;
+          $scope.new_settlement_formerrors = errors;
+        }
+        $scope.submit = false;
+      });
+    }
+
   });
   
 </script>
