@@ -25,6 +25,9 @@ class User_transformer extends TransformerAbstract
             case 'restaurant_cashier':
                 $str_privilege = "Restaurant Cashier";
                 break;
+            case 'inventory_user':
+                $str_privilege = "Inventory User";
+                break;
             default:
                 $str_privilege = "";
                 break;
@@ -35,6 +38,7 @@ class User_transformer extends TransformerAbstract
             'username' => $user->username,
             'name' => $user->name,
             'email_address' => $user->email_address,
+            'position' => $user->position,
             'privilege' => $user->privilege,
             'restaurant_id' => $user->restaurant_id,
             'str_privilege' => $str_privilege,

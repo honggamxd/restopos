@@ -19,7 +19,11 @@ use App\Transformers\User_transformer;
 
 class Users_controller extends Controller
 {
-
+  public function __construct()
+  {
+    // $this->middleware('auth');
+    $this->check_json_settings();
+  }
   public function index(Request $request)
   {
     $restaurant = DB::table('restaurant')->get();
@@ -99,6 +103,41 @@ class Users_controller extends Controller
     return redirect('/login');
   }
 
+  private function check_json_settings()
+  {
+    if(!file_exists(public_path('settings/user.json'))){
+        $data = array();
+        $data['positions'] = [
+          'Resort Manager',
+          'Managing Director',
+          'General Manager',
+          'HR Manager',
+          'Cash & Bank',
+          'Purchasing',
+          'Warehouse Representative',
+          'Department Head'
+        ];
+        $fp = fopen('settings/user.json', 'w');
+        fwrite($fp, json_encode($data));
+        fclose($fp);
+    }
+  }
+
+  public function update_settings(Request $request)
+  {
+      $data = array();
+      $data['positions'] = $request->positions;
+      $fp = fopen('settings/user.json', 'w');
+      fwrite($fp, json_encode($data));
+      fclose($fp);
+  }
+
+  public function get_settings(Request $request)
+  {
+      $string = file_get_contents(public_path("settings/user.json"));
+      return $string;
+  }
+
 
   public function show_users(Request $request)
   {
@@ -149,6 +188,7 @@ class Users_controller extends Controller
         $user->username = $request->username;
         $user->password = bcrypt(md5($request->password));
         $user->privilege = $request->privilege;
+        $user->position = $request->privilege=='inventory_user' || $request->privilege=='admin' ? $request->position : null;
         $user->email_address = $request->email_address;
         $user->allow_edit_info = ($request->allow_edit_info!=null?1:0);
         $user->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
@@ -162,14 +202,22 @@ class Users_controller extends Controller
 
   public function edit_privilege(Request $request,$id)
   {
-    $this->validate($request, [
-        'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
-        'email_address' => 'email|unique:user,email_address,'.$id.',id,deleted_at,NULL',
-    ],
+    if($request->email_address){
+      $validations = [
+          'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
+          'email_address' => 'email|unique:user,email_address,'.$id.',id,deleted_at,NULL',
+      ];
+    }else{
+        $validations = [
+            'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
+        ];
+    }
+    $this->validate($request, $validations,
     [
       'restaurant_id.required_if' => 'The outlet field is required when privilege is restaurant admin or cashier.',
     ]
     );
+    // return $request->email_address;
     DB::beginTransaction();
     try{
         
@@ -177,6 +225,7 @@ class Users_controller extends Controller
         $user_data = $user->find($id);
         $user_data->privilege = $request->privilege;
         $user_data->email_address = $request->email_address;
+        $user_data->position = $request->privilege=='inventory_user' || $request->privilege=='admin' ? $request->position : null;
         $user_data->password = bcrypt(md5($request->password));
         $user_data->allow_edit_info = ($request->allow_edit_info=='true'?1:0);
         $user_data->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);

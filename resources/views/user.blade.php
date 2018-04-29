@@ -4,6 +4,9 @@
 
 @section('css')
 <style type="text/css">
+.ui.striped.table > tr:nth-child(2n), .ui.striped.table tbody tr:nth-child(2n) {
+    background-color: rgba(0, 0, 50, 0.06);
+}
 @media (min-width: 768px){
   .modal-lg {
     width: 760px;
@@ -30,19 +33,22 @@
         <tr>
           <th class="center aligned">Name</th>
           <th class="center aligned">Username</th>
-          <th class="center aligned">Privilege</th>
           <th class="center aligned">Email Address</th>
-          <th class="center aligned">Outlet</th>
+          <th class="center aligned">Privilege</th>
+          <th class="center aligned">Outlet/Position</th>
         </tr>
       </thead>
       <tbody ng-cloak>
         <tr ng-repeat="user in users.data" ng-hide="user.id=={{Auth::user()->id}}">
           <td class="center aligned middle aligned">@{{user.name}}</td>
           <td class="center aligned middle aligned">@{{user.username}}</td>
-          <td class="center aligned middle aligned">@{{user.str_privilege}}</td>
           <td class="center aligned middle aligned">@{{user.email_address}}</td>
           <td class="center aligned middle aligned">
-            <span ng-if="user.restaurant">@{{user.restaurant.name}}</span>
+            <span>@{{user.str_privilege}}</span>
+          </td>
+          <td class="center aligned middle aligned">
+            <span ng-if="user.restaurant && user.privilege!='inventory_user'">@{{user.restaurant.name}}</span>
+            <span ng-if="user.privilege=='inventory_user' || user.privilege=='admin'">@{{user.position}}</span>
           </td>
           <td class="center aligned middle aligned">
             <div class="ui buttons">
@@ -96,12 +102,13 @@
             <option value="restaurant_cashier">Restaurant Cashier</option>
             <option value="restaurant_admin">Restaurant Admin</option>
             <option value="admin">Admin</option>
+            <option value="inventory_user">Inventory User</option>
           </select>
           <p class="help-block">@{{formerrors.privilege[0]}}</p>
         </div>
 
 
-        <div class="form-group" ng-hide="formdata.privilege=='admin'">
+        <div class="form-group" ng-hide="formdata.privilege=='admin' || formdata.privilege=='inventory_user'">
           <label>Outlet:</label>
           <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id">
             <option value="">Select Outlet</option>
@@ -110,6 +117,14 @@
             @endforeach
           </select>
           <p class="help-block">@{{formerrors.restaurant_id[0]}}</p>
+        </div>
+
+        <div class="form-group" ng-if="formdata.privilege=='admin' || formdata.privilege=='inventory_user'">
+          <label>Position</label>
+          <select class="form-control" ng-model="formdata.position" ng-options="item for item in positions">
+            <option value="">Select Position</option>
+          </select>
+          <p class="help-block">@{{formerrors.position[0]}}</p>
         </div>
 
         <div class="form-group">
@@ -174,16 +189,25 @@
 
         <div class="form-group">
           <label>Privilege:</label>
-          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.privilege" ng-init="formdata.privilege='restaurant_cashier'">
+          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.privilege">
             <option value="restaurant_cashier">Restaurant Cashier</option>
             <option value="restaurant_admin">Restaurant Admin</option>
             <option value="admin">Admin</option>
+            <option value="inventory_user">Inventory User</option>
           </select>
           <p class="help-block">@{{formerrors.privilege[0]}}</p>
         </div>
 
+        <div class="form-group" ng-if="formdata.privilege=='admin' || formdata.privilege=='inventory_user'">
+          <label>Position</label>
+          <select class="form-control" ng-model="formdata.position" ng-options="item for item in positions">
+            <option value="">Select Position</option>
+          </select>
+          <p class="help-block">@{{formerrors.position[0]}}</p>
+        </div>
 
-        <div class="form-group" ng-hide="formdata.privilege=='admin'">
+
+        <div class="form-group" ng-hide="formdata.privilege=='admin' || formdata.privilege=='inventory_user'">
           <label>Outlet:</label>
           <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.restaurant_id">
             <option value="">Select Outlet</option>
@@ -225,6 +249,8 @@
   
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     show_users();
+    get_settings();
+    $scope.positions = [];
     function show_users() {
       $scope.loading = true;
       $http({
@@ -242,14 +268,34 @@
           }
       });
     }
+    function get_settings() {
+        $http({
+            method: "GET",
+            url: route('api.user.settings.get').url(),
+        }).then(function mySuccess(response) {
+            let positions = response.data.positions;
+            angular.forEach(positions, function(value, key) {
+              $scope.positions.push(value);
+            });
+            console.log($scope.positions);
+        }, function(rejection) {
+            if (rejection.status != 422) {
+                request_error(rejection.status);
+            } else if (rejection.status == 422) {
+                console.log(rejection.statusText);
+            }
+        });
+    }
     $scope.loading = true;
     $scope.formdata = {
-      privilege:'restaurant_cashier'
+      privilege:'restaurant_cashier',
+      position: null,
     }
     $scope.add_user_form = function() {
       $('#add-user-modal').modal('show');
       $scope.formdata = {
-        privilege:'restaurant_cashier'
+        privilege:'restaurant_cashier',
+        position: null,
       }
     }
 
@@ -281,7 +327,7 @@
     $scope.edit_user = function(data) {
       console.log(data);
       $scope.formdata = data.user;
-      $scope.formdata.restaurant_id = (data.user.restaurant_id.toString()=='0'?'':data.user.restaurant_id.toString()); 
+      $scope.formdata.restaurant_id = (data.user.restaurant_id.toString()=='0'?'':data.user.restaurant_id.toString());
       $('#edit-user-modal').modal('show');
     }
 
@@ -292,7 +338,8 @@
         restaurant_id: $scope.formdata.restaurant_id,
         allow_edit_info: $scope.formdata.allow_edit_info,
         password: $scope.formdata.password,
-        email_address: $scope.formdata.email_address
+        email_address: $scope.formdata.email_address,
+        position: $scope.formdata.position
       };
       $scope.formerrors = {};
       $scope.submit = true;
@@ -305,7 +352,7 @@
       .then(function(response) {
         console.log(response.data)
          $("#edit-user-modal").modal("hide");
-         $.notify('The Privileges of '+$scope.formdata.username+' has been updated.');
+         $.notify('The User '+$scope.formdata.username+' has been updated.');
          $scope.formdata = {};
          $scope.formerrors = {};
          $scope.submit = false;

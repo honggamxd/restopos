@@ -122,6 +122,8 @@ Route::post('/api/users/add', 'Users_controller@add');
 Route::post('/api/users/settings', 'Users_controller@save_settings');
 Route::post('/api/users/edit/{id}', 'Users_controller@edit_privilege');
 Route::post('/api/users/delete/{id}', 'Users_controller@delete');
+Route::patch('/api/user/settings','Users_controller@update_settings')->name('api.user.settings.update');
+Route::get('/api/user/settings','Users_controller@get_settings')->name('api.user.settings.get');
 
 
 Route::get('/restaurant/settings','Restaurant_controller@settings')->middleware('auth.level.4');
