@@ -116,7 +116,10 @@
   </thead>
   <tbody>
     <tr ng-repeat="items in bill_detail" ng-cloak>
-      <td style="width: 50%;vertical-align: top;">@{{items.menu}}<b ng-if="items.special_instruction != '' && items.special_instruction != null && bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
+      <td style="width: 50%;vertical-align: top;">
+        <select ng-model="items.menu_data" ng-options="item as item.name for item in menu track by item.id">
+        </select>
+        <b ng-if="items.special_instruction != '' && items.special_instruction != null && bill.type=='good_order'"><br>(@{{items.special_instruction}})</b></td>
       <td style="text-align: center;vertical-align: top;">
         <input type="number" step="0.01" min="0" style="text-align: right;" ng-model="items.price">
       </td>
@@ -254,12 +257,14 @@
     $scope.has_payment = {!! json_encode($has_payment) !!};
     $scope.customer_data = {!! json_encode($customer_data) !!};
     $scope.settlements = {!! json_encode($settlements) !!};
+    $scope.menu = {!! json_encode($menu) !!};
     $scope.total_discount = parseFloat($scope.bill.total_discount);
     $scope.items_has_sundry = function() {
       items_has_sundry = false;
       angular.forEach($scope.bill_detail, function(value, key) {
-        if(value.category.toUpperCase()=="SUNDRY"){
+        if(value.menu_data.category.toUpperCase()=="SUNDRY"){
           items_has_sundry = true;
+          $scope.bill.sc_pwd = 0;
         }
       });
       return items_has_sundry;
@@ -332,25 +337,50 @@
         $.notify('Unable to modify, the remaining balance must be 0 in order to modify.','error');
         return false;
       }
-      $scope.bill.gross_billing = $scope.discounted_gross_billing();
-      $scope.bill.total_item_amount = $scope.gross_billing();
-      $scope.bill.room_service_charge = $scope.room_service_charge();
-      $scope.bill.discounted_gross_billing = $scope.discounted_gross_billing();
-      $scope.bill.sc_pwd_discount = $scope.sc_pwd_discount();
-      $scope.bill.sc_pwd_vat_exemption = $scope.sc_pwd_vat_exemption();
-      $scope.bill.net_billing = $scope.net_billing();
-      $scope.bill.sales_net_of_vat_and_service_charge = $scope.discounted_gross_billing()/1.12*.9;
-      $scope.bill.service_charge = $scope.discounted_gross_billing()/1.12*0.1;
-      $scope.bill.vatable_sales = $scope.bill.sales_net_of_vat_and_service_charge+$scope.bill.service_charge;
-      $scope.bill.output_vat = $scope.bill.vatable_sales*.12;
-      $scope.bill.sales_inclusive_of_vat = $scope.bill.vatable_sales+$scope.bill.output_vat;
-      $scope.bill.excess = $scope.payment_change();
-      $scope.bill.total_discount = $scope.total_discount;
+      let bill = {};
+      angular.copy($scope.bill,bill);
+      bill.gross_billing = $scope.discounted_gross_billing();
+      bill.total_item_amount = $scope.gross_billing();
+      bill.room_service_charge = $scope.room_service_charge();
+      bill.discounted_gross_billing = $scope.discounted_gross_billing();
+      bill.sc_pwd_discount = $scope.sc_pwd_discount();
+      bill.sc_pwd_vat_exemption = $scope.sc_pwd_vat_exemption();
+      bill.net_billing = $scope.net_billing();
+      bill.sales_net_of_vat_and_service_charge = $scope.discounted_gross_billing()/1.12*.9;
+      bill.service_charge = $scope.discounted_gross_billing()/1.12*0.1;
+      bill.vatable_sales = bill.sales_net_of_vat_and_service_charge+bill.service_charge;
+      bill.output_vat = bill.vatable_sales*.12;
+      bill.sales_inclusive_of_vat = bill.vatable_sales+bill.output_vat;
+      bill.excess = $scope.payment_change();
+      bill.total_discount = $scope.total_discount;
+      bill = _.omit(bill,'check_number','is_paid','date_','date_time','server_id','table_name','reason_cancelled','type','deleted','deleted_by','deleted_comment','deleted_date','deleted_at','created_at','updated_at','restaurant_name','invoice_number','meal_type');
+      let bill_detail = [];
+      angular.copy($scope.bill_detail,bill_detail);
+      angular.forEach(bill_detail, function(value, key) {
+        bill_detail[key] = {
+          id: value.id,
+          quantity: value.quantity,
+          price: value.price,
+          restaurant_menu_id: value.menu_data['id'],
+        }
+      });
+
+      let payments = [];
+      angular.copy($scope.payments,payments);
+      angular.forEach(payments, function(value, key) {
+        payments[key] = {
+          id: value.id,
+          payment: value.payment,
+          settlement_array: {
+            value: value.settlement_array.value
+          }
+        }
+      });
       $scope.formdata = {
-        bill: $scope.bill,
-        bill_detail: $scope.bill_detail,
+        bill: bill,
+        bill_detail: bill_detail,
         excess: $scope.excess,
-        payments: $scope.payments,
+        payments: payments,
       }
       $http({
         method: 'PUT',

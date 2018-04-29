@@ -73,6 +73,8 @@ class Restaurant_bill_controller extends Controller
       ];
     }
     $data['settlements'] = $settlements_dropdown;
+    $restaurant_id = $data['bill_info']['bill']['restaurant_id'];
+    $data['menu'] = Restaurant_menu::where('restaurant_id',$restaurant_id)->orderBy('name')->get();
     // return $data;
     return view('restaurant.edit-bill',$data);
   }
@@ -102,8 +104,11 @@ class Restaurant_bill_controller extends Controller
       $bill->save();
 
       foreach ($request->bill_detail as $form_bill_detail) {
+        $menu = Restaurant_menu::find($form_bill_detail['restaurant_menu_id']);
         $bill_detail = Restaurant_bill_detail::find($form_bill_detail['id']);
+        $bill_detail->restaurant_menu_id = $form_bill_detail['restaurant_menu_id'];
         $bill_detail->quantity = $form_bill_detail['quantity'];
+        $bill_detail->restaurant_menu_name = $menu->name;
         $bill_detail->price = $form_bill_detail['price'];
         $bill_detail->save();
       }
@@ -324,14 +329,18 @@ class Restaurant_bill_controller extends Controller
       if($data["bill"]->type=="bad_order"){
         $data["bill_detail"] = $restaurant_accepted_order_cancellation->where("restaurant_bill_id",$id)->get();
         foreach ($data["bill_detail"] as $bill_detail_data) {
-          $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+          $menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id);
+          $bill_detail_data->menu_data = $menu;
+          $bill_detail_data->menu = $menu->name;
           $bill_detail_data->category = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->category;
           $bill_detail_data->settlement = settlements($bill_detail_data->settlement);
         }
       }else{
         $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
         foreach ($data["bill_detail"] as $bill_detail_data) {
-          $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+          $menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id);
+          $bill_detail_data->menu_data = $menu;
+          $bill_detail_data->menu = $menu->name;
           $bill_detail_data->category = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->category;
         }
       }
