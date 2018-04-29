@@ -22,7 +22,7 @@
 @section('content')
 <div class="col-sm-12">
   <div class="form-group">
-    <button class="ui primary button" onclick="$('#add-user-modal').modal('show')">Add User</button>
+    <button class="ui primary button" ng-click="add_user_form()">Add User</button>
   </div>
   <div class="table-responsive">
     <table class="ui unstackable celled table" id="customer-table">
@@ -31,6 +31,7 @@
           <th class="center aligned">Name</th>
           <th class="center aligned">Username</th>
           <th class="center aligned">Privilege</th>
+          <th class="center aligned">Email Address</th>
           <th class="center aligned">Outlet</th>
         </tr>
       </thead>
@@ -39,6 +40,7 @@
           <td class="center aligned middle aligned">@{{user.name}}</td>
           <td class="center aligned middle aligned">@{{user.username}}</td>
           <td class="center aligned middle aligned">@{{user.str_privilege}}</td>
+          <td class="center aligned middle aligned">@{{user.email_address}}</td>
           <td class="center aligned middle aligned">
             <span ng-if="user.restaurant">@{{user.restaurant.name}}</span>
           </td>
@@ -54,6 +56,21 @@
           </td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr ng-if="users.data | isEmpty">
+          <td colspan="20" style="text-align: center;">
+            <h1 ng-if="loading">
+              <img src="{{asset('assets/images/loading.gif')}}" style="height: 70px;">
+              <br>
+              LOADING
+            </h1>
+            <h1>
+              <span ng-if="!loading" ng-cloak>NO DATA</span>
+              <span ng-if="loading" ng-cloak></span>
+            </h1>
+          </td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </div>
@@ -75,7 +92,7 @@
 
         <div class="form-group">
           <label>Privilege:</label>
-          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.privilege" ng-init="formdata.privilege='restaurant_cashier'">
+          <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.privilege">
             <option value="restaurant_cashier">Restaurant Cashier</option>
             <option value="restaurant_admin">Restaurant Admin</option>
             <option value="admin">Admin</option>
@@ -99,6 +116,12 @@
           <label>Name</label>
           <input class="form-control" type="text" placeholder="Enter Name" name="pax" ng-model="formdata.name">
           <p class="help-block">@{{formerrors.name[0]}}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input class="form-control" type="email" placeholder="Enter Email Address" name="pax" ng-model="formdata.email_address">
+          <p class="help-block">@{{formerrors.email_address[0]}}</p>
         </div>
 
 
@@ -137,11 +160,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">edit User privileges</h4>
+        <h4 class="modal-title">edit User and privileges</h4>
       </div>
       <div class="modal-body">
         <form id="edit-user-form" ng-submit="update_user()">
         {{ csrf_field() }}
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input class="form-control" type="email" placeholder="Enter Email Address" name="pax" ng-model="formdata.email_address">
+          <p class="help-block">@{{formerrors.email_address[0]}}</p>
+        </div>
 
         <div class="form-group">
           <label>Privilege:</label>
@@ -197,18 +226,31 @@
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     show_users();
     function show_users() {
+      $scope.loading = true;
       $http({
-          method : "GET",
-          url : "/api/users",
+        method : "GET",
+        url : "/api/users",
       }).then(function mySuccess(response) {
-          $scope.users = response.data.result;
+        $scope.loading = false;
+        $scope.users = response.data.result;
       }, function myError(rejection) {
-          if(rejection.status != 422){
+        $scope.loading = false;
+        if(rejection.status != 422){
             request_error(rejection.status);
           }else if(rejection.status == 422){
             var errors = rejection.data;
           }
       });
+    }
+    $scope.loading = true;
+    $scope.formdata = {
+      privilege:'restaurant_cashier'
+    }
+    $scope.add_user_form = function() {
+      $('#add-user-modal').modal('show');
+      $scope.formdata = {
+        privilege:'restaurant_cashier'
+      }
     }
 
     $scope.add_user = function(){
@@ -249,7 +291,8 @@
         privilege: $scope.formdata.privilege,
         restaurant_id: $scope.formdata.restaurant_id,
         allow_edit_info: $scope.formdata.allow_edit_info,
-        password: $scope.formdata.password
+        password: $scope.formdata.password,
+        email_address: $scope.formdata.email_address
       };
       $scope.formerrors = {};
       $scope.submit = true;

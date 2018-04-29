@@ -135,6 +135,7 @@ class Users_controller extends Controller
         'name' => 'required',
         'username' => 'required|unique:user,username,NULL,id,deleted_at,NULL|min:5|max:12',
         'password' => 'required|min:5|max:12',
+        'email_address' => 'email|unique:user,email_address,NULL,id,deleted_at,NULL',
         'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
     ],
     [
@@ -148,6 +149,7 @@ class Users_controller extends Controller
         $user->username = $request->username;
         $user->password = bcrypt(md5($request->password));
         $user->privilege = $request->privilege;
+        $user->email_address = $request->email_address;
         $user->allow_edit_info = ($request->allow_edit_info!=null?1:0);
         $user->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
         $user->save();
@@ -162,6 +164,7 @@ class Users_controller extends Controller
   {
     $this->validate($request, [
         'restaurant_id' => 'required_if:privilege,restaurant_cashier,restaurant_admin',
+        'email_address' => 'email|unique:user,email_address,'.$id.',id,deleted_at,NULL',
     ],
     [
       'restaurant_id.required_if' => 'The outlet field is required when privilege is restaurant admin or cashier.',
@@ -173,6 +176,7 @@ class Users_controller extends Controller
         $user = new User;
         $user_data = $user->find($id);
         $user_data->privilege = $request->privilege;
+        $user_data->email_address = $request->email_address;
         $user_data->password = bcrypt(md5($request->password));
         $user_data->allow_edit_info = ($request->allow_edit_info=='true'?1:0);
         $user_data->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
