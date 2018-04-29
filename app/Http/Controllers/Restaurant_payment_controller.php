@@ -78,4 +78,43 @@ class Restaurant_payment_controller extends Controller
       return $data;
     }
   }
+
+  public function destroy(Request $request,$id)
+  {
+    DB::beginTransaction();
+    try{
+      $payment_data = Restaurant_payment::findOrFail($id);
+      $payment_data->delete();
+      // DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
+  }
+
+  public function add(Request $request,$bill_id)
+  {
+    $this->validate($request, [
+        'type' => 'required',
+        'amount' => 'required|numeric'
+      ]);
+    DB::beginTransaction();
+    try{
+        $bill_data = Restaurant_bill::find($bill_id);
+        $restaurant_payment = new Restaurant_payment;
+        $restaurant_payment->payment = $request->amount;
+        $restaurant_payment->settlement = $request->type['value'];
+        $restaurant_payment->date_ = strtotime(date("m/d/Y"));
+        $restaurant_payment->date_time = strtotime(date("m/d/Y h:i:s A"));
+        $restaurant_payment->restaurant_bill_id = $bill_id;
+        $restaurant_payment->save();
+
+        $restaurant_payment = Restaurant_payment::orderBy('id','DESC')->first();
+        // DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
+    $restaurant_payment->settlement_array = [
+        'label' => settlements($restaurant_payment->settlement_code),
+        'value' => $restaurant_payment->settlement,
+    ];
+    return $restaurant_payment;
+  }
 }

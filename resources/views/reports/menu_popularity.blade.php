@@ -73,7 +73,7 @@
         <td class="center aligned middle aligned">@{{item.subcategory}}</td>
         <td class="center aligned middle aligned">@{{item.name}}</td>
         <td class="center aligned middle aligned">@{{item.total_quantity}}</td>
-        <td class="center aligned middle aligned">@{{item.price*item.total_quantity|currency:""}}</td>
+        <td class="center aligned middle aligned">@{{item.total_price|currency:""}}</td>
       </tr>
     </tbody>
     <tfoot>

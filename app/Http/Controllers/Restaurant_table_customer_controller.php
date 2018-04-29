@@ -200,7 +200,7 @@ class Restaurant_table_customer_controller extends Controller
 
         foreach ($unique_ordered_items as $order_item_data) {
           $order_joined_data = $restaurant_order
-            ->select('restaurant_menu_name','special_instruction','restaurant_menu_id','price',DB::raw('SUM(quantity) as total_quantity'))
+            ->select('restaurant_menu_name','special_instruction','restaurant_menu_id','restaurant_order_detail.price',DB::raw('SUM(quantity) as total_quantity'))
             ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
             ->where('restaurant_table_customer_id',$id)
             ->where('restaurant_menu_id',$order_item_data->restaurant_menu_id)
@@ -255,7 +255,8 @@ class Restaurant_table_customer_controller extends Controller
     $data["result"] = $restaurant_temp_bill
       ->join('restaurant_temp_bill_detail', 'restaurant_temp_bill.id', '=', 'restaurant_temp_bill_detail.restaurant_temp_bill_id')
       ->join('restaurant_menu','restaurant_menu.id','=','restaurant_temp_bill_detail.restaurant_menu_id')
-      ->where('restaurant_table_customer_id',$id)
+      ->where('restaurant_temp_bill.restaurant_table_customer_id',$id)
+      ->select('restaurant_menu.name','restaurant_menu.category','restaurant_temp_bill_detail.*','restaurant_temp_bill_detail.*')
       ->get();
     $restaurant_temp_bill_data = $restaurant_temp_bill->where('restaurant_table_customer_id',$id)->first();
     $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;

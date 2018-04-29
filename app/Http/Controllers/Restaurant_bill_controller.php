@@ -73,6 +73,8 @@ class Restaurant_bill_controller extends Controller
       ];
     }
     $data['settlements'] = $settlements_dropdown;
+    $restaurant_id = $data['bill_info']['bill']['restaurant_id'];
+    $data['menu'] = Restaurant_menu::where('restaurant_id',$restaurant_id)->orderBy('name')->get();
     // return $data;
     return view('restaurant.edit-bill',$data);
   }
@@ -102,18 +104,45 @@ class Restaurant_bill_controller extends Controller
       $bill->save();
 
       foreach ($request->bill_detail as $form_bill_detail) {
+        $menu = Restaurant_menu::find($form_bill_detail['restaurant_menu_id']);
         $bill_detail = Restaurant_bill_detail::find($form_bill_detail['id']);
+        $bill_detail->restaurant_menu_id = $form_bill_detail['restaurant_menu_id'];
         $bill_detail->quantity = $form_bill_detail['quantity'];
+        $bill_detail->restaurant_menu_name = $menu->name;
         $bill_detail->price = $form_bill_detail['price'];
         $bill_detail->save();
       }
 
+      $formdata_payment_id = array();
       foreach ($request->payments as $form_payments) {
-        $payments = Restaurant_payment::find($form_payments['id']);
-        $payments->payment = $form_payments['payment'];
-        $payments->settlement = $form_payments['settlement_array']['value'];
-        $payments->save();
+        $formdata_payment_id[] = $form_payments['id'];
       }
+      $payment_ids = Restaurant_payment::where('restaurant_bill_id',$request->bill['id'])->pluck('id')->toArray();
+      foreach ($payment_ids as $payment_id) {
+        if(in_array($payment_id, $formdata_payment_id)){
+          
+        }else{
+          Restaurant_payment::find($payment_id)->delete();
+        }
+      }
+      foreach ($request->payments as $form_payments) {
+        $formdata_payment_id[] = $form_payments['id'];
+        $payments = Restaurant_payment::find($form_payments['id']);
+        if($payments){
+          $payments->payment = $form_payments['payment'];
+          $payments->settlement = $form_payments['settlement_array']['value'];
+          $payments->save();
+        }else{
+          $restaurant_payment = new Restaurant_payment;
+          $restaurant_payment->payment = $form_payments['payment'];
+          $restaurant_payment->settlement = $form_payments['settlement_array']['value'];
+          $restaurant_payment->date_ = strtotime(date("m/d/Y"));
+          $restaurant_payment->date_time = strtotime(date("m/d/Y h:i:s A"));
+          $restaurant_payment->restaurant_bill_id = $request->bill['id'];
+          $restaurant_payment->save();
+        }
+      }
+      
       DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
@@ -300,14 +329,18 @@ class Restaurant_bill_controller extends Controller
       if($data["bill"]->type=="bad_order"){
         $data["bill_detail"] = $restaurant_accepted_order_cancellation->where("restaurant_bill_id",$id)->get();
         foreach ($data["bill_detail"] as $bill_detail_data) {
-          $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+          $menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id);
+          $bill_detail_data->menu_data = $menu;
+          $bill_detail_data->menu = $menu->name;
           $bill_detail_data->category = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->category;
           $bill_detail_data->settlement = settlements($bill_detail_data->settlement);
         }
       }else{
         $data["bill_detail"] = $restaurant_bill_detail->where("restaurant_bill_id",$id)->get();
         foreach ($data["bill_detail"] as $bill_detail_data) {
-          $bill_detail_data->menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->name;
+          $menu = $restaurant_menu->find($bill_detail_data->restaurant_menu_id);
+          $bill_detail_data->menu_data = $menu;
+          $bill_detail_data->menu = $menu->name;
           $bill_detail_data->category = $restaurant_menu->find($bill_detail_data->restaurant_menu_id)->category;
         }
       }

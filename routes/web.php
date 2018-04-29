@@ -60,6 +60,8 @@ Route::get('/api/restaurant/table/customer/list', 'Restaurant_table_customer_con
 Route::post('/api/restaurant/table/customer/remove/{id}', 'Restaurant_table_customer_controller@destroy');
 Route::post('/api/restaurant/table/customer/payment/make/{id}', 'Restaurant_payment_controller@store');
 Route::get('/api/restaurant/table/customer/payment/list/{id}', 'Restaurant_payment_controller@show');
+Route::delete('/api/restaurant/table/customer/payment/delete/{id}', 'Restaurant_payment_controller@destroy');
+Route::post('/api/restaurant/table/customer/payment/add/{bill_id}', 'Restaurant_payment_controller@add');
 Route::get('/api/restaurant/table/list/{type}', 'Restaurant_table_controller@get_list');
 
 Route::get('/restaurant/order/{id}', 'Restaurant_order_controller@index');

@@ -692,7 +692,7 @@ class Reports_controller extends Controller
 
     $restaurant_bill_detail = new Restaurant_bill_detail;
     $menu_popularity = $restaurant_bill_detail->where('restaurant_bill_detail.deleted',0);
-    $menu_popularity->select('restaurant_menu.*',DB::raw('SUM(quantity) as total_quantity'));
+    $menu_popularity->select('restaurant_menu.*',DB::raw('SUM(quantity) as total_quantity, SUM(restaurant_bill_detail.price * quantity) as total_price'));
     $menu_popularity->whereBetween('restaurant_bill_detail.date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $menu_popularity->join('restaurant_menu','restaurant_menu.id','=','restaurant_menu_id');
     $menu_popularity->leftJoin('restaurant_bill','restaurant_bill.id','=','restaurant_bill_id');
