@@ -108,12 +108,36 @@ class Restaurant_bill_controller extends Controller
         $bill_detail->save();
       }
 
+      $formdata_payment_id = array();
       foreach ($request->payments as $form_payments) {
-        $payments = Restaurant_payment::find($form_payments['id']);
-        $payments->payment = $form_payments['payment'];
-        $payments->settlement = $form_payments['settlement_array']['value'];
-        $payments->save();
+        $formdata_payment_id[] = $form_payments['id'];
       }
+      $payment_ids = Restaurant_payment::where('restaurant_bill_id',$request->bill['id'])->pluck('id')->toArray();
+      foreach ($payment_ids as $payment_id) {
+        if(in_array($payment_id, $formdata_payment_id)){
+          
+        }else{
+          Restaurant_payment::find($payment_id)->delete();
+        }
+      }
+      foreach ($request->payments as $form_payments) {
+        $formdata_payment_id[] = $form_payments['id'];
+        $payments = Restaurant_payment::find($form_payments['id']);
+        if($payments){
+          $payments->payment = $form_payments['payment'];
+          $payments->settlement = $form_payments['settlement_array']['value'];
+          $payments->save();
+        }else{
+          $restaurant_payment = new Restaurant_payment;
+          $restaurant_payment->payment = $form_payments['payment'];
+          $restaurant_payment->settlement = $form_payments['settlement_array']['value'];
+          $restaurant_payment->date_ = strtotime(date("m/d/Y"));
+          $restaurant_payment->date_time = strtotime(date("m/d/Y h:i:s A"));
+          $restaurant_payment->restaurant_bill_id = $request->bill['id'];
+          $restaurant_payment->save();
+        }
+      }
+      
       DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}

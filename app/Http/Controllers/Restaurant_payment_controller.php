@@ -85,7 +85,7 @@ class Restaurant_payment_controller extends Controller
     try{
       $payment_data = Restaurant_payment::findOrFail($id);
       $payment_data->delete();
-      DB::commit();
+      // DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
   }
@@ -108,7 +108,7 @@ class Restaurant_payment_controller extends Controller
         $restaurant_payment->save();
 
         $restaurant_payment = Restaurant_payment::orderBy('id','DESC')->first();
-        DB::commit();
+        // DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
     $restaurant_payment->settlement_array = [

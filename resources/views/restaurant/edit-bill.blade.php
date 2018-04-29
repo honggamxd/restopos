@@ -218,7 +218,7 @@
   </tr>
 </table>
 <div class="btn-group" role="group" aria-label="...">
-  <button class="btn btn-primary" ng-if="remaining_balance() == 0" ng-click="save()">Save Changes</button>
+  <button class="btn btn-primary" ng-click="save()">Save Changes</button>
   <button class="btn btn-success" ng-click="add_payment_form()">Add Payment</button>
 </div>
 @endsection
@@ -362,7 +362,7 @@
       }).then(function(response) {
         $.notify('This Order Slip has been modified.');
         setTimeout(function(){
-          window.location = '/restaurant/bill/'+$scope.bill.id;
+          // window.location = '/restaurant/bill/'+$scope.bill.id;
         }, 3000);
       }, function(rejection) {
         if (rejection.status != 422) {
@@ -432,7 +432,14 @@
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       }).then(function(response) {
-        $scope.payments.push(response.data);
+        $scope.has_payment = true;
+        if(!angular.equals($scope.payments,[])){
+          $scope.payments.push(response.data);
+        }else{
+          $scope.payments = [];
+          $scope.payments[0] = response.data;
+        }
+        console.log($scope.payments);
         $('#add-payment-modal').modal('hide');
         $.notify('A new settlement has been added.');
       }, function(rejection) {
