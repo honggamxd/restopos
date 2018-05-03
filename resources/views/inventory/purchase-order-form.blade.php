@@ -14,6 +14,8 @@
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Purchase Order</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Purchase Order</div>
 <i class="divider">|</i>
+<a class="section" href="{{route('inventory.purchase-order.create')}}" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_purchase_orders)">Create Purchase Orders</a>
+<i class="divider" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_purchase_orders)">|</i>
 <a class="section" href="{{route('inventory.purchase-order.settings')}}">Settings</a>
 @endsection
 
@@ -311,7 +313,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.recipients = [];
     $scope.recipient = {};
     $scope.sent_emails = 0;
-    $scope.generated_form = {}
+    $scope.generated_form = {};
+    $scope.user_data = user_data;
+
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.items = {};

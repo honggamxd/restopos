@@ -14,8 +14,8 @@
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Stock Issuance</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Stock Issuance</div>
 <i class="divider">|</i>
-<a class="section" href="{{route('inventory.stock-issuance.create')}}" ng-if="edit_mode=='update'" ng-cloak>Create Stock Issuance</a>
-<i class="divider" ng-if="edit_mode=='update'">|</i>
+<a class="section" href="{{route('inventory.stock-issuance.create')}}" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_stock_issuances)" ng-cloak>Create Stock Issuance</a>
+<i class="divider" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_stock_issuances)">|</i>
 <a class="section" href="{{route('inventory.stock-issuance.settings')}}">Settings</a>
 @endsection
 
@@ -336,6 +336,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.sent_emails = 0;
     $scope.generated_form = {}
     $scope.is_approved = false;
+    $scope.user_data = user_data;
+
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.items = {};

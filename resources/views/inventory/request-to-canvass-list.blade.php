@@ -11,8 +11,8 @@
 @section('breadcrumb')
 <div class="active section">Request to Canvasses</div>
 <i class="right angle icon divider"></i>
-<a class="section hideprint" href="{{route('inventory.request-to-canvass.create')}}">Create Request to Canvass</a>
-<i class="divider">|</i>
+<a class="section hideprint" href="{{route('inventory.request-to-canvass.create')}}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_request_to_canvasses">Create Request to Canvass</a>
+<i class="divider" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_request_to_canvasses">|</i>
 <a class="section" href="{{route('inventory.request-to-canvass.settings')}}">Settings</a>
 @endsection
 
@@ -59,8 +59,8 @@
                             <td style="text-align: center">@{{item.vendor_3_name}}</td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
-                                    <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>
-                                    <button type="button" class="ui red button" ng-click="delete_confirm(item)"><span class="glyphicon glyphicon-trash"></span></button>
+                                    <button type="button" class="ui blue button" ng-click="edit_form(item)" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_edit_request_to_canvasses"><span class="glyphicon glyphicon-edit"></span></button>
+                                    <button type="button" class="ui red button" ng-click="delete_confirm(item)" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_delete_request_to_canvasses"><span class="glyphicon glyphicon-trash"></span></button>
                                 </div>
                             </td>
                         </tr>
@@ -104,6 +104,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.items = {};
     $scope.pages = "";
     $scope.searchString = "";
+    $scope.user_data = user_data;
 
     $scope.search = _.debounce(function(argument) {
         $scope.show_items();

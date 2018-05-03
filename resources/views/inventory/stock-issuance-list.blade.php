@@ -11,8 +11,8 @@
 @section('breadcrumb')
 <div class="active section">Stock Issuances</div>
 <i class="right angle icon divider"></i>
-<a class="section hideprint" href="{{route('inventory.stock-issuance.create')}}">Create Stock Issuance</a>
-<i class="divider">|</i>
+<a class="section hideprint" href="{{route('inventory.stock-issuance.create')}}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_stock_issuances">Create Stock Issuance</a>
+<i class="divider" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_stock_issuances">|</i>
 <a class="section" href="{{route('inventory.stock-issuance.settings')}}">Settings</a>
 @endsection
 
@@ -57,9 +57,9 @@
                             <td style="text-align: center">@{{item.approved_by_name}}</td>
                             <td style="text-align: center">
                                 <div class="ui buttons">
-                                    <button type="button" class="ui green button" ng-click="approve_confirm(item,index)" ng-if="!item.is_approved"><span class="glyphicon glyphicon-ok"></span></button>
-                                    <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>
-                                    <button type="button" class="ui red button" ng-click="delete_confirm(item)"><span class="glyphicon glyphicon-trash"></span></button>
+                                    <button type="button" class="ui green button" ng-click="approve_confirm(item,index)" ng-if="!item.is_approved && (user_data.privilege == 'admin' || user_data.permissions.can_approve_stock_issuances)"><span class="glyphicon glyphicon-ok"></span></button>
+                                    <button type="button" class="ui blue button" ng-click="edit_form(item)" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_edit_stock_issuances"><span class="glyphicon glyphicon-edit"></span></button>
+                                    <button type="button" class="ui red button" ng-click="delete_confirm(item)" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_delete_stock_issuances"><span class="glyphicon glyphicon-trash"></span></button>
                                 </div>
                             </td>
                         </tr>
@@ -103,6 +103,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.items = {};
     $scope.pages = "";
     $scope.searchString = "";
+    $scope.user_data = user_data;
 
     $scope.search = _.debounce(function(argument) {
         $scope.show_items();

@@ -13,8 +13,8 @@
 <i class="right angle icon divider"></i>
 <div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Receiving Report</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Receiving Report</div>
-<i class="divider" ng-if="edit_mode=='update'">|</i>
-<a class="section" href="{{route('inventory.receiving-report.create')}}" ng-if="edit_mode=='update'" ng-cloak>Create Receiving Report</a>
+<i class="divider" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_receiving_reports)">|</i>
+<a class="section" href="{{route('inventory.receiving-report.create')}}" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_receiving_reports)" ng-cloak>Create Receiving Report</a>
 {{-- <i class="divider">|</i> --}}
 {{-- <a class="section" href="{{route('inventory.receiving-report.settings')}}">Settings</a> --}}
 @endsection
@@ -255,7 +255,7 @@
                 <a href="javascript:history.back()" type="button" class="ui red button" ng-if="edit_mode=='update'" ng-cloak>
                     <span class="glyphicon glyphicon-trash"></span> Cancel
                 </a>
-                <a href="javascript:void(0);" type="button" class="ui red button" ng-if="edit_mode=='update'" ng-click="delete_confirm(formdata)">
+                <a href="javascript:void(0);" type="button" class="ui red button" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_delete_receiving_reports)" ng-click="delete_confirm(formdata)">
                     <span class="glyphicon glyphicon-trash"></span> Delete Form
                 </a>
             </div>
@@ -296,6 +296,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.formerrors = {};
     $scope.submit = false;
     $scope.loading = false;
+    $scope.user_data = user_data;
 
     $scope.delete_item = function(index) {
         delete $scope.items[index];

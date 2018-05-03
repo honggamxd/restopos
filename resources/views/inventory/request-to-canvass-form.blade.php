@@ -11,11 +11,11 @@
 @section('breadcrumb')
 <a class="section" href="{{route('inventory.request-to-canvass.list')}}">Request to Canvasses</a>
 <i class="right angle icon divider"></i>
-<div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Request to Canvass</div>
+<div class="active section" ng-if="edit_mode=='create' && (user_data.privilege == 'admin' || user_data.permissions.can_add_request_to_canvasses)" ng-cloak>Create Request to Canvass</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Request to Canvass</div>
 <i class="divider">|</i>
-<a class="section" href="{{route('inventory.request-to-canvass.create')}}" ng-if="edit_mode=='update'" ng-cloak>Create Request to Canvass</a>
-<i class="divider" ng-if="edit_mode=='update'">|</i>
+<a class="section" href="{{route('inventory.request-to-canvass.create')}}" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_request_to_canvasses)" ng-cloak>Create Request to Canvass</a>
+<i class="divider" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_request_to_canvasses)">|</i>
 <a class="section" href="{{route('inventory.request-to-canvass.settings')}}">Settings</a>
 @endsection
 @section('padded_content')
@@ -345,6 +345,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.formerrors = {};
     $scope.submit = false;
     $scope.loading = false;
+    $scope.user_data = user_data;
 
     $scope.delete_item = function(index) {
         delete $scope.items[index];

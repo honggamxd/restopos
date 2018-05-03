@@ -11,8 +11,8 @@
 @section('breadcrumb')
 <div class="active section">Capital Expenditure Requests</div>
 <i class="right angle icon divider"></i>
-<a class="section hideprint" href="{{route('inventory.capital-expenditure-request.create')}}">Create Capital Expenditure Request</a>
-<i class="divider">|</i>
+<a class="section hideprint" href="{{route('inventory.capital-expenditure-request.create')}}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_capital_expenditure_requests">Create Capital Expenditure Request</a>
+<i class="divider" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_capital_expenditure_requests">|</i>
 <a class="section" href="{{route('inventory.capital-expenditure-request.settings')}}">Settings</a>
 @endsection
 
@@ -61,8 +61,8 @@
                             <td style="text-align: center">
                                 <div class="ui buttons">
                                     <button type="button" class="ui green button" ng-click="approve_confirm(item,index)" ng-if="!item.is_approved"><span class="glyphicon glyphicon-ok"></span></button>
-                                    <button type="button" class="ui blue button" ng-click="edit_form(item)"><span class="glyphicon glyphicon-edit"></span></button>
-                                    <button type="button" class="ui red button" ng-click="delete_confirm(item)"><span class="glyphicon glyphicon-trash"></span></button>
+                                    <button type="button" class="ui blue button" ng-click="edit_form(item)" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_edit_capital_expenditure_requests"><span class="glyphicon glyphicon-edit"></span></button>
+                                    <button type="button" class="ui red button" ng-click="delete_confirm(item)" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_delete_capital_expenditure_requests"><span class="glyphicon glyphicon-trash"></span></button>
                                 </div>
                             </td>
                         </tr>
@@ -106,6 +106,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.items = {};
     $scope.pages = "";
     $scope.searchString = "";
+    $scope.user_data = user_data;
 
     $scope.search = _.debounce(function(argument) {
         $scope.show_items();

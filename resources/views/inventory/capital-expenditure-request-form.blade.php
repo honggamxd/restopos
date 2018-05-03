@@ -11,9 +11,11 @@
 @section('breadcrumb')
 <a class="section" href="{{route('inventory.capital-expenditure-request.list')}}">Capital Expenditure Requests</a>
 <i class="right angle icon divider"></i>
-<div class="active section" ng-if="edit_mode=='create'" ng-cloak>Create Capital Expenditure Request</div>
+<div class="active section" ng-if="edit_mode=='create' && (user_data.privilege == 'admin' || user_data.permissions.can_add_capital_expenditure_requests)" ng-cloak>Create Capital Expenditure Request</div>
 <div class="active section" ng-if="edit_mode=='update'" ng-cloak>Edit Capital Expenditure Request</div>
 <i class="divider">|</i>
+<a class="section" href="{{route('inventory.capital-expenditure-request.create')}}" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_capital_expenditure_requests)">Create Capital Expenditure Requests</a>
+<i class="divider" ng-if="edit_mode=='update' && (user_data.privilege == 'admin' || user_data.permissions.can_add_capital_expenditure_requests)">|</i>
 <a class="section" href="{{route('inventory.capital-expenditure-request.settings')}}">Settings</a>
 @endsection
 
@@ -341,7 +343,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $scope.recipients = [];
     $scope.recipient = {};
     $scope.sent_emails = 0;
-    $scope.generated_form = {}
+    $scope.generated_form = {};
+    $scope.user_data = user_data;
+
     if($scope.edit_mode=='create'){
         $scope.formdata = {};
         $scope.items = {};
