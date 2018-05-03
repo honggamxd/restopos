@@ -19,7 +19,7 @@ class Restaurant_controller extends Controller
     }
     public function index(Request $request)
     {
-      if(Auth::user()->privilege=="admin"){
+      if(Auth::user()->privilege=="admin" || Auth::user()->privilege=="inventory_user"){
         $app_config = DB::table('app_config')->first();
         $data["categories"] = explode(',', $app_config->categories);
         return view('inventory.items',$data);

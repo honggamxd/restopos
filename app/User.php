@@ -20,4 +20,9 @@ class User extends Authenticatable
   {
     return $this->belongsTo('App\Restaurant');
   }
+
+  public function permissions()
+  {
+    return $this->hasOne('App\Inventory\Inventory_user_permission');
+  }
 }

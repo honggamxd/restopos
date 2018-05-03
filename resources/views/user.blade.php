@@ -127,6 +127,12 @@
           <p class="help-block">@{{formerrors.position[0]}}</p>
         </div>
 
+        <div class="form-group" ng-if="formdata.privilege=='inventory_user'">
+          <label>Permissions</label>
+          <a href="javascript:void(0)" class="form-control" ng-click="permission_form()">View Permissions</a>
+          <p class="help-block">@{{formerrors.position[0]}}</p>
+        </div>
+
         <div class="form-group">
           <label>Name</label>
           <input class="form-control" type="text" placeholder="Enter Name" name="pax" ng-model="formdata.name">
@@ -175,7 +181,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">edit User and privileges</h4>
+        <h4 class="modal-title">edit User</h4>
       </div>
       <div class="modal-body">
         <form id="edit-user-form" ng-submit="update_user()">
@@ -206,6 +212,11 @@
           <p class="help-block">@{{formerrors.position[0]}}</p>
         </div>
 
+        <div class="form-group" ng-if="formdata.privilege=='inventory_user'">
+          <label>Permissions</label>
+          <a href="javascript:void(0)" class="form-control" ng-click="permission_form()">View Permissions</a>
+          <p class="help-block">@{{formerrors.position[0]}}</p>
+        </div>
 
         <div class="form-group" ng-hide="formdata.privilege=='admin' || formdata.privilege=='inventory_user'">
           <label>Outlet:</label>
@@ -241,6 +252,293 @@
   </div>
 </div>
 
+<div id="permission-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Permissions</h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="ui unstackable celled table">
+            <thead>
+              <tr>
+                <th class="center aligned middle aligned">Module</th>
+                <th class="center aligned middle aligned">Accessing</th>
+                <th class="center aligned middle aligned">Adding</th>
+                <th class="center aligned middle aligned">Updating</th>
+                <th class="center aligned middle aligned">Deleting</th>
+                <th class="center aligned middle aligned">Approving</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="center aligned middle aligned">Items</td>
+                <td class="center aligned middle aligned">
+{{--                   <div class="ui toggle checkbox">
+                      <input type="checkbox" ng-model="permissions.can_view_items">
+                      <label ng-if="permissions.can_view_items">Enable</label>
+                      <label ng-if="!permissions.can_view_items">Disable</label>
+                  </div> --}}
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_items">
+                      <input type="checkbox" ng-model="permissions.can_add_items">
+                      <label ng-if="permissions.can_add_items">Enable</label>
+                      <label ng-if="!permissions.can_add_items">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_items">
+                      <input type="checkbox" ng-model="permissions.can_edit_items">
+                      <label ng-if="permissions.can_edit_items">Enable</label>
+                      <label ng-if="!permissions.can_edit_items">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_items">
+                      <input type="checkbox" ng-model="permissions.can_delete_items">
+                      <label ng-if="permissions.can_delete_items">Enable</label>
+                      <label ng-if="!permissions.can_delete_items">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+
+                </td>
+              </tr>
+              <tr>
+                <td class="center aligned middle aligned">Purchase Request</td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox">
+                      <input type="checkbox" ng-model="permissions.can_view_purchase_requests">
+                      <label ng-if="permissions.can_view_purchase_requests">Enable</label>
+                      <label ng-if="!permissions.can_view_purchase_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_requests">
+                      <input type="checkbox" ng-model="permissions.can_add_purchase_requests">
+                      <label ng-if="permissions.can_add_purchase_requests">Enable</label>
+                      <label ng-if="!permissions.can_add_purchase_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_requests">
+                      <input type="checkbox" ng-model="permissions.can_edit_purchase_requests">
+                      <label ng-if="permissions.can_edit_purchase_requests">Enable</label>
+                      <label ng-if="!permissions.can_edit_purchase_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_requests">
+                      <input type="checkbox" ng-model="permissions.can_delete_purchase_requests">
+                      <label ng-if="permissions.can_delete_purchase_requests">Enable</label>
+                      <label ng-if="!permissions.can_delete_purchase_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_requests">
+                      <input type="checkbox" ng-model="permissions.can_approve_purchase_requests">
+                      <label ng-if="permissions.can_approve_purchase_requests">Enable</label>
+                      <label ng-if="!permissions.can_approve_purchase_requests">Disable</label>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="center aligned middle aligned">Request to Canvass</td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox">
+                      <input type="checkbox" ng-model="permissions.can_view_request_to_canvasses">
+                      <label ng-if="permissions.can_view_request_to_canvasses">Enable</label>
+                      <label ng-if="!permissions.can_view_request_to_canvasses">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_request_to_canvasses">
+                      <input type="checkbox" ng-model="permissions.can_add_request_to_canvasses">
+                      <label ng-if="permissions.can_add_request_to_canvasses">Enable</label>
+                      <label ng-if="!permissions.can_add_request_to_canvasses">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_request_to_canvasses">
+                      <input type="checkbox" ng-model="permissions.can_edit_request_to_canvasses">
+                      <label ng-if="permissions.can_edit_request_to_canvasses">Enable</label>
+                      <label ng-if="!permissions.can_edit_request_to_canvasses">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_request_to_canvasses">
+                      <input type="checkbox" ng-model="permissions.can_delete_request_to_canvasses">
+                      <label ng-if="permissions.can_delete_request_to_canvasses">Enable</label>
+                      <label ng-if="!permissions.can_delete_request_to_canvasses">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+
+                </td>
+              </tr>
+              <tr>
+                <td class="center aligned middle aligned">Capital Expenditure Request</td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox">
+                      <input type="checkbox" ng-model="permissions.can_view_capital_expenditure_requests">
+                      <label ng-if="permissions.can_view_capital_expenditure_requests">Enable</label>
+                      <label ng-if="!permissions.can_view_capital_expenditure_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_capital_expenditure_requests">
+                      <input type="checkbox" ng-model="permissions.can_add_capital_expenditure_requests">
+                      <label ng-if="permissions.can_add_capital_expenditure_requests">Enable</label>
+                      <label ng-if="!permissions.can_add_capital_expenditure_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_capital_expenditure_requests">
+                      <input type="checkbox" ng-model="permissions.can_edit_capital_expenditure_requests">
+                      <label ng-if="permissions.can_edit_capital_expenditure_requests">Enable</label>
+                      <label ng-if="!permissions.can_edit_capital_expenditure_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_capital_expenditure_requests">
+                      <input type="checkbox" ng-model="permissions.can_delete_capital_expenditure_requests">
+                      <label ng-if="permissions.can_delete_capital_expenditure_requests">Enable</label>
+                      <label ng-if="!permissions.can_delete_capital_expenditure_requests">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_capital_expenditure_requests">
+                      <input type="checkbox" ng-model="permissions.can_approve_capital_expenditure_requests">
+                      <label ng-if="permissions.can_approve_capital_expenditure_requests">Enable</label>
+                      <label ng-if="!permissions.can_approve_capital_expenditure_requests">Disable</label>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="center aligned middle aligned">Purchase Order</td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox">
+                      <input type="checkbox" ng-model="permissions.can_view_purchase_orders">
+                      <label ng-if="permissions.can_view_purchase_orders">Enable</label>
+                      <label ng-if="!permissions.can_view_purchase_orders">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_orders">
+                      <input type="checkbox" ng-model="permissions.can_add_purchase_orders">
+                      <label ng-if="permissions.can_add_purchase_orders">Enable</label>
+                      <label ng-if="!permissions.can_add_purchase_orders">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_orders">
+                      <input type="checkbox" ng-model="permissions.can_edit_purchase_orders">
+                      <label ng-if="permissions.can_edit_purchase_orders">Enable</label>
+                      <label ng-if="!permissions.can_edit_purchase_orders">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_orders">
+                      <input type="checkbox" ng-model="permissions.can_delete_purchase_orders">
+                      <label ng-if="permissions.can_delete_purchase_orders">Enable</label>
+                      <label ng-if="!permissions.can_delete_purchase_orders">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_purchase_orders">
+                      <input type="checkbox" ng-model="permissions.can_approve_purchase_orders">
+                      <label ng-if="permissions.can_approve_purchase_orders">Enable</label>
+                      <label ng-if="!permissions.can_approve_purchase_orders">Disable</label>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="center aligned middle aligned">Receiving Report</td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox">
+                      <input type="checkbox" ng-model="permissions.can_view_receiving_reports">
+                      <label ng-if="permissions.can_view_receiving_reports">Enable</label>
+                      <label ng-if="!permissions.can_view_receiving_reports">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_receiving_reports">
+                      <input type="checkbox" ng-model="permissions.can_add_receiving_reports">
+                      <label ng-if="permissions.can_add_receiving_reports">Enable</label>
+                      <label ng-if="!permissions.can_add_receiving_reports">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_receiving_reports">
+                      <input type="checkbox" ng-model="permissions.can_edit_receiving_reports">
+                      <label ng-if="permissions.can_edit_receiving_reports">Enable</label>
+                      <label ng-if="!permissions.can_edit_receiving_reports">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_receiving_reports">
+                      <input type="checkbox" ng-model="permissions.can_delete_receiving_reports">
+                      <label ng-if="permissions.can_delete_receiving_reports">Enable</label>
+                      <label ng-if="!permissions.can_delete_receiving_reports">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+
+                </td>
+              </tr>
+              <tr>
+                <td class="center aligned middle aligned">Stock Issuance</td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox">
+                      <input type="checkbox" ng-model="permissions.can_view_stock_issuances">
+                      <label ng-if="permissions.can_view_stock_issuances">Enable</label>
+                      <label ng-if="!permissions.can_view_stock_issuances">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_stock_issuances">
+                      <input type="checkbox" ng-model="permissions.can_add_stock_issuances">
+                      <label ng-if="permissions.can_add_stock_issuances">Enable</label>
+                      <label ng-if="!permissions.can_add_stock_issuances">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_stock_issuances">
+                      <input type="checkbox" ng-model="permissions.can_edit_stock_issuances">
+                      <label ng-if="permissions.can_edit_stock_issuances">Enable</label>
+                      <label ng-if="!permissions.can_edit_stock_issuances">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_stock_issuances">
+                      <input type="checkbox" ng-model="permissions.can_delete_stock_issuances">
+                      <label ng-if="permissions.can_delete_stock_issuances">Enable</label>
+                      <label ng-if="!permissions.can_delete_stock_issuances">Disable</label>
+                  </div>
+                </td>
+                <td class="center aligned middle aligned">
+                  <div class="ui toggle checkbox" ng-if="permissions.can_view_stock_issuances">
+                      <input type="checkbox" ng-model="permissions.can_approve_stock_issuances">
+                      <label ng-if="permissions.can_approve_stock_issuances">Enable</label>
+                      <label ng-if="!permissions.can_approve_stock_issuances">Disable</label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 @endsection
 
@@ -250,6 +548,7 @@
   app.controller('content-controller', function($scope,$http, $sce, $window) {
     show_users();
     get_settings();
+    initialize_user_permissions();
     $scope.positions = [];
     function show_users() {
       $scope.loading = true;
@@ -267,6 +566,43 @@
             var errors = rejection.data;
           }
       });
+    }
+    function initialize_user_permissions() {
+      $scope.permissions = {};
+      $scope.permissions = {
+        can_view_items: true,
+        can_add_items: true,
+        can_edit_items: true,
+        can_delete_items: true,
+        can_view_purchase_requests: true,
+        can_add_purchase_requests: true,
+        can_edit_purchase_requests: true,
+        can_delete_purchase_requests: true,
+        can_approve_purchase_requests: true,
+        can_view_request_to_canvasses: true,
+        can_add_request_to_canvasses: true,
+        can_edit_request_to_canvasses: true,
+        can_delete_request_to_canvasses: true,
+        can_view_capital_expenditure_requests: true,
+        can_add_capital_expenditure_requests: true,
+        can_edit_capital_expenditure_requests: true,
+        can_delete_capital_expenditure_requests: true,
+        can_approve_capital_expenditure_requests: true,
+        can_view_purchase_orders: true,
+        can_add_purchase_orders: true,
+        can_edit_purchase_orders: true,
+        can_delete_purchase_orders: true,
+        can_approve_purchase_orders: true,
+        can_view_receiving_reports: true,
+        can_add_receiving_reports: true,
+        can_edit_receiving_reports: true,
+        can_delete_receiving_reports: true,
+        can_view_stock_issuances: true,
+        can_add_stock_issuances: true,
+        can_edit_stock_issuances: true,
+        can_delete_stock_issuances: true,
+        can_approve_stock_issuances: true,
+      };
     }
     function get_settings() {
         $http({
@@ -293,6 +629,7 @@
     }
     $scope.add_user_form = function() {
       $('#add-user-modal').modal('show');
+      initialize_user_permissions();
       $scope.formdata = {
         privilege:'restaurant_cashier',
         position: null,
@@ -300,9 +637,9 @@
     }
 
     $scope.add_user = function(){
-
       $scope.formerrors = {};
       $scope.submit = true;
+      $scope.formdata.permissions = $scope.permissions;
       $http({
          method: 'POST',
          url: '/api/users/add',
@@ -327,6 +664,8 @@
     $scope.edit_user = function(data) {
       console.log(data);
       $scope.formdata = data.user;
+      $scope.permissions = data.user.permissions;
+      console.log($scope.permissions);
       $scope.formdata.restaurant_id = (data.user.restaurant_id.toString()=='0'?'':data.user.restaurant_id.toString());
       $('#edit-user-modal').modal('show');
     }
@@ -339,7 +678,8 @@
         allow_edit_info: $scope.formdata.allow_edit_info,
         password: $scope.formdata.password,
         email_address: $scope.formdata.email_address,
-        position: $scope.formdata.position
+        position: $scope.formdata.position,
+        permissions: $scope.permissions
       };
       $scope.formerrors = {};
       $scope.submit = true;
@@ -407,6 +747,49 @@
         }
       );
     }
+    $scope.permission_form = function() {
+      $('#permission-modal').modal('show');
+    }
+    $scope.$watch('permissions.can_view_items', function (newValue, oldValue, scope) {
+      $scope.permissions.can_add_items = newValue;
+      $scope.permissions.can_edit_items = newValue;
+      $scope.permissions.can_delete_items = newValue;
+    });
+    $scope.$watch('permissions.can_view_purchase_requests', function (newValue, oldValue, scope) {
+      $scope.permissions.can_add_purchase_requests = newValue;
+      $scope.permissions.can_edit_purchase_requests = newValue;
+      $scope.permissions.can_delete_purchase_requests = newValue;
+      $scope.permissions.can_approve_purchase_requests = newValue;
+    });
+    $scope.$watch('permissions.can_view_request_to_canvasses', function (newValue, oldValue, scope) {
+      $scope.permissions.can_add_request_to_canvasses = newValue;
+      $scope.permissions.can_edit_request_to_canvasses = newValue;
+      $scope.permissions.can_delete_request_to_canvasses = newValue;
+    });
+    $scope.$watch('permissions.can_view_capital_expenditure_requests', function (newValue, oldValue, scope) {
+      $scope.permissions.can_add_capital_expenditure_requests = newValue;
+      $scope.permissions.can_edit_capital_expenditure_requests = newValue;
+      $scope.permissions.can_delete_capital_expenditure_requests = newValue;
+      $scope.permissions.can_approve_capital_expenditure_requests = newValue;
+    });
+    $scope.$watch('permissions.can_view_purchase_orders', function (newValue, oldValue, scope) {
+      $scope.permissions.can_add_purchase_orders = newValue;
+      $scope.permissions.can_edit_purchase_orders = newValue;
+      $scope.permissions.can_delete_purchase_orders = newValue;
+      $scope.permissions.can_approve_purchase_orders = newValue;
+    });
+    $scope.$watch('permissions.can_view_receiving_reports', function (newValue, oldValue, scope) {
+      $scope.permissions.can_add_receiving_reports = newValue;
+      $scope.permissions.can_edit_receiving_reports = newValue;
+      $scope.permissions.can_delete_receiving_reports = newValue;
+    });
+    $scope.$watch('permissions.can_view_stock_issuances', function (newValue, oldValue, scope) {
+      $scope.permissions.can_add_stock_issuances = newValue;
+      $scope.permissions.can_edit_stock_issuances = newValue;
+      $scope.permissions.can_delete_stock_issuances = newValue;
+      $scope.permissions.can_approve_stock_issuances = newValue;
+    });
+
   });
 
 

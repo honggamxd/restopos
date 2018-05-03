@@ -10,6 +10,7 @@ use App\Restaurant_bill_detail;
 use App\Restaurant_bill;
 use App\Restaurant_payment;
 use App\Restaurant_meal_types;
+use App\Inventory\Inventory_user_permission;
 use Carbon\Carbon;
 use Auth;
 use App;
@@ -151,7 +152,7 @@ class Users_controller extends Controller
       $users->where($request->fieldName,$request->fieldValue);
     }
     $users = $users->get();
-    $data['result'] = fractal($users, new User_transformer)->parseIncludes('restaurant')->toArray();
+    $data['result'] = fractal($users, new User_transformer)->parseIncludes('restaurant,permissions')->toArray();
     if($request->term){
       $autocomplete = array();
       foreach ($data['result']['data'] as $user) {
@@ -193,6 +194,45 @@ class Users_controller extends Controller
         $user->allow_edit_info = ($request->allow_edit_info!=null?1:0);
         $user->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
         $user->save();
+
+        if($request->privilege=='inventory_user'){
+          $user = User::orderBy('id','DESC')->first();
+          $permission = new Inventory_user_permission;
+          $permission->user_id = $user->id;
+          $permission->can_view_items = $request->permissions['can_view_items'] == 'true' ? 1 : 0;
+          $permission->can_add_items = $request->permissions['can_add_items'] == 'true' ? 1 : 0;
+          $permission->can_edit_items = $request->permissions['can_edit_items'] == 'true' ? 1 : 0;
+          $permission->can_delete_items = $request->permissions['can_delete_items'] == 'true' ? 1 : 0;
+          $permission->can_view_purchase_requests = $request->permissions['can_view_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_add_purchase_requests = $request->permissions['can_add_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_edit_purchase_requests = $request->permissions['can_edit_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_delete_purchase_requests = $request->permissions['can_delete_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_approve_purchase_requests = $request->permissions['can_approve_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_view_request_to_canvasses = $request->permissions['can_view_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_add_request_to_canvasses = $request->permissions['can_add_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_edit_request_to_canvasses = $request->permissions['can_edit_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_delete_request_to_canvasses = $request->permissions['can_delete_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_view_capital_expenditure_requests = $request->permissions['can_view_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_add_capital_expenditure_requests = $request->permissions['can_add_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_edit_capital_expenditure_requests = $request->permissions['can_edit_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_delete_capital_expenditure_requests = $request->permissions['can_delete_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_approve_capital_expenditure_requests = $request->permissions['can_approve_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_view_purchase_orders = $request->permissions['can_view_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_add_purchase_orders = $request->permissions['can_add_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_edit_purchase_orders = $request->permissions['can_edit_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_delete_purchase_orders = $request->permissions['can_delete_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_approve_purchase_orders = $request->permissions['can_approve_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_view_receiving_reports = $request->permissions['can_view_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_add_receiving_reports = $request->permissions['can_add_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_edit_receiving_reports = $request->permissions['can_edit_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_delete_receiving_reports = $request->permissions['can_delete_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_view_stock_issuances = $request->permissions['can_view_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_add_stock_issuances = $request->permissions['can_add_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_edit_stock_issuances = $request->permissions['can_edit_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_delete_stock_issuances = $request->permissions['can_delete_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_approve_stock_issuances = $request->permissions['can_approve_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->save();
+        }
         DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
@@ -230,6 +270,44 @@ class Users_controller extends Controller
         $user_data->allow_edit_info = ($request->allow_edit_info=='true'?1:0);
         $user_data->restaurant_id = ($request->restaurant_id==null||$request->privilege=='admin'?0:$request->restaurant_id);
         $user_data->save();
+
+        if($request->privilege=='inventory_user'){
+          $permission = Inventory_user_permission::where('user_id',$id)->first();
+          $permission->can_view_items = $request->permissions['can_view_items'] == 'true' ? 1 : 0;
+          $permission->can_add_items = $request->permissions['can_add_items'] == 'true' ? 1 : 0;
+          $permission->can_edit_items = $request->permissions['can_edit_items'] == 'true' ? 1 : 0;
+          $permission->can_delete_items = $request->permissions['can_delete_items'] == 'true' ? 1 : 0;
+          $permission->can_view_purchase_requests = $request->permissions['can_view_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_add_purchase_requests = $request->permissions['can_add_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_edit_purchase_requests = $request->permissions['can_edit_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_delete_purchase_requests = $request->permissions['can_delete_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_approve_purchase_requests = $request->permissions['can_approve_purchase_requests'] == 'true' ? 1 : 0;
+          $permission->can_view_request_to_canvasses = $request->permissions['can_view_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_add_request_to_canvasses = $request->permissions['can_add_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_edit_request_to_canvasses = $request->permissions['can_edit_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_delete_request_to_canvasses = $request->permissions['can_delete_request_to_canvasses'] == 'true' ? 1 : 0;
+          $permission->can_view_capital_expenditure_requests = $request->permissions['can_view_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_add_capital_expenditure_requests = $request->permissions['can_add_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_edit_capital_expenditure_requests = $request->permissions['can_edit_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_delete_capital_expenditure_requests = $request->permissions['can_delete_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_approve_capital_expenditure_requests = $request->permissions['can_approve_capital_expenditure_requests'] == 'true' ? 1 : 0;
+          $permission->can_view_purchase_orders = $request->permissions['can_view_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_add_purchase_orders = $request->permissions['can_add_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_edit_purchase_orders = $request->permissions['can_edit_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_delete_purchase_orders = $request->permissions['can_delete_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_approve_purchase_orders = $request->permissions['can_approve_purchase_orders'] == 'true' ? 1 : 0;
+          $permission->can_view_receiving_reports = $request->permissions['can_view_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_add_receiving_reports = $request->permissions['can_add_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_edit_receiving_reports = $request->permissions['can_edit_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_delete_receiving_reports = $request->permissions['can_delete_receiving_reports'] == 'true' ? 1 : 0;
+          $permission->can_view_stock_issuances = $request->permissions['can_view_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_add_stock_issuances = $request->permissions['can_add_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_edit_stock_issuances = $request->permissions['can_edit_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_delete_stock_issuances = $request->permissions['can_delete_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->can_approve_stock_issuances = $request->permissions['can_approve_stock_issuances'] == 'true' ? 1 : 0;
+          $permission->save();
+        }
+
         DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
@@ -240,6 +318,7 @@ class Users_controller extends Controller
   {
     $user = new User;
     $user_data = $user->find($id)->delete();
+    Inventory_user_permission::where('user_id',$id)->delete();
     return $this->show_users($request);
   }
 

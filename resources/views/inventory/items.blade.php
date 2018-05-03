@@ -20,7 +20,7 @@
             <div class="ui left icon input action fluid">
                 <i class="search icon"></i>
                 <input type="text" placeholder="Search" id="search-item-name" ng-model="search_item_name">
-                <button type="button" class="ui primary button" ng-click="add_item_form()">Add Item</button>
+                <button type="button" class="ui primary button" ng-click="add_item_form()" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_items">Add Item</button>
             </div> 
         </div>
     </div>
@@ -129,6 +129,7 @@
         $scope.submit = false;
         $scope.loading = true;
         $scope.pages = "";
+        $scope.user_data = user_data;
         
         $scope.show_items =  _.debounce(function(url_string) {
             url_string = (typeof url_string !== 'undefined') && url_string !== "" ? url_string : route('api.inventory.item.index').url();

@@ -11,7 +11,7 @@
 </head>
 <body ng-app="main" ng-controller="content-controller">
 @yield('overlay-div')
-<div class="ui left vertical inverted labeled icon sidebar menu">
+<div class="ui left vertical inverted labeled icon sidebar menu" ng-controller="nav_controller">
     @if(Auth::user()->privilege=="restaurant_cashier")
     <a class="item" href="/">
         <i class="food icon"></i>
@@ -49,35 +49,36 @@
         Food Orders
     </a>
     @endif
-    @if(Auth::user()->privilege=="admin")
-    <a class="item" href="{{route('inventory.item.index')}}">
+    @if(Auth::user()->privilege=="admin" || Auth::user()->privilege=="inventory_user"))
+    <a class="item" href="{{route('inventory.item.index')}}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_view_items">
         <i class="browser icon"></i>
         Items
     </a>
-    <a class="item" href="{{ route('inventory.purchase-request.list') }}">
+    <a class="item" href="{{ route('inventory.purchase-request.list') }}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_view_purchase_requests">
         <i class="browser icon"></i>
         Purchase<br>Request
     </a>
-    <a class="item" href="{{ route('inventory.request-to-canvass.list') }}">
+    <a class="item" href="{{ route('inventory.request-to-canvass.list') }}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_view_request_to_canvasses">
         <i class="browser icon"></i>
         Request to<br>Canvass
     </a>
-    <a class="item" href="{{ route('inventory.capital-expenditure-request.list') }}">
+    <a class="item" href="{{ route('inventory.capital-expenditure-request.list') }}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_view_capital_expenditure_requests">
         <i class="browser icon"></i>
         Capital<br>Expenditure<br>Request
     </a>
-    <a class="item" href="{{ route('inventory.purchase-order.list') }}">
+    <a class="item" href="{{ route('inventory.purchase-order.list') }}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_view_purchase_orders">
         <i class="browser icon"></i>
         Purchase<br>Order
     </a>
-    <a class="item" href="{{ route('inventory.receiving-report.list') }}">
+    <a class="item" href="{{ route('inventory.receiving-report.list') }}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_view_receiving_reports">
         <i class="browser icon"></i>
         Receiving<br>Report
     </a>
-    <a class="item" href="{{ route('inventory.stock-issuance.list') }}">
+    <a class="item" href="{{ route('inventory.stock-issuance.list') }}" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_view_stock_issuances">
         <i class="browser icon"></i>
         Stock<br>Issuance
     </a>
+    @if(Auth::user()->privilege=="admin")
     <a class="item" href="/users">
         <i class="users icon"></i>
         Users
@@ -91,6 +92,7 @@
         Restaurant<br>
         Settings
     </a>
+    @endif
     @endif
 
 </div>
@@ -143,7 +145,13 @@
 
 @routes
 <script src="{{ asset('js/app.js') }}"></script>
-<script>user_data = {name: "{{Auth::user()->name}}",username: "{{Auth::user()->username}}"};</script>
+<script>user_data = {privilege: "{{Auth::user()->privilege}}" ,name: "{{Auth::user()->name}}",username: "{{Auth::user()->username}}", permissions:{!! fractal(App\Inventory\Inventory_user_permission::where('user_id',Auth::user()->id)->first(), new App\Transformers\Inventory_user_permission_transformer)->parseincludes('permissions')->toJson() !!} };</script>
+<script>
+    app.controller('nav_controller', function($scope,$http, $sce, $window) {
+        $scope.user_data = user_data;
+        // console.log($scope.user_permission);
+    });
+</script>
 @stack('scripts')
 </body>
 </html>

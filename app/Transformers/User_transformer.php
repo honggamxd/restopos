@@ -4,6 +4,7 @@ namespace App\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use App\Transformers\Restaurant_transformer;
+use App\Transformers\Inventory_user_permission_transformer;
 
 class User_transformer extends TransformerAbstract
 {
@@ -12,7 +13,7 @@ class User_transformer extends TransformerAbstract
      *
      * @return array
      */
-    protected $availableIncludes = ['restaurant'];
+    protected $availableIncludes = ['restaurant','permissions'];
     public function transform($user)
     {
         switch ($user->privilege) {
@@ -51,6 +52,13 @@ class User_transformer extends TransformerAbstract
     {
         if ($user->restaurant) {
             return $this->item($user->restaurant, new Restaurant_transformer);
+        }
+    }
+
+    public function includePermissions($user)
+    {
+        if ($user->permissions) {
+            return $this->item($user->permissions, new Inventory_user_permission_transformer);
         }
     }
 }

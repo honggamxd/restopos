@@ -3,7 +3,7 @@
 namespace App\Transformers;
 
 use League\Fractal\TransformerAbstract;
-use App\Transformers\UserTransformer;
+use App\Transformers\User_transformer;
 
 class Inventory_user_permission_transformer extends TransformerAbstract
 {
@@ -56,7 +56,7 @@ class Inventory_user_permission_transformer extends TransformerAbstract
     public function includeUser ($user_permission)
     {
         if($user_permission->user) {
-            return $this->collection($user_permission->user, new UserTransformer);
+            return $this->item($user_permission->user, new User_transformer);
         }
     }
 }
