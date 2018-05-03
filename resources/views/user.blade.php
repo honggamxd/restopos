@@ -613,7 +613,6 @@
             angular.forEach(positions, function(value, key) {
               $scope.positions.push(value);
             });
-            console.log($scope.positions);
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
