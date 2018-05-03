@@ -47,7 +47,9 @@
                             <td class="center aligned middle aligned">@{{item.total_quantity}}</td>
                             <td class="right aligned middle aligned">@{{item.average_cost|currency:""}}</td>
                             <td class="center aligned middle aligned"></td>
-                            <td class="right aligned middle aligned"><button type="button" class="btn btn-danger" ng-click="delete_item(this)">&times;</button></td>
+                            <td class="right aligned middle aligned">
+                                <button type="button" class="btn btn-danger" ng-click="delete_item(this)" ng-if="user_data.privilege == 'admin' || user_data.permissions.can_add_items">&times;</button>
+                            </td>
                         </tr>
                     </tbody>
                     <tfoot>
