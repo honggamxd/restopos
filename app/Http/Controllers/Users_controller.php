@@ -116,7 +116,8 @@ class Users_controller extends Controller
           'Cash & Bank',
           'Purchasing',
           'Warehouse Representative',
-          'Department Head'
+          'Department Head',
+          'Finance Personel'
         ];
         $fp = fopen('settings/user.json', 'w');
         fwrite($fp, json_encode($data));

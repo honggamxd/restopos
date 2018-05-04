@@ -600,6 +600,16 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     $('#capital_expenditure_request_date,#date_needed').datepicker();
     $('#requested_by_date,#approved_by_1_date,#verified_as_funded_by_date,#approved_by_2_date,#recorded_by_date').datepicker();
 
+    $("#verified_as_funded_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Cash%20%26%20Bank"
+    });
+    $("#requested_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Department Head"
+    });
+    $("#recorded_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Finance Personel"
+    });
+
     window.onbeforeunload = confirmExit;
 
     function confirmExit() {

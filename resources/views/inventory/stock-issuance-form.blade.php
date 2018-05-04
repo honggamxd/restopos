@@ -239,7 +239,9 @@
             <div class="col-sm-3">
                 <div class="form-group">
                     <label for="issued_by_name"><small style="color:red">*</small> Stock Issued By:</label>
-                    <input type="text" class="form-control" placeholder="Enter Stock Issued By" id="issued_by_name" ng-model="formdata.issued_by_name">
+                    <div data-tooltip="Search for the name of the warehouse representative" data-position="bottom right" data-inverted="">
+                        <input type="text" class="form-control" placeholder="Enter Stock Issued By" id="issued_by_name" ng-model="formdata.issued_by_name">
+                    </div>
                     <p class="help-block" ng-cloak>@{{formerrors.issued_by_name[0]}}</p>
                 </div>
             </div>
@@ -250,18 +252,18 @@
                     <p class="help-block" ng-cloak>@{{formerrors.received_by_name[0]}}</p>
                 </div>
             </div>
-            <div class="col-sm-3" ng-if="edit_mode=='update'">
-                <div class="form-group">
-                    <label for="approved_by_name">Approved By: <a href="javascript:void(0);" ng-click="fill_approved_by()"><small data-tooltip="This will fill your name and date" data-position="right center" data-inverted="">Fill</small></a></label>
-                    <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
-                    <p class="help-block" ng-cloak>@{{formerrors.approved_by_name[0]}}</p>
-                </div>
-            </div>
             <div class="col-sm-3">
                 <div class="form-group">
                     <label for="posted_by_name">Posted By:</label>
                     <input type="text" class="form-control" placeholder="Enter Posted By" id="posted_by_name" ng-model="formdata.posted_by_name">
                     <p class="help-block" ng-cloak>@{{formerrors.posted_by_name[0]}}</p>
+                </div>
+            </div>
+            <div class="col-sm-3" ng-if="edit_mode=='update'">
+                <div class="form-group">
+                    <label for="approved_by_name">Approved By: <a href="javascript:void(0);" ng-click="fill_approved_by()"><small data-tooltip="This will fill your name and date" data-position="right center" data-inverted="">Fill</small></a></label>
+                    <input type="text" class="form-control" placeholder="Enter Approved By" id="approved_by_name" ng-model="formdata.approved_by_name">
+                    <p class="help-block" ng-cloak>@{{formerrors.approved_by_name[0]}}</p>
                 </div>
             </div>
         </div>
@@ -344,6 +346,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.receiving_report_number_formatted = null;
         $scope.formdata.issued_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.stock_issuance_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.posted_by_date = moment().format("MM/DD/YYYY");
+        $scope.formdata.received_by_date = moment().format("MM/DD/YYYY");
         $scope.formdata.issued_by_name = user_data.name;
         get_settings();
     }else{
@@ -652,6 +656,16 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $('#stock_issuance_date,#date_to').datepicker();
     $('#received_by_date,#issued_by_date,#approved_by_date,#posted_by_date').datepicker();
+
+    $("#issued_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Warehouse Representative"
+    });
+    $("#received_by_name").autocomplete({
+        source: route('api.user.list').url()
+    });
+    $("#posted_by_name").autocomplete({
+        source: route('api.user.list').url()
+    });
 
     window.onbeforeunload = confirmExit;
 

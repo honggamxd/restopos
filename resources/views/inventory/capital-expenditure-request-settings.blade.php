@@ -97,11 +97,15 @@
                 <div id="footer-settings" class="tab-pane fade">
                     <div class="form-group">
                         <label for="verified_as_funded_by_name">Verified as Funded By:</label>
-                        <input type="text" class="form-control" placeholder="Search for Name of User" id="verified_as_funded_by_name" ng-model="footer.verified_as_funded_by_name">
+                        <div data-tooltip="Search for the name of the cash & bank" data-position="bottom right" data-inverted="">
+                            <input type="text" class="form-control" placeholder="Search for Name of User" id="verified_as_funded_by_name" ng-model="footer.verified_as_funded_by_name">
+                        </div>
                     </div>    
                     <div class="form-group">
                         <label for="recorded_by_name">Recorded by:</label>
-                        <input type="text" class="form-control" placeholder="Search for Name of User" id="recorded_by_name" ng-model="footer.recorded_by_name">
+                        <div data-tooltip="Search for the name of the finance personel" data-position="bottom right" data-inverted="">
+                            <input type="text" class="form-control" placeholder="Search for Name of User" id="recorded_by_name" ng-model="footer.recorded_by_name">
+                        </div>
                     </div>    
                     <div class="form-group">
                         <label for="approved_by_2_name">Managing Director:</label>
@@ -327,7 +331,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     }
 
     $("#verified_as_funded_by_name").autocomplete({
-        source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Cash%20%26%20Bank",
         select: function(event, ui) {
             $scope.footer.verified_as_funded_by_name = ui.item.value;
             $scope.update_footer_settings();
@@ -335,7 +339,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     });
 
     $("#approved_by_2_name").autocomplete({
-        source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Managing Director",
         select: function(event, ui) {
             $scope.footer.approved_by_2_name = ui.item.value;
             $scope.update_footer_settings();
@@ -343,12 +347,13 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     });
 
     $("#recorded_by_name").autocomplete({
-        source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Finance Personel",
         select: function(event, ui) {
             $scope.footer.recorded_by_name = ui.item.value;
             $scope.update_footer_settings();
         }
     });
+
 
 });
 </script>

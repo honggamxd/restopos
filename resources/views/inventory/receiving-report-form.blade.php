@@ -196,7 +196,9 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     <label for="received_by_name"><small style="color:red">*</small> Received By:</label>
-                    <input type="text" class="form-control" placeholder="Enter Received By" id="received_by_name" ng-model="formdata.received_by_name">
+                    <div data-tooltip="Search for the name of the warehouse representative" data-position="bottom right" data-inverted="">
+                        <input type="text" class="form-control" placeholder="Enter Received By" id="received_by_name" ng-model="formdata.received_by_name">
+                    </div>
                     <p class="help-block" ng-cloak>@{{formerrors.received_by_name[0]}}</p>
                 </div>
             </div>
@@ -279,8 +281,9 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
         $scope.items = {};
         $scope.purchase_order_number_formatted = null;
         $scope.formdata.receiving_report_date = moment().format("MM/DD/YYYY hh:mm:ss a");
-        $scope.formdata.received_by_name = user_data.name;
-        get_settings();
+        // $scope.formdata.posted_by_name = user_data.name;
+        // $scope.formdata.posted_by_date  = moment().format("MM/DD/YYYY");;
+        // get_settings();
     }else{
         $scope.formdata = {!! isset($data) ? json_encode($data): '{}' !!};
         $scope.formdata.receiving_report_date = $scope.formdata.receiving_report_date ? moment($scope.formdata.receiving_report_date).format("MM/DD/YYYY hh:mm:ss a") : null;
@@ -455,8 +458,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             url: route('api.inventory.receiving-report.footer.get').url(),
         }).then(function mySuccess(response) {
             let footer = response.data.footer;
-            $scope.formdata.noted_by_name = footer.noted_by_name;
-            $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+            $scope.formdata.posted_by_name = footer.posted_by_name;
+            $scope.formdata.posted_by_date = moment().format("MM/DD/YYYY");
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
@@ -506,6 +509,17 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
       timeFormat: "hh:mm:ss tt"
     });
     $('#checked_by_date,#posted_by_date').datepicker();
+
+    $("#received_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Warehouse Representative"
+    });
+    $("#checked_by_name").autocomplete({
+        source: route('api.user.list').url()
+    });
+    $("#posted_by_name").autocomplete({
+        source: route('api.user.list').url()
+    });
+
 });
 </script>
 @endpush
