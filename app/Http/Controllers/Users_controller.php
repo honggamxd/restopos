@@ -151,6 +151,10 @@ class Users_controller extends Controller
     if($request->fieldName){
       $users->where($request->fieldName,$request->fieldValue);
     }
+    if($request->term){
+      $users->select('name');
+      $users->distinct();
+    }
     $users = $users->get();
     $data['result'] = fractal($users, new User_transformer)->parseIncludes('restaurant,permissions')->toArray();
     if($request->term){

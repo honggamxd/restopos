@@ -97,7 +97,9 @@
                 <div id="footer-settings" class="tab-pane fade">
                     <div class="form-group">
                         <label for="noted_by_name">Noted By:</label>
-                        <input type="text" class="form-control" placeholder="Search for Name of User" id="noted_by_name" ng-model="footer.noted_by_name" ng-change="update_footer_settings()">
+                        <div data-tooltip="Search for the name of the department head" data-position="bottom right" data-inverted="">
+                            <input type="text" class="form-control" placeholder="Search for Name of User" id="noted_by_name" ng-model="footer.noted_by_name" ng-change="update_footer_settings()">
+                        </div>
                     </div>    
                 </div>
             </div>
@@ -319,7 +321,7 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
     }
 
     $("#noted_by_name").autocomplete({
-        source: route('api.user.list').url() + "?fieldName=privilege&fieldValue=restaurant_admin",
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Department Head",
         select: function(event, ui) {
             $scope.footer.noted_by_name = ui.item.value;
             $scope.update_footer_settings();

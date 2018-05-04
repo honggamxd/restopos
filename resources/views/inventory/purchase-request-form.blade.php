@@ -248,7 +248,9 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     <label for="noted_by_name">Noted By:</label>
-                    <input type="text" class="form-control" placeholder="Enter Noted By" id="noted_by_name" ng-model="formdata.noted_by_name">
+                    <div data-tooltip="Search for the name of the department head" data-position="bottom right" data-inverted="">
+                        <input type="text" class="form-control" placeholder="Enter Noted By" id="noted_by_name" ng-model="formdata.noted_by_name">
+                    </div>
                     <p class="help-block" ng-cloak>@{{formerrors.noted_by_name[0]}}</p>
                 </div>
             </div>
@@ -658,6 +660,13 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $('#purchase_request_date,#date_needed').datepicker();
     $('#requested_by_date,#noted_by_date,#approved_by_date').datepicker();
+
+    $("#noted_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Department Head"
+    });
+    $("#requested_by_name").autocomplete({
+        source: route('api.user.list').url()
+    });
 
     window.onbeforeunload = confirmExit;
 

@@ -225,7 +225,7 @@ class Request_to_canvass_controller extends Controller
     public function update_footer_settings(Request $request)
     {
         $data = array();
-        $data['footer'] = ['noted_by_name'=>$request->noted_by_name];
+        $data['footer'] = ['noted_by_name'=>$request->noted_by_name,'canvass_by_name'=>$request->canvass_by_name];
         $fp = fopen('settings/request-to-canvass.json', 'w');
         fwrite($fp, json_encode($data));
         fclose($fp);

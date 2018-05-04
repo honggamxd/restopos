@@ -255,14 +255,18 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     <label for="noted_by_name">Noted By:</label>
-                    <input type="text" class="form-control" placeholder="Enter Noted By" id="noted_by_name" ng-model="formdata.noted_by_name">
+                    <div data-tooltip="Search for the name of the department head" data-position="bottom right" data-inverted="">
+                        <input type="text" class="form-control" placeholder="Enter Noted By" id="noted_by_name" ng-model="formdata.noted_by_name">
+                    </div>
                     <p class="help-block" ng-cloak>@{{formerrors.noted_by_name[0]}}</p>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
                     <label for="canvass_by_name">Canvass By:</label>
-                    <input type="text" class="form-control" placeholder="Enter Canvass By" id="canvass_by_name" ng-model="formdata.canvass_by_name">
+                    <div data-tooltip="Search for the name of a purchaser" data-position="bottom right" data-inverted="">
+                        <input type="text" class="form-control" placeholder="Enter Canvass By" id="canvass_by_name" ng-model="formdata.canvass_by_name">
+                    </div>
                     <p class="help-block" ng-cloak>@{{formerrors.canvass_by_name[0]}}</p>
                 </div>
             </div>
@@ -464,6 +468,8 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
             let footer = response.data.footer;
             $scope.formdata.noted_by_name = footer.noted_by_name;
             $scope.formdata.noted_by_date = moment().format("MM/DD/YYYY");
+            $scope.formdata.canvass_by_name = footer.canvass_by_name;
+            $scope.formdata.canvass_by_date = moment().format("MM/DD/YYYY");
         }, function(rejection) {
             if (rejection.status != 422) {
                 request_error(rejection.status);
@@ -555,6 +561,16 @@ app.controller('content-controller', function($scope,$http, $sce, $window) {
 
     $('#request_to_canvass_date,#date_needed').datepicker();
     $('#noted_by_date,#canvass_by_date').datepicker();
+
+    $("#noted_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Department Head"
+    });
+    $("#canvass_by_name").autocomplete({
+        source: route('api.user.list').url() + "?fieldName=position&fieldValue=Purchasing"
+    });
+    $("#requested_by_name").autocomplete({
+        source: route('api.user.list').url()
+    });
 });
 </script>
 @endpush
