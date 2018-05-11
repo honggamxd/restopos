@@ -321,6 +321,7 @@
     }
     $scope.remaining_balance = function() {
       remaining_balance = $scope.net_billing()-$scope.total_payments();
+      remaining_balance = Math.round(remaining_balance * 100) / 100;
       return (remaining_balance<=0?0:remaining_balance);
     }
     $scope.payment_change = function() {
@@ -330,7 +331,6 @@
 
     $scope.change_settlement = function(data) {
       data.payment_data.settlement = data.payment_data.settlement_array.label;
-      console.log(data.payment_data.settlement);
     }
     $scope.save = function() {
       if($scope.remaining_balance()!=0){
