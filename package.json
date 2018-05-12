@@ -20,6 +20,7 @@
     "alertifyjs": "^1.11.0",
     "angular": "^1.6.8",
     "angular-sanitize": "^1.6.8",
+    "balloon-css": "^0.5.0",
     "font-awesome": "^4.7.0",
     "jquery-ui": "^1.12.1",
     "jquery-ui-dist": "^1.12.1",

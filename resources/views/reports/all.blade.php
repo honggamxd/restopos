@@ -421,7 +421,7 @@
       $http({
           method : "PATCH",
           url : "/api/reports/general/f_and_b_export",
-          data: {
+          data: $.param({
             "date_from":$scope.date_from,
             "date_to":$scope.date_to,
             "meal_type": $scope.meal_type,
@@ -431,7 +431,7 @@
             "export": 1,
             "page": page,
             "is_last_page": ($scope.number_of_pages==page)
-          }
+          })
       }).then(function mySuccess(response) {
         $scope.export = false;
         let num = (($scope.export_page/$scope.number_of_pages) * 100);
