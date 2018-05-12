@@ -371,6 +371,7 @@
     }
     // $scope.export_reports_parameters = 
     $scope.export_reports = function(page=1) {
+      console.log($scope.number_of_pages);
       $scope.export = true;
       $scope.overlay_div = {
         'z-index': '2000',
