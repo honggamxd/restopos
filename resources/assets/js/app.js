@@ -46,14 +46,13 @@ $(document).ready(function(){
 });
 
 window.request_error = function(error_code) {
+    console.log(error_code);
     if(error_code==401){
         alertify.alert('Error','Session has expired. Please login again.');
         setTimeout(function(){
             location.reload();
         }, 3000);
-    }else if(error_code==401){
-        $.notify("Server Error Try Again.",'warn');
-    }else if(error_code>=500){
+    }else{
         $.notify("Server Error Try Again.",'error');
     }
 }

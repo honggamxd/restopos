@@ -33,7 +33,7 @@
         <h1 style="text-align: center;">Export {{App\Restaurant::find(Auth::user()->restaurant_id)->name}} Order Slip Summary Report<br><small><b>Date From:</b> @{{date_from_str}} <b>Date To:</b> @{{date_to_str}} </small></h1>
       @endif    
       <br>
-      <span>@{{export_status}}</span>
+      <span id="time">@{{export_status}}</span>
       <br>
       <div class="progress" ng-if="export_progress != ''">
         <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
@@ -453,7 +453,15 @@
           }
         }
       }, function myError(rejection) {
-          if(rejection.status != 422){
+          if(rejection.status >= 500){
+            $scope.export_status = "Export failed, Resuming export in ";
+            var countDownTime = 60 * 1.5;
+            startTimer(countDownTime);
+            setTimeout(function(){
+              setTimeout(write_csv($scope.export_page), 1500);
+            }, ((1000 * 60 * 1.5) + 500));
+            return false;
+          }else if(rejection.status != 422){
             request_error(rejection.status);
           }else if(rejection.status == 422){
             var errors = rejection.data;
@@ -480,6 +488,29 @@
     function confirmExit() {
       if ($scope.export) return "Exporting is still in progress.";
     }
+
+    function startTimer(duration) {
+    var timer = duration, minutes, seconds;
+    var interval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        $scope.$apply(function () {
+          $scope.export_status = "Exporting Failed. Resuming the export in " + minutes + ":" + seconds;
+        });
+
+        if (--timer < 0) {
+            timer = duration;
+            $scope.$apply(function () {
+              $scope.export_status = "Exporting Report.. ";
+            });
+            clearInterval(interval);
+        }
+    }, 1000);
+}
   });
 
 
