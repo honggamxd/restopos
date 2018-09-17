@@ -233,4 +233,9 @@ class Restaurant_menu_controller extends Controller
     }
     return $data;
   }
+
+  public function destroy($id)
+  {
+    Restaurant_menu::find($id)->delete();
+  }
 }

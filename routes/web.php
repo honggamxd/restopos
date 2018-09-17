@@ -27,6 +27,7 @@ Route::get('/api/restaurant/menu/subcategory/list', 'Restaurant_menu_controller@
 Route::get('/api/restaurant/menu/list/{type}', 'Restaurant_menu_controller@get_list');
 Route::get('/api/restaurant/menu/category/{id}', 'Restaurant_menu_controller@show_category')->middleware('auth.level.4');
 Route::put('/api/restaurant/menu/list/{id}', 'Restaurant_menu_controller@available_to_menu');
+Route::delete('/api/restaurant/menu/list/{id}', 'Restaurant_menu_controller@destroy');
 
 Route::post('/api/restaurant/table', 'Restaurant_table_controller@add_table');
 Route::put('/api/restaurant/table', 'Restaurant_table_controller@edit_table');

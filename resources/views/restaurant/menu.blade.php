@@ -69,7 +69,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="menu_data in menu">
+        <tr ng-repeat="(index, menu_data) in menu">
           <td class="center aligned middle aligned" ng-bind="menu_data.category" ng-cloak></td>
           <td class="center aligned middle aligned" ng-bind="menu_data.subcategory" ng-cloak></td>
           <td class="center aligned middle aligned" ng-bind="menu_data.name" ng-cloak></td>
@@ -77,11 +77,14 @@
           <td class="center aligned middle aligned" style="width: 12vw">
             <div class="ui toggle checkbox">
               <input type="checkbox" name="public" ng-change="available_to_menu(this)" ng-model="menu_data.is_prepared">
-              <label>Available</label>
+              <label ng-if="menu_data.is_prepared">Available</label>
+              <label ng-if="!menu_data.is_prepared">Unavailable</label>
             </div>
           </td>
           <td class="center aligned middle aligned" ng-cloak>
             <a href="javascript:void(0);" ng-click="edit_menu(this)">Edit</a>
+            <b ng-if="!menu_data.is_prepared"> | </b>
+            <a href="javascript:void(0);" ng-if="!menu_data.is_prepared" ng-click="delete_menu(menu_data,index)">Delete</a>
           </td>
         </tr>
       </tbody>
@@ -374,10 +377,41 @@
     }
 
     $scope.edit_menu = function(data) {
-      console.log(data);
+      // console.log(data);
       $scope.formdata = data.menu_data;
       $scope.formdata.price = parseInt(data.menu_data.price);
       $('#edit-menu-modal').modal('show');
+    }
+    $scope.delete_menu = function(data,index) {
+      // console.log(index);
+      alertify.confirm(
+            'Delete Menu',
+            'Are you sure you want to delete menu <b>'+data.name+'</b> permanently?',
+            function(){
+                $scope.remove_menu(data,index);
+            },
+            function()
+            {
+                // alertify.error('Cancel')
+            }
+        );
+    }
+
+    $scope.remove_menu = function(data,index) {
+      $http({
+        method: 'DELETE',
+        url: '/api/restaurant/menu/list/'+data.id,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        $scope.submit = false;
+        $scope.menu.shift(index,1);
+        $.notify(data.name+" has beed deleted.");
+      }, function(rejection) {
+        var errors = rejection.data;
+        $scope.formerrors = errors;
+        $scope.submit = false;
+      });
     }
 
 
