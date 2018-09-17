@@ -12,6 +12,7 @@
    $scope.formdata._token = $scope._token;
    $scope.loading = false;
    $scope.has_room_service_charge = true;
+   $scope.user_data = user_data;
    shortcut.add("Alt+A", function() {
      show_table();
      $scope.formdata.pax = '';
@@ -51,6 +52,7 @@
          var errors = rejection.data;
          $scope.formerrors.sc_pwd = errors.sc_pwd;
          $scope.formerrors.pax = errors.pax;
+         $scope.formerrors.password = errors.password;
          $scope.formerrors.server_id = errors['server_id.id'];
        }
        $scope.submit = false;
@@ -64,6 +66,7 @@
 
    function show_table(table_data) {
      $scope.table = {};
+     $scope.formdata.password = null;
      $http({
        method: "GET",
        url: "/api/restaurant/table/list/serve",

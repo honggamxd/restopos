@@ -7,6 +7,7 @@ use Validator;
 use DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use App\Restaurant_server;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,13 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         Validator::extend('custom_min', function($attribute, $value, $parameters, $validator) {
             return $value>=$parameters[0];
+        });
+        Validator::extend('waiter_password', function($attribute, $value, $parameters, $validator) {
+            if($parameters[0] == "restaurant_waiter"){
+                $server = Restaurant_server::find($parameters[1]);
+                return $server->password === $value;
+            }
+            return true;
         });
 
         Validator::extend('custom_max', function($attribute, $value, $parameters, $validator) {

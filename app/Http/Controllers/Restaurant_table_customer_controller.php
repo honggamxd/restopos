@@ -32,8 +32,10 @@ class Restaurant_table_customer_controller extends Controller
         'server_id.id' => 'required',
         'pax' => 'integer|required|custom_min:1',
         'sc_pwd' => 'integer|required|custom_max:'.$request->pax,
+        'password' => 'waiter_password:'.Auth::user()->privilege.','.$request->server_id['id'],
     ],[
       'custom_min' => 'The number of :attribute must be greater than or equal to 1.',
+      'waiter_password' => 'Incorrect or Invalid Password',
       'server_id.id.required' => 'The Server field is required.',
       'sc_pwd.custom_max' => 'The number of SC/PWD must not be greater than '.$request->pax.' pax.',
     ]);

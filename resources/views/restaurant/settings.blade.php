@@ -214,6 +214,13 @@
             <p class="help-block">@{{formerror.name[0]}}</p>
           </div>
 
+          <div class="form-group">
+            <label>Password:</label>
+            <a href="javascript:void(0);" ng-click="generate_password()">Generate Password</a>
+            <input class="form-control" type="text" placeholder="Enter Password" name="pax" ng-model="formdata.password">
+            <p class="help-block">@{{formerrors.password[0]}}</p>
+          </div>
+
         </form>
       </div>
       <div class="modal-footer">
@@ -241,6 +248,12 @@
             <label>Waiter/Waitress Name:</label>
             <input type="text" ng-model="formdata.name" placeholder="Waiter/Waitress Name" class="form-control">
             <p class="help-block">@{{formerror.name[0]}}</p>
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+            <a href="javascript:void(0);" ng-click="generate_password()">Generate Password</a>
+            <input class="form-control" type="text" placeholder="Enter Password" name="pax" ng-model="formdata.password">
+            <p class="help-block">@{{formerrors.password[0]}}</p>
           </div>
 
         </form>
@@ -277,6 +290,10 @@
       // console.log(data.restaurant_id.name);
       $scope.formdata.restaurant_name = data.restaurant_id.name;
       $scope.hide_outlet = ($scope.hide_outlet?false:true);
+    }
+
+    $scope.generate_password = function(params) {
+      $scope.formdata.password = $scope.formdata.name.replace(/ .*/,'').toLowerCase() + Math.floor((Math.random() * 999) + 1);
     }
 
     $scope.rename_restaurant = function(data) {

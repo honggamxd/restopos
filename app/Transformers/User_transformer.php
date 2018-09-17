@@ -26,6 +26,9 @@ class User_transformer extends TransformerAbstract
             case 'restaurant_cashier':
                 $str_privilege = "Restaurant Cashier";
                 break;
+            case 'restaurant_waiter':
+                $str_privilege = "Restaurant Waiter";
+                break;
             case 'inventory_user':
                 $str_privilege = "Inventory User";
                 break;

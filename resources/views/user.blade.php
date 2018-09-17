@@ -101,6 +101,7 @@
           <select name="restaurant_id" placeholder="Outlet" class="form-control" ng-model="formdata.privilege">
             <option value="restaurant_cashier">Restaurant Cashier</option>
             <option value="restaurant_admin">Restaurant Admin</option>
+            <option value="restaurant_waiter">Restaurant Waiter</option>
             <option value="admin">Admin</option>
             <option value="inventory_user">Inventory User</option>
           </select>

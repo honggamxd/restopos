@@ -76,6 +76,9 @@ class Reports_controller extends Controller
     $data["restaurants"] = Restaurant::all();
     $data['restaurant_servers'] = Restaurant_server::withTrashed()->where('restaurant_id')->get();
     $data['restaurant_cashiers'] = User::withTrashed()->where('privilege','restaurant_cashier')->get();
+    if(Auth::user()->privilege == "restaurant_waiter"){
+      abort(403);
+    }
     return view('reports.all',$data);
   }
 

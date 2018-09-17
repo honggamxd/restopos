@@ -98,16 +98,16 @@
                 <button class="ui inverted green button" ng-click="add_order(this)" ng-if="!customer_data.has_billed_out">
                   <i class="fa fa-file-text-o" aria-hidden="true"></i> Order
                 </button>
-                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-disabled="bill_out_submit" ng-class="{'loading':bill_out_submit}">
+                <button class="ui inverted violet button" ng-click="bill_out(this)" ng-disabled="bill_out_submit" ng-class="{'loading':bill_out_submit}" ng-hide="user_data.privilege == 'restaurant_waiter'">
                   <i class="fa fa-calculator" aria-hidden="true"></i> Bill out
                 </button>
-                <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill">
+                <button class="ui inverted brown button" ng-click="view_bills(this)" ng-if="customer_data.has_bill" ng-hide="user_data.privilege == 'restaurant_waiter'">
                   <i class="fa fa-list-alt" aria-hidden="true"></i> View Bills
                 </button>
-                <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==2)">
+                <button class="ui inverted red button" ng-click="delete_table_customer(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==0 || customer_data.cancellation_order_status==2)"  ng-hide="user_data.privilege == 'restaurant_waiter'">
                   <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
                 </button>
-                <button class="ui inverted green button" ng-click="settlement_cancelled_orders(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==1)">
+                <button class="ui inverted green button" ng-click="settlement_cancelled_orders(this)" ng-if="customer_data.has_paid == 1 && (customer_data.cancellation_order_status==1)"  ng-hide="user_data.privilege == 'restaurant_waiter'">
                   <i class="fa fa-window-close" aria-hidden="true"></i> Settle Cancelled Orders
                 </button>
               </div>
@@ -181,6 +181,11 @@
             <option value="">Select Waiter/Waitress</option>
           </select>
           <p class="help-block">@{{formerrors.server_id[0]}}</p>
+        </div>
+        <div class="form-group" ng-hide="user_data.privilege != 'restaurant_waiter'">
+          <label>Password</label>
+          <input class="form-control" type="password" placeholder="Enter Password" name="password" ng-model="formdata.password">
+          <p class="help-block">@{{formerrors.password[0]}}</p>
         </div>
         </form>
       </div>

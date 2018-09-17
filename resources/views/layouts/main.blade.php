@@ -124,7 +124,7 @@
   </div>
 </nav>
 <div class="container-fluid">
-    <div class="ui breadcrumb">
+    <div class="ui breadcrumb" ng-hide="user_data.privilege == 'restaurant_waiter'">
         <a class="section hideprint hideprint" id="menu">App Menu</a>
         <i class="right angle icon divider hideprint"></i>
         @yield('breadcrumb')

@@ -57,6 +57,7 @@ class Restaurant_controller extends Controller
       try{
           $restaurant_server = new Restaurant_server;
           $restaurant_server->name = $request->name;
+          $restaurant_server_data->password = $request->password;
           $restaurant_server->restaurant_id = $request->restaurant_id;
           $restaurant_server->save();
           // return $request->name;
@@ -77,6 +78,7 @@ class Restaurant_controller extends Controller
           $restaurant_server = new Restaurant_server;
           $restaurant_server_data = $restaurant_server->find($request->id);
           $restaurant_server_data->name = $request->name;
+          $restaurant_server_data->password = $request->password;
           $restaurant_server_data->restaurant_id = $request->restaurant_id;
           $restaurant_server_data->save();
           DB::commit();
