@@ -128,16 +128,6 @@
      show_table_customers();
    });
    $scope.submit = false;
-   $('.modal').on('show.bs.modal', function() {
-     $('.button').hide();
-     $('button').hide();
-     $('.btn').hide();
-     setTimeout(function() {
-       $('.button').show();
-       $('button').show();
-       $('.btn').show();
-     }, 1000);
-   })
    show_table_customers();
    $scope.delete_table_customer = function(data) {
      $scope.formdata._token = $scope._token;
@@ -730,6 +720,7 @@
    $scope.settlement_cancelled_orders = function(data) {
      $scope.cancelled_orders = {};
      $scope.table_customer_id = "";
+     $scope.formdata = {};
      $http({
        method: "GET",
        url: "/api/restaurant/orders/cancellations/accept/" + data.$parent.customer_data.id,
@@ -761,6 +752,7 @@
      var formdata = {
        items: items,
        table_customer_id: data.table_customer_id,
+       invoice_number: $scope.formdata.invoice_number,
        _token: $scope._token
      };
      $http({

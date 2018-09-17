@@ -276,6 +276,11 @@ class Restaurant_order_cancellation_controller extends Controller
 
   public function settlement(Request $request,$id)
   {
+    $this->validate($request, [
+      'invoice_number' => 'required',
+    ],[
+
+    ]);
     DB::beginTransaction();
     try{
         // return $request->all();
@@ -292,6 +297,7 @@ class Restaurant_order_cancellation_controller extends Controller
         $restaurant_bill->date_ = strtotime(date("m/d/Y"));
         $restaurant_bill->date_time = strtotime(date("m/d/Y h:i:s A"));
         $restaurant_bill->server_id = $restaurant_table_customer_data->server_id;
+        $restaurant_bill->invoice_number = $request->invoice_number;
         $restaurant_bill->cashier_id = Auth::user()->id;
         $restaurant_bill->restaurant_table_customer_id = $restaurant_table_customer_data->id;
         $restaurant_bill->table_name = $restaurant_table_customer_data->table_name;

@@ -956,6 +956,11 @@
               </tr>
             </tfoot>
           </table>
+          <div class="form-group">
+            <label>Invoice Number</label>
+            <input type="text" name="name" placeholder="Enter Invoice Number" class="form-control" ng-model="formdata.invoice_number">
+            <p class="help-block">@{{formerrors.invoice_number[0]}}</p>
+          </div>
         </form>
       </div>
       <div class="modal-footer" ng-model="bill_id">
