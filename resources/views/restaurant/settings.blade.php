@@ -70,7 +70,7 @@
              <td>@{{table_data.name}}</td>
              <!-- <td>@{{table_data.restaurant_name}}</td> -->
              <td>@{{(table_data.occupied==0?"Available":"Occupied")}}</td>
-             <td><a href="javascript:void(0)" ng-click="edit_table(this)">Edit</a></td>
+             <td style="text-align: center"><a href="javascript:void(0)" ng-click="edit_table(this)">Edit</a></td>
            </tr>
          </tbody>
        </thead>
@@ -103,9 +103,13 @@
            <!-- <th>Status</th> -->
          </tr>
          <tbody>
-           <tr ng-repeat="server_data in server" ng-cloak>
+           <tr ng-repeat="(index,server_data) in server" ng-cloak>
              <td>@{{server_data.name}}</td>
-             <td><a href="javascript:void(0)" ng-click="edit_server(this)">Edit</a></td>
+             <td style="text-align: center">
+               <a href="javascript:void(0)" ng-click="edit_server(this)">Edit</a>
+               | 
+               <a href="javascript:void(0)" ng-click="delete_server(server_data,index)">Delete</a>
+             </td>
              <!-- <td>@{{server_data.restaurant_name}}</td> -->
            </tr>
          </tbody>
@@ -306,6 +310,38 @@
     $scope.edit_server = function(data) {
       $('#edit-list-server-modal').modal('show');
       $scope.formdata = data.server_data;
+    }
+
+    $scope.delete_server = function(data,index) {
+      console.log(data);
+      alertify.confirm(
+            'Delete Menu',
+            'Are you sure you want to server <b>'+data.name+'</b> permanently?',
+            function(){
+                $scope.remove_server(data,index);
+            },
+            function()
+            {
+                // alertify.error('Cancel')
+            }
+        );
+    }
+
+    $scope.remove_server = function(data,index) {
+      $http({
+        method: 'DELETE',
+        url: '/api/restaurant/server/list/'+data.id,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+      .then(function(response) {
+        $scope.submit = false;
+        $scope.server.shift(index,1);
+        $.notify(data.name+" has beed deleted.");
+      }, function(rejection) {
+        var errors = rejection.data;
+        $scope.formerrors = errors;
+        $scope.submit = false;
+      });
     }
 
     $scope.add_table = function() {

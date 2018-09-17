@@ -88,8 +88,13 @@ class Restaurant_controller extends Controller
 
     public function show_server(Request $request)
     {
-      $data["result"] = DB::table('restaurant_server')->orderBY('name')->where(['deleted'=>0,'restaurant_id'=>$request->restaurant_id])->get();
+      $data["result"] = Restaurant_server::orderBY('name')->where(['restaurant_id'=>$request->restaurant_id])->get();
       return $data;
+    }
+
+    public function delete_server($id)
+    {
+      Restaurant_server::find($id)->delete();;
     }
 
     public function update(Request $request)

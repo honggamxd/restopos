@@ -34,6 +34,7 @@ Route::put('/api/restaurant/table', 'Restaurant_table_controller@edit_table');
 Route::post('/api/restaurant/table/order/make/{id}', 'Restaurant_order_controller@store');
 Route::post('/api/restaurant/server', 'Restaurant_controller@add_server');
 Route::put('/api/restaurant/server', 'Restaurant_controller@edit_server');
+Route::delete('/api/restaurant/server/list/{id}', 'Restaurant_controller@delete_server');
 Route::get('/api/restaurant/server/list', 'Restaurant_controller@show_server');
 Route::post('/api/restaurant/name', 'Restaurant_controller@update');
 
