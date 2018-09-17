@@ -277,6 +277,10 @@ class Restaurant_bill_controller extends Controller
                   ->where('restaurant_temp_bill_id',$preview_data["restaurant_temp_bill_id"])
                   ->where('restaurant_menu_id',$preview_data["restaurant_menu_id"])
                   ->first();
+                $menu_in_bill_detail = Restaurant_bill_detail::where('restaurant_menu_id',$preview_data["restaurant_menu_id"])->where('restaurant_bill_id',$bill_data->id)->first();
+                if($menu_in_bill_detail != null){
+                  continue;
+                }
                 $restaurant_bill_detail = new Restaurant_bill_detail;
                 $restaurant_bill_detail->restaurant_menu_id = $preview_data["restaurant_menu_id"];
                 $restaurant_bill_detail->restaurant_menu_name = $restaurant_temp_bill_detail_data->restaurant_menu_name;

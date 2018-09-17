@@ -64,6 +64,10 @@ class Restaurant_order_controller extends Controller
         $order_data = $restaurant_order->orderBy('id','DESC')->first();
         $cart = $request->session()->get('restaurant.table_customer.'.$id.'.cart');
         foreach ($request->table_customer_cart as $cart_data) {
+          $menu_in_order = Restaurant_order_detail::where('restaurant_menu_id',$cart_data['id'])->where('restaurant_order_id',$order_data->id)->first();
+          if($menu_in_order != null){
+            continue;
+          }
           $restaurant_order_detail = new Restaurant_order_detail;
           $restaurant_order_detail->restaurant_menu_id = $cart_data['id'];
           $restaurant_order_detail->restaurant_menu_name = Restaurant_menu::find($cart_data['id'])->name;

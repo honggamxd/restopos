@@ -789,13 +789,13 @@
      // console.log($scope.bill_preview);
    }
    $scope.make_bill = function(data) {
-     let items = data.bill_preview.items;
+     let items = [];
+     angular.copy(data.bill_preview.items,items);
      $scope.bill = {};
      $scope.submit = true;
      $scope.formdata = data.bill_preview;
      $scope.formdata._token = $scope._token;
      $scope.formdata.items = {};
-     // console.log(items);
      angular.forEach(items,function(value,key) {
       $scope.formdata.items[key] = {
         id: value.id,
@@ -826,6 +826,7 @@
        } else if (rejection.status == 422) {
          var errors = rejection.data;
          $.notify(errors.items[0], 'error');
+         data.bill_preview.items = items;
        }
        $scope.submit = false;
      });
