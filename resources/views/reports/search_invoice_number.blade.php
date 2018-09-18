@@ -122,9 +122,9 @@
      }).then(function mySuccess(response) {
        $scope.bills = response.data.result.data;
        $scope.pages = $sce.trustAsHtml(response.data.pagination);
-       $scope.loading = true;
+       $scope.loading = false;
      }, function(rejection) {
-       $scope.loading = true;
+       $scope.loading = false;
        if (rejection.status != 422) {
          request_error(rejection.status);
        } else if (rejection.status == 422) {
