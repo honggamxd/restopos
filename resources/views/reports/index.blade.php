@@ -19,6 +19,7 @@
     <li><a data-toggle="pill" href="#purchases">Purchases</a></li>
     <li><a data-toggle="pill" href="#issuances">Issuances</a></li>
     <li><a data-toggle="pill" href="#menu_popularity">Menu Popularity</a></li>
+    <li><a data-toggle="pill" href="#search_invoice_number">Search Invoice Number</a></li>
   </ul>
 </div>
 <div class="col-sm-4">
@@ -95,6 +96,21 @@
 
         <div class="form-group">
           <button type="submit" class="btn btn-primary btn-block">View Report</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="search_invoice_number" class="tab-pane fade">
+      <form class="form" method="get" action="/reports/view/search_invoice_number">
+        <h1 style="text-align: center;">Search Invoice Number</h1>
+        <div class="form-group">
+          <label>Search</label>
+          <input type="text" id="search_invoice_number-date-from" name="invoice_number" class="form-control" placeholder="Invoice Number">
+        </div>
+
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-block">Search</button>
         </div>
       </form>
     </div>

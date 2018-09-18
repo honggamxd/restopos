@@ -61,6 +61,10 @@ class Reports_controller extends Controller
       $data["categories"] = explode(',', $app_config->categories);
       $data["restaurants"] = Restaurant::all();
       return view('reports.menu_popularity',$data);
+    }elseif ($type=="search_invoice_number") {
+      # code...
+      $data["search_string"] = $request->invoice_number;
+      return view('reports.search_invoice_number',$data);
     }else{
       return view('reports.issuances',$data);
     }
@@ -111,7 +115,7 @@ class Reports_controller extends Controller
     $orders->whereBetween('date_',[strtotime($request->date_from),strtotime($request->date_to)]);
     $data["result"] = $orders->paginate(50);
     foreach ($data['result'] as $order_data) {
-      $order_data->date_ = date('j-M',$order_data->date_);
+      $order_data->date_ = date('j-M-Y',$order_data->date_);
       $order_data->date_time = date('h:i:s A',$order_data->date_time);
       $order_data->que_number = sprintf('%04d',$order_data->que_number);
       $order_data->server_name = Restaurant_server::find($order_data->server_id)->name;
@@ -317,7 +321,7 @@ class Reports_controller extends Controller
 
     foreach ($bills as $bill_data) {
       $bill_data->date_time = date("h:i:s A",$bill_data->date_time);
-      $bill_data->date_ = date("j-M",$bill_data->date_);
+      $bill_data->date_ = date("j-M-Y",$bill_data->date_);
       $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
       $bill_data->total_settlements = 0;
       $bill_data->special_trade_discount = $bill_data->total_discount+$bill_data->sc_pwd_discount+$bill_data->sc_pwd_vat_exemption;
@@ -681,7 +685,7 @@ class Reports_controller extends Controller
     $issued_items = $issued_items->get();
 
     foreach ($issued_items as $issuance_data) {
-      $issuance_data->date_ = date("j-M",$issuance_data->date_);
+      $issuance_data->date_ = date("j-M-Y",$issuance_data->date_);
     }
     // $data["paging"] = paging($page,$num_items,$display_per_page);
     $data["result"] = $issued_items;
@@ -755,6 +759,33 @@ class Reports_controller extends Controller
 
     fclose($fp);
     return asset('assets/reports/menu_popularity_report.csv');
+  }
+
+  public function search_invoice_number(Request $request)
+  {
+    $invoice_number = $request->search_string;
+    $data["result"] = Restaurant_bill::where('invoice_number','LIKE',"%$invoice_number%");
+    $data["pagination"] = (string)$data["result"]->paginate(50);
+    $bills = $data["result"]->paginate(50);
+    foreach ($bills as $bill_data) {
+      $bill_data->date_time = date("h:i:s A",$bill_data->date_time);
+      $bill_data->date_ = date("j-M-Y",$bill_data->date_);
+      $bill_data->check_number = sprintf('%04d',$bill_data->check_number);
+      $bill_data->total_settlements = 0;
+      $bill_data->special_trade_discount = $bill_data->total_discount+$bill_data->sc_pwd_discount+$bill_data->sc_pwd_vat_exemption;
+      $bill_data->net_total_amount = $bill_data->total_item_amount-$bill_data->special_trade_discount;
+      $restaurant_server = new Restaurant_server;
+      $bill_data->server_name = $restaurant_server->withTrashed()->find($bill_data->server_id)->name;
+
+      $user = new User;
+      $bill_data->cashier_name = $user->withTrashed()->find($bill_data->cashier_id)->name;
+
+      $restaurant = new Restaurant;
+      $bill_data->restaurant_name = $restaurant->find($bill_data->restaurant_id)->name;
+      
+    }
+    $data["result"] = $bills;
+    return $data;
   }
 
 }

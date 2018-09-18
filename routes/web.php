@@ -106,6 +106,7 @@ Route::get('/api/reports/general/orders', 'Reports_controller@get_orders_list');
 Route::get('/api/reports/general/purchases', 'Reports_controller@purhcased_item');
 Route::get('/api/reports/general/issuances', 'Reports_controller@issued_items');
 Route::get('/api/reports/general/f_and_b', 'Reports_controller@f_and_b');
+Route::get('/api/reports/general/search/invoice_number', 'Reports_controller@search_invoice_number');
 Route::patch('/api/reports/general/f_and_b_export', 'Reports_controller@f_and_b_export');
 Route::post('/api/reports/general/f_and_b_export', 'Reports_controller@create_f_and_b_csv');
 Route::get('/api/reports/general/menu_popularity', 'Reports_controller@menu_popularity');
