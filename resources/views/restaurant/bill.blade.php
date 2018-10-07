@@ -162,6 +162,7 @@
   </tr>
 </table>
 <div class="btn-group" role="group" aria-label="...">
+  <a href="javascript:void(0);" class="btn btn-info hideprint" ng-click="order_history()"><span class="glyphicon glyphicon-list-alt"></span> Order History</a>
   <a href="javascript:void(0);" class="btn btn-success hideprint" ng-click="show_invoice_number_logs()"><span class="glyphicon glyphicon-edit"></span> Invoice Number Logs</a>
   <a href="javascript:void(0);" class="btn btn-info hideprint" ng-click="prompt_edit_invoice()"><span class="glyphicon glyphicon-edit"></span> Edit Invoice Number</a>
   <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
@@ -176,7 +177,43 @@
 @endsection
 
 @section('modals')
-
+<div id="order-history-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Orders History</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ui unstackable sortable compact table" id="list-order-table">
+          <thead>
+            <tr>
+              <th class="center aligned" width="100%">Order #</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="order_data in orders">
+              <td class="center aligned"><p style="cursor: pointer;" data-balloon="Click to View" data-balloon-pos="up" ng-bind="order_data.que_number" ng-click="preview_order(this)"></p></td>
+              <td>
+                <a class="btn btn-primary" href="javascript:void(0);" ng-click="open_food_order(order_data.id)"> View Food Order</a>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr ng-if="orders | isEmpty">
+              <td colspan="20" style="text-align: center;">
+                <h1>NO DATA</h1>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="invoice-number-logs-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -244,6 +281,13 @@
       setTimeout(function(){ window.print(); }, 1000);
     });
     @endif
+
+    $scope.open_food_order = function(id) {
+      window.open('/restaurant/order/'+id,
+      'newwindow', 
+      'width=500,height=600');
+      return false;
+    }
     $scope.footer = {};
     $scope.payments = {};
     $scope.formdata = {};
@@ -256,6 +300,11 @@
     $scope.payments = {!! json_encode($payment_data['result']) !!};
     $scope.has_payment = {!! json_encode($has_payment) !!};
     $scope.customer_data = {!! json_encode($customer_data) !!};
+    $scope.orders = {!! json_encode($orders) !!};
+
+    $scope.order_history = function() {
+      $('#order-history-modal').modal('show');
+    }
 
     $scope.prompt_edit_invoice = function() {
       alertify.prompt(

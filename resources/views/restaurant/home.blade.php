@@ -245,6 +245,44 @@
 </div>
 
 
+<div id="add-order-with-password-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Select Server</h4>
+      </div>
+      <div class="modal-body">
+        <form id="add-order-with-password-form" ng-submit="add_order_with_password_form()" autocomplete="off">
+        {{ csrf_field() }}
+        <input id="username" style="display:none" type="text" name="fakeusernameremembered">
+        <input id="password" style="display:none" type="password" name="fakepasswordremembered">
+        <input type="hidden" name="restaurant_id" ng-model="formdata.restaurant_id">
+
+        <div class="form-group">
+          <label>Server</label>
+          <select class="form-control" ng-model="formdata.server_id" ng-options="item as item.name for item in server track by item.id">
+            <option value="">Select Waiter/Waitress</option>
+          </select>
+          <p class="help-block">@{{formerrors.server_id[0]}}</p>
+        </div>
+        <div class="form-group" ng-hide="user_data.privilege != 'restaurant_waiter'">
+          <label>Password</label>
+          <input class="form-control"  autocomplete="new-password" type="password" placeholder="Enter Password" name="password" ng-model="formdata.password">
+          <p class="help-block">@{{formerrors.password[0]}}</p>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ui default button" data-dismiss="modal">Close</button>
+        <button type="submit" class="ui primary button" form="add-order-with-password-form" ng-disabled="submit" ng-class="{'loading':submit}">Submit</button>
+      </div>
+    </div>
+
+  </div>
+</div> 
+
+
 <div id="add-order-modal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-lg order">
     <div class="modal-content">

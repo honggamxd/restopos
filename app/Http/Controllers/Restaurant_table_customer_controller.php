@@ -377,4 +377,17 @@ class Restaurant_table_customer_controller extends Controller
     catch(\Exception $e){DB::rollback();throw $e;}
     return $data;
   }
+
+  public function update_server(Request $request,$id)
+  {
+    DB::beginTransaction();
+    try{
+        $customer_data = Restaurant_table_customer::find($id);
+        $customer_data->server_id = $request->server_id['id'];
+        $customer_data->save();
+        DB::commit();
+    }
+    catch(\Exception $e){DB::rollback();throw $e;}
+    // return $data;
+  }
 }

@@ -157,7 +157,35 @@
    $('#add-order-modal').on('shown.bs.modal', function() {
      $('#search-menu').focus();
    });
-   $scope.add_order = function(data) {
+   $scope.add_order_data = [];
+   $scope.user_data = user_data;
+   $scope.add_order = function(data,status = 'failed',server_id = null) {
+     $scope.add_order_data = data;
+     if ($scope.user_data.privilege == 'restaurant_waiter' && status=='failed'){
+       $scope.formdata = {};
+       $scope.formerrors = {};
+       $http({
+         method: "GET",
+         params: {
+           restaurant_id: restaurant_id
+          },
+          url: "/api/restaurant/server/list",
+        }).then(function mySuccess(response) {
+          $scope.server = response.data.result;
+          let server = $scope.server.filter(server => server.id == data.$parent.customer_data.server_id);
+          $scope.formdata.server_id = server[0];
+          $scope.formdata.password = null;
+          $scope.formdata.customer_data = data.customer_data;
+         $("#add-order-with-password-modal").modal('show');
+       }, function (rejection) {
+         if (rejection.status != 422) {
+           request_error(rejection.status);
+         } else if (rejection.status == 422) {
+           console.log(rejection.statusText);
+         }
+       });
+       return false;
+     }
      $scope.table_customer_id = "";
      $scope.table_name = "";
      if (!data.$parent.customer_data.has_billed_out) {
@@ -171,6 +199,46 @@
      } else {
        $.notify("The customer has already billed out", 'error');
      }
+   }
+   
+   $scope.add_order_with_password_form = function() {
+     if ($scope.formdata.server_id.password == $scope.formdata.password){
+       $scope.add_order($scope.add_order_data,"pass");
+       $("#add-order-with-password-modal").modal('hide');
+     }else{
+       $scope.formerrors.password = ['Incorrect Password'];
+     }
+   }
+
+   $scope.open_food_order = function (id) {
+     window.open('/restaurant/order/' + id + '/?print=1',
+       'newwindow',
+       'width=500,height=600');
+     return false;
+   }
+   $scope.upate_table_customer_server = function() {
+     $http({
+       method: 'PUT',
+       url: '/api/restaurant/table/customer/update/' + $scope.formdata.customer_data.id + '/server',
+       data: $.param($scope.formdata),
+       headers: {
+         'Content-Type': 'application/x-www-form-urlencoded'
+       }
+     }).then(function (response) {
+       $('#edit-table-modal').modal('hide');
+       $scope.submit = false;
+       $scope.loading_table_customers = true;
+       $scope.table_customers = {};
+       $.notify("The information of customer has been updated.");
+     }, function (rejection) {
+       if (rejection.status != 422) {
+         request_error(rejection.status);
+       } else if (rejection.status == 422) {
+         var errors = rejection.data;
+         $scope.formerrors = errors;
+       }
+       $scope.submit = false;
+     });
    }
    $scope.cancellation_orders = function(type, data) {
      if (type == 'before') {

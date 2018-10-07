@@ -40,6 +40,12 @@ class Restaurant_bill_controller extends Controller
       $data['has_payment'] = true;
     }
     $data['customer_data'] = Restaurant_table_customer::onlyTrashed()->find($data['bill_info']['bill']['restaurant_table_customer_id']);
+    $orders = Restaurant_order::where('restaurant_table_customer_id',$data['bill_info']['bill']['restaurant_table_customer_id'])->get()->toArray();
+    $data['orders'] = $orders;
+    foreach ($orders as $key => $order) {
+      $data['orders'][$key]['que_number'] = sprintf('%04d',$order['que_number']);
+    }
+    // return $data;
     return view('restaurant.bill',$data);
   }
 

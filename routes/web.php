@@ -48,6 +48,7 @@ Route::post('/api/restaurant/table/order/cancel/request/{type}', 'Restaurant_ord
 
 
 Route::put('/api/restaurant/table/customer/update/{id}', 'Restaurant_table_customer_controller@update');
+Route::put('/api/restaurant/table/customer/update/{id}/server', 'Restaurant_table_customer_controller@update_server');
 Route::post('/api/restaurant/table/customer/add', 'Restaurant_table_customer_controller@store');
 Route::post('/api/restaurant/table/customer/bill/make/{id}', 'Restaurant_bill_controller@make_bill');
 Route::post('/api/restaurant/table/customer/bill/delete/{id}', 'Restaurant_bill_controller@delete');

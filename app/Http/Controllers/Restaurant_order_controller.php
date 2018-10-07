@@ -55,7 +55,7 @@ class Restaurant_order_controller extends Controller
         $restaurant_order->que_number = ($que_number==null?1:++$que_number);
         $restaurant_order->restaurant_id = $customer_data->restaurant_id;
         $restaurant_order->restaurant_table_customer_id = $id;
-        $restaurant_order->server_id = $customer_data->server_id;
+        $restaurant_order->server_id = $request->server_id['id'];
         $restaurant_order->save();
 
         $customer_data->has_order = 1;
