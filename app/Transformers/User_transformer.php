@@ -48,6 +48,7 @@ class User_transformer extends TransformerAbstract
             'str_privilege' => $str_privilege,
             'restaurant_id' => $user->restaurant_id,
             'allow_edit_info' => $user->allow_edit_info,
+            'is_valid' => $user->is_valid == 1,
         ];
     }
 

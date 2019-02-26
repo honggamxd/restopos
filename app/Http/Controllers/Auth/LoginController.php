@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\User;
 
 class LoginController extends Controller
 {
@@ -27,9 +28,15 @@ class LoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
+        $user = User::where('username',$request->username)->first();
+        if($user!=null){
+            $password = $user->is_valid == 1 ? $request->password : 'wrongest password ever do not try this';
+        }else{
+            $password = $request->password;
+        }
         $new_credentials = [
             'username' => $request->username,
-            'password' => md5($request->password),
+            'password' => md5($password),
         ];
         return $this->guard()->attempt(
             $new_credentials, $request->has('remember')

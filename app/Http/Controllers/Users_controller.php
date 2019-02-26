@@ -269,6 +269,7 @@ class Users_controller extends Controller
         $user = new User;
         $user_data = $user->find($id);
         $user_data->privilege = $request->privilege;
+        $user_data->is_valid = $request->is_valid ? 1 : 0;
         $user_data->email_address = $request->email_address;
         $user_data->position = $request->privilege=='inventory_user' || $request->privilege=='admin' ? $request->position : null;
         if($request->password){

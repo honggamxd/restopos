@@ -193,6 +193,14 @@
           <input class="form-control" type="email" placeholder="Enter Email Address" name="pax" ng-model="formdata.email_address">
           <p class="help-block">@{{formerrors.email_address[0]}}</p>
         </div>
+        <div class="form-group">
+          <label>Validity of the User:</label><br>
+          <div class="ui toggle checkbox">
+              <input type="checkbox" name="public" ng-model="formdata.is_valid">
+              <label ng-if="formdata.is_valid">Valid</label>
+              <label ng-if="!formdata.is_valid">Invalid</label>
+            </div>
+        </div>
 
         <div class="form-group">
           <label>Privilege:</label>
@@ -662,10 +670,10 @@
     }
 
     $scope.edit_user = function(data) {
-      console.log(data);
+      // console.log(data);
       $scope.formdata = data.user;
-      $scope.permissions = data.user.permissions;
-      console.log($scope.permissions);
+      $scope.permissions = data.user.permissions ? data.user.permissions : {};
+      // console.log($scope.permissions);
       $scope.formdata.restaurant_id = (data.user.restaurant_id.toString()=='0'?'':data.user.restaurant_id.toString());
       $('#edit-user-modal').modal('show');
     }
@@ -677,6 +685,7 @@
         restaurant_id: $scope.formdata.restaurant_id,
         allow_edit_info: $scope.formdata.allow_edit_info,
         password: $scope.formdata.password,
+        is_valid: $scope.formdata.is_valid,
         email_address: $scope.formdata.email_address,
         position: $scope.formdata.position,
         permissions: $scope.permissions
