@@ -194,6 +194,7 @@ class Users_controller extends Controller
         $user->username = $request->username;
         $user->password = bcrypt(md5($request->password));
         $user->privilege = $request->privilege;
+        $user->is_valid = 1;
         $user->position = $request->privilege=='inventory_user' || $request->privilege=='admin' ? $request->position : null;
         $user->email_address = $request->email_address;
         $user->allow_edit_info = ($request->allow_edit_info!=null?1:0);
