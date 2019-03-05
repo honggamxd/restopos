@@ -34,7 +34,7 @@ class Restaurant_controller extends Controller
         $data["restaurant_name"] = DB::table('restaurant')->find(Auth::user()->restaurant_id)->name;
         $app_config = DB::table('app_config')->first();
         $data["categories"] = explode(',', $app_config->categories);
-        $data['js_version'] = '1.0.04';
+        $data['js_version'] = '1.0.05';
         return view('restaurant.home',$data);
       }
     }
