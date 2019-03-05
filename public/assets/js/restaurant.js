@@ -720,6 +720,9 @@
          angular.forEach($scope.bill_preview.items, function(value, key) {
            value.quantity_to_cancel = 0;
            value.quantity = parseInt($scope.bill_preview.items[key].quantity);
+           value.quantity_to_bill = parseInt($scope.bill_preview.items[key].quantity);
+           if (value.quantity == 0){
+           }
          });
          $scope.bill_preview.total = response.data.total;
          $scope.bill_preview.customer_data = response.data.customer_data;
@@ -739,6 +742,7 @@
            $.notify('Cannot make a bill, this customer has an existing cancellation request.', 'error');
          }
          $scope.bill_out_submit = false;
+        //  $scope.compute_net_total();
        }, function(rejection) {
          if (rejection.status != 422) {
            request_error(rejection.status);
@@ -766,6 +770,9 @@
          angular.forEach($scope.bill_preview.items, function(value, key) {
            value.quantity_to_cancel = parseInt(0);
            value.quantity = parseInt($scope.bill_preview.items[key].quantity);
+           value.quantity_to_bill = parseInt($scope.bill_preview.items[key].quantity);
+           if (value.quantity == 0){
+           }
          });
          $scope.bill_preview.total = response.data.total;
          $scope.bill_preview.customer_data = response.data.customer_data;
@@ -777,6 +784,7 @@
          $scope.bill_preview.customer_data.sc_pwd = parseInt(response.data.customer_data.sc_pwd);
          $scope.max = parseInt(data.$parent.customer_data.pax);
          $('#bill-preview-modal').modal('show');
+        //  $scope.compute_net_total();
        }, function(rejection) {
          if (rejection.status != 422) {
            request_error(rejection.status);

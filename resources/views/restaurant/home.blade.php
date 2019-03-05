@@ -731,7 +731,7 @@
               <td class="left aligned middle aligned">@{{bill_preview_data.name}}<span ng-if="bill_preview_data.special_instruction != '' && bill_preview_data.special_instruction != null"><br>(@{{bill_preview_data.special_instruction}})</span></td>
               <td class="center aligned middle aligned">@{{bill_preview_data.quantity}}</td>
               <td class="center aligned middle aligned">
-                <input style="width: 100px" type="number" ng-init="bill_preview_data.quantity_to_bill = bill_preview_data.quantity" ng-model="bill_preview_data.quantity_to_bill" ng-change="bill_preview_total(this)">
+                <input style="width: 100px" type="number" ng-model="bill_preview_data.quantity_to_bill" ng-change="bill_preview_total(this)">
               </td>
               <td class="right aligned middle aligned">@{{bill_preview_data.price|currency:""}}</td>
               <td class="right aligned middle aligned">@{{ (bill_preview_data.quantity_to_bill*bill_preview_data.price)|currency:"" }}</td>

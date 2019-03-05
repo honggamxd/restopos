@@ -189,6 +189,7 @@ class Restaurant_table_customer_controller extends Controller
           ->distinct()
           ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
           ->where('restaurant_table_customer_id',$id)
+          ->whereNull('restaurant_order.has_billed')
           ->get();
         $restaurant_temp_bill->restaurant_table_customer_id = $id;
         $restaurant_temp_bill->save();
@@ -199,6 +200,12 @@ class Restaurant_table_customer_controller extends Controller
         $customer_data->has_billed_out = 1;
         $customer_data->restaurant_temp_bill_id = $temp_bill_data->id;
         $customer_data->save();
+
+        $restaurant_orders = Restaurant_order::where('restaurant_table_customer_id',$id);
+        foreach ($restaurant_orders as $restaurant_order) {
+          $restaurant_order->has_billed = 1;
+          $restaurant_order->save();
+        }
 
         foreach ($unique_ordered_items as $order_item_data) {
           $order_joined_data = $restaurant_order
@@ -264,10 +271,10 @@ class Restaurant_table_customer_controller extends Controller
     $restaurant_temp_bill_detail = new Restaurant_temp_bill_detail;
     $restaurant_table_customer = new Restaurant_table_customer;
     $data['customer_data'] = $restaurant_table_customer->find($id);
-    $data["total"] = $restaurant_temp_bill_detail
-      ->select(DB::raw('SUM(price*quantity) as total'))
-      ->where('restaurant_temp_bill_id',$restaurant_temp_bill_data->id)
-      ->value("total");
+    $data["total"] = 0;
+    foreach ($data['result'] as $result) {
+      $data["total"] += ($result->price * $result->quantity);
+    }
     $data['discount']['amount_disount'] = 0;
     $data['discount']['percent_disount'] = 0;
     $data['discount']['total'] = 0;
