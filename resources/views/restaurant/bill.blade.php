@@ -51,7 +51,12 @@
   </tr>
   <tr>
     <td>Check #: <b ng-cloak>@{{bill.check_number}}</b></td>
-    <td>Date: <b ng-cloak>@{{bill.date_}}</b></td>
+    <td>
+      Date:
+      <b ng-cloak ng-hide="toggle_date_textbox">@{{bill.date_}}</b>
+      <input ng-cloak type="text" id="bill_date" ng-show="toggle_date_textbox" ng-model="bill.date_">
+      <button ng-cloak ng-show="toggle_date_textbox" ng-click="update_date()">Save</button>
+    </td>
   </tr>
   <tr>
     <td>Table #: <b ng-cloak>@{{bill.table_name}}</b></td>
@@ -163,6 +168,7 @@
 </table>
 <div class="btn-group" role="group" aria-label="...">
   <a href="javascript:void(0);" class="btn btn-info hideprint" ng-click="order_history()"><span class="glyphicon glyphicon-list-alt"></span> Order History</a>
+  <a href="javascript:void(0);" class="btn btn-primary hideprint" ng-click="edit_date()"><span class="glyphicon glyphicon-edit"></span> Edit Date</a>
   <a href="javascript:void(0);" class="btn btn-success hideprint" ng-click="show_invoice_number_logs()"><span class="glyphicon glyphicon-edit"></span> Invoice Number Logs</a>
   <a href="javascript:void(0);" class="btn btn-info hideprint" ng-click="prompt_edit_invoice()"><span class="glyphicon glyphicon-edit"></span> Edit Invoice Number</a>
   <a href="javascript:void(0);" class="btn btn-primary hideprint" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</a>
@@ -398,6 +404,34 @@
           
         });
     }
+    $scope.toggle_date_textbox = false;
+    $scope.edit_date = function() {
+      $scope.toggle_date_textbox = true;
+    }
+    $scope.update_date = function(params) {
+      $http({
+             method: 'PUT',
+             url: '/api/restaurant/table/customer/bill/view/'+$scope.bill.id,
+             data: $.param({
+               date:$scope.bill.date_,
+               time:$scope.bill.date_time,
+              }),
+             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          })
+          .then(function(response) {
+            console.log(response.data);
+            $.notify('The Order Slip date is now ' + $scope.bill.date_);
+          }, function(rejection) {
+            if(rejection.status != 422){
+              request_error(rejection.status);
+            }else if(rejection.status == 422){ 
+             var errors = rejection.data;
+            }
+           $scope.submit = false;
+          });
+    }
+
+    $('#bill_date').datepicker({ dateFormat: 'MM dd, yy' });
   });
   
 </script>

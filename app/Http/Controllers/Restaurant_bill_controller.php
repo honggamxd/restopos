@@ -20,6 +20,7 @@ use App\Restaurant_payment;
 use App\Restaurant_meal_types;
 use App\Restaurant_invoice_number_log;
 use App\User;
+use Carbon\Carbon;
 use Auth;
 
 class Restaurant_bill_controller extends Controller
@@ -432,15 +433,23 @@ class Restaurant_bill_controller extends Controller
   public function update_invoice(Request $request,$id)
   {
     try{
-      $restaurant_bill_data = Restaurant_bill::find($id);
-      $restaurant_bill_data->invoice_number = $request->invoice_number;
-      $restaurant_bill_data->save();
+      if($request->invoice_number){
+        $restaurant_bill_data = Restaurant_bill::find($id);
+        $restaurant_bill_data->invoice_number = $request->invoice_number;
+        $restaurant_bill_data->save();
 
-      $invoice_number_log = new Restaurant_invoice_number_log;
-      $invoice_number_log->invoice_number = $request->invoice_number;
-      $invoice_number_log->user_id = Auth::user()->id;
-      $invoice_number_log->restaurant_bill_id = $id;
-      $invoice_number_log->save();
+        $invoice_number_log = new Restaurant_invoice_number_log;
+        $invoice_number_log->invoice_number = $request->invoice_number;
+        $invoice_number_log->user_id = Auth::user()->id;
+        $invoice_number_log->restaurant_bill_id = $id;
+        $invoice_number_log->save();
+      }else{
+        $restaurant_bill_data = Restaurant_bill::find($id);
+        $restaurant_bill_data->date_ = strtotime($request->date);
+        $restaurant_bill_data->date_time = strtotime($request->date . " " . $request->time);
+        $restaurant_bill_data->created_at = Carbon::parse($request->date . " " . $request->time);
+        $restaurant_bill_data->save();
+      }
       DB::commit();
     }
     catch(\Exception $e){DB::rollback();throw $e;}
