@@ -816,7 +816,7 @@
      });
    }
    $scope.settle_cancelled_orders = function(data) {
-     // console.log(data.cancelled_orders);
+    //  console.log(data.cancelled_orders);
      $scope.submit = true;
      let items = {};
      angular.forEach(data.cancelled_orders, function(value, key) {
@@ -826,6 +826,7 @@
         restaurant_menu_id: value.restaurant_menu_id,
         menu_name: value.menu_name,
         price: value.price,
+        quantity: value.quantity,
        }
      });
      var formdata = {

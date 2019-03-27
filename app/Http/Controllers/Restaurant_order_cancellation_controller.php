@@ -86,16 +86,14 @@ class Restaurant_order_cancellation_controller extends Controller
             if($cancelled_order_item->quantity>0){
               $restaurant_order_detail_data->quantity -= $cancelled_order_item->quantity;
               $restaurant_order_detail_data->save();
-              for ($i=0; $i < $cancelled_order_item->quantity; $i++) { 
-                $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
-                $restaurant_accepted_order_cancellation->restaurant_menu_id = $restaurant_order_detail_data->restaurant_menu_id;
-                $restaurant_accepted_order_cancellation->restaurant_table_customer_id = $cancellation_request_data->restaurant_table_customer_id;
-                $restaurant_accepted_order_cancellation->quantity = 1;
-                $restaurant_accepted_order_cancellation->price = $restaurant_order_detail_data->price;
-                $restaurant_accepted_order_cancellation->restaurant_order_cancellation_id = $cancellation_request_data->id;
-                $restaurant_accepted_order_cancellation->reason_cancelled = $cancellation_request_data->reason_cancelled;
-                $restaurant_accepted_order_cancellation->save();
-              }
+              $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
+              $restaurant_accepted_order_cancellation->restaurant_menu_id = $restaurant_order_detail_data->restaurant_menu_id;
+              $restaurant_accepted_order_cancellation->restaurant_table_customer_id = $cancellation_request_data->restaurant_table_customer_id;
+              $restaurant_accepted_order_cancellation->quantity = $cancelled_order_item->quantity;
+              $restaurant_accepted_order_cancellation->price = $restaurant_order_detail_data->price;
+              $restaurant_accepted_order_cancellation->restaurant_order_cancellation_id = $cancellation_request_data->id;
+              $restaurant_accepted_order_cancellation->reason_cancelled = $cancellation_request_data->reason_cancelled;
+              $restaurant_accepted_order_cancellation->save();
             }
           }
           $cancellation_request_data->approved_by = Auth::user()->id;
@@ -323,14 +321,14 @@ class Restaurant_order_cancellation_controller extends Controller
           $restaurant_bill_detail = new Restaurant_bill_detail;
           $restaurant_bill_detail->restaurant_menu_id = $cancelled_order_item['restaurant_menu_id'];
           $restaurant_bill_detail->restaurant_menu_name = $cancelled_order_item['menu_name'];
-          $restaurant_bill_detail->quantity = 1;
+          $restaurant_bill_detail->quantity = $cancelled_order_item['quantity'];
           $restaurant_bill_detail->price = $cancelled_order_item['price'];
           $restaurant_bill_detail->date_ = $bill_data->date_;
           $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
           $restaurant_bill_detail->restaurant_bill_id = $bill_data->id;
           $restaurant_bill_detail->restaurant_id = $bill_data->restaurant_id;
           $restaurant_bill_detail->save();
-          $total_item_amount += $cancelled_order_item['price'];
+          $total_item_amount += ($cancelled_order_item['quantity'] * $cancelled_order_item['price']);
         }
         // $bill_data->gross_billing = $total_item_amount;
         $bill_data->gross_billing = 0;
@@ -342,7 +340,7 @@ class Restaurant_order_cancellation_controller extends Controller
         $bill_data->reason_cancelled = implode("<br>", $reason_cancelled);
         $bill_data->save();
         $restaurant_accepted_order_cancellation = new Restaurant_accepted_order_cancellation;
-        $cancelled_orders_settlements = $restaurant_accepted_order_cancellation->select('settlement',DB::raw('SUM(price) as total'))->groupBy('settlement')->where('restaurant_bill_id',$bill_data->id)->get();
+        $cancelled_orders_settlements = $restaurant_accepted_order_cancellation->select('settlement',DB::raw('SUM(quantity * price) as total'))->groupBy('settlement')->where('restaurant_bill_id',$bill_data->id)->get();
         foreach ($cancelled_orders_settlements as $cancelled_orders_settlements_data) {
           $restaurant_payment = new Restaurant_payment;
           $restaurant_payment->payment = $cancelled_orders_settlements_data->total;
