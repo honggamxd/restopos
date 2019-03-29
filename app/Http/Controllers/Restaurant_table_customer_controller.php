@@ -323,8 +323,9 @@ class Restaurant_table_customer_controller extends Controller
   
   public function delete(Request $request)
   {
-    $request->session()->forget('restaurant');
-    # code...
+    if ($request->session()->has('restaurant')) {
+        $request->session()->forget('restaurant');
+    }
   }
 
   public function update(Request $request,$id)
