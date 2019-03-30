@@ -422,6 +422,7 @@
           })
           .then(function(response) {
             console.log(response.data);
+            $scope.toggle_date_textbox = false;
             $.notify('The Order Slip date is now ' + $scope.bill.date_);
           }, function(rejection) {
             if(rejection.status != 422){
