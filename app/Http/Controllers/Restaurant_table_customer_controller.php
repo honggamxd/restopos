@@ -188,11 +188,15 @@ class Restaurant_table_customer_controller extends Controller
           ->select('restaurant_menu_id')
           ->distinct()
           ->join('restaurant_order_detail', 'restaurant_order.id', '=', 'restaurant_order_detail.restaurant_order_id')
-          ->where('restaurant_table_customer_id',$id)
+          ->where('restaurant_order.restaurant_table_customer_id',$id)
           ->whereNull('restaurant_order.has_billed')
           ->get();
         $restaurant_temp_bill->restaurant_table_customer_id = $id;
-        $restaurant_temp_bill->save();
+        if(Restaurant_temp_bill::where('restaurant_table_customer_id',$id)->first()){
+
+        }else{
+          $restaurant_temp_bill->save();
+        }
         $temp_bill_data = $restaurant_temp_bill->orderBy('id','DESC')->first();
 
         $restaurant_table_customer = new Restaurant_table_customer;
@@ -221,7 +225,12 @@ class Restaurant_table_customer_controller extends Controller
           $restaurant_temp_bill_detail->quantity = $order_joined_data->total_quantity;
           $restaurant_temp_bill_detail->special_instruction = $order_joined_data->special_instruction;
           $restaurant_temp_bill_detail->restaurant_temp_bill_id = $temp_bill_data->id;
-          $restaurant_temp_bill_detail->save();
+
+          if(Restaurant_temp_bill_detail::where('restaurant_menu_id',$order_joined_data->restaurant_menu_id)->where('restaurant_temp_bill_id',$temp_bill_data->id)->first()){
+
+          }else{
+            $restaurant_temp_bill_detail->save();
+          }
         }
         $data["result"] = $restaurant_temp_bill
           ->join('restaurant_temp_bill_detail','restaurant_temp_bill.id','=','restaurant_temp_bill_detail.restaurant_temp_bill_id')
