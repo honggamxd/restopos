@@ -73,7 +73,7 @@
 @endsection
 
 @section('modals')
-<div id="view-request-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="view-request-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -108,7 +108,7 @@
     </div>
   </div>
 </div>
-<div id="accept-request-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="accept-request-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -125,7 +125,7 @@
     </div>
   </div>
 </div>
-<div id="delete-request-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="delete-request-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">

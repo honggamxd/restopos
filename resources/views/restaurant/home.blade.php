@@ -140,7 +140,7 @@
 
 
 
-<div id="add-table-modal" class="modal fade" role="dialog">
+<div id="add-table-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -199,7 +199,7 @@
 </div>
 
 
-<div id="edit-table-modal" class="modal fade" role="dialog">
+<div id="edit-table-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -245,7 +245,7 @@
 </div>
 
 
-<div id="add-order-with-password-modal" class="modal fade" role="dialog">
+<div id="add-order-with-password-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -283,7 +283,7 @@
 </div> 
 
 
-<div id="add-order-modal" class="modal fade" role="dialog">
+<div id="add-order-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-lg order">
     <div class="modal-content">
       <div class="modal-header">
@@ -433,7 +433,7 @@
   </div>
 </div>
 
-<div id="confirm-food-order-modal" class="modal fade" role="dialog">
+<div id="confirm-food-order-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -476,7 +476,7 @@
 </div>
 
 
-<div id="view-list-order-modal" class="modal fade" role="dialog">
+<div id="view-list-order-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -516,7 +516,7 @@
   </div>
 </div>
 
-<div id="view-order-modal" class="modal fade" role="dialog">
+<div id="view-order-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -578,7 +578,7 @@
 </div>
 
 
-<div id="before-bill-out-cancellation-order-modal" class="modal fade" role="dialog">
+<div id="before-bill-out-cancellation-order-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -625,7 +625,7 @@
 </div>
 
 
-<div id="after-bill-out-cancellation-order-modal" class="modal fade" role="dialog">
+<div id="after-bill-out-cancellation-order-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -676,7 +676,7 @@
 </div>
 
 
-<div id="bill-preview-modal" class="modal fade" role="dialog">
+<div id="bill-preview-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -787,7 +787,7 @@
   </div>
 </div>
 
-<div id="view-bill-modal" class="modal fade" role="dialog">
+<div id="view-bill-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -829,7 +829,7 @@
   </div>
 </div>
 
-<div id="payment-modal" class="modal fade" role="dialog">
+<div id="payment-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -958,7 +958,7 @@
   </div>
 </div>
 
-<div id="settlement-cancelled-order-modal" class="modal fade" role="dialog">
+<div id="settlement-cancelled-order-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -1016,7 +1016,7 @@
 
 
 
-<div id="add-menu-modal" class="modal fade" role="dialog">
+<div id="add-menu-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -1072,11 +1072,11 @@
 <script type="text/javascript">
   var csrf_token = "{{csrf_token()}}";
   var restaurant_id = {{Auth::user()->restaurant_id}};
-  $(".modal").modal({
-      backdrop: 'static',
-      keyboard: false
-  });
-  $(".modal").modal('hide');
+  // $(".modal").modal({
+  //     backdrop: 'static',
+  //     keyboard: false
+  // });
+  // $(".modal").modal('hide');
 </script>
 <script type="text/javascript" src="{{asset('assets/js/restaurant.js')}}?ver={{$js_version}}"></script>
 @endpush

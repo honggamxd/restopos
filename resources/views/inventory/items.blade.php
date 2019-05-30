@@ -82,7 +82,7 @@
 @endsection
 
 @section('modals')
-<div id="add-item-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="add-item-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

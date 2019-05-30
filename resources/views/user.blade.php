@@ -85,7 +85,7 @@
 @section('modals')
 
 
-<div id="add-user-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="add-user-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -177,7 +177,7 @@
   </div>
 </div>
 
-<div id="edit-user-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="edit-user-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -261,7 +261,7 @@
   </div>
 </div>
 
-<div id="permission-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="permission-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">

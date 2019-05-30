@@ -185,7 +185,7 @@
 @endsection
 
 @section('modals')
-<div id="order-history-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="order-history-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -222,7 +222,7 @@
     </div>
   </div>
 </div>
-<div id="invoice-number-logs-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="invoice-number-logs-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

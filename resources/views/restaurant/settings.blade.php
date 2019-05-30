@@ -137,7 +137,7 @@
 
 @section('modals')
 
-<div id="add-list-table-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="add-list-table-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -165,7 +165,7 @@
   </div>
 </div>
 
-<div id="edit-list-table-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="edit-list-table-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -194,7 +194,7 @@
 </div>
 
 
-<div id="add-list-server-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="add-list-server-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -230,7 +230,7 @@
     </div>
   </div>
 </div>
-<div id="edit-list-server-modal" class="modal fade" role="dialog" tabindex="-1">
+<div id="edit-list-server-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
